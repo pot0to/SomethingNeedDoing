@@ -610,6 +610,8 @@ public class CommandInterface : ICommandInterface
         return 0;
     }
 
+    public string GetTargetName() => Svc.Targets.Target?.Name.TextValue ?? "";
+
     private unsafe int GetNodeTextAsInt(AtkTextNode* node, string error)
     {
         try
