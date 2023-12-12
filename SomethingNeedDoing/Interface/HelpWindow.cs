@@ -322,7 +322,14 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-           "2023-06-23",
+           "2023-12-12",
+           "- Added IsQuestAccepted()\n" +
+           "- Added IsQuestComplete()\n" +
+           "- Added GetQuestSequence()\n" +
+           "- Added GetQuestIDByName()\n");
+
+        DisplayChangelog(
+           "2023-11-06",
            "- Added GetLevel()\n" +
            "- Added \"Game Data\" tab to the help menu.\n" +
            "- Added GetGp() and GetMaxGp() (thanks nihilistzsche)\n" +
@@ -947,6 +954,12 @@ float GetPlayerRawZPos()
 float GetDistanceToPoint(float x, float y, float z))
 
 int GetLevel(uint ExpArrayIndex = -1)
+
+string GetQuestNameByID(ushort id)
+bool IsQuestAccepted(ushort id)
+bool IsQuestComplete(ushort id)
+byte GetQuestSequence(ushort id)
+uint? GetQuestIDByName(string name)
 ".Trim();
 
         ImGui.TextWrapped(text);
