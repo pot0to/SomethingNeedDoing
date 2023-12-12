@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Logging;
+using ECommons;
 using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
@@ -598,6 +599,15 @@ public class CommandInterface : ICommandInterface
             score += item.Length;
 
         return score;
+    }
+
+    public unsafe int GetNodeListCount(string addonName)
+    {
+        if (GenericHelpers.TryGetAddonByName<AtkUnitBase>(addonName, out var addon))
+        {
+            return addon->UldManager.NodeListCount;
+        }
+        return 0;
     }
 
     private unsafe int GetNodeTextAsInt(AtkTextNode* node, string error)

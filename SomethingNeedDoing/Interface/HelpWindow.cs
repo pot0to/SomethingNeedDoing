@@ -326,7 +326,8 @@ internal class HelpWindow : Window
            "- Added IsQuestAccepted()\n" +
            "- Added IsQuestComplete()\n" +
            "- Added GetQuestSequence()\n" +
-           "- Added GetQuestIDByName()\n");
+           "- Added GetQuestIDByName()\n" +
+           "- Added GetNodeListCount()\n");
 
         DisplayChangelog(
            "2023-11-06",
@@ -960,6 +961,8 @@ bool IsQuestAccepted(ushort id)
 bool IsQuestComplete(ushort id)
 byte GetQuestSequence(ushort id)
 uint? GetQuestIDByName(string name)
+
+int GetNodeListCount(string addonName)
 ".Trim();
 
         ImGui.TextWrapped(text);
