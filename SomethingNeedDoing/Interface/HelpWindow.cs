@@ -327,6 +327,7 @@ internal class HelpWindow : Window
            "- Added IsQuestComplete()\n" +
            "- Added GetQuestSequence()\n" +
            "- Added GetQuestIDByName()\n" +
+           "- Added GetQuestNameByID()\n" +
            "- Added GetNodeListCount()\n" +
            "- Added GetTargetName()\n");
 
