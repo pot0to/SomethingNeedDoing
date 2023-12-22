@@ -322,7 +322,7 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-           "2023-12-12",
+           "2023-12-22",
            "- Updated the GetRaw coordinate functions to take in an object name or party member position.\n");
 
         DisplayChangelog(
