@@ -5,12 +5,11 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Logging;
 using ECommons;
 using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -19,7 +18,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Excel.GeneratedSheets;
 using Lumina.Text;
 using SomethingNeedDoing.Exceptions;
-using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.IPC;
 
 namespace SomethingNeedDoing.Misc;
@@ -546,9 +544,60 @@ public class CommandInterface : ICommandInterface
 
     public uint GetClassJobId() => Svc.ClientState.LocalPlayer!.ClassJob.Id;
 
-    public float GetPlayerRawXPos() => Svc.ClientState.LocalPlayer!.Position.X;
-    public float GetPlayerRawYPos() => Svc.ClientState.LocalPlayer!.Position.Y;
-    public float GetPlayerRawZPos() => Svc.ClientState.LocalPlayer!.Position.Z;
+    private static readonly unsafe IntPtr pronounModule = (IntPtr)Framework.Instance()->GetUiModule()->GetPronounModule();
+    private static readonly unsafe delegate* unmanaged<IntPtr, uint, GameObject*> getGameObjectFromPronounID = (delegate* unmanaged<IntPtr, uint, GameObject*>)Service.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 85 ?? ?? ?? ?? 8D 4F DD");
+    public static unsafe GameObject* GetGameObjectFromPronounID(uint id) => getGameObjectFromPronounID(pronounModule, id);
+
+    public float GetPlayerRawXPos(string character = "")
+    {
+        if (!character.IsNullOrEmpty())
+        {
+            unsafe
+            {
+                if (int.TryParse(character, out var p))
+                {
+                    var go = GetGameObjectFromPronounID((uint)(p + 42));
+                    return go != null ? go->Position.X : -1;
+                }
+                else return Svc.Objects.Where(x => x.IsTargetable).FirstOrDefault(x => x.Name.ToString().Equals(character))?.Position.X ?? -1;
+            }
+        }
+        return Svc.ClientState.LocalPlayer!.Position.X;
+    }
+
+    public float GetPlayerRawYPos(string character = "")
+    {
+        if (!character.IsNullOrEmpty())
+        {
+            unsafe
+            {
+                if (int.TryParse(character, out var p))
+                {
+                    var go = GetGameObjectFromPronounID((uint)(p + 42));
+                    return go != null ? go->Position.Y : -1;
+                }
+                else return Svc.Objects.Where(x => x.IsTargetable).FirstOrDefault(x => x.Name.ToString().Equals(character))?.Position.Y ?? -1;
+            }
+        }
+        return Svc.ClientState.LocalPlayer!.Position.Y;
+    }
+
+    public float GetPlayerRawZPos(string character = "")
+    {
+        if (!character.IsNullOrEmpty())
+        {
+            unsafe
+            {
+                if (int.TryParse(character, out var p))
+                {
+                    var go = GetGameObjectFromPronounID((uint)(p + 42));
+                    return go != null ? go->Position.Z : -1;
+                }
+                else return Svc.Objects.Where(x => x.IsTargetable).FirstOrDefault(x => x.Name.ToString().Equals(character))?.Position.Z ?? -1;
+            }
+        }
+        return Svc.ClientState.LocalPlayer!.Position.Z;
+    }
 
     public float GetDistanceToPoint(float x, float y, float z) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, new Vector3(x, y, z));
 

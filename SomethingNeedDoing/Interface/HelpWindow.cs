@@ -323,6 +323,10 @@ internal class HelpWindow : Window
 
         DisplayChangelog(
            "2023-12-12",
+           "- Updated the GetRaw coordinate functions to take in an object name or party member position.\n");
+
+        DisplayChangelog(
+           "2023-12-12",
            "- Added IsQuestAccepted()\n" +
            "- Added IsQuestComplete()\n" +
            "- Added GetQuestSequence()\n" +
@@ -951,9 +955,10 @@ uint GetGil()
 
 uint GetClassJobId()
 
-float GetPlayerRawXPos()
-float GetPlayerRawYPos()
-float GetPlayerRawZPos()
+// if you pass an invalid name or party position it will return -1
+float GetPlayerRawXPos(string character = "")
+float GetPlayerRawYPos(string character = "")
+float GetPlayerRawZPos(string character = "")
 float GetDistanceToPoint(float x, float y, float z))
 
 int GetLevel(uint ExpArrayIndex = -1)
