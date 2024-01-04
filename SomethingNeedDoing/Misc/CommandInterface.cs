@@ -352,6 +352,16 @@ public class CommandInterface : ICommandInterface
         return addon->IsVisible;
     }
 
+    public unsafe bool IsNodeVisible(string addonName, int node)
+    {
+        var ptr = Service.GameGui.GetAddonByName(addonName, 1);
+        if (ptr == IntPtr.Zero)
+            return false;
+
+        var addon = (AtkUnitBase*)ptr;
+        return addon->UldManager.NodeList[node]->IsVisible;
+    }
+
     /// <inheritdoc/>
     public unsafe bool IsAddonReady(string addonName)
     {

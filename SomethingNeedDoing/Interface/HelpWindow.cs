@@ -322,6 +322,10 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+          "2024-01-04",
+          "- Added IsNodeVisible().\n");
+
+        DisplayChangelog(
            "2023-12-22",
            "- Updated the GetRaw coordinate functions to take in an object name or party member position.\n");
 
@@ -922,6 +926,7 @@ bool HasStatus(string name)
 bool HasStatusId(uint id, ...)
 
 bool IsAddonVisible(string addonName)
+bool IsNodeVisible(string addonName, int node)
 bool IsAddonReady(string addonName)
 
 // Can fetch nested nodes
