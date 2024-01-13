@@ -1,4 +1,4 @@
-Fully working Script for Auto Dungeons- Example is the Stone Vigil
+--Fully working Script for Auto Dungeons- Example is the Stone Vigil
 
 local waypoints = {
 {x = 0, y = 4, z = 305, movement = "rebuild"},
