@@ -38,35 +38,57 @@ local waypoints = {
 }
 
 local currentWaypointIndex = 1
+local enemy_deest = 3 -- Minimum distance to the enemy
+
+local function distance(x1, y1, z1, x2, y2, z2)
+    return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+end
 
 while currentWaypointIndex <= #waypoints do
     local waypoint = waypoints[currentWaypointIndex]
-    
-        if not GetCharacterCondition(26) then
-        if waypoint.movement == "navmesh" then
-        yield("/vnavmesh moveto " .. waypoint.x .. " " .. waypoint.y .. " " .. waypoint.z)
-    elseif waypoint.movement == "visland" then
-        yield("/visland moveto " .. waypoint.x .. " " .. waypoint.y .. " " .. waypoint.z)
-    elseif waypoint.movement == "interact" then
-            yield("/send NUMPAD0")
-            yield("/wait 1")
-            yield("/send NUMPAD0")
-            yield("/wait 3")
-    elseif waypoint.movement == "rebuild" then
-            yield("/vnavmesh rebuild")
-            yield("/wait 10")
-    end
+
+    -- Check for combat condition
+    if GetCharacterCondition(26) then
+        -- Enemy targeting and movement logic
+        local enemyLocX = GetPlayerRawXPos(GetTargetName())
+        local enemyLocY = GetPlayerRawYPos(GetTargetName())
+        local enemyLocZ = GetPlayerRawZPos(GetTargetName())
 
         local playerX = GetPlayerRawXPos()
         local playerY = GetPlayerRawYPos()
         local playerZ = GetPlayerRawZPos()
 
-        local distance = GetDistanceToPoint(waypoint.x, waypoint.y, waypoint.z)
+        local dist_to_enemy = distance(playerX, playerY, playerZ, enemyLocX, enemyLocY, enemyLocZ)
 
-        if distance <= 5.0 then -- Assuming 1.0 as a threshold for reaching the waypoint
+        if dist_to_enemy > enemy_deest then
+            yield("/vnavmesh moveto " .. math.ceil(enemyLocX) .. " " .. math.ceil(enemyLocY) .. " " .. math.ceil(enemyLocZ))
+        end
+    else
+        -- Waypoint navigation logic
+        if waypoint.movement == "navmesh" then
+            yield("/vnavmesh moveto " .. waypoint.x .. " " .. waypoint.y .. " " .. waypoint.z)
+        elseif waypoint.movement == "visland" then
+            yield("/visland moveto " .. waypoint.x .. " " .. waypoint.y .. " " .. waypoint.z)
+        elseif waypoint.movement == "interact" then
+            yield("/send NUMPAD0")
+            yield("/wait 1")
+            yield("/send NUMPAD0")
+            yield("/wait 3")
+        elseif waypoint.movement == "rebuild" then
+            yield("/vnavmesh rebuild")
+            yield("/wait 10")
+        end
+
+        local playerX = GetPlayerRawXPos()
+        local playerY = GetPlayerRawYPos()
+        local playerZ = GetPlayerRawZPos()
+
+        local distanceToWaypoint = GetDistanceToPoint(waypoint.x, waypoint.y, waypoint.z)
+
+        if distanceToWaypoint <= 5.0 then
             currentWaypointIndex = currentWaypointIndex + 1
         end
-end
+    end
 
-        yield("/wait 2")  -- Short delay to check the position
+    yield("/wait 2") -- Short delay to check the position
 end
