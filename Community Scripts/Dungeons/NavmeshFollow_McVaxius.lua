@@ -1,10 +1,9 @@
  --[[
-  Description: v4 of the navmesh follow. works alot better and i actually tested it. you will have to click rebuild navmesh yourself
+  Description: Navmesh follow. works alot better and i actually tested it. you will have to click rebuild navmesh yourself
   Author: McVaxius
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1194784208749608991
 ]]
 
---v4
 --configuration notes:
 --***install vnavmesh (veyn) might still be a compile it yourself situation
 --pull and compile from -> https://github.com/awgil/ffxiv_navmesh/
@@ -132,7 +131,9 @@ while neverstop do
 		yield("/wait 10")
 	end
 	if we_are_in ~= we_were_in then
-		--yield("/vnavmesh RebuildNavmesh")
+		yield("/vnavmesh stop")
+		yield("/wait 1")
+		yield("/vnavmesh rebuild")
 		yield("/echo we changed areas. rebuild the navmesh!")
 		--yield("/wait 10")
 	end
