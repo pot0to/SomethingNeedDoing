@@ -1,10 +1,15 @@
 ## Leveling scripts for BTN/MIN
 
 Just a collection of scripts/visland pathing that was used to help make leveling a new character a lot easier/time efficient. 
+
 Miner uses the Red Line Route, BTN uses the Pink Line Route.
+
 You will need the following installed to be fully automated
+
 -> SomethingNeedDoing : Make sure to have the LUA button checkmarked if you're using this, it'll automatically instance you in, as well as take you to the pathing automatically every time to gather items
+
 -> Pandora's Box :  Enable P.Gathering here, and make sure to have "Remember Item" checkmarked as well. 
+
 -> Visland: This will loop you through a set of nodes to collect items in the Diadem.
 
 ## Diadem visland routes
