@@ -4,3 +4,6 @@
 [submodule "ECommons"]
 	path = ECommons
 	url = https://github.com/NightmareXIV/ECommons.git
+[submodule "SpeedLib"]
+	path = SpeedLib
+	url = https://github.com/Jaksuhn/SpeedLib.git
