@@ -4,6 +4,16 @@
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1194784208749608991
 ]]
 
+--[[
+contemplate these for next update:
+          "- Added GetTargetRawXPos()" +
+          "- Added GetTargetRawYPos()" +
+          "- Added GetTargetRawZPos()" +
+          "- Added GetDistanceToTarget()" +
+          "- Added GetFlagXCoord()" +
+          "- Added GetFlagYCoord()");
+]]
+
 --configuration notes:
 --***install vnavmesh (veyn) might still be a compile it yourself situation
 --pull and compile from -> https://github.com/awgil/ffxiv_navmesh/
