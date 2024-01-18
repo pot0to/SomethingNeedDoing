@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClickLib", "lib\ClickLib\Cl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommons", "ECommons\ECommons\ECommons.csproj", "{84749BB1-F2C5-48F8-AF05-F1A0E715C1F2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpeedLib", "SpeedLib\SpeedLib.csproj", "{3B46F906-E9FA-4609-BD76-2E9610A3B4BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,14 @@ Global
 		{84749BB1-F2C5-48F8-AF05-F1A0E715C1F2}.Release|Any CPU.Build.0 = Release|x64
 		{84749BB1-F2C5-48F8-AF05-F1A0E715C1F2}.Release|x64.ActiveCfg = Release|x64
 		{84749BB1-F2C5-48F8-AF05-F1A0E715C1F2}.Release|x64.Build.0 = Release|x64
+		{3B46F906-E9FA-4609-BD76-2E9610A3B4BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B46F906-E9FA-4609-BD76-2E9610A3B4BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B46F906-E9FA-4609-BD76-2E9610A3B4BE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3B46F906-E9FA-4609-BD76-2E9610A3B4BE}.Debug|x64.Build.0 = Debug|Any CPU
+		{3B46F906-E9FA-4609-BD76-2E9610A3B4BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B46F906-E9FA-4609-BD76-2E9610A3B4BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B46F906-E9FA-4609-BD76-2E9610A3B4BE}.Release|x64.ActiveCfg = Release|Any CPU
+		{3B46F906-E9FA-4609-BD76-2E9610A3B4BE}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

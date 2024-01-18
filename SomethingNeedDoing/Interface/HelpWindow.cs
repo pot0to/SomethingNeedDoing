@@ -320,6 +320,15 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+        
+        DisplayChangelog(
+          "2024-01-18",
+          "- Added GetTargetRawXPos()\n" +
+          "- Added GetTargetRawYPos()\n" +
+          "- Added GetTargetRawZPos()\n" +
+          "- Added GetDistanceToTarget()\n" +
+          "- Added GetFlagXCoord()\n" +
+          "- Added GetFlagYCoord()\n");
 
         DisplayChangelog(
           "2024-01-04",
@@ -965,6 +974,14 @@ float GetPlayerRawXPos(string character = "")
 float GetPlayerRawYPos(string character = "")
 float GetPlayerRawZPos(string character = "")
 float GetDistanceToPoint(float x, float y, float z))
+
+float GetTargetRawXPos()
+float GetTargetRawYPos()
+float GetTargetRawZPos()
+float GetDistanceToTarget()
+
+float GetFlagXCoord()
+float GetFlagYCoord()
 
 int GetLevel(uint ExpArrayIndex = -1)
 
