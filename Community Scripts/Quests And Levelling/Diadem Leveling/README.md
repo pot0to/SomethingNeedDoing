@@ -12,6 +12,9 @@ You will need the following installed to be fully automated
 
 -> Visland: This will loop you through a set of nodes to collect items in the Diadem.
 
+If you're using the SND Script with it, make sure to have LUA (this button) pressed/green. It will make it run like it should.
+
+
 ## Diadem visland routes
 
 ### Miner
