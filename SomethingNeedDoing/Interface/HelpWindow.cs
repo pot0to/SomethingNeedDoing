@@ -921,7 +921,7 @@ int GetMaxCp()
 
 int GetStep()
 int GetPercentHQ()
-bool NeedsRepair()
+bool NeedsRepair(float below = 0)
 
 // within: Return false if the next highest spiritbond is >= the within value.
 bool CanExtractMateria(float within = 100)
