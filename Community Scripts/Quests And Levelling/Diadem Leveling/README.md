@@ -13,7 +13,7 @@ You will need the following installed to be fully automated
 -> Visland: This will loop you through a set of nodes to collect items in the Diadem.
 
 If you're using the SND Script with it, make sure to have LUA (this button) pressed/green. It will make it run like it should.
-![](https://github.com/xicemanx95/SomethingNeedDoing/blob/master/Community%20Scripts/Quests%20And%20Levelling/Diadem%20Leveling/LUA.png)
+![](https://github.com/xicemanx95/SomethingNeedDoing/blob/master/Community%20Scripts/Quests%20And%20Levelling/Diadem%20Leveling/z.%20LUA%20Button.png)
 
 ## Diadem visland routes
 
