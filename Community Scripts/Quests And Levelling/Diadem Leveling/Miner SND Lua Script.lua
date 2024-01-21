@@ -1,12 +1,14 @@
 --[[
   Description: Full automation of Diadem, to allow leveling of an item. You need to initially click the first item you want to gather here, but afterwards can just walk away.
   Author: LegendofIceman
-  Version: 4
+  Version: 5
   Link: https://discord.com/channels/1001823907193552978/1191076157882388581/1193416966388600925
 ]]
 
 -- Insert the route name here that you named it in visland
 routename = "Insert the name of your visland route here!"
+
+
 
 -- Main loop, test to see if you're in the Diadem or not
 ::Wait::
@@ -14,6 +16,23 @@ while not IsInZone(886) do
   yield("/wait 10")
 end
 yield("/wait 3")
+
+-- If you have the ability to repair your gear, this will allow you to do so. 
+-- Currently will repair when your gear gets to 50% or below, but you can change the value to be whatever you would like
+::RepairMode::
+  if NeedsRepair(50) then
+    yield("/generalaction repair")
+    yield("/waitaddon Repair")
+    yield("/pcall Repair true 0")
+    yield("/wait 0.1")
+    if IsAddonVisible("SelectYesno") then
+      yield("/pcall SelectYesno true 0")
+      yield("/wait 0.1")
+    end
+    while GetCharacterCondition(39) do yield("/wait 1") end
+    yield("/wait 1")
+    yield("/pcall Repair true -1")
+  end
 
 -- If not in the Diadem, then if you're standing in front of the NCP "Aurvael", this will queue you into it
 ::Enter::
