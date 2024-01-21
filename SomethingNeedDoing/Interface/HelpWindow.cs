@@ -320,6 +320,10 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+            "2024-01-21",
+            "- Added GetInventoryFreeSlotCount()\n");
         
         DisplayChangelog(
           "2024-01-18",
@@ -984,6 +988,7 @@ float GetFlagXCoord()
 float GetFlagYCoord()
 
 int GetLevel(uint ExpArrayIndex = -1)
+int GetInventoryFreeSlotCount()
 
 string GetQuestNameByID(ushort id)
 bool IsQuestAccepted(ushort id)

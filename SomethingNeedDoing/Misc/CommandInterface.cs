@@ -633,6 +633,25 @@ public class CommandInterface : ICommandInterface
 
     public unsafe int GetFCRank() => ((InfoProxyFreeCompany*)Framework.Instance()->UIModule->GetInfoModule()->GetInfoProxyById(InfoProxyId.FreeCompany))->Rank;
 
+    public unsafe int GetInventoryFreeSlotCount()
+    {
+        InventoryType[] types = [InventoryType.Inventory1, InventoryType.Inventory2, InventoryType.Inventory3, InventoryType.Inventory4];
+        var c = InventoryManager.Instance();
+        var slots = 0;
+        foreach (var x in types)
+        {
+            var inv = c->GetInventoryContainer(x);
+            for (var i = 0; i < inv->Size; i++)
+            {
+                if (inv->Items[i].ItemID == 0)
+                {
+                    slots++;
+                }
+            }
+        }
+        return slots;
+    }
+
     private static readonly Dictionary<uint, Quest>? QuestSheet = Svc.Data?.GetExcelSheet<Quest>()?.Where(x => x.Id.RawString.Length > 0).ToDictionary(i => i.RowId, i => i);
     public static string GetQuestNameByID(ushort id)
     {
