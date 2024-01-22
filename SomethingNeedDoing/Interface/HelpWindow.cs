@@ -322,6 +322,12 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+            "2024-01-22",
+            "- Added ARAnyWaitingToBeProcessed()\n" +
+            "- Added ARRetainersWaitingToBeProcessed()\n" +
+            "- Added ARSubsWaitingToBeProcessed()\n");
+
+        DisplayChangelog(
             "2024-01-21",
             "- Added GetInventoryFreeSlotCount()\n");
         
@@ -958,6 +964,9 @@ string GetCharacterName(bool includeWorld = false)
 int GetItemCount(int itemID, bool includeHQ = true)
 
 bool DeliverooIsTurnInRunning()
+bool ARAnyWaitingToBeProcessed()
+bool ARRetainersWaitingToBeProcessed()
+bool ARSubsWaitingToBeProcessed()
 
 uint GetProgressIncrease(uint actionID)
 uint GetQualityIncrease(uint actionID)

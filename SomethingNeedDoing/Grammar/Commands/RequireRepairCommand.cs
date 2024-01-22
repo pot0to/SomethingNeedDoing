@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
+using SomethingNeedDoing.Misc.Commands;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 

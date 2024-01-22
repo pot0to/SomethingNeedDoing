@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using AutoRetainerAPI;
 using Dalamud.Game.ClientState.Conditions;
 using ECommons;
 using ECommons.DalamudServices;
@@ -20,12 +21,12 @@ using Lumina.Text;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.IPC;
 
-namespace SomethingNeedDoing.Misc;
+namespace SomethingNeedDoing.Misc.Commands;
 
 /// <summary>
 /// Miscellaneous functions that commands/scripts can use.
 /// </summary>
-public class CommandInterface : ICommandInterface
+public class CommandInterface
 {
     private readonly AbandonDuty abandonDuty = Marshal.GetDelegateForFunctionPointer<AbandonDuty>(Service.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 43 28 B1 01"));
 
@@ -345,7 +346,7 @@ public class CommandInterface : ICommandInterface
     public unsafe bool IsAddonVisible(string addonName)
     {
         var ptr = Service.GameGui.GetAddonByName(addonName, 1);
-        if (ptr == IntPtr.Zero)
+        if (ptr == nint.Zero)
             return false;
 
         var addon = (AtkUnitBase*)ptr;
@@ -355,7 +356,7 @@ public class CommandInterface : ICommandInterface
     public unsafe bool IsNodeVisible(string addonName, int node, int child1 = -1, int child2 = -1)
     {
         var ptr = Service.GameGui.GetAddonByName(addonName, 1);
-        if (ptr == IntPtr.Zero)
+        if (ptr == nint.Zero)
             return false;
 
         var addon = (AtkUnitBase*)ptr;
@@ -371,7 +372,7 @@ public class CommandInterface : ICommandInterface
     public unsafe bool IsAddonReady(string addonName)
     {
         var ptr = Service.GameGui.GetAddonByName(addonName, 1);
-        if (ptr == IntPtr.Zero)
+        if (ptr == nint.Zero)
             return false;
 
         var addon = (AtkUnitBase*)ptr;
@@ -385,7 +386,7 @@ public class CommandInterface : ICommandInterface
             throw new MacroCommandError("At least one node number is required");
 
         var ptr = Service.GameGui.GetAddonByName(addonName, 1);
-        if (ptr == IntPtr.Zero)
+        if (ptr == nint.Zero)
             throw new MacroCommandError($"Could not find {addonName} addon");
 
         var addon = (AtkUnitBase*)ptr;
@@ -428,7 +429,7 @@ public class CommandInterface : ICommandInterface
     public unsafe string GetSelectStringText(int index)
     {
         var ptr = Service.GameGui.GetAddonByName("SelectString", 1);
-        if (ptr == IntPtr.Zero)
+        if (ptr == nint.Zero)
             throw new MacroCommandError("Could not find SelectString addon");
 
         var addon = (AddonSelectString*)ptr;
@@ -443,14 +444,14 @@ public class CommandInterface : ICommandInterface
         if (textPtr == null)
             throw new MacroCommandError("Text pointer was null");
 
-        return Marshal.PtrToStringUTF8((IntPtr)textPtr) ?? string.Empty;
+        return Marshal.PtrToStringUTF8((nint)textPtr) ?? string.Empty;
     }
 
     /// <inheritdoc/>
     public unsafe string GetSelectIconStringText(int index)
     {
         var ptr = Service.GameGui.GetAddonByName("SelectIconString", 1);
-        if (ptr == IntPtr.Zero)
+        if (ptr == nint.Zero)
             throw new MacroCommandError("Could not find SelectIconString addon");
 
         var addon = (AddonSelectIconString*)ptr;
@@ -464,7 +465,7 @@ public class CommandInterface : ICommandInterface
         if (textPtr == null)
             throw new MacroCommandError("Text pointer was null");
 
-        return Marshal.PtrToStringUTF8((IntPtr)textPtr) ?? string.Empty;
+        return Marshal.PtrToStringUTF8((nint)textPtr) ?? string.Empty;
     }
 
     /// <inheritdoc/>
@@ -491,13 +492,6 @@ public class CommandInterface : ICommandInterface
     public unsafe int GetItemCount(int itemID, bool includeHQ = true) =>
         includeHQ ? InventoryManager.Instance()->GetInventoryItemCount((uint)itemID, true) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID)
         : InventoryManager.Instance()->GetInventoryItemCount((uint)itemID);
-
-    /// <inheritdoc/>
-    public unsafe bool DeliverooIsTurnInRunning()
-    {
-        DeliverooIPC.Init();
-        return DeliverooIPC.IsTurnInRunning!.InvokeFunc();
-    }
 
     /// <inheritdoc/>
     public unsafe uint GetProgressIncrease(uint actionID) => this.GetActionResult(actionID).Progress;
@@ -559,8 +553,8 @@ public class CommandInterface : ICommandInterface
 
     public uint GetClassJobId() => Svc.ClientState.LocalPlayer!.ClassJob.Id;
 
-    private static readonly unsafe IntPtr pronounModule = (IntPtr)Framework.Instance()->GetUiModule()->GetPronounModule();
-    private static readonly unsafe delegate* unmanaged<IntPtr, uint, GameObject*> getGameObjectFromPronounID = (delegate* unmanaged<IntPtr, uint, GameObject*>)Service.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 85 ?? ?? ?? ?? 8D 4F DD");
+    private static readonly unsafe nint pronounModule = (nint)Framework.Instance()->GetUiModule()->GetPronounModule();
+    private static readonly unsafe delegate* unmanaged<nint, uint, GameObject*> getGameObjectFromPronounID = (delegate* unmanaged<nint, uint, GameObject*>)Service.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 85 ?? ?? ?? ?? 8D 4F DD");
     public static unsafe GameObject* GetGameObjectFromPronounID(uint id) => getGameObjectFromPronounID(pronounModule, id);
 
     public float GetPlayerRawXPos(string character = "")
@@ -724,7 +718,7 @@ public class CommandInterface : ICommandInterface
     private unsafe AddonSynthesis* GetSynthesisAddon()
     {
         var ptr = Service.GameGui.GetAddonByName("Synthesis", 1);
-        if (ptr == IntPtr.Zero)
+        if (ptr == nint.Zero)
             throw new MacroCommandError("Could not find Synthesis addon");
 
         return (AddonSynthesis*)ptr;
