@@ -964,9 +964,9 @@ string GetCharacterName(bool includeWorld = false)
 int GetItemCount(int itemID, bool includeHQ = true)
 
 bool DeliverooIsTurnInRunning()
-bool ARAnyWaitingToBeProcessed()
-bool ARRetainersWaitingToBeProcessed()
-bool ARSubsWaitingToBeProcessed()
+bool ARAnyWaitingToBeProcessed(bool allCharacters = false)
+bool ARRetainersWaitingToBeProcessed(bool allCharacters = false)
+bool ARSubsWaitingToBeProcessed(bool allCharacters = false)
 
 uint GetProgressIncrease(uint actionID)
 uint GetQualityIncrease(uint actionID)

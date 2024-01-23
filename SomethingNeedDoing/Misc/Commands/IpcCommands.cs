@@ -30,12 +30,24 @@ public class IpcCommands
 
     public unsafe bool DeliverooIsTurnInRunning() => DeliverooIPC.IsTurnInRunning!.InvokeFunc();
 
-    public unsafe bool ARAnyWaitingToBeProcessed() =>
-        _autoRetainerApi.GetOfflineCharacterData(Svc.ClientState.LocalContentId).RetainerData.Any(x => x.VentureEndsAt <= DateTime.Now.ToUnixTimestamp())
-        || _autoRetainerApi.GetOfflineCharacterData(Svc.ClientState.LocalContentId).OfflineSubmarineData.Any(x => x.ReturnTime <= DateTime.Now.ToUnixTimestamp());
+    public unsafe bool ARAnyWaitingToBeProcessed(bool allCharacters = false) =>
+        allCharacters ?
+        ARRetainersWaitingToBeProcessed(allCharacters) || ARSubsWaitingToBeProcessed(allCharacters) :
+        ARRetainersWaitingToBeProcessed() || ARSubsWaitingToBeProcessed();
 
-    public unsafe bool ARRetainersWaitingToBeProcessed() =>
-        _autoRetainerApi.GetOfflineCharacterData(Svc.ClientState.LocalContentId).RetainerData.Any(x => x.VentureEndsAt <= DateTime.Now.ToUnixTimestamp());
-    public unsafe bool ARSubsWaitingToBeProcessed() =>
-        _autoRetainerApi.GetOfflineCharacterData(Svc.ClientState.LocalContentId).OfflineSubmarineData.Any(x => x.ReturnTime <= DateTime.Now.ToUnixTimestamp());
+    public unsafe bool ARRetainersWaitingToBeProcessed(bool allCharacters = false)
+    {
+        if (!allCharacters)
+            return _autoRetainerApi.GetOfflineCharacterData(Svc.ClientState.LocalContentId).RetainerData.AsParallel().Any(x => x.VentureEndsAt <= DateTime.Now.ToUnixTimestamp());
+        else
+            return _autoRetainerApi.GetRegisteredCharacters().AsParallel().Any(character => _autoRetainerApi.GetOfflineCharacterData(character).RetainerData.Any(x => x.VentureEndsAt <= DateTime.Now.ToUnixTimestamp()));
+    }
+
+    public unsafe bool ARSubsWaitingToBeProcessed(bool allCharacters = false)
+    {
+        if (!allCharacters)
+            return _autoRetainerApi.GetOfflineCharacterData(Svc.ClientState.LocalContentId).OfflineSubmarineData.AsParallel().Any(x => x.ReturnTime <= DateTime.Now.ToUnixTimestamp());
+        else
+            return _autoRetainerApi.GetRegisteredCharacters().AsParallel().Any(character => _autoRetainerApi.GetOfflineCharacterData(character).OfflineSubmarineData.Any(x => x.ReturnTime <= DateTime.Now.ToUnixTimestamp()));
+    }
 }
