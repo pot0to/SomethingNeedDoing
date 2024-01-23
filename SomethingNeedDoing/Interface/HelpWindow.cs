@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Game.Text;
@@ -15,7 +13,6 @@ using Dalamud.Interface.Windowing;
 using ECommons;
 using ECommons.DalamudServices;
 using ImGuiNET;
-using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 
 namespace SomethingNeedDoing.Interface;
@@ -231,10 +228,17 @@ internal class HelpWindow : Window
             }),
         (
             "index",
-            "For supported commands, specify the index. For example, when there are multiple targets with the same name.",
+            "For supported commands, specify the object index. For example, when there are multiple targets with the same name.",
             new[]
             {
                 "/target abc <index.5>",
+            }),
+        (
+            "list",
+            "For supported commands, specify the index to check. For example, when there are multiple targets with the same name.",
+            new[]
+            {
+                "/target abc <list.5>",
             }),
     };
 
@@ -320,6 +324,10 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+            "2024-01-23",
+            "- Added new <list.listIndex> modifier. Used for /target where you're searching for targets with the same name.\n");
 
         DisplayChangelog(
             "2024-01-22",

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using AutoRetainerAPI;
 using Dalamud.Game.ClientState.Conditions;
 using ECommons;
 using ECommons.DalamudServices;
@@ -19,7 +18,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Excel.GeneratedSheets;
 using Lumina.Text;
 using SomethingNeedDoing.Exceptions;
-using SomethingNeedDoing.IPC;
 
 namespace SomethingNeedDoing.Misc.Commands;
 

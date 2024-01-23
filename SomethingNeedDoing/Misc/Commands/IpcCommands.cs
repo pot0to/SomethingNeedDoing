@@ -1,5 +1,4 @@
 ﻿using AutoRetainerAPI;
-using ECommons;
 using ECommons.DalamudServices;
 using SomethingNeedDoing.IPC;
 using System;
