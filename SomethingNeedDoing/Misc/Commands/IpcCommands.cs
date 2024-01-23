@@ -38,9 +38,9 @@ public class IpcCommands
     public unsafe bool ARRetainersWaitingToBeProcessed(bool allCharacters = false)
     {
         if (!allCharacters)
-            return _autoRetainerApi.GetOfflineCharacterData(Svc.ClientState.LocalContentId).RetainerData.AsParallel().Any(x => x.VentureEndsAt <= DateTime.Now.ToUnixTimestamp());
+            return _autoRetainerApi.GetOfflineCharacterData(Svc.ClientState.LocalContentId).RetainerData.AsParallel().Any(x => x.HasVenture && x.VentureEndsAt <= DateTime.Now.ToUnixTimestamp());
         else
-            return _autoRetainerApi.GetRegisteredCharacters().AsParallel().Any(character => _autoRetainerApi.GetOfflineCharacterData(character).RetainerData.Any(x => x.VentureEndsAt <= DateTime.Now.ToUnixTimestamp()));
+            return _autoRetainerApi.GetRegisteredCharacters().AsParallel().Any(character => _autoRetainerApi.GetOfflineCharacterData(character).RetainerData.Any(x => x.HasVenture && x.VentureEndsAt <= DateTime.Now.ToUnixTimestamp()));
     }
 
     public unsafe bool ARSubsWaitingToBeProcessed(bool allCharacters = false)
