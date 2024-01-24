@@ -326,6 +326,11 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+            "2024-01-24",
+            "- Added GetActiveWeatherID()\n" +
+            "- Added a section in the help menu to decipher weather IDs.\n");
+
+        DisplayChangelog(
             "2024-01-23",
             "- Added new <list.listIndex> modifier. Used for /target where you're searching for targets with the same name.\n");
 
@@ -1016,6 +1021,7 @@ uint? GetQuestIDByName(string name)
 int GetNodeListCount(string addonName)
 
 string GetTargetName()
+byte GetActiveWeatherID()
 ".Trim();
 
         ImGui.TextWrapped(text);
