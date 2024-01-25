@@ -925,41 +925,27 @@ yield(""/echo done!"")
         ImGui.TextWrapped(text);
         ImGui.Separator();
 
-        ImGui.Text($"{nameof(ActionCommands)}");
-        ImGui.TextWrapped(string.Join("\n", ActionCommands.Instance.ListAllFunctions()));
-        ImGui.Separator();
+        var commands = new List<(string, dynamic)>
+        {
+            (nameof(ActionCommands), ActionCommands.Instance),
+            (nameof(AddonCommands), AddonCommands.Instance),
+            (nameof(CharacterStateCommands), CharacterStateCommands.Instance),
+            (nameof(CraftingCommands), CraftingCommands.Instance),
+            (nameof(InventoryCommands), InventoryCommands.Instance),
+            (nameof(IpcCommands), IpcCommands.Instance),
+            (nameof(QuestCommands), QuestCommands.Instance),
+            (nameof(TargetStateCommands), TargetStateCommands.Instance),
+            (nameof(WorldStateCommands), WorldStateCommands.Instance)
+        };
 
-        ImGui.Text($"{nameof(AddonCommands)}");
-        ImGui.TextWrapped(string.Join("\n", AddonCommands.Instance.ListAllFunctions()));
-        ImGui.Separator();
+        foreach (var (commandName, commandInstance) in commands)
+        {
+            ImGui.Text($"{commandName}");
+            ImGui.TextWrapped(string.Join("\n", commandInstance.ListAllFunctions()));
+            ImGui.Separator();
+        }
 
-        ImGui.Text($"{nameof(CharacterStateCommands)}");
-        ImGui.TextWrapped(string.Join("\n", CharacterStateCommands.Instance.ListAllFunctions()));
-        ImGui.Separator();
-
-        ImGui.Text($"{nameof(CraftingCommands)}");
-        ImGui.TextWrapped(string.Join("\n", CraftingCommands.Instance.ListAllFunctions()));
-        ImGui.Separator();
-
-        ImGui.Text($"{nameof(InventoryCommands)}");
-        ImGui.TextWrapped(string.Join("\n", InventoryCommands.Instance.ListAllFunctions()));
-        ImGui.Separator();
-
-        ImGui.Text($"{nameof(IpcCommands)}");
-        ImGui.TextWrapped(string.Join("\n", IpcCommands.Instance.ListAllFunctions()));
-        ImGui.Separator();
-
-        ImGui.Text($"{nameof(QuestCommands)}");
-        ImGui.TextWrapped(string.Join("\n", QuestCommands.Instance.ListAllFunctions()));
-        ImGui.Separator();
-
-        ImGui.Text($"{nameof(TargetStateCommands)}");
-        ImGui.TextWrapped(string.Join("\n", TargetStateCommands.Instance.ListAllFunctions()));
-        ImGui.Separator();
-
-        ImGui.Text($"{nameof(WorldStateCommands)}");
-        ImGui.TextWrapped(string.Join("\n", WorldStateCommands.Instance.ListAllFunctions()));
-        ImGui.Separator();
+        ImGui.PopFont();
         ImGui.PopFont();
     }
 
@@ -967,7 +953,7 @@ yield(""/echo done!"")
     {
         ImGui.PushFont(UiBuilder.MonoFont);
 
-        ImGui.TextWrapped("Refer to https://github.com/daemitus/ClickLib/tree/master/ClickLib/Clicks for any details.");
+        ImGui.TextWrapped("Refer to https://github.com/Limiana/ClickLib/tree/master/ClickLib/Clicks for any details.");
         ImGui.Separator();
 
         foreach (var name in this.clickNames)
