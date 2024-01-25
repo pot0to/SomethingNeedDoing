@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Game.Text;
@@ -15,7 +13,6 @@ using Dalamud.Interface.Windowing;
 using ECommons;
 using ECommons.DalamudServices;
 using ImGuiNET;
-using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 
 namespace SomethingNeedDoing.Interface;
@@ -231,10 +228,17 @@ internal class HelpWindow : Window
             }),
         (
             "index",
-            "For supported commands, specify the index. For example, when there are multiple targets with the same name.",
+            "For supported commands, specify the object index. For example, when there are multiple targets with the same name.",
             new[]
             {
                 "/target abc <index.5>",
+            }),
+        (
+            "list",
+            "For supported commands, specify the index to check. For example, when there are multiple targets with the same name.",
+            new[]
+            {
+                "/target abc <list.5>",
             }),
     };
 
@@ -320,6 +324,15 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+            "2024-01-24",
+            "- Added GetActiveWeatherID()\n" +
+            "- Added a section in the help menu to decipher weather IDs.\n");
+
+        DisplayChangelog(
+            "2024-01-23",
+            "- Added new <list.listIndex> modifier. Used for /target where you're searching for targets with the same name.\n");
 
         DisplayChangelog(
             "2024-01-22",
@@ -964,9 +977,9 @@ string GetCharacterName(bool includeWorld = false)
 int GetItemCount(int itemID, bool includeHQ = true)
 
 bool DeliverooIsTurnInRunning()
-bool ARAnyWaitingToBeProcessed()
-bool ARRetainersWaitingToBeProcessed()
-bool ARSubsWaitingToBeProcessed()
+bool ARAnyWaitingToBeProcessed(bool allCharacters = false)
+bool ARRetainersWaitingToBeProcessed(bool allCharacters = false)
+bool ARSubsWaitingToBeProcessed(bool allCharacters = false)
 
 uint GetProgressIncrease(uint actionID)
 uint GetQualityIncrease(uint actionID)
@@ -1008,6 +1021,7 @@ uint? GetQuestIDByName(string name)
 int GetNodeListCount(string addonName)
 
 string GetTargetName()
+byte GetActiveWeatherID()
 ".Trim();
 
         ImGui.TextWrapped(text);
@@ -1085,6 +1099,7 @@ string GetTargetName()
     }
 
     private readonly IEnumerable<ClassJob> classJobSheet = Svc.Data.GetExcelSheet<ClassJob>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private readonly IEnumerable<Weather> weatherSheet = Svc.Data.GetExcelSheet<Weather>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
     private void DrawGameData()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
@@ -1097,6 +1112,15 @@ string GetTargetName()
         foreach (var cj in classJobSheet)
         {
             ImGui.Text($"{cj.Name}: Key={cj.RowId}; ExpArrayIndex={cj.ExpArrayIndex}");
+        }
+        ImGui.PopStyleColor();
+
+        ImGui.Separator();
+        ImGui.TextWrapped("ClassJob");
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var w in weatherSheet)
+        {
+            ImGui.Text($"{w.Name}: Key={w.RowId}");
         }
         ImGui.PopStyleColor();
     }

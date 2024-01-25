@@ -1,9 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Dalamud.Logging;
-using FFXIVClientStructs.FFXIV.Client.Game;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
@@ -23,8 +20,7 @@ internal class RequireRepairCommand : MacroCommand
     /// </summary>
     /// <param name="text">Original text.</param>
     /// <param name="wait">Wait value.</param>
-    private RequireRepairCommand(string text, WaitModifier wait)
-        : base(text, wait)
+    private RequireRepairCommand(string text, WaitModifier wait) : base(text, wait)
     {
     }
 
@@ -49,7 +45,7 @@ internal class RequireRepairCommand : MacroCommand
     {
         Service.Log.Debug($"Executing: {this.Text}");
 
-        if (CommandInterface.Instance.NeedsRepair())
+        if (CraftingCommands.Instance.NeedsRepair())
             throw new MacroPause("You need to repair", UiColor.Yellow);
 
         await this.PerformWait(token);
