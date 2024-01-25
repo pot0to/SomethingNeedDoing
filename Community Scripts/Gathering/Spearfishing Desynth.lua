@@ -85,4 +85,4 @@ if not GetCharacterCondition(39) then
   yield("/visland resume")
 end
 
-goto StartCount
+goto StartCount 
