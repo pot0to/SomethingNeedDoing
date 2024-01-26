@@ -1054,7 +1054,7 @@ yield(""/echo done!"")
         ImGui.PopStyleColor();
 
         ImGui.Separator();
-        ImGui.TextWrapped("ClassJob");
+        ImGui.TextWrapped("Weather IDs");
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
         foreach (var w in weatherSheet)
         {
