@@ -958,11 +958,12 @@ yield(""/echo done!"")
         foreach (var (commandName, commandInstance) in commands)
         {
             ImGui.Text($"{commandName}");
+            ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
             ImGui.TextWrapped(string.Join("\n", commandInstance.ListAllFunctions()));
+            ImGui.PopStyleColor();
             ImGui.Separator();
         }
 
-        ImGui.PopFont();
         ImGui.PopFont();
     }
 
