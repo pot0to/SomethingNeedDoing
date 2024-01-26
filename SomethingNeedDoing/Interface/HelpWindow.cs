@@ -328,6 +328,23 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+          "2024-01-26",
+          "- Added GetRecastTimeElapsed()\n" +
+          "- Added GetRealRecastTimeElapsed()\n" +
+          "- Added GetRecastTime()\n" +
+          "- Added GetRealRecastTime()\n" +
+          "- Added GetSpellCooldown()\n" +
+          "- Added GetRealSpellCooldown()\n" +
+          "- Added GetSpellCooldownInt()\n" +
+          "- Added GetActionStackCount()\n\n" +
+          "- Added GetStatusStackCount()\n" +
+          "- Added GetStatusTimeRemaining()\n" +
+          "- Added GetStatusSourceID()\n\n" +
+          "- Added GetFCGrandCompany()\n" +
+          "- Added GetFCOnlineMembers()\n" +
+          "- Added GetFCTotalMembers()\n");
+
+        DisplayChangelog(
             "2024-01-25",
             "- Added IsTargetCasting()\n" +
             "- Added GetTargetActionID()\n" +
