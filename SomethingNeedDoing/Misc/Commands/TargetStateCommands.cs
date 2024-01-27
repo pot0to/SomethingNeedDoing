@@ -29,8 +29,8 @@ internal class TargetStateCommands
     public float GetTargetRawZPos() => Svc.Targets.Target?.Position.Z ?? 0;
 
     public float GetDistanceToPoint(float x, float y, float z) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, new Vector3(x, y, z));
-
     public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer!.Position);
+    public float GetDistanceToObject(string name) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Objects.First(x => x.Name.TextValue.Equals(name, System.StringComparison.InvariantCultureIgnoreCase)).Position);
 
     public unsafe bool IsTargetCasting() => ((Character*)Svc.Targets.Target?.Address!)->IsCasting;
     public unsafe uint GetTargetActionID() => ((Character*)Svc.Targets.Target?.Address!)->GetCastInfo()->ActionID;

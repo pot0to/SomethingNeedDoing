@@ -328,6 +328,21 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+          "2024-01-27",
+          "- Added IsInFate()\n" +
+          "- Added GetNearestFate()\n" +
+          "- Added GetFateDuration()\n" +
+          "- Added GetFateHandInCount()\n" +
+          "- Added GetFateLocationX()\n" +
+          "- Added GetFateLocationY()\n" +
+          "- Added GetFateLocationZ()\n" +
+          "- Added GetFateProgress()\n\n" +
+          "- Added GetCurrentEorzeaTimestamp()\n" +
+          "- Added GetCurrentEorzeaSecond()\n" +
+          "- Added GetCurrentEorzeaMinute()\n" +
+          "- Added GetCurrentEorzeaHour()\n");
+
+        DisplayChangelog(
           "2024-01-26",
           "- Added GetRecastTimeElapsed()\n" +
           "- Added GetRealRecastTimeElapsed()\n" +
