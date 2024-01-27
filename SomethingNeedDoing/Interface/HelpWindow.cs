@@ -340,7 +340,8 @@ internal class HelpWindow : Window
           "- Added GetCurrentEorzeaTimestamp()\n" +
           "- Added GetCurrentEorzeaSecond()\n" +
           "- Added GetCurrentEorzeaMinute()\n" +
-          "- Added GetCurrentEorzeaHour()\n");
+          "- Added GetCurrentEorzeaHour()\n\n" +
+          "- Added GetDistanceToObject()\n");
 
         DisplayChangelog(
           "2024-01-26",
