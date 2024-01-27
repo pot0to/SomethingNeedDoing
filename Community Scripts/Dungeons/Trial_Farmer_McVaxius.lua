@@ -7,6 +7,7 @@
 --make sure you go into settings and disable the snd targeting
 --you need following plugins
 --visland, SND (croizat fork), pandora
+--simpletweaks -> turn on maincommand
 --turn on auto interact on pandora set distance to 5 dist 5 height
 --turn on vbm. click ai mode -> click follow. then form the group.
 --turn on rotation solver if you like, set your lazyloot to /fulf need/green/pass/off etc
@@ -88,6 +89,9 @@ while repeated_trial < repeat_trial do
 		end
 		if repeat_type == 1 then --just you using duty support
 			--("/pcall DawnStory true 20") open the window.. how?
+			--we use simpletweaks
+			yield("/maincommand Duty Support")
+			yield("/wait 2")
 			yield("/echo attempting to trigger duty support")
 			yield("/pcall DawnStory true 11 0") --change tab to first tab
 			yield("/pcall DawnStory true 12 35")--select port decumana
