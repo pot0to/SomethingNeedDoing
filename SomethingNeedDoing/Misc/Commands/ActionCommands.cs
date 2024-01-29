@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ECommons.DalamudServices;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -26,5 +28,19 @@ namespace SomethingNeedDoing.Misc.Commands
         private delegate void AbandonDuty(bool a1);
 
         public void LeaveDuty() => this.abandonDuty(false);
+
+        public unsafe void TeleportToGCTown()
+        {
+            var gc = UIState.Instance()->PlayerState.GrandCompany;
+            var aetheryte = gc switch
+            {
+                0 => 0u,
+                1 => 8u,
+                2 => 2u,
+                3 => 9u,
+                _ => 0u
+            };
+            Telepo.Instance()->Teleport(aetheryte, 0);
+        }
     }
 }

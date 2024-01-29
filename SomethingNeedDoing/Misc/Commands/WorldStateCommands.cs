@@ -40,12 +40,12 @@ namespace SomethingNeedDoing.Misc.Commands
         public unsafe int GetCurrentEorzeaHour() => DateTimeOffset.FromUnixTimeSeconds(Framework.Instance()->ClientTime.EorzeaTime).Hour;
 
         // this causes errors on the lua side if you iterate through it but works perfectly on the c# side
-        //public unsafe List<ushort> GetActiveFates() =>
-        //    FateManager.Instance()->Fates.Span.ToArray()
-        //    .Where(f => f.Value is not null)
-        //    .OrderBy(f => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, f.Value->Location))
-        //    .Select(f => f.Value->FateId)
-        //    .ToList();
+        public unsafe List<ushort> GetActiveFates() =>
+            FateManager.Instance()->Fates.Span.ToArray()
+            .Where(f => f.Value is not null)
+            .OrderBy(f => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, f.Value->Location))
+            .Select(f => f.Value->FateId)
+            .ToList();
 
         public unsafe ushort GetNearestFate() => FateManager.Instance()->Fates.Span.ToArray()
             .Where(f => f.Value is not null)

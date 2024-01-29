@@ -328,6 +328,18 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+         "2024-01-29",
+         "- Added TeleportToGCTown()\n" +
+         "- Added GetPlayerGC()\n" +
+         "- Added GetActiveFates() [EXPERIMENTAL]\n" +
+         "- Added ARGetRegisteredCharacters() [EXPERIMENTAL]\n" +
+         "- Added ARGetRegisteredEnabledCharacters() [EXPERIMENTAL]\n" +
+         "- Added IsVislandRouteRunning()\n" +
+         "- Added GetToastNodeText()\n" +
+         "- Added PauseYesAlready()\n" +
+         "- Added RestoreYesAlready()\n");
+
+        DisplayChangelog(
           "2024-01-27",
           "- Added IsInFate()\n" +
           "- Added GetNearestFate()\n" +
