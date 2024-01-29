@@ -1,5 +1,6 @@
 ﻿using ECommons;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Data.Parsing;
 using SomethingNeedDoing.Exceptions;
@@ -25,6 +26,10 @@ public class AddonCommands
         }
         return list;
     }
+
+    public unsafe void OpenRouletteDuty(byte key) => AgentContentsFinder.Instance()->OpenRouletteDuty(key);
+    public unsafe void OpenRegularDuty(byte key) => AgentContentsFinder.Instance()->OpenRegularDuty(key);
+
     public unsafe bool IsAddonVisible(string addonName)
     {
         var ptr = Service.GameGui.GetAddonByName(addonName, 1);

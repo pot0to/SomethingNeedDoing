@@ -337,7 +337,10 @@ internal class HelpWindow : Window
          "- Added IsVislandRouteRunning()\n" +
          "- Added GetToastNodeText()\n" +
          "- Added PauseYesAlready()\n" +
-         "- Added RestoreYesAlready()\n");
+         "- Added RestoreYesAlready()\n\n" +
+         "- Added OpenRouletteDuty()\n" +
+         "- Added OpenRegularDuty()\n" +
+         "- Added CFC and Roulette entries to the GameData section in help for using the above two functions");
 
         DisplayChangelog(
           "2024-01-27",
@@ -1064,29 +1067,82 @@ yield(""/echo done!"")
         }
     }
 
-    private readonly IEnumerable<ClassJob> classJobSheet = Svc.Data.GetExcelSheet<ClassJob>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
-    private readonly IEnumerable<Weather> weatherSheet = Svc.Data.GetExcelSheet<Weather>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
     private void DrawGameData()
     {
-        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-
-        ImGui.TextWrapped("Misc Game Data Information");
-        ImGui.Separator();
-
-        ImGui.TextWrapped("ClassJob");
-        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-        foreach (var cj in classJobSheet)
+        if (ImGui.BeginTabBar("GameDataTab"))
         {
-            ImGui.Text($"{cj.Name}: Key={cj.RowId}; ExpArrayIndex={cj.ExpArrayIndex}");
+            var tabs = new (string Title, System.Action Dele)[]
+            {
+                ("ClassJob", this.DrawClassJob),
+                ("Weather", this.DrawWeather),
+                ("CFC", this.DrawCFC),
+                ("Duty Roulette", this.DrawDutyRoulette),
+            };
+
+            foreach (var (title, dele) in tabs)
+            {
+                if (ImGui.BeginTabItem(title))
+                {
+                    ImGui.BeginChild("scrolling", new Vector2(0, -1), false);
+
+                    dele();
+
+                    ImGui.EndChild();
+
+                    ImGui.EndTabItem();
+                }
+            }
+
+            ImGui.EndTabBar();
+        }
+
+        ImGui.EndChild();  
+    }
+
+    private readonly IEnumerable<ContentRoulette> rouletteSheet = Svc.Data.GetExcelSheet<ContentRoulette>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private void DrawDutyRoulette()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var w in rouletteSheet)
+        {
+            ImGui.Text($"{w.RowId}: {w.Name}");
         }
         ImGui.PopStyleColor();
+    }
 
-        ImGui.Separator();
-        ImGui.TextWrapped("Weather IDs");
+    private readonly IEnumerable<ContentFinderCondition> cfcSheet = Svc.Data.GetExcelSheet<ContentFinderCondition>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private void DrawCFC()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var w in cfcSheet)
+        {
+            ImGui.Text($"{w.RowId}: {w.Name}");
+        }
+        ImGui.PopStyleColor();
+    }
+
+    private readonly IEnumerable<Weather> weatherSheet = Svc.Data.GetExcelSheet<Weather>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private void DrawWeather()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
         foreach (var w in weatherSheet)
         {
             ImGui.Text($"{w.Name}: Key={w.RowId}");
+        }
+        ImGui.PopStyleColor();
+    }
+
+    private readonly IEnumerable<ClassJob> classJobSheet = Svc.Data.GetExcelSheet<ClassJob>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private void DrawClassJob()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var cj in classJobSheet)
+        {
+            ImGui.Text($"{cj.Name}: Key={cj.RowId}; ExpArrayIndex={cj.ExpArrayIndex}");
         }
         ImGui.PopStyleColor();
     }
