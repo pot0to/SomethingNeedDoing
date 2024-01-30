@@ -1,9 +1,12 @@
-﻿using ECommons;
+﻿using Dalamud.Utility.Signatures;
+using ECommons;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Data.Parsing;
 using SomethingNeedDoing.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -27,8 +30,8 @@ public class AddonCommands
         return list;
     }
 
-    public unsafe void OpenRouletteDuty(byte key) => AgentContentsFinder.Instance()->OpenRouletteDuty(key);
-    public unsafe void OpenRegularDuty(byte key) => AgentContentsFinder.Instance()->OpenRegularDuty(key);
+    public unsafe void OpenRouletteDuty(byte contentRouletteID) => AgentContentsFinder.Instance()->OpenRouletteDuty(contentRouletteID);
+    public unsafe void OpenRegularDuty(byte cfcID) => AgentContentsFinder.Instance()->OpenRegularDuty(cfcID);
 
     public unsafe bool IsAddonVisible(string addonName)
     {

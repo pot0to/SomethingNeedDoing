@@ -328,6 +328,25 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+         "2024-01-30",
+         "- Added GetCurrentOceanFishingRoute()\n" +
+         "- Added GetCurrentOceanFishingStatus()\n" +
+         "- Added GetCurrentOceanFishingZone()\n" +
+         "- Added GetCurrentOceanFishingDuration()\n" +
+         "- Added GetCurrentOceanFishingTimeOffset()\n" +
+         "- Added GetCurrentOceanFishingWeatherID()\n" +
+         "- Added OceanFishingIsSpectralActive()\n" +
+         "- Added GetCurrentOceanFishingMission1Type()\n" +
+         "- Added GetCurrentOceanFishingMission2Type()\n" +
+         "- Added GetCurrentOceanFishingMission3Type()\n" +
+         "- Added GetCurrentOceanFishingMission1Progress()\n" +
+         "- Added GetCurrentOceanFishingMission2Progress()\n" +
+         "- Added GetCurrentOceanFishingMission3Progress()\n" +
+         "- Added GetCurrentOceanFishingPoints()\n" +
+         "- Added GetCurrentOceanFishingTotalScore()\n" +
+         "- Added \"Ocean Fishing Routes\" to the Game Data tab");
+
+        DisplayChangelog(
          "2024-01-29",
          "- Added TeleportToGCTown()\n" +
          "- Added GetPlayerGC()\n" +
@@ -340,7 +359,7 @@ internal class HelpWindow : Window
          "- Added RestoreYesAlready()\n\n" +
          "- Added OpenRouletteDuty()\n" +
          "- Added OpenRegularDuty()\n" +
-         "- Added CFC and Roulette entries to the GameData section in help for using the above two functions");
+         "- Added CFC and Roulette entries to the GameData section in help for using the above two functions\n");
 
         DisplayChangelog(
           "2024-01-27",
@@ -1077,6 +1096,7 @@ yield(""/echo done!"")
                 ("Weather", this.DrawWeather),
                 ("CFC", this.DrawCFC),
                 ("Duty Roulette", this.DrawDutyRoulette),
+                ("Ocean Fishing Routes", this.DrawOceanFishingSpots),
             };
 
             foreach (var (title, dele) in tabs)
@@ -1097,6 +1117,18 @@ yield(""/echo done!"")
         }
 
         ImGui.EndChild();  
+    }
+
+    private readonly IEnumerable<FishingSpot> fishingSpotsSheet = Svc.Data.GetExcelSheet<FishingSpot>(Svc.ClientState.ClientLanguage)!.Where(x => x.PlaceNameMain.Value?.RowId != 0);
+    private void DrawOceanFishingSpots()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var w in fishingSpotsSheet)
+        {
+            ImGui.Text($"{w.RowId}: {w.PlaceName.Value!.Name}");
+        }
+        ImGui.PopStyleColor();
     }
 
     private readonly IEnumerable<ContentRoulette> rouletteSheet = Svc.Data.GetExcelSheet<ContentRoulette>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
@@ -1130,7 +1162,7 @@ yield(""/echo done!"")
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
         foreach (var w in weatherSheet)
         {
-            ImGui.Text($"{w.Name}: Key={w.RowId}");
+            ImGui.Text($"{w.RowId}: {w.Name}");
         }
         ImGui.PopStyleColor();
     }
@@ -1142,7 +1174,7 @@ yield(""/echo done!"")
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
         foreach (var cj in classJobSheet)
         {
-            ImGui.Text($"{cj.Name}: Key={cj.RowId}; ExpArrayIndex={cj.ExpArrayIndex}");
+            ImGui.Text($"{cj.RowId}: {cj.Name}; ExpArrayIndex={cj.ExpArrayIndex}");
         }
         ImGui.PopStyleColor();
     }
