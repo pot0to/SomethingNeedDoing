@@ -1001,7 +1001,7 @@ yield(""/echo done!"")
             (nameof(InventoryCommands), InventoryCommands.Instance),
             (nameof(IpcCommands), IpcCommands.Instance),
             (nameof(QuestCommands), QuestCommands.Instance),
-            (nameof(TargetStateCommands), TargetStateCommands.Instance),
+            (nameof(EntityStateCommands), EntityStateCommands.Instance),
             (nameof(WorldStateCommands), WorldStateCommands.Instance)
         };
 

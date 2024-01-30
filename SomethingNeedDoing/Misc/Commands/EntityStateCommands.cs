@@ -7,9 +7,9 @@ using System.Reflection;
 
 namespace SomethingNeedDoing.Misc.Commands;
 
-internal class TargetStateCommands
+internal class EntityStateCommands
 {
-    internal static TargetStateCommands Instance { get; } = new();
+    internal static EntityStateCommands Instance { get; } = new();
 
     public List<string> ListAllFunctions()
     {
@@ -28,9 +28,13 @@ internal class TargetStateCommands
     public float GetTargetRawYPos() => Svc.Targets.Target?.Position.Y ?? 0;
     public float GetTargetRawZPos() => Svc.Targets.Target?.Position.Z ?? 0;
 
+    public float GetObjectRawXPos(string name) => Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))?.Position.X ?? 0;
+    public float GetObjectRawYPos(string name) => Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))?.Position.Y ?? 0;
+    public float GetObjectRawZPos(string name) => Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))?.Position.Z ?? 0;
+
     public float GetDistanceToPoint(float x, float y, float z) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, new Vector3(x, y, z));
     public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer!.Position);
-    public float GetDistanceToObject(string name) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Objects.First(x => x.Name.TextValue.Equals(name, System.StringComparison.InvariantCultureIgnoreCase)).Position);
+    public float GetDistanceToObject(string name) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))?.Position ?? Vector3.Zero);
 
     public unsafe bool IsTargetCasting() => ((Character*)Svc.Targets.Target?.Address!)->IsCasting;
     public unsafe uint GetTargetActionID() => ((Character*)Svc.Targets.Target?.Address!)->GetCastInfo()->ActionID;
