@@ -15,10 +15,18 @@
 --meant for premade party but could be used for duty support
 --enjoy
 
+--/xldata object table, vbm debug, automaton debug
+--gotta fix this up so it actually works.. the orb mechanic in phase 2 kind of fails too often as chars are not positioned correctly with 4 real players.
+--17BB974B6D0:40000B89[38] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53157 Z468.43414 D9 R-0.7854581 - Target: E0000000
+--17BB974E650:40000B8C[40] - BattleNpc - Aetheroplasm - X-715.5604 Y-185.53159 Z468.4341 D19 R0.78536224 - Target: E0000000
+--17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
+--17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
+
+
 --you could concieveably just change "The Ultima Weapon" to another target if you were say.. wanting to farm a different trial.
 --target stuff
-local char_snake = "The Ultima Weapon" -- the target to follow.  4 means character slot 4, slot 1 is us, dont use 1
-local repeat_trial = 1 --number of times to repeat the trial.  we could also contemplate repeating until current char reaches a specific level also...
+local char_snake = "The Ultima Weapon" -- the target to follow.  4 means character slot 4, slot 1 is us, dont use 1, can throw in text if you want it to be a specific enemy or player -> wrap it with double quotes
+local repeat_trial = 5 --number of times to repeat the trial.  we could also contemplate repeating until current char reaches a specific level also...
 local repeated_trial = 0 --counter init
 local repeat_type = 0 --0 is premade, 1 is trust
 
@@ -52,6 +60,10 @@ local lockon_wait = 5
 local neverstop = true
 local i = 0
 
+--duty specific settings
+--porta decumana
+partymemberENUM = 1 --this is 1-8 so we can assign specific behvaiour etc per member
+
 local function distance(x1, y1, z1, x2, y2, z2)
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
 end
@@ -76,12 +88,13 @@ while repeated_trial < repeat_trial do
 	mecurrentLocX = GetPlayerRawXPos(tostring(1))
 	mecurrentLocY = GetPlayerRawYPos(tostring(1))
 	mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+	
 	yield("/targetenemy") --this will trigger RS to do stuff.
 	if GetCharacterCondition(34)==false then --if we are not in a duty --try to restart duty
 		yield("/visland stop")
 		yield("/wait 2")
 		yield("/echo We seem to be outside of the duty.. let us enter!")
-		yield("/wait 5")	
+		yield("/wait 15")	
 		if repeat_type == 0 then --4 Real players (or scripts haha) using duty finder
 			yield("/finder")
 			yield("/echo attempting to trigger duty finder")
@@ -98,7 +111,11 @@ while repeated_trial < repeat_trial do
 			yield("/wait 2")
 			yield("/pcall DawnStory true 14") --START THE DUTY
 		end
-		repeated_trial = repeated_trial + 1
+	
+		--reset duty specific stuff
+		--nothing yet
+
+		repeated_trial = repeated_trial + 1 --IMPROVE this later, this is a bad way to do this. we should be checking if we changed areas.
 		yield("/echo Total Trials triggered for "..char_snake..": "..repeated_trial)
 		yield("/wait 10")
 	end
@@ -111,6 +128,7 @@ while repeated_trial < repeat_trial do
 			yield("/wait 10")
 		end
 	end
+
 	--test dist to the intended party leader
 	if GetCharacterCondition(34)==true then --if we are in a duty
 		setdeest()
@@ -119,7 +137,28 @@ while repeated_trial < repeat_trial do
 				yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
 				--yield("/echo vnavmesh moveto "..math.ceil(currentLocX).." "..math.ceil(currentLocY).." "..math.ceil(currentLocZ))
 		end
+		--duty specific stuff
+		--porta decumana
+		if type(GetDistanceToObject("Aetheroplasm")) == "number" then
+			yield("/visland stop")
+			while type(GetDistanceToObject("Aetheroplasm")) == "number" do
+				if partymemberENUM == 1 then
+					yield("/visland moveto -692.46704 -185.53157 468.43414")
+				end
+				if partymemberENUM == 2 then
+					yield("/visland moveto -715.5604 -185.53159 468.4341")
+				end
+				if partymemberENUM == 3 then
+					yield("/visland moveto -715.5605 -185.53157 491.5273")
+				end
+				if partymemberENUM == 4 then
+					yield("/visland moveto -692.46704 -185.53159 491.52734")
+				end
+				yield("/wait 0.5")			
+			end
+		end	
 	end
+	
 	--test dist to the intended party leader
 	i = 0
 	if GetCharacterCondition(28)==true then --if we are bound by qte
