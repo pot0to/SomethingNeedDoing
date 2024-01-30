@@ -329,6 +329,9 @@ internal class HelpWindow : Window
 
         DisplayChangelog(
          "2024-01-30",
+         "- Added GetObjectRawXPos()\n" +
+         "- Added GetObjectRawYPos()\n" +
+         "- Added GetObjectRawZPos()\n" +
          "- Added GetCurrentOceanFishingRoute()\n" +
          "- Added GetCurrentOceanFishingStatus()\n" +
          "- Added GetCurrentOceanFishingZone()\n" +
