@@ -31,10 +31,10 @@ local repeated_trial = 0 --counter init
 local repeat_type = 0 --0 is premade, 1 is trust
 
 --distance stuf
-local snake_deest = 5 -- distance max to the specific char so we can decide when to start moving
+local snake_deest = 8 -- distance max to the specific char so we can decide when to start moving
 local enemy_deest = 1 -- distance max to the specific enemy to beeline to the enemy using navmesh. set this to a higher value than snake_deest if you want it to never follow the enemy.
 local meh_deest = 40 -- distance max to char_snake where we stop trying to follow or do anything. maybe look for interaction points or exits?
-local enemeh_deest = 5 -- distance max to battle target
+local enemeh_deest = 8 -- distance max to battle target
 
 --placeholder for target location
 local currentLocX = 1
@@ -72,7 +72,7 @@ local function setdeest()
 	if currentLocX and currentLocY and currentLocZ and mecurrentLocX and mecurrentLocY and mecurrentLocZ then
 		dist_between_points = distance(currentLocX, currentLocY, currentLocZ, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
 		-- dist_between_points will contain the distance between the two points
-		yield("/echo Distance between char_snake and point 1: " .. dist_between_points)
+		--yield("/echo Distance between char_snake and point 1: " .. dist_between_points)
 	else
 		yield("/echo Failed to retrieve coordinates for one or both points.")
 		dist_between_points = 500 -- default value haha
@@ -82,14 +82,19 @@ end
 yield("/echo starting.....")
 
 while repeated_trial < repeat_trial do
-	currentLocX = GetPlayerRawXPos(tostring(char_snake))
-	currentLocY = GetPlayerRawYPos(tostring(char_snake))
-	currentLocZ = GetPlayerRawZPos(tostring(char_snake))
+	yield("/targetenemy") --this will trigger RS to do stuff.
+	yield("/target "..char_snake) --this will trigger RS to do stuff.
+	--currentLocX = GetPlayerRawXPos(tostring(char_snake))
+	--currentLocY = GetPlayerRawYPos(tostring(char_snake))
+	--currentLocZ = GetPlayerRawZPos(tostring(char_snake))
+	currentLocX = GetTargetRawXPos()
+	currentLocY = GetTargetRawYPos()
+	currentLocZ = GetTargetRawZPos()
+	--yield("Target x y z "..currentLocX.." "..currentLocY.." "..currentLocZ)
 	mecurrentLocX = GetPlayerRawXPos(tostring(1))
 	mecurrentLocY = GetPlayerRawYPos(tostring(1))
 	mecurrentLocZ = GetPlayerRawZPos(tostring(1))
 	
-	yield("/targetenemy") --this will trigger RS to do stuff.
 	if GetCharacterCondition(34)==false then --if we are not in a duty --try to restart duty
 		yield("/visland stop")
 		yield("/wait 2")
@@ -140,21 +145,29 @@ while repeated_trial < repeat_trial do
 		--duty specific stuff
 		--porta decumana
 		if type(GetDistanceToObject("Aetheroplasm")) == "number" then
-			yield("/visland stop")
-			while type(GetDistanceToObject("Aetheroplasm")) == "number" do
-				if partymemberENUM == 1 then
-					yield("/visland moveto -692.46704 -185.53157 468.43414")
+--			if GetObjectRawXPos("Aetheroplasm") > 0 then
+			if GetDistanceToObject("Aetheroplasm") < 20 then
+				yield("/wait 1")			
+				yield("/echo Porta Decumana ball dodger distance to random ball: "..GetDistanceToObject("Aetheroplasm"))
+				yield("/visland stop")
+				--yield("/vbm cfg AI Enabled false")
+				while type(GetDistanceToObject("Aetheroplasm")) == "number" and GetDistanceToObject("Aetheroplasm") < 20 do
+					if partymemberENUM == 1 then
+						yield("/visland moveto -692.46704 -185.53157 468.43414")
+					end
+					if partymemberENUM == 2 then
+						yield("/visland moveto -715.5604 -185.53159 468.4341")
+					end
+					if partymemberENUM == 3 then
+						yield("/visland moveto -715.5605 -185.53157 491.5273")
+					end
+					if partymemberENUM == 4 then
+						yield("/visland moveto -692.46704 -185.53159 491.52734")
+					end
+					yield("/wait 5")			
 				end
-				if partymemberENUM == 2 then
-					yield("/visland moveto -715.5604 -185.53159 468.4341")
-				end
-				if partymemberENUM == 3 then
-					yield("/visland moveto -715.5605 -185.53157 491.5273")
-				end
-				if partymemberENUM == 4 then
-					yield("/visland moveto -692.46704 -185.53159 491.52734")
-				end
-				yield("/wait 0.5")			
+				yield("/visland stop")
+				--yield("/vbm cfg AI Enabled true")
 			end
 		end	
 	end
