@@ -328,6 +328,59 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+         "2024-01-30",
+         "- Added GetObjectRawXPos()\n" +
+         "- Added GetObjectRawYPos()\n" +
+         "- Added GetObjectRawZPos()\n" +
+         "- Added GetCurrentOceanFishingRoute()\n" +
+         "- Added GetCurrentOceanFishingStatus()\n" +
+         "- Added GetCurrentOceanFishingZone()\n" +
+         "- Added GetCurrentOceanFishingDuration()\n" +
+         "- Added GetCurrentOceanFishingTimeOffset()\n" +
+         "- Added GetCurrentOceanFishingWeatherID()\n" +
+         "- Added OceanFishingIsSpectralActive()\n" +
+         "- Added GetCurrentOceanFishingMission1Type()\n" +
+         "- Added GetCurrentOceanFishingMission2Type()\n" +
+         "- Added GetCurrentOceanFishingMission3Type()\n" +
+         "- Added GetCurrentOceanFishingMission1Progress()\n" +
+         "- Added GetCurrentOceanFishingMission2Progress()\n" +
+         "- Added GetCurrentOceanFishingMission3Progress()\n" +
+         "- Added GetCurrentOceanFishingPoints()\n" +
+         "- Added GetCurrentOceanFishingTotalScore()\n" +
+         "- Added \"Ocean Fishing Routes\" to the Game Data tab");
+
+        DisplayChangelog(
+         "2024-01-29",
+         "- Added TeleportToGCTown()\n" +
+         "- Added GetPlayerGC()\n" +
+         "- Added GetActiveFates() [EXPERIMENTAL]\n" +
+         "- Added ARGetRegisteredCharacters() [EXPERIMENTAL]\n" +
+         "- Added ARGetRegisteredEnabledCharacters() [EXPERIMENTAL]\n" +
+         "- Added IsVislandRouteRunning()\n" +
+         "- Added GetToastNodeText()\n" +
+         "- Added PauseYesAlready()\n" +
+         "- Added RestoreYesAlready()\n\n" +
+         "- Added OpenRouletteDuty()\n" +
+         "- Added OpenRegularDuty()\n" +
+         "- Added CFC and Roulette entries to the GameData section in help for using the above two functions\n");
+
+        DisplayChangelog(
+          "2024-01-27",
+          "- Added IsInFate()\n" +
+          "- Added GetNearestFate()\n" +
+          "- Added GetFateDuration()\n" +
+          "- Added GetFateHandInCount()\n" +
+          "- Added GetFateLocationX()\n" +
+          "- Added GetFateLocationY()\n" +
+          "- Added GetFateLocationZ()\n" +
+          "- Added GetFateProgress()\n\n" +
+          "- Added GetCurrentEorzeaTimestamp()\n" +
+          "- Added GetCurrentEorzeaSecond()\n" +
+          "- Added GetCurrentEorzeaMinute()\n" +
+          "- Added GetCurrentEorzeaHour()\n\n" +
+          "- Added GetDistanceToObject()\n");
+
+        DisplayChangelog(
           "2024-01-26",
           "- Added GetRecastTimeElapsed()\n" +
           "- Added GetRealRecastTimeElapsed()\n" +
@@ -951,7 +1004,7 @@ yield(""/echo done!"")
             (nameof(InventoryCommands), InventoryCommands.Instance),
             (nameof(IpcCommands), IpcCommands.Instance),
             (nameof(QuestCommands), QuestCommands.Instance),
-            (nameof(TargetStateCommands), TargetStateCommands.Instance),
+            (nameof(EntityStateCommands), EntityStateCommands.Instance),
             (nameof(WorldStateCommands), WorldStateCommands.Instance)
         };
 
@@ -1036,29 +1089,95 @@ yield(""/echo done!"")
         }
     }
 
-    private readonly IEnumerable<ClassJob> classJobSheet = Svc.Data.GetExcelSheet<ClassJob>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
-    private readonly IEnumerable<Weather> weatherSheet = Svc.Data.GetExcelSheet<Weather>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
     private void DrawGameData()
     {
-        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-
-        ImGui.TextWrapped("Misc Game Data Information");
-        ImGui.Separator();
-
-        ImGui.TextWrapped("ClassJob");
-        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-        foreach (var cj in classJobSheet)
+        if (ImGui.BeginTabBar("GameDataTab"))
         {
-            ImGui.Text($"{cj.Name}: Key={cj.RowId}; ExpArrayIndex={cj.ExpArrayIndex}");
+            var tabs = new (string Title, System.Action Dele)[]
+            {
+                ("ClassJob", this.DrawClassJob),
+                ("Weather", this.DrawWeather),
+                ("CFC", this.DrawCFC),
+                ("Duty Roulette", this.DrawDutyRoulette),
+                ("Ocean Fishing Routes", this.DrawOceanFishingSpots),
+            };
+
+            foreach (var (title, dele) in tabs)
+            {
+                if (ImGui.BeginTabItem(title))
+                {
+                    ImGui.BeginChild("scrolling", new Vector2(0, -1), false);
+
+                    dele();
+
+                    ImGui.EndChild();
+
+                    ImGui.EndTabItem();
+                }
+            }
+
+            ImGui.EndTabBar();
+        }
+
+        ImGui.EndChild();  
+    }
+
+    private readonly IEnumerable<FishingSpot> fishingSpotsSheet = Svc.Data.GetExcelSheet<FishingSpot>(Svc.ClientState.ClientLanguage)!.Where(x => x.PlaceNameMain.Value?.RowId != 0);
+    private void DrawOceanFishingSpots()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var w in fishingSpotsSheet)
+        {
+            ImGui.Text($"{w.RowId}: {w.PlaceName.Value!.Name}");
         }
         ImGui.PopStyleColor();
+    }
 
-        ImGui.Separator();
-        ImGui.TextWrapped("Weather IDs");
+    private readonly IEnumerable<ContentRoulette> rouletteSheet = Svc.Data.GetExcelSheet<ContentRoulette>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private void DrawDutyRoulette()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var w in rouletteSheet)
+        {
+            ImGui.Text($"{w.RowId}: {w.Name}");
+        }
+        ImGui.PopStyleColor();
+    }
+
+    private readonly IEnumerable<ContentFinderCondition> cfcSheet = Svc.Data.GetExcelSheet<ContentFinderCondition>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private void DrawCFC()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var w in cfcSheet)
+        {
+            ImGui.Text($"{w.RowId}: {w.Name}");
+        }
+        ImGui.PopStyleColor();
+    }
+
+    private readonly IEnumerable<Weather> weatherSheet = Svc.Data.GetExcelSheet<Weather>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private void DrawWeather()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
         foreach (var w in weatherSheet)
         {
-            ImGui.Text($"{w.Name}: Key={w.RowId}");
+            ImGui.Text($"{w.RowId}: {w.Name}");
+        }
+        ImGui.PopStyleColor();
+    }
+
+    private readonly IEnumerable<ClassJob> classJobSheet = Svc.Data.GetExcelSheet<ClassJob>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private void DrawClassJob()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var cj in classJobSheet)
+        {
+            ImGui.Text($"{cj.RowId}: {cj.Name}; ExpArrayIndex={cj.ExpArrayIndex}");
         }
         ImGui.PopStyleColor();
     }
