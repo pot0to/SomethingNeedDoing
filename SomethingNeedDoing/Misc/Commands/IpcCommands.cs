@@ -30,15 +30,28 @@ public class IpcCommands
     {
         _autoRetainerApi = new();
         DeliverooIPC.Init();
+        VislandIPC.Init();
     }
 
     public void Dispose()
     {
         _autoRetainerApi.Dispose();
+        VislandIPC.Dispose();
         DeliverooIPC.Dispose();
     }
 
     public unsafe bool DeliverooIsTurnInRunning() => DeliverooIPC.IsTurnInRunning!.InvokeFunc();
+
+    public unsafe bool IsVislandRouteRunning() => VislandIPC.IsRouteRunning!.InvokeFunc();
+
+    public unsafe List<string> ARGetRegisteredCharacters() =>
+        _autoRetainerApi.GetRegisteredCharacters().AsParallel()
+        .Select(c => $"{_autoRetainerApi.GetOfflineCharacterData(c).Name}@{_autoRetainerApi.GetOfflineCharacterData(c).World}").ToList();
+
+    public unsafe List<string> ARGetRegisteredEnabledCharacters() =>
+        _autoRetainerApi.GetRegisteredCharacters().AsParallel()
+        .Where(c => _autoRetainerApi.GetOfflineCharacterData(c).Enabled)
+        .Select(c => $"{_autoRetainerApi.GetOfflineCharacterData(c).Name}@{_autoRetainerApi.GetOfflineCharacterData(c).World}").ToList();
 
     public unsafe bool ARAnyWaitingToBeProcessed(bool allCharacters = false) =>
         allCharacters ?
@@ -60,4 +73,24 @@ public class IpcCommands
         else
             return _autoRetainerApi.GetRegisteredCharacters().AsParallel().Any(character => _autoRetainerApi.GetOfflineCharacterData(character).OfflineSubmarineData.Any(x => x.ReturnTime <= DateTime.Now.ToUnixTimestamp()));
     }
+
+    public void PauseYesAlready()
+    {
+        if (Svc.PluginInterface.TryGetData<HashSet<string>>("YesAlready.StopRequests", out var data) && !data.Contains(nameof(SomethingNeedDoing)))
+        {
+            Svc.Log.Debug("Disabling YesAlready");
+            data.Add(nameof(SomethingNeedDoing));
+        }
+    }
+
+    public void RestoreYesAlready()
+    {
+        if (Svc.PluginInterface.TryGetData<HashSet<string>>("YesAlready.StopRequests", out var data) &&
+            data.Contains(nameof(SomethingNeedDoing)))
+        {
+            Svc.Log.Debug("Restoring YesAlready");
+            data.Remove(nameof(SomethingNeedDoing));
+        }
+    }
+
 }

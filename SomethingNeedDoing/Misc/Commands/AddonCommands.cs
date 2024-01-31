@@ -1,7 +1,12 @@
-﻿using ECommons;
+﻿using Dalamud.Utility.Signatures;
+using ECommons;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using Lumina.Data.Parsing;
 using SomethingNeedDoing.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -24,6 +29,10 @@ public class AddonCommands
         }
         return list;
     }
+
+    public unsafe void OpenRouletteDuty(byte contentRouletteID) => AgentContentsFinder.Instance()->OpenRouletteDuty(contentRouletteID);
+    public unsafe void OpenRegularDuty(byte cfcID) => AgentContentsFinder.Instance()->OpenRegularDuty(cfcID);
+
     public unsafe bool IsAddonVisible(string addonName)
     {
         var ptr = Service.GameGui.GetAddonByName(addonName, 1);
@@ -57,6 +66,44 @@ public class AddonCommands
 
         var addon = (AtkUnitBase*)ptr;
         return addon->UldManager.LoadedState == AtkLoadState.Loaded;
+    }
+
+    public unsafe string GetToastNodeText(int index, params int[] nodeNumbers)
+    {
+        var ptr = (AtkUnitBase*)Service.GameGui.GetAddonByName("_WideText", index);
+        if (ptr == null) return string.Empty;
+        if (ptr->UldManager.NodeList == null || ptr->UldManager.NodeListCount < 4) return string.Empty;
+
+        var uld = ptr->UldManager;
+        AtkResNode* node = null;
+        var debugString = string.Empty;
+
+        for (var i = 0; i < nodeNumbers.Length; i++)
+        {
+            var nodeNumber = nodeNumbers[i];
+
+            var count = uld.NodeListCount;
+            if (nodeNumber < 0 || nodeNumber >= count)
+                throw new MacroCommandError($"Addon node number must be between 0 and {count} for the _WideText addon");
+
+            node = uld.NodeList[nodeNumber];
+            debugString += $"[{nodeNumber}]";
+
+            if (node == null)
+                throw new MacroCommandError($"_WideText addon node{debugString} is null");
+
+            // More nodes to traverse
+            if (i < nodeNumbers.Length - 1)
+            {
+                if ((int)node->Type < 1000)
+                    throw new MacroCommandError($"_WideText addon node{debugString} is not a component");
+
+                uld = ((AtkComponentNode*)node)->Component->UldManager;
+            }
+        }
+
+        var textNode = (AtkTextNode*)node;
+        return textNode->NodeText.ToString();
     }
 
     public unsafe string GetNodeText(string addonName, params int[] nodeNumbers)
