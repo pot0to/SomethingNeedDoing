@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace SomethingNeedDoing.Misc.Commands;
 
@@ -137,4 +138,16 @@ public class CharacterStateCommands
     public unsafe string GetFCGrandCompany() => ((InfoProxyFreeCompany*)Framework.Instance()->UIModule->GetInfoModule()->GetInfoProxyById(InfoProxyId.FreeCompany))->GrandCompany.ToString();
     public unsafe int GetFCOnlineMembers() => ((InfoProxyFreeCompany*)Framework.Instance()->UIModule->GetInfoModule()->GetInfoProxyById(InfoProxyId.FreeCompany))->OnlineMembers;
     public unsafe int GetFCTotalMembers() => ((InfoProxyFreeCompany*)Framework.Instance()->UIModule->GetInfoModule()->GetInfoProxyById(InfoProxyId.FreeCompany))->TotalMembers;
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x140)]
+    public unsafe struct PlayerMoveControllerWalk
+    {
+        [FieldOffset(0xB0)] public float RotationDir;
+    }
+
+    public static void SetRotation(float y)
+    {
+        var x = new PlayerMoveControllerWalk();
+        x.RotationDir = y;
+    }
 }

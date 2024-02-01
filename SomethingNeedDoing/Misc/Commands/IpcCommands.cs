@@ -29,8 +29,8 @@ public class IpcCommands
     internal IpcCommands()
     {
         _autoRetainerApi = new();
-        DeliverooIPC.Init();
         VislandIPC.Init();
+        DeliverooIPC.Init();
     }
 
     public void Dispose()
@@ -40,10 +40,25 @@ public class IpcCommands
         DeliverooIPC.Dispose();
     }
 
+    #region AutoHook
+    public unsafe void SetAutoHookState(bool state) => AutoHookIPC.SetPluginState(state);
+    public unsafe void SetAutoHookAutoGigState(bool state) => AutoHookIPC.SetAutoGigState(state);
+    public unsafe void SetAutoHookAutoGigSize(int size) => AutoHookIPC.SetAutoGigSize(size);
+    public unsafe void SetAutoHookAutoGigSpeed(int speed) => AutoHookIPC.SetAutoGigSpeed(speed);
+    public unsafe void SetAutoHookPreset(string preset) => AutoHookIPC.SetPreset(preset);
+    public unsafe void UseAutoHookAnonymousPreset(string preset) => AutoHookIPC.CreateAndSelectAnonymousPreset(preset);
+    public unsafe void DeletedSelectedAutoHookPreset() => AutoHookIPC.DeleteSelectedPreset();
+    #endregion
+
+    #region Deliveroo
     public unsafe bool DeliverooIsTurnInRunning() => DeliverooIPC.IsTurnInRunning!.InvokeFunc();
+    #endregion
 
+    #region visland
     public unsafe bool IsVislandRouteRunning() => VislandIPC.IsRouteRunning!.InvokeFunc();
+    #endregion
 
+    #region AutoRetainer
     public unsafe List<string> ARGetRegisteredCharacters() =>
         _autoRetainerApi.GetRegisteredCharacters().AsParallel()
         .Select(c => $"{_autoRetainerApi.GetOfflineCharacterData(c).Name}@{_autoRetainerApi.GetOfflineCharacterData(c).World}").ToList();
@@ -73,7 +88,9 @@ public class IpcCommands
         else
             return _autoRetainerApi.GetRegisteredCharacters().AsParallel().Any(character => _autoRetainerApi.GetOfflineCharacterData(character).OfflineSubmarineData.Any(x => x.ReturnTime <= DateTime.Now.ToUnixTimestamp()));
     }
+    #endregion
 
+    #region YesAlready
     public void PauseYesAlready()
     {
         if (Svc.PluginInterface.TryGetData<HashSet<string>>("YesAlready.StopRequests", out var data) && !data.Contains(nameof(SomethingNeedDoing)))
@@ -92,5 +109,5 @@ public class IpcCommands
             data.Remove(nameof(SomethingNeedDoing));
         }
     }
-
+    #endregion
 }

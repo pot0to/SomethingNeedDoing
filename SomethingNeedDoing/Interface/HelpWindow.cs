@@ -328,6 +328,25 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+         "2024-02-01",
+         "- Added GetContentTimeLeft()\n" +
+         "- Replaced GetCurrentOceanFishingDuration() with GetCurrentOceanFishingZoneTimeLeft()\n" +
+         "- Added GetCurrentOceanFishingScore()\n" +
+         "- Added GetCurrentOceanFishingMission1Goal()\n" +
+         "- Added GetCurrentOceanFishingMission2Goal()\n" +
+         "- Added GetCurrentOceanFishingMission3Goal()\n" +
+         "- Added GetCurrentOceanFishingMission1Name()\n" +
+         "- Added GetCurrentOceanFishingMission2Name()\n" +
+         "- Added GetCurrentOceanFishingMission3Name()\n\n" +
+         "- Added SetAutoHookState()\n" +
+         "- Added SetAutoHookAutoGigState()\n" +
+         "- Added SetAutoHookAutoGigSize()\n" +
+         "- Added SetAutoHookAutoGigSpeed()\n" +
+         "- Added SetAutoHookPreset()\n" +
+         "- Added UseAutoHookAnonymousPreset()\n" +
+         "- Added DeletedSelectedAutoHookPreset()\n");
+
+        DisplayChangelog(
          "2024-01-30",
          "- Added GetObjectRawXPos()\n" +
          "- Added GetObjectRawYPos()\n" +
