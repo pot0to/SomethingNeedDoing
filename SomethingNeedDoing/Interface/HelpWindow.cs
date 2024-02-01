@@ -332,7 +332,7 @@ internal class HelpWindow : Window
          "- Added GetTargetHP()\n" +
          "- Added GetTargetHPP()\n\n" +
          "- Added RequestAchievementProgress()\n" +
-         "- Added GetAchievementProgress()\n\n" +
+         "- Added GetRequestedAchievementProgress()\n\n" +
          "- Added GetContentTimeLeft()\n" +
          "- Replaced GetCurrentOceanFishingDuration() with GetCurrentOceanFishingZoneTimeLeft()\n" +
          "- Added GetCurrentOceanFishingScore()\n" +
@@ -349,7 +349,7 @@ internal class HelpWindow : Window
          "- Added SetAutoHookAutoGigSpeed()\n" +
          "- Added SetAutoHookPreset()\n" +
          "- Added UseAutoHookAnonymousPreset()\n" +
-         "- Added DeletedSelectedAutoHookPreset()\n");
+         "- Added DeleteSelectedAutoHookPreset()\n");
 
         DisplayChangelog(
          "2024-01-30",
