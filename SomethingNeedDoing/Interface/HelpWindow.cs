@@ -332,6 +332,7 @@ internal class HelpWindow : Window
          "- Added GetContentTimeLeft()\n" +
          "- Replaced GetCurrentOceanFishingDuration() with GetCurrentOceanFishingZoneTimeLeft()\n" +
          "- Added GetCurrentOceanFishingScore()\n" +
+         "- Added GetCurrentOceanFishingTimeOfDay()\n" +
          "- Added GetCurrentOceanFishingMission1Goal()\n" +
          "- Added GetCurrentOceanFishingMission2Goal()\n" +
          "- Added GetCurrentOceanFishingMission3Goal()\n" +

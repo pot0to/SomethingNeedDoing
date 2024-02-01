@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Excel.GeneratedSheets2;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -69,6 +70,7 @@ namespace SomethingNeedDoing.Misc.Commands
 
         #region OceanFishing
         public unsafe uint GetCurrentOceanFishingRoute() => EventFramework.Instance()->GetInstanceContentOceanFishing()->CurrentRoute;
+        public byte GetCurrentOceanFishingTimeOfDay() => Svc.Data.GetExcelSheet<IKDRoute>()?.GetRow(GetCurrentOceanFishingRoute())?.Time[GetCurrentOceanFishingZone()].Value?.Unknown0 ?? 0;
         public unsafe int GetCurrentOceanFishingStatus() => (int)EventFramework.Instance()->GetInstanceContentOceanFishing()->Status;
         public unsafe byte GetCurrentOceanFishingZone() => EventFramework.Instance()->GetInstanceContentOceanFishing()->CurrentZone;
         public float GetCurrentOceanFishingZoneTimeLeft() => GetContentTimeLeft() - GetCurrentOceanFishingTimeOffset();
