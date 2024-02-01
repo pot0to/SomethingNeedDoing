@@ -276,7 +276,7 @@ end
 --just kind of proof of concept farming script for easy duties that vbm AI mode can solve
 --make sure you go into settings and disable the snd targeting
 --you need following plugins
---visland, SND (croizat fork), pandora
+--vnavmesh (compile it yourself), SND (croizat fork), pandora, rotation solver, simpletweaks
 --simpletweaks -> turn on maincommand
 --turn on auto interact on pandora set distance to 5 dist 5 height
 --turn on vbm. click ai mode -> click follow. then form the group.
