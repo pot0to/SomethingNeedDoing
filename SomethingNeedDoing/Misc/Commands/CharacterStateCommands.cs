@@ -150,4 +150,7 @@ public class CharacterStateCommands
         var x = new PlayerMoveControllerWalk();
         x.RotationDir = y;
     }
+
+    public unsafe void RequestAchievementProgress(uint id) => Achievement.Instance()->RequestAchievementProgress(id);
+    public unsafe uint GetAchievementProgress() => Achievement.Instance()->ProgressMax;
 }

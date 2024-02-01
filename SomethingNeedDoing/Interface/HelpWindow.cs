@@ -329,6 +329,10 @@ internal class HelpWindow : Window
 
         DisplayChangelog(
          "2024-02-01",
+         "- Added GetTargetHP()\n" +
+         "- Added GetTargetHPP()\n\n" +
+         "- Added RequestAchievementProgress()\n" +
+         "- Added GetAchievementProgress()\n\n" +
          "- Added GetContentTimeLeft()\n" +
          "- Replaced GetCurrentOceanFishingDuration() with GetCurrentOceanFishingZoneTimeLeft()\n" +
          "- Added GetCurrentOceanFishingScore()\n" +
@@ -1120,6 +1124,7 @@ yield(""/echo done!"")
                 ("CFC", this.DrawCFC),
                 ("Duty Roulette", this.DrawDutyRoulette),
                 ("Ocean Fishing Routes", this.DrawOceanFishingSpots),
+                ("Achievements", this.DrawAchievements),
             };
 
             foreach (var (title, dele) in tabs)
@@ -1140,6 +1145,18 @@ yield(""/echo done!"")
         }
 
         ImGui.EndChild();  
+    }
+
+    private readonly IEnumerable<Achievement> achievementsSheet = Svc.Data.GetExcelSheet<Achievement>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private void DrawAchievements()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var w in achievementsSheet)
+        {
+            ImGui.Text($"{w.RowId}: {w.Name}");
+        }
+        ImGui.PopStyleColor();
     }
 
     private readonly IEnumerable<FishingSpot> fishingSpotsSheet = Svc.Data.GetExcelSheet<FishingSpot>(Svc.ClientState.ClientLanguage)!.Where(x => x.PlaceNameMain.Value?.RowId != 0);

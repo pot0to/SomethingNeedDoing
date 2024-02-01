@@ -39,4 +39,6 @@ internal class EntityStateCommands
     public unsafe bool IsTargetCasting() => ((Character*)Svc.Targets.Target?.Address!)->IsCasting;
     public unsafe uint GetTargetActionID() => ((Character*)Svc.Targets.Target?.Address!)->GetCastInfo()->ActionID;
     public unsafe uint GetTargetUsedActionID() => ((Character*)Svc.Targets.Target?.Address!)->GetCastInfo()->UsedActionId;
+    public float GetTargetHP() => (Svc.Targets.Target as Dalamud.Game.ClientState.Objects.Types.Character)?.CurrentHp ?? 0;
+    public float GetTargetHPP() => (Svc.Targets.Target as Dalamud.Game.ClientState.Objects.Types.Character)?.CurrentHp / (Svc.Targets.Target as Dalamud.Game.ClientState.Objects.Types.Character)?.MaxHp * 100 ?? 0;
 }
