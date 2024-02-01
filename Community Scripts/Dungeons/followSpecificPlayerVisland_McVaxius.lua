@@ -51,7 +51,7 @@ local function setdeest()
 	if currentLocX and currentLocY and currentLocZ and mecurrentLocX and mecurrentLocY and mecurrentLocZ then
 		dist_between_points = distance(currentLocX, currentLocY, currentLocZ, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
 		-- dist_between_points will contain the distance between the two points
-		yield("/echo Distance between char_snake and point 1: " .. dist_between_points)
+		--yield("/echo Distance between char_snake and point 1: " .. dist_between_points)
 	else
 		yield("/echo Failed to retrieve coordinates for one or both points.")
 		dist_between_points = 500 -- default value haha
@@ -90,21 +90,29 @@ while neverstop do
 		--duty specific stuff
 		--porta decumana
 		if type(GetDistanceToObject("Aetheroplasm")) == "number" then
-			yield("/visland stop")
-			while type(GetDistanceToObject("Aetheroplasm")) == "number" do
-				if partymemberENUM == 1 then
-					yield("/visland moveto -692.46704 -185.53157 468.43414")
+--			if GetObjectRawXPos("Aetheroplasm") > 0 then
+			if GetDistanceToObject("Aetheroplasm") < 20 then
+				yield("/wait 1")			
+				yield("/echo Porta Decumana ball dodger distance to random ball: "..GetDistanceToObject("Aetheroplasm"))
+				yield("/visland stop")
+				--yield("/vbm cfg AI Enabled false")
+				while type(GetDistanceToObject("Aetheroplasm")) == "number" and GetDistanceToObject("Aetheroplasm") < 20 do
+					if partymemberENUM == 1 then
+						yield("/visland moveto -692.46704 -185.53157 468.43414")
+					end
+					if partymemberENUM == 2 then
+						yield("/visland moveto -715.5604 -185.53159 468.4341")
+					end
+					if partymemberENUM == 3 then
+						yield("/visland moveto -715.5605 -185.53157 491.5273")
+					end
+					if partymemberENUM == 4 then
+						yield("/visland moveto -692.46704 -185.53159 491.52734")
+					end
+					yield("/wait 5")			
 				end
-				if partymemberENUM == 2 then
-					yield("/visland moveto -715.5604 -185.53159 468.4341")
-				end
-				if partymemberENUM == 3 then
-					yield("/visland moveto -715.5605 -185.53157 491.5273")
-				end
-				if partymemberENUM == 4 then
-					yield("/visland moveto -692.46704 -185.53159 491.52734")
-				end
-				yield("/wait 0.5")			
+				yield("/visland stop")
+				--yield("/vbm cfg AI Enabled true")
 			end
 		end	
 	end
