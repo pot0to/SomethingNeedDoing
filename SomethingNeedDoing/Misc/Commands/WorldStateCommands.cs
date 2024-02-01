@@ -1,12 +1,13 @@
 ﻿using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
-using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using Lumina.Excel.GeneratedSheets2;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -55,6 +56,7 @@ namespace SomethingNeedDoing.Misc.Commands
             .Select(f => f.Value->FateId)
             .FirstOrDefault();
 
+        #region Fate
         public unsafe bool IsInFate() => FateManager.Instance()->CurrentFate is not null;
         public unsafe float GetFateDuration(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Duration;
         public unsafe float GetFateHandInCount(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->HandInCount;
@@ -62,21 +64,34 @@ namespace SomethingNeedDoing.Misc.Commands
         public unsafe float GetFateLocationY(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Location.Y;
         public unsafe float GetFateLocationZ(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Location.Z;
         public unsafe float GetFateProgress(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Progress;
+        #endregion
 
+        public unsafe float GetContentTimeLeft() => EventFramework.Instance()->GetInstanceContentDirector()->ContentDirector.ContentTimeLeft;
+
+        #region OceanFishing
         public unsafe uint GetCurrentOceanFishingRoute() => EventFramework.Instance()->GetInstanceContentOceanFishing()->CurrentRoute;
+        public byte GetCurrentOceanFishingTimeOfDay() => Svc.Data.GetExcelSheet<IKDRoute>()?.GetRow(GetCurrentOceanFishingRoute())?.Time[GetCurrentOceanFishingZone()].Value?.Unknown0 ?? 0;
         public unsafe int GetCurrentOceanFishingStatus() => (int)EventFramework.Instance()->GetInstanceContentOceanFishing()->Status;
         public unsafe byte GetCurrentOceanFishingZone() => EventFramework.Instance()->GetInstanceContentOceanFishing()->CurrentZone;
-        public unsafe uint GetCurrentOceanFishingDuration() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Duration;
+        public float GetCurrentOceanFishingZoneTimeLeft() => GetContentTimeLeft() - GetCurrentOceanFishingTimeOffset();
         public unsafe uint GetCurrentOceanFishingTimeOffset() => EventFramework.Instance()->GetInstanceContentOceanFishing()->TimeOffset;
         public unsafe uint GetCurrentOceanFishingWeatherID() => EventFramework.Instance()->GetInstanceContentOceanFishing()->WeatherID;
         public unsafe bool OceanFishingIsSpectralActive() => EventFramework.Instance()->GetInstanceContentOceanFishing()->SpectralCurrentActive;
         public unsafe uint GetCurrentOceanFishingMission1Type() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission1Type;
         public unsafe uint GetCurrentOceanFishingMission2Type() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission2Type;
         public unsafe uint GetCurrentOceanFishingMission3Type() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission3Type;
+        public unsafe byte GetCurrentOceanFishingMission1Goal() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission1Type())?.Unknown1 ?? 0;
+        public unsafe byte GetCurrentOceanFishingMission2Goal() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission2Type())?.Unknown1 ?? 0;
+        public unsafe byte GetCurrentOceanFishingMission3Goal() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission3Type())?.Unknown1 ?? 0;
+        public unsafe string GetCurrentOceanFishingMission1Name() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission1Type())?.Unknown0.RawString ?? "";
+        public unsafe string GetCurrentOceanFishingMission2Name() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission2Type())?.Unknown0.RawString ?? "";
+        public unsafe string GetCurrentOceanFishingMission3Name() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission3Type())?.Unknown0.RawString ?? "";
         public unsafe uint GetCurrentOceanFishingMission1Progress() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission1Progress;
         public unsafe uint GetCurrentOceanFishingMission2Progress() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission2Progress;
         public unsafe uint GetCurrentOceanFishingMission3Progress() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission3Progress;
         public unsafe uint GetCurrentOceanFishingPoints() => AgentModule.Instance()->GetAgentIKDFishingLog()->Points;
+        public unsafe uint GetCurrentOceanFishingScore() => AgentModule.Instance()->GetAgentIKDResult()->Data->Score;
         public unsafe uint GetCurrentOceanFishingTotalScore() => AgentModule.Instance()->GetAgentIKDResult()->Data->TotalScore;
+        #endregion
     }
 }

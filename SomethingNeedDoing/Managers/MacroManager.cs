@@ -26,7 +26,6 @@ internal partial class MacroManager : IDisposable
     public MacroManager()
     {
         Service.ClientState.Login += this.OnLogin;
-        Service.ClientState.Logout += this.OnLogout;
 
         // If we're already logged in, toggle the waiter.
         if (Service.ClientState.LocalPlayer != null)
@@ -55,7 +54,6 @@ internal partial class MacroManager : IDisposable
     public void Dispose()
     {
         Service.ClientState.Login -= this.OnLogin;
-        Service.ClientState.Logout -= this.OnLogout;
 
         this.eventLoopTokenSource.Cancel();
         this.eventLoopTokenSource.Dispose();
@@ -68,13 +66,6 @@ internal partial class MacroManager : IDisposable
     {
         this.loggedInWaiter.Set();
         this.State = LoopState.Waiting;
-    }
-
-    // Disabling this enables multi mode or something
-    private void OnLogout()
-    {
-        // this.loggedInWaiter.Reset();
-        // this.State = LoopState.NotLoggedIn;
     }
 
     private async void EventLoop()

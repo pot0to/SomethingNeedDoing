@@ -328,6 +328,30 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+         "2024-02-01",
+         "- Added GetTargetHP()\n" +
+         "- Added GetTargetHPP()\n\n" +
+         "- Added RequestAchievementProgress()\n" +
+         "- Added GetRequestedAchievementProgress()\n\n" +
+         "- Added GetContentTimeLeft()\n" +
+         "- Replaced GetCurrentOceanFishingDuration() with GetCurrentOceanFishingZoneTimeLeft()\n" +
+         "- Added GetCurrentOceanFishingScore()\n" +
+         "- Added GetCurrentOceanFishingTimeOfDay()\n" +
+         "- Added GetCurrentOceanFishingMission1Goal()\n" +
+         "- Added GetCurrentOceanFishingMission2Goal()\n" +
+         "- Added GetCurrentOceanFishingMission3Goal()\n" +
+         "- Added GetCurrentOceanFishingMission1Name()\n" +
+         "- Added GetCurrentOceanFishingMission2Name()\n" +
+         "- Added GetCurrentOceanFishingMission3Name()\n\n" +
+         "- Added SetAutoHookState()\n" +
+         "- Added SetAutoHookAutoGigState()\n" +
+         "- Added SetAutoHookAutoGigSize()\n" +
+         "- Added SetAutoHookAutoGigSpeed()\n" +
+         "- Added SetAutoHookPreset()\n" +
+         "- Added UseAutoHookAnonymousPreset()\n" +
+         "- Added DeleteSelectedAutoHookPreset()\n");
+
+        DisplayChangelog(
          "2024-01-30",
          "- Added GetObjectRawXPos()\n" +
          "- Added GetObjectRawYPos()\n" +
@@ -1100,6 +1124,7 @@ yield(""/echo done!"")
                 ("CFC", this.DrawCFC),
                 ("Duty Roulette", this.DrawDutyRoulette),
                 ("Ocean Fishing Routes", this.DrawOceanFishingSpots),
+                ("Achievements", this.DrawAchievements),
             };
 
             foreach (var (title, dele) in tabs)
@@ -1120,6 +1145,18 @@ yield(""/echo done!"")
         }
 
         ImGui.EndChild();  
+    }
+
+    private readonly IEnumerable<Achievement> achievementsSheet = Svc.Data.GetExcelSheet<Achievement>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
+    private void DrawAchievements()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var w in achievementsSheet)
+        {
+            ImGui.Text($"{w.RowId}: {w.Name}");
+        }
+        ImGui.PopStyleColor();
     }
 
     private readonly IEnumerable<FishingSpot> fishingSpotsSheet = Svc.Data.GetExcelSheet<FishingSpot>(Svc.ClientState.ClientLanguage)!.Where(x => x.PlaceNameMain.Value?.RowId != 0);
