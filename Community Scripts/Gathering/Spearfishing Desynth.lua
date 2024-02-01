@@ -63,23 +63,28 @@ while (not GetCharacterCondition(6)) and not (GetCharacterCondition(39)) do
 
 while (not GetCharacterCondition(6)) and (not GetCharacterCondition(39)) do
   if IsAddonVisible("PurifyResult") then
-    yield("/pcall PurifyResult True 0")
+    yield("/pcall PurifyResult true 0")
     yield("/wait 4")
+    yield("/echo Desynth all items in a row")
   elseif (not IsAddonVisible("PurifyResult")) and IsAddonVisible("PurifyItemSelector") then
     yield("/pcall PurifyItemSelector true 12 0")
     yield("/wait 4")
-  elseif IsAddonVisible("PurifyItemSelector") then
-    yield('/ac "Aetherial Reduction"')
-    yield("/wait 0.5")
+    yield("/echo Selecting first item"
   elseif (not IsAddonVisible("PurifyItemSelector")) and (not GetCharacterCondition(4)) then
     yield('/ac "Aetherial Reduction"')
     yield("/wait 0.5")
+    yield("/echo Opening Desynth Menu")
+  elseif IsAddonVisible("PurifyItemSelector") and GetCharacterCondition(4) then
+    yield("/pcall PurifyItemSelector True -1")
+    yield("/wait 0.5")
+    yield("/echo Desynth window was open while on mount"
   elseif GetCharacterCondition(4) then
     yield("/ac dismount")
     yield("/wait 3")
+    yield("/echo Dismount Test")
   end
  end
-end
+end 
 
 -- checks to see if you're desynth'ing yet, then once it's done, resumes the route/process
 ::DesynthAll::
