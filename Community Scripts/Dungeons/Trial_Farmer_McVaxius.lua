@@ -92,8 +92,11 @@ local dist_between_points = 500
 local neverstop = true
 local i = 0
 
+local we_are_spreading = 0 --by default we aren't spreading
+
 --duty specific vars
-local porta_decumana_orbs = 1
+local dutycheck = 0
+local dutycheckupdate = 1
 
 local function distance(x1, y1, z1, x2, y2, z2)
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
@@ -116,11 +119,13 @@ local function do_we_spread()
     end
 	if did_we_find_one == 1 then
 		--return true
+		we_are_spreading = 1 --indicate to the follow functions that we are spreading and not to try and do stuff
 		spread_em(5) --default 5 "distance" movement for now IMPROVE LATER with multi variable array with distances for each spread marker? and maybe some actual math because 1,1 is actually 1.4 distance from origin.
 	end
 	if did_we_find_one == 0 then
 		--return false
 		--do nothing ;o
+		we_are_spreading = 0 -- we aren't spreading
 	end
 end
 
@@ -168,15 +173,19 @@ local function porta_decumana()
 		--porta decumana ultima weapon orbs in phase 2 near start of phase
 		--very hacky kludge until movement isn't slidy
 		--nested ifs because we don't want to get locked into this
+		phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
+		if dutycheck == 0 and dutycheckupdate == 1 and phase2 < 40 then
+			--we in phase 2 boyo
+			dutycheck = 1
+		end
 		mecurrentLocX = GetPlayerRawXPos(tostring(1))
 		mecurrentLocY = GetPlayerRawYPos(tostring(1))
 		mecurrentLocZ = GetPlayerRawZPos(tostring(1))
-		phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
-		if type(GetDistanceToObject("Magitek Bit")) == "number" and GetDistanceToObject("Magitek Bit") < 50 then
-			--turn off this check
-			porta_decumana_orbs = 0
-			end
-		if phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
+		if dutycheckupdate == 1 and dutycheckupdate == 1 and type(GetDistanceToObject("Magitek Bit")) == "number" and GetDistanceToObject("Magitek Bit") < 50 then
+			dutycheck = 0 --turn off this check
+			dutycheckupdate = 0
+		end
+		if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
 			if partymemberENUM == 1 then
 				yield("/vnavmesh moveto -692.46704 -185.53157 468.43414")
 			end
@@ -199,7 +208,7 @@ local function porta_decumana()
 					--yield("/wait 1")
 					yield("/echo Porta Decumana ball dodger distance to random ball: "..GetDistanceToObject("Aetheroplasm"))
 					yield("/visland stop")
-					yield("/navmesh stop")
+					yield("/vnavmesh stop")
 					--yield("/vbm cfg AI Enabled false")
 					while type(GetDistanceToObject("Aetheroplasm")) == "number" and GetDistanceToObject("Aetheroplasm") < 20 do
 						if partymemberENUM == 1 then
@@ -217,7 +226,7 @@ local function porta_decumana()
 						yield("/wait 5")			
 					end
 					yield("/visland stop")
-					yield("/navmesh stop")
+					yield("/vnavmesh stop")
 					--yield("/vbm cfg AI Enabled true")
 				end
 			end	
@@ -225,7 +234,7 @@ local function porta_decumana()
 end
 
 yield("/echo starting.....")
-while repeated_trial < repeat_trial do
+while repeated_trial < (repeat_trial + 1) do
 	yield("/targetenemy") --this will trigger RS to do stuff.
 	if enemy_snake ~= "follow only" then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
@@ -245,7 +254,7 @@ while repeated_trial < repeat_trial do
 	
 	if GetCharacterCondition(34)==false and char_snake == "party leader" then --if we are not in a duty --try to restart duty
 		yield("/visland stop")
-		yield("/navmesh stop")
+		yield("/vnavmesh stop")
 		yield("/wait 2")
 		yield("/echo We seem to be outside of the duty.. let us enter!")
 		yield("/wait 15")	
@@ -276,7 +285,7 @@ while repeated_trial < repeat_trial do
 		if GetTargetName()=="Exit" then --get out ! assuming pandora setup for auto interaction
 			yield("/visland stop")
 			yield("/wait 0.1")
-			yield("/navmesh stop")
+			yield("/vnavmesh stop")
 			yield("/wait 0.1")
 			yield("/lockon on")
 			yield("/automove on")
@@ -289,11 +298,12 @@ while repeated_trial < repeat_trial do
 		--check for spread_marker_entities
 		do_we_spread() --single target spread marker handler function
 		--duty specific stuff
-		if porta_decumana_orbs == 1 then
+		if type(we_are_in) == "number" and we_are_in == 1048 then --porta decumana
+			--yield("/echo Decumana Check!")
 			porta_decumana()
 		end
 		--regular movement to target
-		if char_snake ~= "no follow" and enemy_snake == "nothing" then --close gaps to party leader only if we are on follow mode
+		if char_snake ~= "no follow" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
 			setdeest()
 			if dist_between_points > snake_deest and dist_between_points < meh_deest then
 					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
@@ -301,7 +311,7 @@ while repeated_trial < repeat_trial do
 					--yield("/echo vnavmesh moveto "..math.ceil(currentLocX).." "..math.ceil(currentLocY).." "..math.ceil(currentLocZ))
 			end
 		end
-		if enemy_snake ~= "nothing" then --close gaps to enemy only if we are on follow mode
+		if enemy_snake ~= "nothing" and dutycheck == 0 and we_are_spreading == 0 then --close gaps to enemy only if we are on follow mode
 			setdeest()
 			if dist_between_points > enemy_deest and dist_between_points < enemeh_deest then
 					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
@@ -333,7 +343,7 @@ while repeated_trial < repeat_trial do
 	--check if we chagned areas and rebuild navmesh or just wait as normal
 	we_are_in = GetZoneID() --where are we?
 	if type(we_are_in) ~= "number" then
-		we_are_in = 666 --its an invalid type so lets just default it and wait 10 seconds
+		we_are_in = we_were_in --its an invalid type so lets just default it and wait 10 seconds
 		yield("/echo invalid type for area waiting 10 seconds")
 		yield("/wait 10")
 	end
@@ -343,15 +353,25 @@ while repeated_trial < repeat_trial do
 		--if GetCharacterCondition(34) == true and char_snake ~= "no follow" then --only trigger rebuild in a duty and when following a party leader
 		if GetCharacterCondition(34) == true then --only trigger rebuild in a duty and when following a party leader
 			yield("/vnavmesh rebuild")
+			if char_snake == "party leader" then
+				yield("/cd 5")
+				repeated_trial = repeated_trial + 1
+			end
 		end
 		yield("/echo we changed areas. rebuild the navmesh!")
-		repeated_trial = repeated_trial + 1
-		--yield("/wait 10")
-
-		--reset duty specific stuff
-		porta_decumana_orbs = 1
+		yield("/echo trial has begun!")
+		--reset duty specific stuff. can make smarter checks later but for now just set the duty related stuff to 0 so it doesn't get "in the way" of stuff if you aren't doing that specific duty.
+		dutycheck = 0 --by default we aren't going to stop things because we are in a duty
+		dutycheckupdate = 1 --sometimes we don't want to update dutycheck because we reached phase 2 in a fight.
+		we_were_in = we_are_in --record this as we are in this area now
 	end
-	we_were_in = we_are_in --record this as we are in this area now
+	if GetCharacterCondition(34) ==true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
+		yield("/cd 5")
+		yield("/send KEY_1")
+		yield("/wait 10")
+		dutycheck = 0 --by default we aren't going to stop things because we are in a duty
+		dutycheckupdate = 1 --sometimes we don't want to update dutycheck because we reached phase 2 in a fight.
+	end
 end
 
 
