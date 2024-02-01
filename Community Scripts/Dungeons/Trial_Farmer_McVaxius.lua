@@ -277,6 +277,8 @@ end
 --make sure you go into settings and disable the snd targeting
 --you need following plugins
 --vnavmesh (compile it yourself), SND (croizat fork), pandora, rotation solver, simpletweaks
+--if you dont have vnavmesh, use visland and find+replace all instead of /vnavmesh with /visland   it won't be able to follow very well in dungeons but you can still do trials like porta decumana
+--plogon config
 --simpletweaks -> turn on maincommand
 --turn on auto interact on pandora set distance to 5 dist 5 height
 --turn on vbm. click ai mode -> click follow. then form the group.
