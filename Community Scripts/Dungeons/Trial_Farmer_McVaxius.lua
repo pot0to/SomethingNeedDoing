@@ -289,6 +289,33 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/target shortcut")
 		yield("/wait 0.1")
 		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
+			local minicounter = 0
+			if NeedsRepair(99) then
+				yield("/wait 10")
+				while not IsAddonVisible("Repair") do
+				  yield("/generalaction repair")
+				  yield("/wait 1")
+				  minicounter = minicounter + 1
+				  if minicounter > 20 then
+					minicounter = 0
+					break
+				  end
+				end
+				yield("/pcall Repair true 0")
+				yield("/wait 0.1")
+				if IsAddonVisible("SelectYesno") then
+				  yield("/pcall SelectYesno true 0")
+				  yield("/wait 1")
+				end
+				while GetCharacterCondition(39) do yield("/wait 1") end
+				yield("/wait 1")
+				yield("/pcall Repair true -1")
+				  minicounter = minicounter + 1
+				  if minicounter > 20 then
+					minicounter = 0
+					break
+				  end
+			end
 			yield("/visland stop")
 			yield("/wait 0.1")
 			yield("/vnavmesh stop")
@@ -375,32 +402,6 @@ while repeated_trial < (repeat_trial + 1) do
 	if GetCharacterCondition(34) ==true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
 		--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
 		yield("/equipguud")
-		local minicounter = 0
-		if NeedsRepair(99) then
-		while not IsAddonVisible("Repair") do
-		  yield("/generalaction repair")
-		  yield("/wait 0.5")
-		  minicounter = minicounter + 1
-		  if minicounter > 20 then
-			minicounter = 0
-			break
-		  end
-		end
-		yield("/pcall Repair true 0")
-		yield("/wait 0.1")
-		if IsAddonVisible("SelectYesno") then
-		  yield("/pcall SelectYesno true 0")
-		  yield("/wait 0.1")
-		end
-		while GetCharacterCondition(39) do yield("/wait 1") end
-		yield("/wait 1")
-		yield("/pcall Repair true -1")
-		  minicounter = minicounter + 1
-		  if minicounter > 20 then
-			minicounter = 0
-			break
-		  end
-		end
 		yield("/cd 5")
 		yield("/send KEY_1")
 		--yield("/wait 10")
