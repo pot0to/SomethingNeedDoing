@@ -8,6 +8,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
+using ECommons.DalamudServices;
 using ImGuiNET;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Misc;
@@ -89,27 +90,7 @@ internal class MacroWindow : Window
         ImGui.SameLine();
         if (ImGuiEx.IconButton(FontAwesomeIcon.FileImport, "Import from clipboard"))
         {
-            string text;
-            try
-            {
-                text = ImGui.GetClipboardText();
-            }
-            catch (NullReferenceException ex)
-            {
-                text = string.Empty;
-                Service.ChatManager.PrintError($"[SND] Could not import from clipboard.");
-                Service.Log.Error(ex, "Clipboard import error");
-            }
-
-            // Replace \r with \r\n, usually from copy/pasting from the in-game macro window
-            var rex = new Regex("\r(?!\n)", RegexOptions.Compiled);
-            var matches = from Match match in rex.Matches(text)
-                          let index = match.Index
-                          orderby index descending
-                          select index;
-            foreach (var index in matches)
-                text = text.Remove(index, 1).Insert(index, "\r\n");
-
+            string text = MiscHelpers.ConvertClipboardToSafeString();
             var node = new MacroNode { Name = this.GetUniqueNodeName("Untitled macro") };
             RootFolder.Children.Add(node);
 
@@ -452,6 +433,20 @@ internal class MacroWindow : Window
 
                 ImGui.PopItemWidth();
             }
+        }
+
+        ImGui.SameLine();
+        var buttonSize = ImGuiHelpers.GetButtonSize(FontAwesomeIcon.FileImport.ToIconString());
+        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - buttonSize.X - ImGui.GetStyle().WindowPadding.X);
+        if (ImGuiEx.IconButton(FontAwesomeIcon.FileImport, "Import from clipboard"))
+        {
+            string text = MiscHelpers.ConvertClipboardToSafeString();
+
+            if (MiscHelpers.IsLuaCode(text))
+                node.IsLua = true;
+
+            node.Contents = text;
+            Service.Configuration.Save();
         }
 
         ImGui.PushItemWidth(-1);
