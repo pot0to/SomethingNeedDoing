@@ -12,6 +12,9 @@ function loadVariablesFromFile(filename)
 
     if file then
         for line in file:lines() do
+            -- Remove single-line comments (lines starting with --) before processing
+            line = line:gsub("%s*%-%-.*", "")
+            
             -- Extract variable name and value
             local variable, value = line:match("(%S+)%s*=%s*(.+)")
             if variable and value then
@@ -20,11 +23,13 @@ function loadVariablesFromFile(filename)
                 _G[variable] = value  -- Set the global variable with the extracted name and value
             end
         end
+
         io.close(file)
     else
         print("Error: Unable to open file " .. filename)
     end
 end
+
 
 -- Specify the path to your text file
 -- forward slashes are actually backslashes.
@@ -50,6 +55,17 @@ yield("/echo enemy_snake:"..enemy_snake)
 yield("/echo repeat_trial:"..repeat_trial)
 yield("/echo repeat_type:"..repeat_type)
 yield("/echo partymemberENUM:"..partymemberENUM)
+yield("/echo dont_lockon:"..dont_lockon)
+yield("/echo lockon_wait:"..lockon_wait)
+yield("/echo snake_deest:"..snake_deest)
+yield("/echo enemy_deest:"..enemy_deest)
+yield("/echo meh_deest:"..meh_deest)
+yield("/echo enemeh_deest:"..enemeh_deest)
+
+--cleanup the variablesa  bit.  maybe well lowercase them later toohehe.
+char_snake = char_snake:match("^%s*(.-)%s*$"):gsub('"', '')
+enemy_snake = enemy_snake:match("^%s*(.-)%s*$"):gsub('"', '')
+
 
 --see the .ini file for explanation on settings
 --more comments at the end
@@ -60,12 +76,6 @@ local repeated_trial = 0
 --our current area
 local we_are_in = 666
 local we_were_in = 666
-
---distance stuff
-local snake_deest = 8 -- distance max to the specific char so we can decide when to start moving
-local enemy_deest = 1 -- distance max to the specific enemy to beeline to the enemy using navmesh. set this to a higher value than snake_deest if you want it to never follow the enemy.
-local meh_deest = 40 -- distance max to char_snake where we stop trying to follow or do anything. maybe look for interaction points or exits?
-local enemeh_deest = 8 -- distance max to battle target
 
 --placeholder for target location
 local currentLocX = 1
@@ -84,15 +94,72 @@ local we_were_in = 666
 --declaring distance var
 local dist_between_points = 500
 
---how long to lock on for. we only do it once every lockon_wait seconds. this will interfere less with VBM dodging mechanics
-local dont_lockon = 0
-local lockon_wait = 5
-
 local neverstop = true
 local i = 0
 
+local we_are_spreading = 0 --by default we aren't spreading
+
+--duty specific vars
+local dutycheck = 0
+local dutycheckupdate = 1
+
 local function distance(x1, y1, z1, x2, y2, z2)
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+end
+
+local function do_we_spread()
+    did_we_find_one = 0
+	--need to start getting the names of the ones that vbm doesn't resolve and add them here
+	spread_marker_entities = {
+	"Buttcheeks",
+	"Chuttbeeks",
+	"Kuchkeebs"
+	}
+	--now we iterate through the list of possible entities
+    for _, entity_name in ipairs(spread_marker_entities) do
+         if GetDistanceToObject(entity_name) < 40 then
+             did_we_find_one = 1
+             break --escape from loop we found one!!!
+         end
+    end
+	if did_we_find_one == 1 then
+		--return true
+		we_are_spreading = 1 --indicate to the follow functions that we are spreading and not to try and do stuff
+		spread_em(5) --default 5 "distance" movement for now IMPROVE LATER with multi variable array with distances for each spread marker? and maybe some actual math because 1,1 is actually 1.4 distance from origin.
+	end
+	if did_we_find_one == 0 then
+		--return false
+		--do nothing ;o
+		we_are_spreading = 0 -- we aren't spreading
+	end
+end
+
+local function spread_em(distance)
+    local deltaX, deltaY
+	deltaX = mecurrentLocX
+	deltaY = mecurrentLocY
+    if partymemberENUM == 1 then
+        deltaX, deltaY = 0, -distance  -- Move up
+    elseif partymemberENUM == 2 then
+        deltaX, deltaY = distance, 0  -- Move right
+    elseif partymemberENUM == 3 then
+        deltaX, deltaY = 0, distance  -- Move down
+    elseif partymemberENUM == 4 then
+        deltaX, deltaY = -distance, 0  -- Move left
+    elseif partymemberENUM == 5 then
+        deltaX, deltaY = distance, -distance  -- Move up right
+    elseif partymemberENUM == 6 then
+        deltaX, deltaY = distance, distance  -- Move down right
+    elseif partymemberENUM == 7 then
+        deltaX, deltaY = -distance, distance  -- Move down left
+    elseif partymemberENUM == 8 then
+        deltaX, deltaY = -distance, -distance  -- Move up left
+    else
+        yield("/echo Invalid direction - check partymemberENUM in your .ini file")
+    end
+    --time to do the movement!
+	yield("/vnavmesh moveto "..deltaX.." "..deltaY.." "..mecurrentLocZ)
+	yield("/wait 5")
 end
 
 local function setdeest()
@@ -106,9 +173,73 @@ local function setdeest()
 	end
 end
 
-yield("/echo starting.....")
+--duty specific functions
+local function porta_decumana()
+		--porta decumana ultima weapon orbs in phase 2 near start of phase
+		--very hacky kludge until movement isn't slidy
+		--nested ifs because we don't want to get locked into this
+		phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
+		if dutycheck == 0 and dutycheckupdate == 1 and phase2 < 40 then
+			--we in phase 2 boyo
+			dutycheck = 1
+		end
+		mecurrentLocX = GetPlayerRawXPos(tostring(1))
+		mecurrentLocY = GetPlayerRawYPos(tostring(1))
+		mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+		if dutycheckupdate == 1 and dutycheckupdate == 1 and type(GetDistanceToObject("Magitek Bit")) == "number" and GetDistanceToObject("Magitek Bit") < 50 then
+			dutycheck = 0 --turn off this check
+			dutycheckupdate = 0
+		end
+		if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
+			if partymemberENUM == 1 then
+				yield("/vnavmesh moveto -692.46704 -185.53157 468.43414")
+			end
+			if partymemberENUM == 2 then
+				yield("/vnavmesh moveto -715.5604 -185.53159 468.4341")
+			end
+			if partymemberENUM == 3 then
+				yield("/vnavmesh moveto -715.5605 -185.53157 491.5273")
+			end
+			if partymemberENUM == 4 then
+				yield("/vnavmesh moveto -692.46704 -185.53159 491.52734")
+			end
+			--yield("/wait 5") -- is this too long? we'll see!  maybe this is bad
+		end
+	--[[
+	--on hold for now until movement isnt slide-time-4000
+			if type(GetDistanceToObject("Aetheroplasm")) == "number" then
+	--			if GetObjectRawXPos("Aetheroplasm") > 0 then
+				if GetDistanceToObject("Aetheroplasm") < 20 then
+					--yield("/wait 1")
+					yield("/echo Porta Decumana ball dodger distance to random ball: "..GetDistanceToObject("Aetheroplasm"))
+					yield("/visland stop")
+					yield("/vnavmesh stop")
+					--yield("/vbm cfg AI Enabled false")
+					while type(GetDistanceToObject("Aetheroplasm")) == "number" and GetDistanceToObject("Aetheroplasm") < 20 do
+						if partymemberENUM == 1 then
+							yield("/visland moveto -692.46704 -185.53157 468.43414")
+						end
+						if partymemberENUM == 2 then
+							yield("/visland moveto -715.5604 -185.53159 468.4341")
+						end
+						if partymemberENUM == 3 then
+							yield("/visland moveto -715.5605 -185.53157 491.5273")
+						end
+						if partymemberENUM == 4 then
+							yield("/visland moveto -692.46704 -185.53159 491.52734")
+						end
+						yield("/wait 5")			
+					end
+					yield("/visland stop")
+					yield("/vnavmesh stop")
+					--yield("/vbm cfg AI Enabled true")
+				end
+			end	
+		]]
+end
 
-while repeated_trial < repeat_trial do
+yield("/echo starting.....")
+while repeated_trial < (repeat_trial + 1) do
 	yield("/targetenemy") --this will trigger RS to do stuff.
 	if enemy_snake ~= "follow only" then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
@@ -116,7 +247,7 @@ while repeated_trial < repeat_trial do
 		currentLocY = GetTargetRawYPos()
 		currentLocZ = GetTargetRawZPos()
 	end
-	if enemy_snake == "follow only" then --follow mode loc
+	if char_snake ~= "no follow" and char_snake ~= "party leader" then --follow mode loc
 		currentLocX = GetPlayerRawXPos(tostring(char_snake))
 		currentLocY = GetPlayerRawYPos(tostring(char_snake))
 		currentLocZ = GetPlayerRawZPos(tostring(char_snake))
@@ -128,7 +259,7 @@ while repeated_trial < repeat_trial do
 	
 	if GetCharacterCondition(34)==false and char_snake == "party leader" then --if we are not in a duty --try to restart duty
 		yield("/visland stop")
-		yield("/navmesh stop")
+		yield("/vnavmesh stop")
 		yield("/wait 2")
 		yield("/echo We seem to be outside of the duty.. let us enter!")
 		yield("/wait 15")	
@@ -149,20 +280,45 @@ while repeated_trial < repeat_trial do
 			yield("/pcall DawnStory true 14") --START THE DUTY
 		end
 	
-		--reset duty specific stuff
-		--nothing yet
-
 		yield("/echo Total Trials triggered for "..char_snake..": "..repeated_trial)
 		yield("/wait 10")
 	end
 
-	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then --if we are not in combat AND we are in a duty then we will look for an exit
+	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then --if we are not in combat AND we are in a duty then we will look for an exit or shortcut
 		yield("/target exit")
+		yield("/target shortcut")
 		yield("/wait 0.1")
-		if GetTargetName()=="Exit" then --get out ! assuming pandora setup for auto interaction
+		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
+			local minicounter = 0
+			if NeedsRepair(99) then
+				yield("/wait 10")
+				while not IsAddonVisible("Repair") do
+				  yield("/generalaction repair")
+				  yield("/wait 1")
+				  minicounter = minicounter + 1
+				  if minicounter > 20 then
+					minicounter = 0
+					break
+				  end
+				end
+				yield("/pcall Repair true 0")
+				yield("/wait 0.1")
+				if IsAddonVisible("SelectYesno") then
+				  yield("/pcall SelectYesno true 0")
+				  yield("/wait 1")
+				end
+				while GetCharacterCondition(39) do yield("/wait 1") end
+				yield("/wait 1")
+				yield("/pcall Repair true -1")
+				  minicounter = minicounter + 1
+				  if minicounter > 20 then
+					minicounter = 0
+					break
+				  end
+			end
 			yield("/visland stop")
 			yield("/wait 0.1")
-			yield("/navmesh stop")
+			yield("/vnavmesh stop")
 			yield("/wait 0.1")
 			yield("/lockon on")
 			yield("/automove on")
@@ -172,65 +328,32 @@ while repeated_trial < repeat_trial do
 
 	--test dist to the intended party leader
 	if GetCharacterCondition(34)==true then --if we are in a duty
-		if char_snake ~= "no follow" and enemy_snake ~= "nothing" then --dont close gaps to target if we are on no follow mode
+		--check for spread_marker_entities
+		do_we_spread() --single target spread marker handler function
+		--duty specific stuff
+		if type(we_are_in) == "number" and we_are_in == 1048 then --porta decumana
+			--yield("/echo Decumana Check!")
+			porta_decumana()
+		end
+		--regular movement to target
+		if char_snake ~= "no follow" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
 			setdeest()
 			if dist_between_points > snake_deest and dist_between_points < meh_deest then
+					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ) --sneak around when navmesh being weird
+					yield("/vnavmesh moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
+					--yield("/echo vnavmesh moveto "..math.ceil(currentLocX).." "..math.ceil(currentLocY).." "..math.ceil(currentLocZ))
+					yield("/echo player follow distance between points: "..dist_between_points.." enemy deest"..enemy_deest.." char deest :"..snake_deest)
+			end
+		end
+		if enemy_snake ~= "nothing" and dutycheck == 0 and we_are_spreading == 0 then --close gaps to enemy only if we are on follow mode
+			setdeest()
+			if dist_between_points > enemy_deest and dist_between_points < enemeh_deest then
 					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
 					yield("/vnavmesh moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
 					--yield("/echo vnavmesh moveto "..math.ceil(currentLocX).." "..math.ceil(currentLocY).." "..math.ceil(currentLocZ))
 			end
 		end
-		--duty specific stuff
-		--porta decumana ultima weapon orbs in phase 2 near start of phase
-		--very hacky kludge until movement isn't slidy
-		--nested ifs because we don't want to get locked into this
-		phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
-		if phase2 < 20 and GetDistanceToObject("The Ultimate Weapon") < 20 then
-			if partymemberENUM == 1 then
-				yield("/vnavmesh moveto -692.46704 -185.53157 468.43414")
-			end
-			if partymemberENUM == 2 then
-				yield("/vnavmesh moveto -715.5604 -185.53159 468.4341")
-			end
-			if partymemberENUM == 3 then
-				yield("/vnavmesh moveto -715.5605 -185.53157 491.5273")
-			end
-			if partymemberENUM == 4 then
-				yield("/vnavmesh moveto -692.46704 -185.53159 491.52734")
-			end
-			yield("/wait 5") -- is this too long? we'll see!
-		end
---[[
---on hold for now until movement isnt slide-time-4000
-		if type(GetDistanceToObject("Aetheroplasm")) == "number" then
---			if GetObjectRawXPos("Aetheroplasm") > 0 then
-			if GetDistanceToObject("Aetheroplasm") < 20 then
-				--yield("/wait 1")
-				yield("/echo Porta Decumana ball dodger distance to random ball: "..GetDistanceToObject("Aetheroplasm"))
-				yield("/visland stop")
-				yield("/navmesh stop")
-				--yield("/vbm cfg AI Enabled false")
-				while type(GetDistanceToObject("Aetheroplasm")) == "number" and GetDistanceToObject("Aetheroplasm") < 20 do
-					if partymemberENUM == 1 then
-						yield("/visland moveto -692.46704 -185.53157 468.43414")
-					end
-					if partymemberENUM == 2 then
-						yield("/visland moveto -715.5604 -185.53159 468.4341")
-					end
-					if partymemberENUM == 3 then
-						yield("/visland moveto -715.5605 -185.53157 491.5273")
-					end
-					if partymemberENUM == 4 then
-						yield("/visland moveto -692.46704 -185.53159 491.52734")
-					end
-					yield("/wait 5")			
-				end
-				yield("/visland stop")
-				yield("/navmesh stop")
-				--yield("/vbm cfg AI Enabled true")
-			end
-		end	
-	]]
+		--yield("/echo distance between points: "..dist_between_points.." snake_deest"..snake_deest.." meh_deest :"..meh_deest)
 	end
 	
 	--test dist to the intended party leader
@@ -254,7 +377,7 @@ while repeated_trial < repeat_trial do
 	--check if we chagned areas and rebuild navmesh or just wait as normal
 	we_are_in = GetZoneID() --where are we?
 	if type(we_are_in) ~= "number" then
-		we_are_in = 666 --its an invalid type so lets just default it and wait 10 seconds
+		we_are_in = we_were_in --its an invalid type so lets just default it and wait 10 seconds
 		yield("/echo invalid type for area waiting 10 seconds")
 		yield("/wait 10")
 	end
@@ -264,12 +387,27 @@ while repeated_trial < repeat_trial do
 		--if GetCharacterCondition(34) == true and char_snake ~= "no follow" then --only trigger rebuild in a duty and when following a party leader
 		if GetCharacterCondition(34) == true then --only trigger rebuild in a duty and when following a party leader
 			yield("/vnavmesh rebuild")
+			if char_snake == "party leader" then
+				yield("/cd 5")
+				repeated_trial = repeated_trial + 1
+			end
 		end
 		yield("/echo we changed areas. rebuild the navmesh!")
-		repeated_trial = repeated_trial + 1
-		--yield("/wait 10")
+		yield("/echo trial has begun!")
+		--reset duty specific stuff. can make smarter checks later but for now just set the duty related stuff to 0 so it doesn't get "in the way" of stuff if you aren't doing that specific duty.
+		dutycheck = 0 --by default we aren't going to stop things because we are in a duty
+		dutycheckupdate = 1 --sometimes we don't want to update dutycheck because we reached phase 2 in a fight.
+		we_were_in = we_are_in --record this as we are in this area now
 	end
-	we_were_in = we_are_in --record this as we are in this area now
+	if GetCharacterCondition(34) ==true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
+		--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
+		yield("/equipguud")
+		yield("/cd 5")
+		yield("/send KEY_1")
+		--yield("/wait 10")
+		dutycheck = 0 --by default we aren't going to stop things because we are in a duty
+		dutycheckupdate = 1 --sometimes we don't want to update dutycheck because we reached phase 2 in a fight.
+	end
 end
 
 
@@ -316,3 +454,4 @@ end
 /ac Skyshard
 /ac Big Shot
 ]]
+--v3
