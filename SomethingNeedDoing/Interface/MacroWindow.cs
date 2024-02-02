@@ -88,7 +88,7 @@ internal class MacroWindow : Window
         }
 
         ImGui.SameLine();
-        if (ImGuiEx.IconButton(FontAwesomeIcon.FileImport, "Import from clipboard"))
+        if (ImGuiEx.IconButton(FontAwesomeIcon.FileImport, "Import macro from clipboard"))
         {
             string text = MiscHelpers.ConvertClipboardToSafeString();
             var node = new MacroNode { Name = this.GetUniqueNodeName("Untitled macro") };
