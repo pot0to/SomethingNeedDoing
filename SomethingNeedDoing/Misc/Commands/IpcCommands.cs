@@ -31,6 +31,7 @@ public class IpcCommands
         _autoRetainerApi = new();
         VislandIPC.Init();
         DeliverooIPC.Init();
+        PandorasBoxIPC.Init();
     }
 
     public void Dispose()
@@ -38,7 +39,16 @@ public class IpcCommands
         _autoRetainerApi.Dispose();
         VislandIPC.Dispose();
         DeliverooIPC.Dispose();
+        PandorasBoxIPC.Dispose();
     }
+
+    #region PandorasBox
+    public bool? PandoraGetFeatureEnabled(string feature) => PandorasBoxIPC.GetFeatureEnabled.InvokeFunc(feature);
+    public bool? PandoraGetFeatureConfigEnabled(string feature, string config) => PandorasBoxIPC.GetConfigEnabled.InvokeFunc(feature, config);
+    public void PandoraSetFeatureState(string feature, bool state) => PandorasBoxIPC.SetFeatureEnabled.InvokeFunc(feature, state);
+    public void PandoraSetFeatureConfigState(string feature, string config, bool state) => PandorasBoxIPC.SetConfigEnabled.InvokeFunc(feature, config, state);
+    public void PandoraPauseFeature(string feature, int ms) => PandorasBoxIPC.PauseFeature.InvokeFunc(feature, ms);
+    #endregion
 
     #region AutoHook
     public unsafe void SetAutoHookState(bool state) => AutoHookIPC.SetPluginState(state);
@@ -102,10 +112,29 @@ public class IpcCommands
 
     public void RestoreYesAlready()
     {
-        if (Svc.PluginInterface.TryGetData<HashSet<string>>("YesAlready.StopRequests", out var data) &&
-            data.Contains(nameof(SomethingNeedDoing)))
+        if (Svc.PluginInterface.TryGetData<HashSet<string>>("YesAlready.StopRequests", out var data) && data.Contains(nameof(SomethingNeedDoing)))
         {
             Svc.Log.Debug("Restoring YesAlready");
+            data.Remove(nameof(SomethingNeedDoing));
+        }
+    }
+    #endregion
+
+    #region TextAdvance
+    internal static void PauseTextAdvance()
+    {
+        if (Svc.PluginInterface.TryGetData<HashSet<string>>("TextAdvance.StopRequests", out var data) && !data.Contains(nameof(SomethingNeedDoing)))
+        {
+            Svc.Log.Debug("Disabling TextAdvance");
+            data.Add(nameof(SomethingNeedDoing));
+        }
+    }
+
+    internal static void RestoreTextAdvance()
+    {
+        if (Svc.PluginInterface.TryGetData<HashSet<string>>("TextAdvance.StopRequests", out var data) && data.Contains(nameof(SomethingNeedDoing)))
+        {
+            Svc.Log.Debug("Restoring TextAdvance");
             data.Remove(nameof(SomethingNeedDoing));
         }
     }

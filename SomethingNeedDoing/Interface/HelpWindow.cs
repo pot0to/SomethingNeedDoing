@@ -328,6 +328,16 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+         "2024-02-03",
+         "- Added PauseTextAdvance()\n" +
+         "- Added RestoreTextAdvance()\n" +
+         "- Added PandoraGetFeatureEnabled()\n" +
+         "- Added PandoraGetFeatureConfigEnabled()\n" +
+         "- Added PandoraSetFeatureState()\n" +
+         "- Added PandoraSetFeatureConfigState()\n" +
+         "- Added PandoraPauseFeature()\n");
+
+        DisplayChangelog(
          "2024-02-01",
          "- Added GetTargetHP()\n" +
          "- Added GetTargetHPP()\n\n" +
