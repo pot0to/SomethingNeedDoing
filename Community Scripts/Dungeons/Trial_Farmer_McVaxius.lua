@@ -12,6 +12,9 @@ function loadVariablesFromFile(filename)
 
     if file then
         for line in file:lines() do
+            -- Remove single-line comments (lines starting with --) before processing
+            line = line:gsub("%s*%-%-.*", "")
+            
             -- Extract variable name and value
             local variable, value = line:match("(%S+)%s*=%s*(.+)")
             if variable and value then
@@ -20,11 +23,13 @@ function loadVariablesFromFile(filename)
                 _G[variable] = value  -- Set the global variable with the extracted name and value
             end
         end
+
         io.close(file)
     else
         print("Error: Unable to open file " .. filename)
     end
 end
+
 
 -- Specify the path to your text file
 -- forward slashes are actually backslashes.
@@ -242,7 +247,7 @@ while repeated_trial < (repeat_trial + 1) do
 		currentLocY = GetTargetRawYPos()
 		currentLocZ = GetTargetRawZPos()
 	end
-	if enemy_snake == "follow only" then --follow mode loc
+	if char_snake ~= "no follow" and char_snake ~= "party leader" then --follow mode loc
 		currentLocX = GetPlayerRawXPos(tostring(char_snake))
 		currentLocY = GetPlayerRawYPos(tostring(char_snake))
 		currentLocZ = GetPlayerRawZPos(tostring(char_snake))
@@ -279,10 +284,38 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/wait 10")
 	end
 
-	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then --if we are not in combat AND we are in a duty then we will look for an exit
+	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then --if we are not in combat AND we are in a duty then we will look for an exit or shortcut
 		yield("/target exit")
+		yield("/target shortcut")
 		yield("/wait 0.1")
-		if GetTargetName()=="Exit" then --get out ! assuming pandora setup for auto interaction
+		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
+			local minicounter = 0
+			if NeedsRepair(99) then
+				yield("/wait 10")
+				while not IsAddonVisible("Repair") do
+				  yield("/generalaction repair")
+				  yield("/wait 1")
+				  minicounter = minicounter + 1
+				  if minicounter > 20 then
+					minicounter = 0
+					break
+				  end
+				end
+				yield("/pcall Repair true 0")
+				yield("/wait 0.1")
+				if IsAddonVisible("SelectYesno") then
+				  yield("/pcall SelectYesno true 0")
+				  yield("/wait 1")
+				end
+				while GetCharacterCondition(39) do yield("/wait 1") end
+				yield("/wait 1")
+				yield("/pcall Repair true -1")
+				  minicounter = minicounter + 1
+				  if minicounter > 20 then
+					minicounter = 0
+					break
+				  end
+			end
 			yield("/visland stop")
 			yield("/wait 0.1")
 			yield("/vnavmesh stop")
@@ -306,9 +339,10 @@ while repeated_trial < (repeat_trial + 1) do
 		if char_snake ~= "no follow" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
 			setdeest()
 			if dist_between_points > snake_deest and dist_between_points < meh_deest then
-					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
+					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ) --sneak around when navmesh being weird
 					yield("/vnavmesh moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
 					--yield("/echo vnavmesh moveto "..math.ceil(currentLocX).." "..math.ceil(currentLocY).." "..math.ceil(currentLocZ))
+					yield("/echo player follow distance between points: "..dist_between_points.." enemy deest"..enemy_deest.." char deest :"..snake_deest)
 			end
 		end
 		if enemy_snake ~= "nothing" and dutycheck == 0 and we_are_spreading == 0 then --close gaps to enemy only if we are on follow mode
@@ -319,7 +353,7 @@ while repeated_trial < (repeat_trial + 1) do
 					--yield("/echo vnavmesh moveto "..math.ceil(currentLocX).." "..math.ceil(currentLocY).." "..math.ceil(currentLocZ))
 			end
 		end
-		--yield("/echo distance between points: "..dist_between_points.." enemy deest"..enemy_deest)
+		--yield("/echo distance between points: "..dist_between_points.." snake_deest"..snake_deest.." meh_deest :"..meh_deest)
 	end
 	
 	--test dist to the intended party leader
@@ -366,9 +400,11 @@ while repeated_trial < (repeat_trial + 1) do
 		we_were_in = we_are_in --record this as we are in this area now
 	end
 	if GetCharacterCondition(34) ==true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
+		--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
+		yield("/equipguud")
 		yield("/cd 5")
 		yield("/send KEY_1")
-		yield("/wait 10")
+		--yield("/wait 10")
 		dutycheck = 0 --by default we aren't going to stop things because we are in a duty
 		dutycheckupdate = 1 --sometimes we don't want to update dutycheck because we reached phase 2 in a fight.
 	end
@@ -418,3 +454,4 @@ end
 /ac Skyshard
 /ac Big Shot
 ]]
+--v3
