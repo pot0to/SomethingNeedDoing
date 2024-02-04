@@ -72,6 +72,8 @@ public class CharacterStateCommands
 
     public unsafe bool IsMoving() => AgentMap.Instance()->IsPlayerMoving == 1;
 
+    public bool IsPlayerOccupied() => ECommons.GenericHelpers.IsOccupied();
+
     public unsafe uint GetGil() => InventoryManager.Instance()->GetGil();
 
     public uint GetClassJobId() => Svc.ClientState.LocalPlayer!.ClassJob.Id;

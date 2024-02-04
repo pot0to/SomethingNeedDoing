@@ -79,7 +79,7 @@ public class IpcCommands
         .Where(c => _autoRetainerApi.GetOfflineCharacterData(c).Enabled)
         .Select(c => $"{_autoRetainerApi.GetOfflineCharacterData(c).Name}@{_autoRetainerApi.GetOfflineCharacterData(c).World}").ToList();
 
-    public unsafe bool ARAnyWaitingToBeProcessed(bool allCharacters = false) => ARRetainersWaitingToBeProcessed(allCharacters) || ARSubsWaitingToBeProcessed(allCharacters)
+    public unsafe bool ARAnyWaitingToBeProcessed(bool allCharacters = false) => ARRetainersWaitingToBeProcessed(allCharacters) || ARSubsWaitingToBeProcessed(allCharacters);
 
     public unsafe bool ARRetainersWaitingToBeProcessed(bool allCharacters = false)
     {

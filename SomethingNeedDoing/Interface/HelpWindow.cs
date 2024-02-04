@@ -339,7 +339,8 @@ internal class HelpWindow : Window
          "- Added PandoraPauseFeature()\n\n" +
          "- Added GetClipboard()\n" +
          "- Added SetClipboard()\n" +
-         "- Added CrashTheGame()\n");
+         "- Added CrashTheGame()\n" +
+         "- Added IsPlayerOccupied()\n");
 
         DisplayChangelog(
          "2024-02-01",
