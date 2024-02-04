@@ -328,14 +328,18 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-         "2024-02-03",
+         "2024-02-04",
+         "- Fixed the AR character query commands to only check enabled characters\n" +
          "- Added PauseTextAdvance()\n" +
          "- Added RestoreTextAdvance()\n" +
          "- Added PandoraGetFeatureEnabled()\n" +
          "- Added PandoraGetFeatureConfigEnabled()\n" +
          "- Added PandoraSetFeatureState()\n" +
          "- Added PandoraSetFeatureConfigState()\n" +
-         "- Added PandoraPauseFeature()\n");
+         "- Added PandoraPauseFeature()\n\n" +
+         "- Added GetClipboard()\n" +
+         "- Added SetClipboard()\n" +
+         "- Added CrashTheGame()\n");
 
         DisplayChangelog(
          "2024-02-01",
@@ -1035,11 +1039,12 @@ yield(""/echo done!"")
             (nameof(AddonCommands), AddonCommands.Instance),
             (nameof(CharacterStateCommands), CharacterStateCommands.Instance),
             (nameof(CraftingCommands), CraftingCommands.Instance),
+            (nameof(EntityStateCommands), EntityStateCommands.Instance),
             (nameof(InventoryCommands), InventoryCommands.Instance),
             (nameof(IpcCommands), IpcCommands.Instance),
             (nameof(QuestCommands), QuestCommands.Instance),
-            (nameof(EntityStateCommands), EntityStateCommands.Instance),
-            (nameof(WorldStateCommands), WorldStateCommands.Instance)
+            (nameof(SystemCommands), SystemCommands.Instance),
+            (nameof(WorldStateCommands), WorldStateCommands.Instance),
         };
 
         foreach (var (commandName, commandInstance) in commands)
@@ -1133,7 +1138,8 @@ yield(""/echo done!"")
                 ("Weather", this.DrawWeather),
                 ("CFC", this.DrawCFC),
                 ("Duty Roulette", this.DrawDutyRoulette),
-                ("Ocean Fishing Routes", this.DrawOceanFishingSpots),
+                //("Ocean Fishing Routes", this.DrawOceanFishingRoutes),
+                ("Fishing Spots", this.DrawOceanFishingSpots),
                 ("Achievements", this.DrawAchievements),
             };
 
@@ -1180,6 +1186,18 @@ yield(""/echo done!"")
         }
         ImGui.PopStyleColor();
     }
+
+    //private readonly IEnumerable<IKDRoute> fishingRoutesSheet = Svc.Data.GetExcelSheet<IKDRoute>(Svc.ClientState.ClientLanguage)!.Where(x => x.RowId != 0);
+    //private void DrawOceanFishingRoutes()
+    //{
+    //    using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+    //    ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+    //    foreach (var w in fishingRoutesSheet)
+    //    {
+    //        ImGui.Text($"{w.RowId}: {string.Join(" ", w.UnkData0.ToList())}");
+    //    }
+    //    ImGui.PopStyleColor();
+    //}
 
     private readonly IEnumerable<ContentRoulette> rouletteSheet = Svc.Data.GetExcelSheet<ContentRoulette>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
     private void DrawDutyRoulette()

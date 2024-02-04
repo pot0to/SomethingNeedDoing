@@ -238,10 +238,11 @@ internal partial class ActiveMacro : IDisposable
         RegisterClassMethods(this.lua, AddonCommands.Instance);
         RegisterClassMethods(this.lua, CharacterStateCommands.Instance);
         RegisterClassMethods(this.lua, CraftingCommands.Instance);
+        RegisterClassMethods(this.lua, EntityStateCommands.Instance);
         RegisterClassMethods(this.lua, InventoryCommands.Instance);
         RegisterClassMethods(this.lua, IpcCommands.Instance);
         RegisterClassMethods(this.lua, QuestCommands.Instance);
-        RegisterClassMethods(this.lua, EntityStateCommands.Instance);
+        RegisterClassMethods(this.lua, SystemCommands.Instance);
         RegisterClassMethods(this.lua, WorldStateCommands.Instance);
 
         script = string.Format(EntrypointTemplate, script);
