@@ -1,6 +1,5 @@
--- For those of you who's gotten tired of buying one of each Moonward gear. 
+-- For those of you who's gotten tired of buying one of each Moonward gear.
 -- Uses normal SND, not the LUA button
--- Created by Em
 
 /target J'lakshai
 /wait 0.8

@@ -1,6 +1,6 @@
 --[[
   Description: auto gather collectables for the miner or botanist relic steps
-  Author: Em
+  Author:
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1174327265870483456
 ]]
 
