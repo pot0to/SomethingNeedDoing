@@ -328,9 +328,6 @@ internal class HelpWindow : Window
 
         DisplayChangelog(
         "2024-02-05",
-        "- Added GetLimitBreakBarCount()\n" +
-        "- Added GetLimitBreakBarValue()\n" +
-        "- Added GetLimitBreakCurrentValue()\n" +
         "- Added many global variables usable in any script now. See help menu for a brief explanation.\n");
 
         DisplayChangelog(
