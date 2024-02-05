@@ -3,10 +3,6 @@
 
 local useShortLimsaRoute = true
 
-local chars = {
- 'first last@server',
-}
-
 local gridaniaRoute = "H4sIAAAAAAAACuWTW0vEMBCF/4rMcxuSNEnTvsmqyz6sN4T1gg/BRjZgE2mzipT+d6eXZUF/Qt/mzBwOJx+kg2tTWyhh3bjKeGfO1itIYGd+PoPzsYXypYPb0Lrogoeyg0couSRc5EWRwBOUjPAEnnGpCKNKZlmPMni7ucBbhrd7U7kD5jBCE9iGL1tbH6FEsfHRNuYt7lzc3wz+P7u5GdZp9+H7eMEemPZuPlp7so/lWAKXdYj2GBVtPY/no2MWdwfbxnkegnfGxVPioK5Cswq+mt9Mp+WDq+0WfbRP/hFJOSdKSy30yCQVJMupECMYRkmhtZJ8kWCkHsDITE5gGNFC8GICw4iijLF8kWCUJpnUhZq4UCIpk4Iq1IgmRWpM5sUCPtNr/wtlx33vgwQAAA=="
 
 local uldahRoute = "H4sIAAAAAAAACuWUyWrDMBCGX6XM2R20y/KtpAs5pBst6UIPolGxILZKrLQUk3ev7NgNlD5BrdP80vAz8zGjFi5t5aCA+/XKlkcXM8hgab/eg69jA8VzC9eh8dGHGooWHqA4plwgFyTXGTwmyZApTo2UGTx1r1Kj4YbQXdKhdvNTKCgnGdzald8mR4pJLMKHq1wdoUhiXke3sa9x6WN51eX/uhsKTIU1ZfgcX1JFye3Nrht3SO/LpBmcVSG60Sq6aghP+oxB3GxdE4e4M15aHw+OnToPm1moV0P3ZH955yu3SHlkl/3BhiokRHcwEhvWtdpD4RIFlWqaTBhBrY0emUhhaP4zLlQiyYWaKBpKUGlO92g4mv7kAxrCUDNCpJwmG8bSR6Jzrno4Ytyl3KBRjCsxTSoiLRAXio1Q+okR48QoVIob8//RvOy+Ad4yiSa5BgAA"
@@ -36,8 +32,9 @@ function BackToEstate()
 	yield("/automove")
 end
 
-for _, char in ipairs(chars) do
-	yield("/ays relog " ..char)
+local chars = ARGetRegisteredEnabledCharacters()
+for i = 0, chars.Count - 1 do
+	yield("/ays relog " ..chars[i])
 	yield("/wait 15")
 	yield("/waitaddon NamePlate <maxwait.600> <wait.5>")
 	TeleportToGCTown()
