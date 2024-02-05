@@ -5,7 +5,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -19,9 +18,9 @@ public class CharacterStateCommands
 
     public List<string> ListAllFunctions()
     {
-        MethodInfo[] methods = this.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+        var methods = this.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
         var list = new List<string>();
-        foreach (MethodInfo method in methods.Where(x => x.Name != nameof(ListAllFunctions) && x.DeclaringType != typeof(object)))
+        foreach (var method in methods.Where(x => x.Name != nameof(ListAllFunctions) && x.DeclaringType != typeof(object)))
         {
             var parameterList = method.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}{(p.IsOptional ? " = " + (p.DefaultValue ?? "null") : "")}");
             list.Add($"{method.ReturnType.Name} {method.Name}({string.Join(", ", parameterList)})");
@@ -141,18 +140,10 @@ public class CharacterStateCommands
     public unsafe int GetFCOnlineMembers() => ((InfoProxyFreeCompany*)Framework.Instance()->UIModule->GetInfoModule()->GetInfoProxyById(InfoProxyId.FreeCompany))->OnlineMembers;
     public unsafe int GetFCTotalMembers() => ((InfoProxyFreeCompany*)Framework.Instance()->UIModule->GetInfoModule()->GetInfoProxyById(InfoProxyId.FreeCompany))->TotalMembers;
 
-    [StructLayout(LayoutKind.Explicit, Size = 0x140)]
-    public unsafe struct PlayerMoveControllerWalk
-    {
-        [FieldOffset(0xB0)] public float RotationDir;
-    }
-
-    public static void SetRotation(float y)
-    {
-        var x = new PlayerMoveControllerWalk();
-        x.RotationDir = y;
-    }
-
     public unsafe void RequestAchievementProgress(uint id) => Achievement.Instance()->RequestAchievementProgress(id);
     public unsafe uint GetRequestedAchievementProgress() => Achievement.Instance()->ProgressMax;
+
+    public unsafe byte GetLimitBreakBarCount() => LimitBreakController.Instance()->BarCount;
+    public unsafe uint GetLimitBreakBarValue() => LimitBreakController.Instance()->BarValue;
+    public unsafe ushort GetLimitBreakCurrentValue() => LimitBreakController.Instance()->CurrentValue;
 }

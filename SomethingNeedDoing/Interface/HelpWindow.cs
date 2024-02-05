@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Game.Text;
@@ -14,8 +9,12 @@ using ECommons;
 using ECommons.DalamudServices;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
-using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Interface;
 
@@ -328,6 +327,13 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-05",
+        "- Added GetLimitBreakBarCount()\n" +
+        "- Added GetLimitBreakBarValue()\n" +
+        "- Added GetLimitBreakCurrentValue()\n" +
+        "- Added many global variables usable in any script now. See help menu for a brief explanation.\n");
+
+        DisplayChangelog(
          "2024-02-04",
          "- Fixed the AR character query commands to only check enabled characters\n" +
          "- Added PauseTextAdvance()\n" +
@@ -392,9 +398,9 @@ internal class HelpWindow : Window
          "2024-01-29",
          "- Added TeleportToGCTown()\n" +
          "- Added GetPlayerGC()\n" +
-         "- Added GetActiveFates() [EXPERIMENTAL]\n" +
-         "- Added ARGetRegisteredCharacters() [EXPERIMENTAL]\n" +
-         "- Added ARGetRegisteredEnabledCharacters() [EXPERIMENTAL]\n" +
+         "- Added GetActiveFates()\n" +
+         "- Added ARGetRegisteredCharacters()\n" +
+         "- Added ARGetRegisteredEnabledCharacters()\n" +
          "- Added IsVislandRouteRunning()\n" +
          "- Added GetToastNodeText()\n" +
          "- Added PauseYesAlready()\n" +
@@ -461,7 +467,7 @@ internal class HelpWindow : Window
         DisplayChangelog(
             "2024-01-21",
             "- Added GetInventoryFreeSlotCount()\n");
-        
+
         DisplayChangelog(
           "2024-01-18",
           "- Added GetTargetRawXPos()\n" +
@@ -1029,7 +1035,21 @@ For example:
 yield(""/ac Muscle memory <wait.3>"")
 yield(""/ac Precise touch <wait.2>"")
 yield(""/echo done!"")
-...and so on.".Trim();
+...and so on.
+
+Every script is able to access these global variables:
+Interface, IClientState, IGameGui, IDataManager, IBuddyList, IChatGui, ICommandManager,
+ICondition, IFateTable, IFlyTextGui, IFramework, IGameNetwork, IJobGauges, IKeyState,
+ILibcFunction, IObjectTable, IPartyFinderGui, IPartyList, ISigScanner, ITargetManager,
+IToastGui, IGameConfig, IGameLifecycle, IGamepadState, IDtrBar, IDutyState, IGameInteropProvider,
+ITextureProvider, IPluginLog, IAddonLifecycle, IAetheryteList, IAddonEventManager,
+ITextureSubstitution, ITitleScreenMenu, 
+
+They are Dalamud services, whose code is available here
+https://github.com/goatcorp/Dalamud/tree/master/Dalamud/Plugin/Services.
+
+Many custom functions in SND are simple wrappers around these, but with the global variables
+you can get many properties and functions directly without them needing wrappers added to SND itself.".Trim();
 
         ImGui.TextWrapped(text);
         ImGui.Separator();
@@ -1161,7 +1181,7 @@ yield(""/echo done!"")
             ImGui.EndTabBar();
         }
 
-        ImGui.EndChild();  
+        ImGui.EndChild();
     }
 
     private readonly IEnumerable<Achievement> achievementsSheet = Svc.Data.GetExcelSheet<Achievement>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());

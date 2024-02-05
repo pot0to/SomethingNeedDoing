@@ -2,7 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
+using Dalamud.Game.ClientState.Objects;
+using Dalamud.Plugin.Services;
+using ECommons.DalamudServices;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using NLua;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar;
@@ -217,6 +223,24 @@ internal partial class ActiveMacro : IDisposable
             .Select(line => $"  {line}")
             .Join('\n');
 
+        //var imports = new List<string>
+        //{
+        //    "require \"Dalamud\"",
+        //    "require \"Dalamud.Plugin\"",
+        //    "require \"Dalamud.Logging.PluginLog\"",
+        //    "require \"Lumina\"",
+        //    "require \"Lumina.Excel.GeneratedSheets\"",
+        //};
+
+        //var services = typeof(IDalamudPlugin).Assembly.GetTypes()
+        //    .Where(t => t.GetCustomAttribute(typeof(PluginInterfaceAttribute)) != null)
+        //    .Where(t => t.Namespace != null)
+        //    .Select(t => $"require \"{t.Namespace!}.{t.Name}\"");
+
+        //imports.AddRange(services);
+
+        //script = string.Join("\n", imports) + "\n" + script;
+
         static void RegisterClassMethods(Lua lua, object obj)
         {
             var type = obj.GetType();
@@ -234,6 +258,7 @@ internal partial class ActiveMacro : IDisposable
         this.lua.State.Encoding = Encoding.UTF8;
         this.lua.LoadCLRPackage();
 
+        #region special methods
         RegisterClassMethods(this.lua, ActionCommands.Instance);
         RegisterClassMethods(this.lua, AddonCommands.Instance);
         RegisterClassMethods(this.lua, CharacterStateCommands.Instance);
@@ -244,8 +269,46 @@ internal partial class ActiveMacro : IDisposable
         RegisterClassMethods(this.lua, QuestCommands.Instance);
         RegisterClassMethods(this.lua, SystemCommands.Instance);
         RegisterClassMethods(this.lua, WorldStateCommands.Instance);
+        #endregion
 
         script = string.Format(EntrypointTemplate, script);
+
+        #region globals
+        this.lua["Interface"] = Svc.PluginInterface;
+        this.lua["IClientState"] = Svc.ClientState;
+        this.lua["IGameGui"] = Svc.GameGui;
+        this.lua["IDataManager"] = Svc.Data;
+        this.lua["IBuddyList"] = Svc.Buddies;
+        this.lua["IChatGui"] = Svc.Chat;
+        this.lua["ICommandManager"] = Svc.Commands;
+        this.lua["ICondition"] = Svc.Condition;
+        this.lua["IFateTable"] = Svc.Fates;
+        this.lua["IFlyTextGui"] = Svc.FlyText;
+        this.lua["IFramework"] = Svc.Framework;
+        this.lua["IGameNetwork"] = Svc.GameNetwork;
+        this.lua["IJobGauges"] = Svc.Gauges;
+        this.lua["IKeyState"] = Svc.KeyState;
+        this.lua["ILibcFunction"] = Svc.LibcFunction;
+        this.lua["IObjectTable"] = Svc.Objects;
+        this.lua["IPartyFinderGui"] = Svc.PfGui;
+        this.lua["IPartyList"] = Svc.Party;
+        this.lua["ISigScanner"] = Svc.SigScanner;
+        this.lua["ITargetManager"] = Svc.Targets;
+        this.lua["IToastGui"] = Svc.Toasts;
+        this.lua["IGameConfig"] = Svc.GameConfig;
+        this.lua["IGameLifecycle"] = Svc.GameLifecycle;
+        this.lua["IGamepadState"] = Svc.GamepadState;
+        this.lua["IDtrBar"] = Svc.DtrBar;
+        this.lua["IDutyState"] = Svc.DutyState;
+        this.lua["IGameInteropProvider"] = Svc.Hook;
+        this.lua["ITextureProvider"] = Svc.Texture;
+        this.lua["IPluginLog"] = Svc.Log;
+        this.lua["IAddonLifecycle"] = Svc.AddonLifecycle;
+        this.lua["IAetheryteList"] = Svc.AetheryteList;
+        this.lua["IAddonEventManager"] = Svc.AddonEventManager;
+        this.lua["ITextureSubstitution"] = Svc.TextureSubstitution;
+        this.lua["ITitleScreenMenu"] = Svc.TitleScreenMenu;
+        #endregion
 
         this.lua.DoString(FStringSnippet);
         var results = this.lua.DoString(script);
