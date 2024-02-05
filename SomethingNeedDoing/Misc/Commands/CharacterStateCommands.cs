@@ -142,7 +142,7 @@ public class CharacterStateCommands
     public unsafe void RequestAchievementProgress(uint id) => Achievement.Instance()->RequestAchievementProgress(id);
     public unsafe uint GetRequestedAchievementProgress() => Achievement.Instance()->ProgressMax;
 
-    public unsafe byte GetLimitBreakBarCount() => LimitBreakController.Instance()->BarCount;
-    public unsafe uint GetLimitBreakBarValue() => LimitBreakController.Instance()->BarValue;
-    public unsafe ushort GetLimitBreakCurrentValue() => LimitBreakController.Instance()->CurrentValue;
+    //public unsafe byte GetLimitBreakBarCount() => LimitBreakController.Instance()->BarCount;
+    //public unsafe uint GetLimitBreakBarValue() => LimitBreakController.Instance()->BarValue;
+    //public unsafe ushort GetLimitBreakCurrentValue() => LimitBreakController.Instance()->CurrentValue;
 }
