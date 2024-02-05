@@ -10,10 +10,7 @@ internal class IndexModifier : MacroModifier
 {
     private static readonly Regex Regex = new(@"(?<modifier><index\.(?<objectId>\d+(?:\.\d+)?)>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private IndexModifier(int objectId)
-    {
-        this.ObjectId = objectId;
-    }
+    private IndexModifier(int objectId) => this.ObjectId = objectId;
 
     /// <summary>
     /// Gets the objectIndex of the specified Target.

@@ -1,9 +1,9 @@
+using SomethingNeedDoing.Grammar.Modifiers;
+using SomethingNeedDoing.Misc;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using SomethingNeedDoing.Grammar.Modifiers;
-using SomethingNeedDoing.Misc;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -84,10 +84,7 @@ internal abstract class MacroCommand
     public int ObjectIndex { get; }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return this.Text;
-    }
+    public override string ToString() => this.Text;
 
     /// <summary>
     /// Execute a macro command.

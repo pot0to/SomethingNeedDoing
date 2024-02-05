@@ -8,13 +8,7 @@ internal static class VislandIPC
 
     internal static ICallGateSubscriber<bool>? IsRouteRunning;
 
-    internal static void Init()
-    {
-        IsRouteRunning = Service.Interface.GetIpcSubscriber<bool>(IsRouteRunningStr);
-    }
+    internal static void Init() => IsRouteRunning = Service.Interface.GetIpcSubscriber<bool>(IsRouteRunningStr);
 
-    internal static void Dispose()
-    {
-        IsRouteRunning = null;
-    }
+    internal static void Dispose() => IsRouteRunning = null;
 }

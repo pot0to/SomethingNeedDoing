@@ -1,6 +1,5 @@
-﻿using System;
-
-using SomethingNeedDoing.Misc;
+﻿using SomethingNeedDoing.Misc;
+using System;
 
 namespace SomethingNeedDoing.Exceptions;
 
@@ -15,10 +14,7 @@ internal partial class MacroPause : InvalidOperationException
     /// <param name="command">The reason for stopping.</param>
     /// <param name="color">SeString color.</param>
     public MacroPause(string command, UiColor color)
-        : base($"Macro paused: {command}")
-    {
-        this.Color = color;
-    }
+        : base($"Macro paused: {command}") => this.Color = color;
 
     /// <summary>
     /// Gets the color.

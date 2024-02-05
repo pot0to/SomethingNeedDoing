@@ -1,10 +1,10 @@
+using SomethingNeedDoing.Exceptions;
+using SomethingNeedDoing.Misc;
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using SomethingNeedDoing.Exceptions;
-using SomethingNeedDoing.Misc;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -45,14 +45,13 @@ internal class WaitCommand : MacroCommand
         var untilValue = untilGroup.Success ? untilGroup.Value : "0";
         var until = (int)(float.Parse(untilValue, CultureInfo.InvariantCulture) * 1000);
 
-        if (wait > until && until > 0)
-            throw new ArgumentException("Wait value cannot be lower than the until value");
-
-        return new WaitCommand(text, wait, until);
+        return wait > until && until > 0
+            ? throw new ArgumentException("Wait value cannot be lower than the until value")
+            : new WaitCommand(text, wait, until);
     }
 
     /// <inheritdoc/>
-    public async override Task Execute(ActiveMacro macro, CancellationToken token)
+    public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Service.Log.Debug($"Executing: {this.Text}");
 

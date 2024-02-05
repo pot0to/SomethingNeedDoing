@@ -10,10 +10,7 @@ internal class MaxWaitModifier : MacroModifier
 {
     private static readonly Regex Regex = new(@"(?<modifier><maxwait\.(?<wait>\d+(?:\.\d+)?)>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private MaxWaitModifier(int wait)
-    {
-        this.Wait = wait;
-    }
+    private MaxWaitModifier(int wait) => this.Wait = wait;
 
     /// <summary>
     /// Gets the milliseconds to wait.

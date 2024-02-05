@@ -1,11 +1,11 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using SomethingNeedDoing.Exceptions;
+﻿using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -24,10 +24,7 @@ internal class RequireSpiritbondCommand : MacroCommand
     /// <param name="text">Original text.</param>
     /// <param name="within">Check if other items are within a certain percentage.</param>
     /// <param name="wait">Wait value.</param>
-    private RequireSpiritbondCommand(string text, float within, WaitModifier wait) : base(text, wait)
-    {
-        this.within = within;
-    }
+    private RequireSpiritbondCommand(string text, float within, WaitModifier wait) : base(text, wait) => this.within = within;
 
     /// <summary>
     /// Parse the text as a command.
@@ -50,7 +47,7 @@ internal class RequireSpiritbondCommand : MacroCommand
     }
 
     /// <inheritdoc/>
-    public async override Task Execute(ActiveMacro macro, CancellationToken token)
+    public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Service.Log.Debug($"Executing: {this.Text}");
 

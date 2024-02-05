@@ -1,11 +1,11 @@
-using System;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
+using System;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -58,7 +58,7 @@ internal class WaitAddonCommand : MacroCommand
     }
 
     /// <inheritdoc/>
-    public async override Task Execute(ActiveMacro macro, CancellationToken token)
+    public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Service.Log.Debug($"Executing: {this.Text}");
 
@@ -80,9 +80,6 @@ internal class WaitAddonCommand : MacroCommand
             return (addonPtr, false);
 
         var addon = (AtkUnitBase*)addonPtr;
-        if (!addon->IsVisible || addon->UldManager.LoadedState != AtkLoadState.Loaded)
-            return (addonPtr, false);
-
-        return (addonPtr, true);
+        return !addon->IsVisible || addon->UldManager.LoadedState != AtkLoadState.Loaded ? ((nint Addon, bool IsVisible))(addonPtr, false) : ((nint Addon, bool IsVisible))(addonPtr, true);
     }
 }

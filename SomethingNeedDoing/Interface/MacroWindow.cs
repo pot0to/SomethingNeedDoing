@@ -1,17 +1,15 @@
+using Dalamud.Interface;
+using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility;
+using Dalamud.Interface.Windowing;
+using ImGuiNET;
+using SomethingNeedDoing.Exceptions;
+using SomethingNeedDoing.Misc;
 using System;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
-
-using Dalamud.Interface;
-using Dalamud.Interface.Colors;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Windowing;
-using ECommons.DalamudServices;
-using ImGuiNET;
-using SomethingNeedDoing.Exceptions;
-using SomethingNeedDoing.Misc;
 
 namespace SomethingNeedDoing.Interface;
 
@@ -38,22 +36,13 @@ internal class MacroWindow : Window
 
     private static FolderNode RootFolder => Service.Configuration.RootFolder;
 
-    public override void Update()
-    {
-        this.Flags = Service.Configuration.LockWindow ? ImGuiWindowFlags.NoMove : 0;
-    }
+    public override void Update() => this.Flags = Service.Configuration.LockWindow ? ImGuiWindowFlags.NoMove : 0;
 
     /// <inheritdoc/>
-    public override void PreDraw()
-    {
-        ImGui.PushStyleColor(ImGuiCol.ResizeGrip, 0);
-    }
+    public override void PreDraw() => ImGui.PushStyleColor(ImGuiCol.ResizeGrip, 0);
 
     /// <inheritdoc/>
-    public override void PostDraw()
-    {
-        ImGui.PopStyleColor();
-    }
+    public override void PostDraw() => ImGui.PopStyleColor();
 
     /// <inheritdoc/>
     public override void Draw()
@@ -90,7 +79,7 @@ internal class MacroWindow : Window
         ImGui.SameLine();
         if (ImGuiEx.IconButton(FontAwesomeIcon.FileImport, "Import macro from clipboard"))
         {
-            string text = MiscHelpers.ConvertClipboardToSafeString();
+            var text = MiscHelpers.ConvertClipboardToSafeString();
             var node = new MacroNode { Name = this.GetUniqueNodeName("Untitled macro") };
             RootFolder.Children.Add(node);
 
@@ -309,10 +298,10 @@ internal class MacroWindow : Window
         if (ImGui.BeginListBox("##running-macros", new Vector2(-1, runningHeight)))
         {
             var macroStatus = Service.MacroManager.MacroStatus;
-            for (int i = 0; i < macroStatus.Length; i++)
+            for (var i = 0; i < macroStatus.Length; i++)
             {
                 var (name, stepIndex) = macroStatus[i];
-                string text = name;
+                var text = name;
                 if (i == 0 || stepIndex > 1)
                     text += $" (step {stepIndex})";
                 ImGui.Selectable($"{text}##{Guid.NewGuid()}", i == 0);
@@ -332,7 +321,7 @@ internal class MacroWindow : Window
             }
             else
             {
-                for (int i = stepIndex; i < macroContent.Length; i++)
+                for (var i = stepIndex; i < macroContent.Length; i++)
                 {
                     var step = macroContent[i];
                     var isCurrentStep = i == stepIndex;
@@ -440,7 +429,7 @@ internal class MacroWindow : Window
         ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - buttonSize.X - ImGui.GetStyle().WindowPadding.X);
         if (ImGuiEx.IconButton(FontAwesomeIcon.FileImport, "Import from clipboard"))
         {
-            string text = MiscHelpers.ConvertClipboardToSafeString();
+            var text = MiscHelpers.ConvertClipboardToSafeString();
 
             if (MiscHelpers.IsLuaCode(text))
                 node.IsLua = true;
@@ -575,7 +564,7 @@ internal class MacroWindow : Window
     {
         if (ImGui.IsItemHovered())
         {
-            int mouseDelta = (int)ImGui.GetIO().MouseWheel;  // -1, 0, 1
+            var mouseDelta = (int)ImGui.GetIO().MouseWheel;  // -1, 0, 1
             if (mouseDelta != 0)
             {
                 iv += mouseDelta;

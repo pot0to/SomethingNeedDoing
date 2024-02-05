@@ -1,7 +1,7 @@
-﻿using System;
+﻿using FFXIVClientStructs.FFXIV.Client.UI;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using FFXIVClientStructs.FFXIV.Client.UI;
 
 namespace SomethingNeedDoing.Grammar.Modifiers;
 

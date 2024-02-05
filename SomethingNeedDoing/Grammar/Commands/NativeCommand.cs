@@ -1,8 +1,8 @@
+using SomethingNeedDoing.Grammar.Modifiers;
+using SomethingNeedDoing.Misc;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SomethingNeedDoing.Grammar.Modifiers;
-using SomethingNeedDoing.Misc;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -34,7 +34,7 @@ internal class NativeCommand : MacroCommand
     }
 
     /// <inheritdoc/>
-    public async override Task Execute(ActiveMacro macro, CancellationToken token)
+    public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Service.Log.Debug($"Executing: {this.Text}");
 

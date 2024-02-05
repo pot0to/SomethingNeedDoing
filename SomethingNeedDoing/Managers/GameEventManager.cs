@@ -1,7 +1,6 @@
+using Dalamud.Game.ClientState.Conditions;
 using System;
 using System.Threading;
-
-using Dalamud.Game.ClientState.Conditions;
 
 namespace SomethingNeedDoing.Managers;
 

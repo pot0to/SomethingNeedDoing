@@ -63,7 +63,6 @@ internal class TargetCommand : MacroCommand
             .Skip(this.listIndex)
             .FirstOrDefault();
 
-
         if (target == default && Service.Configuration.StopMacroIfTargetNotFound)
             throw new MacroCommandError("Could not find target");
 

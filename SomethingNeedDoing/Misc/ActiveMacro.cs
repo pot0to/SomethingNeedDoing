@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using Dalamud.Game.ClientState.Objects;
-using Dalamud.Plugin.Services;
-using ECommons.DalamudServices;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
+﻿using ECommons.DalamudServices;
 using NLua;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar;
 using SomethingNeedDoing.Grammar.Commands;
 using SomethingNeedDoing.Misc.Commands;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
 namespace SomethingNeedDoing.Misc;
 
@@ -35,7 +30,7 @@ internal partial class ActiveMacro : IDisposable
 
         if (node.IsLua)
         {
-            this.Steps = new List<MacroCommand>();
+            this.Steps = [];
             return;
         }
 
@@ -80,10 +75,9 @@ internal partial class ActiveMacro : IDisposable
             if (craftCount == -1)
                 craftCount = 999_999;
 
-            if (!template.Contains("{{macro}}"))
-                throw new MacroCommandError("CraftLoop template does not contain the {{macro}} placeholder");
-
-            return template
+            return !template.Contains("{{macro}}")
+                ? throw new MacroCommandError("CraftLoop template does not contain the {{macro}} placeholder")
+                : template
                 .Replace("{{macro}}", contents)
                 .Replace("{{count}}", craftCount.ToString());
         }
@@ -142,7 +136,7 @@ internal partial class ActiveMacro : IDisposable
                 sb.AppendLine(clickSteps);
                 sb.AppendLine(loopStep);
             }
-            else if (craftCount == 0 || craftCount == 1)
+            else if (craftCount is 0 or 1)
             {
                 sb.AppendLine(contents);
             }
@@ -168,10 +162,7 @@ internal partial class ActiveMacro : IDisposable
     /// <summary>
     /// Go to the next step.
     /// </summary>
-    public void NextStep()
-    {
-        this.StepIndex++;
-    }
+    public void NextStep() => this.StepIndex++;
 
     /// <summary>
     /// Loop.
@@ -210,10 +201,7 @@ internal partial class ActiveMacro : IDisposable
             return command;
         }
 
-        if (this.StepIndex < 0 || this.StepIndex >= this.Steps.Count)
-            return null;
-
-        return this.Steps[this.StepIndex];
+        return this.StepIndex < 0 || this.StepIndex >= this.Steps.Count ? null : this.Steps[this.StepIndex];
     }
 
     private void InitLuaScript()

@@ -9,10 +9,7 @@ internal class EchoModifier : MacroModifier
 {
     private static readonly Regex Regex = new(@"(?<modifier><echo>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private EchoModifier(bool echo)
-    {
-        this.PerformEcho = echo;
-    }
+    private EchoModifier(bool echo) => this.PerformEcho = echo;
 
     /// <summary>
     /// Gets a value indicating whether to perform an echo.

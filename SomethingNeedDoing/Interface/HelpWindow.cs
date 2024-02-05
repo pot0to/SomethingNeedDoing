@@ -1189,7 +1189,7 @@ you can get many properties and functions directly without them needing wrappers
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-        foreach (var w in achievementsSheet)
+        foreach (var w in this.achievementsSheet)
         {
             ImGui.Text($"{w.RowId}: {w.Name}");
         }
@@ -1201,7 +1201,7 @@ you can get many properties and functions directly without them needing wrappers
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-        foreach (var w in fishingSpotsSheet)
+        foreach (var w in this.fishingSpotsSheet)
         {
             ImGui.Text($"{w.RowId}: {w.PlaceName.Value!.Name}");
         }
@@ -1225,7 +1225,7 @@ you can get many properties and functions directly without them needing wrappers
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-        foreach (var w in rouletteSheet)
+        foreach (var w in this.rouletteSheet)
         {
             ImGui.Text($"{w.RowId}: {w.Name}");
         }
@@ -1237,7 +1237,7 @@ you can get many properties and functions directly without them needing wrappers
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-        foreach (var w in cfcSheet)
+        foreach (var w in this.cfcSheet)
         {
             ImGui.Text($"{w.RowId}: {w.Name}");
         }
@@ -1249,7 +1249,7 @@ you can get many properties and functions directly without them needing wrappers
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-        foreach (var w in weatherSheet)
+        foreach (var w in this.weatherSheet)
         {
             ImGui.Text($"{w.RowId}: {w.Name}");
         }
@@ -1261,7 +1261,7 @@ you can get many properties and functions directly without them needing wrappers
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-        foreach (var cj in classJobSheet)
+        foreach (var cj in this.classJobSheet)
         {
             ImGui.Text($"{cj.RowId}: {cj.Name}; ExpArrayIndex={cj.ExpArrayIndex}");
         }

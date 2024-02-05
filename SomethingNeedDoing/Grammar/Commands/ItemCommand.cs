@@ -1,13 +1,12 @@
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
-
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Sheets = Lumina.Excel.GeneratedSheets;
 
 namespace SomethingNeedDoing.Grammar.Commands;
@@ -56,7 +55,7 @@ internal class ItemCommand : MacroCommand
     }
 
     /// <inheritdoc/>
-    public async override Task Execute(ActiveMacro macro, CancellationToken token)
+    public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Service.Log.Debug($"Executing: {this.Text}");
 
@@ -90,19 +89,15 @@ internal class ItemCommand : MacroCommand
     private unsafe int GetInventoryItemCount(uint itemID, bool isHQ)
     {
         var inventoryManager = InventoryManager.Instance();
-        if (inventoryManager == null)
-            throw new MacroCommandError("InventoryManager not found");
-
-        return inventoryManager->GetInventoryItemCount(itemID, isHQ);
+        return inventoryManager == null
+            ? throw new MacroCommandError("InventoryManager not found")
+            : inventoryManager->GetInventoryItemCount(itemID, isHQ);
     }
 
     private uint SearchItemId(string itemName)
     {
         var sheet = Service.DataManager.GetExcelSheet<Sheets.Item>()!;
         var item = sheet.FirstOrDefault(r => r.Name.ToString().ToLowerInvariant() == itemName);
-        if (item == null)
-            throw new MacroCommandError("Item not found");
-
-        return item.RowId;
+        return item == null ? throw new MacroCommandError("Item not found") : item.RowId;
     }
 }

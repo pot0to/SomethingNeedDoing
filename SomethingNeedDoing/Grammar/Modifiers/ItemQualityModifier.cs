@@ -9,10 +9,7 @@ internal class ItemQualityModifier : MacroModifier
 {
     private static readonly Regex Regex = new(@"(?<modifier><hq>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private ItemQualityModifier(bool isHQ)
-    {
-        this.IsHq = isHQ;
-    }
+    private ItemQualityModifier(bool isHQ) => this.IsHq = isHQ;
 
     /// <summary>
     /// Gets a value indicating whether the hq item is used.

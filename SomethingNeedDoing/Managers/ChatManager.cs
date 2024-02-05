@@ -1,15 +1,14 @@
-using System;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Channels;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using SomethingNeedDoing.DalamudServices.Legacy;
 using SomethingNeedDoing.Misc;
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Channels;
 
 namespace SomethingNeedDoing.Managers;
 
@@ -84,10 +83,7 @@ internal class ChatManager : IDisposable
     /// Process a command through the chat box.
     /// </summary>
     /// <param name="message">Message to send.</param>
-    public async void SendMessage(string message)
-    {
-        await this.chatBoxMessages.Writer.WriteAsync(message);
-    }
+    public async void SendMessage(string message) => await this.chatBoxMessages.Writer.WriteAsync(message);
 
     /// <summary>
     /// Clear the queue of messages to send to the chatbox.
@@ -150,9 +146,6 @@ internal class ChatManager : IDisposable
             this.unk2 = 0;
         }
 
-        public void Dispose()
-        {
-            Marshal.FreeHGlobal(this.textPtr);
-        }
+        public void Dispose() => Marshal.FreeHGlobal(this.textPtr);
     }
 }

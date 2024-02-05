@@ -1,11 +1,11 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using SomethingNeedDoing.Exceptions;
+﻿using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -24,10 +24,7 @@ internal class RequireQualityCommand : MacroCommand
     /// <param name="text">Original text.</param>
     /// <param name="quality">Quality value.</param>
     /// <param name="wait">Wait value.</param>
-    private RequireQualityCommand(string text, uint quality, WaitModifier wait) : base(text, wait)
-    {
-        this.requiredQuality = quality;
-    }
+    private RequireQualityCommand(string text, uint quality, WaitModifier wait) : base(text, wait) => this.requiredQuality = quality;
 
     /// <summary>
     /// Parse the text as a command.
@@ -49,7 +46,7 @@ internal class RequireQualityCommand : MacroCommand
     }
 
     /// <inheritdoc/>
-    public async override Task Execute(ActiveMacro macro, CancellationToken token)
+    public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Service.Log.Debug($"Executing: {this.Text}");
 

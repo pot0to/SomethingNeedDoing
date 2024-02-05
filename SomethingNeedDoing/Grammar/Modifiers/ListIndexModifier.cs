@@ -10,10 +10,7 @@ internal class ListIndexModifier : MacroModifier
 {
     private static readonly Regex Regex = new(@"(?<modifier><list\.(?<listIndex>\d+(?:\.\d+)?)>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private ListIndexModifier(int listIndex)
-    {
-        this.ListIndex = listIndex;
-    }
+    private ListIndexModifier(int listIndex) => this.ListIndex = listIndex;
 
     public int ListIndex { get; }
 

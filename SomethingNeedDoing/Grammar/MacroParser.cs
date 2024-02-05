@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using SomethingNeedDoing.Grammar.Commands;
+using System.Collections.Generic;
 using System.IO;
-
-using SomethingNeedDoing.Grammar.Commands;
 
 namespace SomethingNeedDoing.Grammar;
 

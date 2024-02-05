@@ -9,10 +9,7 @@ internal class UnsafeModifier : MacroModifier
 {
     private static readonly Regex Regex = new(@"(?<modifier><unsafe>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private UnsafeModifier(bool isUnsafe)
-    {
-        this.IsUnsafe = isUnsafe;
-    }
+    private UnsafeModifier(bool isUnsafe) => this.IsUnsafe = isUnsafe;
 
     /// <summary>
     /// Gets a value indicating whether the modifier was present.

@@ -1,12 +1,12 @@
+using NLua.Exceptions;
+using SomethingNeedDoing.Exceptions;
+using SomethingNeedDoing.Grammar.Commands;
+using SomethingNeedDoing.Misc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using NLua.Exceptions;
-using SomethingNeedDoing.Exceptions;
-using SomethingNeedDoing.Grammar.Commands;
-using SomethingNeedDoing.Misc;
 
 namespace SomethingNeedDoing.Managers;
 
@@ -267,10 +267,7 @@ internal sealed partial class MacroManager
     /// <summary>
     /// Resume macro execution.
     /// </summary>
-    public void Resume()
-    {
-        this.pausedWaiter.Set();
-    }
+    public void Resume() => this.pausedWaiter.Set();
 
     /// <summary>
     /// Stop macro execution.
@@ -317,23 +314,11 @@ internal sealed partial class MacroManager
     /// Gets the contents of the current macro.
     /// </summary>
     /// <returns>Macro contents.</returns>
-    public string[] CurrentMacroContent()
-    {
-        if (this.macroStack.TryPeek(out var result))
-            return result.Steps.Select(s => s.ToString()).ToArray();
-
-        return Array.Empty<string>();
-    }
+    public string[] CurrentMacroContent() => this.macroStack.TryPeek(out var result) ? result.Steps.Select(s => s.ToString()).ToArray() : Array.Empty<string>();
 
     /// <summary>
     /// Gets the executing line number of the current macro.
     /// </summary>
     /// <returns>Macro line number.</returns>
-    public int CurrentMacroStep()
-    {
-        if (this.macroStack.TryPeek(out var result))
-            return result.StepIndex;
-
-        return 0;
-    }
+    public int CurrentMacroStep() => this.macroStack.TryPeek(out var result) ? result.StepIndex : 0;
 }

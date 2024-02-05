@@ -1,10 +1,9 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
 using Dalamud.Configuration;
 using Dalamud.Game.Text;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace SomethingNeedDoing;
 
@@ -154,10 +153,7 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
     /// Get all nodes in the tree.
     /// </summary>
     /// <returns>All the nodes.</returns>
-    internal IEnumerable<INode> GetAllNodes()
-    {
-        return new INode[] { this.RootFolder }.Concat(this.GetAllNodes(this.RootFolder.Children));
-    }
+    internal IEnumerable<INode> GetAllNodes() => new INode[] { this.RootFolder }.Concat(this.GetAllNodes(this.RootFolder.Children));
 
     /// <summary>
     /// Gets all the nodes in this subset of the tree.
