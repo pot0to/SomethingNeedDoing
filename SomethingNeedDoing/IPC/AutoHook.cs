@@ -15,4 +15,6 @@ internal class AutoHookIPC
     public static void CreateAndSelectAnonymousPreset(string preset) => Service.Interface.GetIpcSubscriber<string, object>("AutoHook.CreateAndSelectAnonymousPreset").InvokeAction(preset);
 
     public static void DeleteSelectedPreset() => Service.Interface.GetIpcSubscriber<object>("AutoHook.DeleteSelectedPreset").InvokeAction();
+
+    public static void DeleteAllAnonymousPresets() => Service.Interface.GetIpcSubscriber<object>("AutoHook.DeleteAllAnonymousPresets").InvokeAction();
 }

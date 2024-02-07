@@ -327,6 +327,13 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-06",
+        "- Added DeleteAllAutoHookAnonymousPresets()\n" +
+        "- Added ARGetRegisteredRetainers()\n" +
+        "- Added ARGetRegisteredEnabledRetainers()\n" +
+        "- Added ARSetSuppressed()\n");
+
+        DisplayChangelog(
         "2024-02-05",
         "- Added many global variables usable in any script now. See help menu for a brief explanation.\n");
 

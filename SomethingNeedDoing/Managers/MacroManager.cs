@@ -16,7 +16,7 @@ namespace SomethingNeedDoing.Managers;
 internal partial class MacroManager : IDisposable
 {
     private readonly Stack<ActiveMacro> macroStack = new();
-    private readonly CancellationTokenSource eventLoopTokenSource = new();
+    private CancellationTokenSource eventLoopTokenSource = new();
     private readonly ManualResetEvent loggedInWaiter = new(false);
     private readonly ManualResetEvent pausedWaiter = new(true);
 
@@ -284,6 +284,9 @@ internal sealed partial class MacroManager
         {
             this.PauseAtLoop = false;
             this.StopAtLoop = false;
+
+            this.eventLoopTokenSource.TryReset();
+
             this.pausedWaiter.Set();
             this.macroStack.Clear();
             Service.ChatManager.Clear();

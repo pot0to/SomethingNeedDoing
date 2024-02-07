@@ -34,7 +34,7 @@ public class IpcCommands
         PandorasBoxIPC.Init();
     }
 
-    public void Dispose()
+    internal void Dispose()
     {
         this._autoRetainerApi.Dispose();
         VislandIPC.Dispose();
@@ -58,6 +58,7 @@ public class IpcCommands
     public unsafe void SetAutoHookPreset(string preset) => AutoHookIPC.SetPreset(preset);
     public unsafe void UseAutoHookAnonymousPreset(string preset) => AutoHookIPC.CreateAndSelectAnonymousPreset(preset);
     public unsafe void DeletedSelectedAutoHookPreset() => AutoHookIPC.DeleteSelectedPreset();
+    public unsafe void DeleteAllAutoHookAnonymousPresets() => AutoHookIPC.DeleteAllAnonymousPresets();
     #endregion
 
     #region Deliveroo
@@ -69,6 +70,8 @@ public class IpcCommands
     #endregion
 
     #region AutoRetainer
+    public unsafe void ARSetSuppressed(bool state) => _autoRetainerApi.Suppressed = state;
+
     public unsafe List<string> ARGetRegisteredCharacters() =>
         this._autoRetainerApi.GetRegisteredCharacters().AsParallel()
         .Select(c => $"{this._autoRetainerApi.GetOfflineCharacterData(c).Name}@{this._autoRetainerApi.GetOfflineCharacterData(c).World}").ToList();
@@ -77,6 +80,16 @@ public class IpcCommands
         this._autoRetainerApi.GetRegisteredCharacters().AsParallel()
         .Where(c => this._autoRetainerApi.GetOfflineCharacterData(c).Enabled)
         .Select(c => $"{this._autoRetainerApi.GetOfflineCharacterData(c).Name}@{this._autoRetainerApi.GetOfflineCharacterData(c).World}").ToList();
+
+    public unsafe List<string> ARGetRegisteredRetainers() =>
+        this._autoRetainerApi.GetRegisteredCharacters().AsParallel()
+        .Select(c => this._autoRetainerApi.GetOfflineCharacterData(c).RetainerData.Select(r => r.Name)).SelectMany(names => names).ToList();
+
+    public unsafe List<string> ARGetRegisteredEnabledRetainers() =>
+        this._autoRetainerApi.GetRegisteredCharacters().AsParallel()
+        .Where(c => this._autoRetainerApi.GetOfflineCharacterData(c).Enabled)
+        .Select(c => this._autoRetainerApi.GetOfflineCharacterData(c).RetainerData
+        .Where(r => r.HasVenture).Select(r => r.Name)).SelectMany(names => names).ToList();
 
     public unsafe bool ARAnyWaitingToBeProcessed(bool allCharacters = false) => this.ARRetainersWaitingToBeProcessed(allCharacters) || this.ARSubsWaitingToBeProcessed(allCharacters);
 
