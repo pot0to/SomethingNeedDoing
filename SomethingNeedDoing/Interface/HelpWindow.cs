@@ -327,6 +327,10 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-07",
+        "- Added more global variables\n");
+
+        DisplayChangelog(
         "2024-02-06",
         "- Added DeleteAllAutoHookAnonymousPresets()\n" +
         "- Added ARGetRegisteredRetainers()\n" +
@@ -1042,12 +1046,9 @@ yield(""/echo done!"")
 ...and so on.
 
 Every script is able to access these global variables:
-Interface, IClientState, IGameGui, IDataManager, IBuddyList, IChatGui, ICommandManager,
-ICondition, IFateTable, IFlyTextGui, IFramework, IGameNetwork, IJobGauges, IKeyState,
-ILibcFunction, IObjectTable, IPartyFinderGui, IPartyList, ISigScanner, ITargetManager,
-IToastGui, IGameConfig, IGameLifecycle, IGamepadState, IDtrBar, IDutyState, IGameInteropProvider,
-ITextureProvider, IPluginLog, IAddonLifecycle, IAetheryteList, IAddonEventManager,
-ITextureSubstitution, ITitleScreenMenu, 
+Interface, IClientState, IGameGui, IDataManager, IBuddyList, IChatGui, ICommandManager, ICondition, IFateTable, IFlyTextGui, IFramework, IGameNetwork, IJobGauges, IKeyState, ILibcFunction, IObjectTable, IPartyFinderGui, IPartyList, ISigScanner, ITargetManager, IToastGui, IGameConfig, IGameLifecycle, IGamepadState, IDtrBar, IDutyState, IGameInteropProvider, ITextureProvider, IPluginLog, IAddonLifecycle, IAetheryteList, IAddonEventManager, ITextureSubstitution, ITitleScreenMenu,
+
+ActionManager, AgentMap, EnvManager, EventFramework, FateManager, Framework, InventoryManager, LimitBreakController, PlayerState, QuestManager, RouletteController, UIState
 
 They are Dalamud services, whose code is available here
 https://github.com/goatcorp/Dalamud/tree/master/Dalamud/Plugin/Services.

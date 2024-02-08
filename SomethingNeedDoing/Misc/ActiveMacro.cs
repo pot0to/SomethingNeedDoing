@@ -1,4 +1,11 @@
 ﻿using ECommons.DalamudServices;
+using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
+using FFXIVClientStructs.FFXIV.Client.Game.Fate;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using NLua;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar;
@@ -8,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SomethingNeedDoing.Misc;
@@ -296,6 +304,23 @@ internal partial class ActiveMacro : IDisposable
         this.lua["IAddonEventManager"] = Svc.AddonEventManager;
         this.lua["ITextureSubstitution"] = Svc.TextureSubstitution;
         this.lua["ITitleScreenMenu"] = Svc.TitleScreenMenu;
+        unsafe
+        {
+#pragma warning disable CS8605 // Unboxing a possibly null value.
+            this.lua["ActionManager"] = (ActionManager)Marshal.PtrToStructure((nint)ActionManager.Instance(), typeof(ActionManager));
+            this.lua["AgentMap"] = (AgentMap)Marshal.PtrToStructure((nint)AgentMap.Instance(), typeof(AgentMap));
+            this.lua["EnvManager"] = (EnvManager)Marshal.PtrToStructure((nint)EnvManager.Instance(), typeof(EnvManager));
+            this.lua["EventFramework"] = (EventFramework)Marshal.PtrToStructure((nint)EventFramework.Instance(), typeof(EventFramework));
+            this.lua["FateManager"] = (FateManager)Marshal.PtrToStructure((nint)FateManager.Instance(), typeof(FateManager));
+            this.lua["Framework"] = (Framework)Marshal.PtrToStructure((nint)Framework.Instance(), typeof(Framework));
+            this.lua["InventoryManager"] = (InventoryManager)Marshal.PtrToStructure((nint)InventoryManager.Instance(), typeof(InventoryManager));
+            this.lua["LimitBreakController"] = (LimitBreakController)Marshal.PtrToStructure((nint)LimitBreakController.Instance(), typeof(LimitBreakController));
+            this.lua["PlayerState"] = (PlayerState)Marshal.PtrToStructure((nint)PlayerState.Instance(), typeof(PlayerState));
+            this.lua["QuestManager"] = (QuestManager)Marshal.PtrToStructure((nint)QuestManager.Instance(), typeof(QuestManager));
+            this.lua["RouletteController"] = (RouletteController)Marshal.PtrToStructure((nint)RouletteController.Instance(), typeof(RouletteController));
+            this.lua["UIState"] = (UIState)Marshal.PtrToStructure((nint)UIState.Instance(), typeof(UIState));
+#pragma warning restore CS8605 // Unboxing a possibly null value.
+        }
         #endregion
 
         this.lua.DoString(FStringSnippet);
