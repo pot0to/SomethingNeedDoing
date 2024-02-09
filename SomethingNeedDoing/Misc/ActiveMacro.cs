@@ -236,6 +236,7 @@ internal partial class ActiveMacro : IDisposable
         //imports.AddRange(services);
 
         //script = string.Join("\n", imports) + "\n" + script;
+        //script = $"{string.Join($"\n", $"{nameof(RefreshGlobals)}()")}\n{script}";
 
         static void RegisterClassMethods(Lua lua, object obj)
         {
@@ -314,7 +315,6 @@ internal partial class ActiveMacro : IDisposable
             this.lua["FateManager"] = (FateManager)Marshal.PtrToStructure((nint)FateManager.Instance(), typeof(FateManager));
             this.lua["Framework"] = (Framework)Marshal.PtrToStructure((nint)Framework.Instance(), typeof(Framework));
             this.lua["InventoryManager"] = (InventoryManager)Marshal.PtrToStructure((nint)InventoryManager.Instance(), typeof(InventoryManager));
-            //this.lua["LimitBreakController"] = (LimitBreakController)Marshal.PtrToStructure((nint)LimitBreakController.Instance(), typeof(LimitBreakController));
             this.lua["PlayerState"] = (PlayerState)Marshal.PtrToStructure((nint)PlayerState.Instance(), typeof(PlayerState));
             this.lua["QuestManager"] = (QuestManager)Marshal.PtrToStructure((nint)QuestManager.Instance(), typeof(QuestManager));
             this.lua["RouletteController"] = (RouletteController)Marshal.PtrToStructure((nint)RouletteController.Instance(), typeof(RouletteController));

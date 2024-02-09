@@ -327,6 +327,13 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-09",
+        "- Added GetCurrentBait()\n" +
+        "- Added GetLimitBreakCurrentValue()\n" +
+        "- Added GetLimitBreakBarValue()\n" +
+        "- Added GetLimitBreakBarCount()\n");
+
+        DisplayChangelog(
         "2024-02-07",
         "- Added more global variables\n");
 
