@@ -960,15 +960,17 @@ internal class HelpWindow : Window
                 Service.Configuration.Save();
             }
 
+            DisplayOption("- Does not support stopping the macro if any error occurs.");
+
             var stopMacroNotFound = Service.Configuration.StopMacroIfItemNotFound;
-            if (ImGui.Checkbox("Stop macro if you cannot use an item", ref stopMacroNotFound))
+            if (ImGui.Checkbox("Stop macro if the item to use is not found (only applies to SND's /useitem system)", ref stopMacroNotFound))
             {
                 Service.Configuration.StopMacroIfItemNotFound = stopMacroNotFound;
                 Service.Configuration.Save();
             }
 
             var stopMacro = Service.Configuration.StopMacroIfCantUseItem;
-            if (ImGui.Checkbox("Stop macro if you cannot use an item", ref stopMacro))
+            if (ImGui.Checkbox("Stop macro if you cannot use an item (only applies to SND's /useitem system)", ref stopMacro))
             {
                 Service.Configuration.StopMacroIfCantUseItem = stopMacro;
                 Service.Configuration.Save();
@@ -984,27 +986,27 @@ internal class HelpWindow : Window
                 Service.Configuration.Save();
             }
 
+            DisplayOption("- Override the behaviour of /target with SND's system.");
+
             var stopMacro = Service.Configuration.StopMacroIfTargetNotFound;
             if (ImGui.Checkbox("Stop macro if target not found (only applies to SND's targeting system).", ref stopMacro))
             {
                 Service.Configuration.StopMacroIfTargetNotFound = stopMacro;
                 Service.Configuration.Save();
             }
-
-            DisplayOption("- Override the behaviour of /target with SND's system.");
         }
 
         if (ImGui.CollapsingHeader("/waitaddon"))
         {
             var stopMacro = Service.Configuration.StopMacroIfAddonNotFound;
-            if (ImGui.Checkbox("Stop macro if an addon is not found", ref stopMacro))
+            if (ImGui.Checkbox("Stop macro if requested addon is not found", ref stopMacro))
             {
                 Service.Configuration.StopMacroIfAddonNotFound = stopMacro;
                 Service.Configuration.Save();
             }
 
             var stopMacroVisible = Service.Configuration.StopMacroIfAddonNotVisible;
-            if (ImGui.Checkbox("Stop macro if an addon isn't visible", ref stopMacroVisible))
+            if (ImGui.Checkbox("Stop macro if requested addon isn't visible", ref stopMacroVisible))
             {
                 Service.Configuration.StopMacroIfAddonNotVisible = stopMacroVisible;
                 Service.Configuration.Save();
