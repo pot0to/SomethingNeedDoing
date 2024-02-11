@@ -1,12 +1,14 @@
+using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using Sheets = Lumina.Excel.GeneratedSheets;
 
 namespace SomethingNeedDoing.Grammar.Commands;
@@ -17,6 +19,10 @@ namespace SomethingNeedDoing.Grammar.Commands;
 internal class ItemCommand : MacroCommand
 {
     private static readonly Regex Regex = new(@"^/item\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    public static nint itemContextMenuAgent = nint.Zero;
+    public delegate void UseItemDelegate(nint itemContextMenuAgent, uint itemID, uint inventoryPage, uint inventorySlot, short a5);
+    public static UseItemDelegate UseItemSig;
 
     private readonly string itemName;
     private readonly ItemQualityModifier itemQualityMod;
@@ -33,6 +39,15 @@ internal class ItemCommand : MacroCommand
     {
         this.itemName = itemName.ToLowerInvariant();
         this.itemQualityMod = itemQualityMod;
+        if (!Service.Configuration.UseItemStructsVersion)
+        {
+            try
+            {
+                UseItemSig = Marshal.GetDelegateForFunctionPointer<UseItemDelegate>(Service.SigScanner.ScanText("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 89 7C 24 38"));
+                unsafe { itemContextMenuAgent = (nint)Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentByInternalId(AgentId.InventoryContext); }
+            }
+            catch { Svc.Log.Error($"Failed to load {nameof(UseItemSig)}"); }
+        }
     }
 
     /// <summary>
@@ -55,7 +70,7 @@ internal class ItemCommand : MacroCommand
     }
 
     /// <inheritdoc/>
-    public override async Task Execute(ActiveMacro macro, CancellationToken token)
+    public override async System.Threading.Tasks.Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Service.Log.Debug($"Executing: {this.Text}");
 
@@ -64,7 +79,7 @@ internal class ItemCommand : MacroCommand
 
         var count = this.GetInventoryItemCount(itemId, this.itemQualityMod.IsHq);
         Service.Log.Debug($"Item Count: {count}");
-        if (count == 0)
+        if (count == 0 && Service.Configuration.StopMacroIfItemNotFound)
             throw new MacroCommandError("You do not have that item");
 
         this.UseItem(itemId, this.itemQualityMod.IsHq);
@@ -81,9 +96,14 @@ internal class ItemCommand : MacroCommand
         if (isHQ)
             itemID += 1_000_000;
 
-        var result = agent->UseItem(itemID);
-        if (result != 0)
-            throw new MacroCommandError("Failed to use item");
+        if (Service.Configuration.UseItemStructsVersion)
+        {
+            var result = agent->UseItem(itemID);
+            if (result != 0 && Service.Configuration.StopMacroIfCantUseItem)
+                throw new MacroCommandError("Failed to use item");
+        }
+        else
+            UseItemSig(itemContextMenuAgent, itemID, 9999, 0, 0);
     }
 
     private unsafe int GetInventoryItemCount(uint itemID, bool isHQ)

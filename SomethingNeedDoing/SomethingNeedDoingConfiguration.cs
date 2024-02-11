@@ -114,8 +114,14 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
     public int BeepCount { get; set; } = 3;
 
     public bool UseSNDTargeting { get; set; } = true;
+    public bool UseItemStructsVersion { get; set; } = true;
 
+    public bool StopMacroIfActionTimeout { get; set; } = true;
+    public bool StopMacroIfItemNotFound { get; set; } = true;
+    public bool StopMacroIfCantUseItem { get; set; } = true;
     public bool StopMacroIfTargetNotFound { get; set; } = true;
+    public bool StopMacroIfAddonNotFound { get; set; } = true;
+    public bool StopMacroIfAddonNotVisible { get; set; } = true;
 
     /// <summary>
     /// Gets or sets the chat channel to use.

@@ -122,7 +122,7 @@ internal class ActionCommand : MacroCommand
                 else
                 {
                     // Wait for the data update
-                    if (!DataWaiter.WaitOne(SafeCraftMaxWait))
+                    if (!DataWaiter.WaitOne(SafeCraftMaxWait) && Service.Configuration.StopMacroIfActionTimeout)
                         throw new MacroActionTimeoutError("Did not receive a timely response");
                 }
 

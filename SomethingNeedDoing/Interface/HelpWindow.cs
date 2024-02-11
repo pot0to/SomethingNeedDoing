@@ -327,6 +327,11 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-11",
+        "- Added the ability to toggle ending scripts when encountering certain errors.\n" +
+        "- Added an alternative system for /useitem\n");
+
+        DisplayChangelog(
         "2024-02-09",
         "- Added GetCurrentBait()\n" +
         "- Added GetLimitBreakCurrentValue()\n" +
@@ -936,6 +941,40 @@ internal class HelpWindow : Window
             }
         }
 
+        if (ImGui.CollapsingHeader("/action"))
+        {
+            var stopMacro = Service.Configuration.StopMacroIfActionTimeout;
+            if (ImGui.Checkbox("Stop macro if /action times out", ref stopMacro))
+            {
+                Service.Configuration.StopMacroIfActionTimeout = stopMacro;
+                Service.Configuration.Save();
+            }
+        }
+
+        if (ImGui.CollapsingHeader("/item"))
+        {
+            var defaultUseItem = Service.Configuration.UseItemStructsVersion;
+            if (ImGui.Checkbox("Use SND's /useitem system", ref defaultUseItem))
+            {
+                Service.Configuration.UseItemStructsVersion = defaultUseItem;
+                Service.Configuration.Save();
+            }
+
+            var stopMacroNotFound = Service.Configuration.StopMacroIfItemNotFound;
+            if (ImGui.Checkbox("Stop macro if you cannot use an item", ref stopMacroNotFound))
+            {
+                Service.Configuration.StopMacroIfItemNotFound = stopMacroNotFound;
+                Service.Configuration.Save();
+            }
+
+            var stopMacro = Service.Configuration.StopMacroIfCantUseItem;
+            if (ImGui.Checkbox("Stop macro if you cannot use an item", ref stopMacro))
+            {
+                Service.Configuration.StopMacroIfCantUseItem = stopMacro;
+                Service.Configuration.Save();
+            }
+        }
+
         if (ImGui.CollapsingHeader("/target"))
         {
             var defaultTarget = Service.Configuration.UseSNDTargeting;
@@ -945,14 +984,31 @@ internal class HelpWindow : Window
                 Service.Configuration.Save();
             }
 
-            var stopMacroIfNoTarget = Service.Configuration.StopMacroIfTargetNotFound;
-            if (ImGui.Checkbox("Stop macro if target not found (only applies to SND's targeting system).", ref stopMacroIfNoTarget))
+            var stopMacro = Service.Configuration.StopMacroIfTargetNotFound;
+            if (ImGui.Checkbox("Stop macro if target not found (only applies to SND's targeting system).", ref stopMacro))
             {
-                Service.Configuration.StopMacroIfTargetNotFound = stopMacroIfNoTarget;
+                Service.Configuration.StopMacroIfTargetNotFound = stopMacro;
                 Service.Configuration.Save();
             }
 
             DisplayOption("- Override the behaviour of /target with SND's system.");
+        }
+
+        if (ImGui.CollapsingHeader("/waitaddon"))
+        {
+            var stopMacro = Service.Configuration.StopMacroIfAddonNotFound;
+            if (ImGui.Checkbox("Stop macro if an addon is not found", ref stopMacro))
+            {
+                Service.Configuration.StopMacroIfAddonNotFound = stopMacro;
+                Service.Configuration.Save();
+            }
+
+            var stopMacroVisible = Service.Configuration.StopMacroIfAddonNotVisible;
+            if (ImGui.Checkbox("Stop macro if an addon isn't visible", ref stopMacroVisible))
+            {
+                Service.Configuration.StopMacroIfAddonNotVisible = stopMacroVisible;
+                Service.Configuration.Save();
+            }
         }
 
         ImGui.PopFont();
