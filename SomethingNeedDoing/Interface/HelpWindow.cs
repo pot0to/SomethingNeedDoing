@@ -999,14 +999,14 @@ internal class HelpWindow : Window
         if (ImGui.CollapsingHeader("/waitaddon"))
         {
             var stopMacro = Service.Configuration.StopMacroIfAddonNotFound;
-            if (ImGui.Checkbox("Stop macro if requested addon is not found", ref stopMacro))
+            if (ImGui.Checkbox("Stop macro if the requested addon is not found", ref stopMacro))
             {
                 Service.Configuration.StopMacroIfAddonNotFound = stopMacro;
                 Service.Configuration.Save();
             }
 
             var stopMacroVisible = Service.Configuration.StopMacroIfAddonNotVisible;
-            if (ImGui.Checkbox("Stop macro if requested addon isn't visible", ref stopMacroVisible))
+            if (ImGui.Checkbox("Stop macro if the requested addon is not visible", ref stopMacroVisible))
             {
                 Service.Configuration.StopMacroIfAddonNotVisible = stopMacroVisible;
                 Service.Configuration.Save();
