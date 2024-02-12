@@ -133,53 +133,40 @@ end
 
 local function limitbreak()
 	if limituse == 1 then --are we a limit break user? we will only trigger via script if we are a dps. however that value is pulled from the ini
-		which_one = 666 --pointless variable init
+		local which_one = 666 --pointless variable init
 		which_one = GetClassJobId()
 		if type(which_one) ~= "number" then  --error trap variable type because we dont like SND pausing
 			which_one = 9000 --invalid job placeholder
 		end
-		GetLimoot = 0 --init lb value. its 10k per 1 bar
+		local GetLimoot = 0 --init lb value. its 10k per 1 bar
 		GetLimoot = GetLimitBreakCurrentValue()
 		if type(GetLimoot) ~= "number" then  --error trap variable type because we dont like SND pausing
 			GetLimoot = 0 --well its 0 if its 0
 		end
+		local_teext = "\"Limit Break\""
 		--check the target life %
-		if type(GetTargetHPP) == "number" and GetTargetHPP < limitpct then
+		if type(GetTargetHPP()) == "number" and GetTargetHPP() < limitpct then
 			--cast a limit break or try to
 			--level 3
-			if limitlevel > 2 and GetLimoot > 29999 then
-				--check the job!
-				--Melee DPS
-				if which_one == 20 then yield("/ac Final Heaven")			--Monk(20)
-					elseif which_one == 22 then yield("/ac Dragonsong Dive")	--Dragoon(22)
-					elseif which_one == 34 then yield("/ac Chimatsuri")			--Reddit Moderator(34)
-					elseif which_one == 19 then yield("/ac Doom of the Living")	--Ninja(19)
-					elseif which_one == 28 then yield("/ac The End")			--Gardener(28)
-					--Ranged Magic DPS
-					elseif which_one == 5 then yield("/ac Meteor")				--Black Mage(5)
-					elseif which_one == 18 then yield("/ac Teraflare")			--Yellow Mage(18)
-					elseif which_one == 24 then yield("/ac Vermilion Scourge")	--Red Mage(24)
-					--Ranged DPS
-					elseif which_one == 3 then yield("/ac Sagittarius Arrow")	--Midi Enjoyer(3)
-					elseif which_one == 20 then yield("/ac Satellite Beam")		--Bullet Mage(20)
-					elseif which_one == 27 then yield("/ac Crimson Lotus")		--Dancer(27)
-					else yield("/echo Ooops did we forget to add vooper and rainbow splasher")
-				end
+			if limitlevel > 1 and GetLimoot > 29999 then
+				yield("/rotation cancel")		
+				yield("/wait 1")
+				yield("/echo Attempting Limit Break")
+				yield("/ac "..local_teext)
 			end
-			if limitlevel > 1 and GetLimoot > 19999  then	
-				if which_one == 20 or which_one == 22 or which_one == 34 or which_one == 19 or which_one == 28 then yield("/ac Bladedance")			--Melee DPS
-					elseif which_one == 5 or which_one == 18 or which_one == 24 then yield("/ac Starstorm")											--Magic Ranged DPS
-					elseif which_one == 3 or which_one == 20 or which_one == 27 then yield("/ac Desperado")											--Ranged DPS
-				end
+			if limitlevel == 2 and GetLimoot > 19999  then	
+				yield("/rotation cancel")		
+				yield("/wait 1")
+				yield("/echo Attempting Limit Break")
+				yield("/ac "..local_teext)
 			end
-			if limitlevel > 0 and GetLimoot > 9999  then
-				--check the job!
-				if which_one == 20 or which_one == 22 or which_one == 34 or which_one == 19 or which_one == 28 then yield("/ac Braver")				--Melee DPS
-					elseif which_one == 5 or which_one == 18 or which_one == 24 then yield("/ac Skyshard")											--Magic Ranged DPS
-					elseif which_one == 3 or which_one == 20 or which_one == 27 then yield("/ac Big Shot")											--Ranged DPS
-				end
+			if limitlevel == 1 and GetLimoot > 9999  then
+				yield("/rotation cancel")		
+				yield("/wait 1")
+				yield("/echo Attempting Limit Break")
+				yield("/ac "..local_teext)
 			end
-			yield("/wait 1")		
+			yield("/rotation auto")		
 		end
 	end
 end
@@ -507,26 +494,4 @@ end
 --17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
 --17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
 
---some lbs for later maybe
---[[
-/ac Final Heaven
-/ac Dragonsong Dive
-/ac Chimatsuri
-/ac Doom of the Living
-/ac The End
-/ac Meteor
-/ac Teraflare
-/ac Vermilion Scourge
-/ac Sagittarius Arrow
-/ac Satellite Beam
-/ac Crimson Lotus
-
-/ac Bladedance
-/ac Starstorm
-/ac Desperado
-
-/ac Braver
-/ac Skyshard
-/ac Big Shot
-]]
---v6
+--v7
