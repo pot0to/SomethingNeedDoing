@@ -12,13 +12,18 @@
 --plogon config
 --simpletweaks -> turn on maincommand
 --turn on auto interact on pandora set distance to 5 dist 5 height
---turn on vbm. click ai mode -> click follow. then form the group.  OR with latest vbm you can just type /vbmai on    and it will autofollow yourself while your in a group already.
---turn on rotation solver if you like, set your lazyloot to /fulf need/green/pass/off etc
---preselect port decumana in the duty finder menu.
+--turn on vbm. turn on AI mode. your all set. script will enable ai "follow" mode which actually turns on ai movement.
+--turn on rotation solver if you like
+--set your lazyloot to /fulf need/green/pass/off etc
+--preselect port decumana in the duty finder menu on the designated party leader
 --meant for premade party but could be used for duty support
 --enjoy
 --****END OF INSTRUCTIONS****
 
+
+--todo
+--convert all variable sanity (type) checks into a generic function to reduce code clutter
+--test and start building the spread marker checker so we can farm level 90 duties with a premade in preparation for vnavmesh caching :~D
 
 --we are now going to configure everything in a ini file.
 --this way we can just copy paste the scripts and not need to edit the script per char
@@ -127,34 +132,52 @@ local function distance(x1, y1, z1, x2, y2, z2)
 end
 
 local function limitbreak()
-	--not going to use smart limit breaks . ini setting only
-	if limituse == 1 then --are we a limit break user?
+	if limituse == 1 then --are we a limit break user? we will only trigger via script if we are a dps. however that value is pulled from the ini
+		which_one = 666 --pointless variable init
+		which_one = GetClassJobId()
+		if type(which_one) ~= "number" then  --error trap variable type because we dont like SND pausing
+			which_one = 9000 --invalid job placeholder
+		end
+		GetLimoot = 0 --init lb value. its 10k per 1 bar
+		GetLimoot = GetLimitBreakCurrentValue()
+		if type(GetLimoot) ~= "number" then  --error trap variable type because we dont like SND pausing
+			GetLimoot = 0 --well its 0 if its 0
+		end
 		--check the target life %
 		if type(GetTargetHPP) == "number" and GetTargetHPP < limitpct then
 			--cast a limit break or try to
 			--level 3
-			if limitlevel > 2 then
-				yield("/ac Final Heaven")
-				yield("/ac Dragonsong Dive")
-				yield("/ac Chimatsuri")
-				yield("/ac Doom of the Living")
-				yield("/ac The End")
-				yield("/ac Meteor")
-				yield("/ac Teraflare")
-				yield("/ac Vermilion Scourge")
-				yield("/ac Sagittarius Arrow")
-				yield("/ac Satellite Beam")
-				yield("/ac Crimson Lotus")
+			if limitlevel > 2 and GetLimoot > 29999 then
+				--check the job!
+				--Melee DPS
+				if which_one == 20 then yield("/ac Final Heaven")			--Monk(20)
+					elseif which_one == 22 then yield("/ac Dragonsong Dive")	--Dragoon(22)
+					elseif which_one == 34 then yield("/ac Chimatsuri")			--Reddit Moderator(34)
+					elseif which_one == 19 then yield("/ac Doom of the Living")	--Ninja(19)
+					elseif which_one == 28 then yield("/ac The End")			--Gardener(28)
+					--Ranged Magic DPS
+					elseif which_one == 5 then yield("/ac Meteor")				--Black Mage(5)
+					elseif which_one == 18 then yield("/ac Teraflare")			--Yellow Mage(18)
+					elseif which_one == 24 then yield("/ac Vermilion Scourge")	--Red Mage(24)
+					--Ranged DPS
+					elseif which_one == 3 then yield("/ac Sagittarius Arrow")	--Midi Enjoyer(3)
+					elseif which_one == 20 then yield("/ac Satellite Beam")		--Bullet Mage(20)
+					elseif which_one == 27 then yield("/ac Crimson Lotus")		--Dancer(27)
+					else yield("/echo Ooops did we forget to add vooper and rainbow splasher")
+				end
 			end
-			if limitlevel > 1 then	
-				yield("/ac Bladedance")
-				yield("/ac Starstorm")
-				yield("/ac Desperado")
+			if limitlevel > 1 and GetLimoot > 19999  then	
+				if which_one == 20 or which_one == 22 or which_one == 34 or which_one == 19 or which_one == 28 then yield("/ac Bladedance")			--Melee DPS
+					elseif which_one == 5 or which_one == 18 or which_one == 24 then yield("/ac Starstorm")											--Magic Ranged DPS
+					elseif which_one == 3 or which_one == 20 or which_one == 27 then yield("/ac Desperado")											--Ranged DPS
+				end
 			end
-			if limitlevel > 0 then
-				yield("/ac Braver")
-				yield("/ac Skyshard")
-				yield("/ac Big Shot")
+			if limitlevel > 0 and GetLimoot > 9999  then
+				--check the job!
+				if which_one == 20 or which_one == 22 or which_one == 34 or which_one == 19 or which_one == 28 then yield("/ac Braver")				--Melee DPS
+					elseif which_one == 5 or which_one == 18 or which_one == 24 then yield("/ac Skyshard")											--Magic Ranged DPS
+					elseif which_one == 3 or which_one == 20 or which_one == 27 then yield("/ac Big Shot")											--Ranged DPS
+				end
 			end
 			yield("/wait 1")		
 		end
@@ -293,7 +316,14 @@ local function porta_decumana()
 end
 
 yield("/echo starting.....")
-while repeated_trial < (repeat_trial + 1) do
+yield("/echo Turning AI On")
+yield("/wait 0.5")
+yield("/vbm cfg AI Enabled true")
+yield("/echo Turning AI Self Follow On")
+yield("/wait 0.5")
+yield("/vbmai on")
+
+	while repeated_trial < (repeat_trial + 1) do
 	yield("/targetenemy") --this will trigger RS to do stuff.
 	if enemy_snake ~= "follow only" then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
@@ -444,6 +474,7 @@ while repeated_trial < (repeat_trial + 1) do
 		if GetCharacterCondition(34) == true then --only trigger rebuild in a duty and when following a party leader
 			yield("/vnavmesh rebuild")
 			if char_snake == "party leader" then
+			    yield("/vbmai on")
 				yield("/rotation auto")
 				yield("/cd 5")
 				repeated_trial = repeated_trial + 1
@@ -459,6 +490,7 @@ while repeated_trial < (repeat_trial + 1) do
 	if GetCharacterCondition(34) ==true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
 		--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
 		yield("/equipguud")
+		yield("/vbmai on")
 		yield("/rotation auto")
 		yield("/cd 5")
 		yield("/send KEY_1")
@@ -497,4 +529,4 @@ end
 /ac Skyshard
 /ac Big Shot
 ]]
---v4
+--v6
