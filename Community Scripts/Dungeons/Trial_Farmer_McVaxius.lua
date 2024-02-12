@@ -157,21 +157,22 @@ local function limitbreak()
 		if type(GetLimoot) ~= "number" then  --error trap variable type because we dont like SND pausing
 			GetLimoot = 0 --well its 0 if its 0
 		end
-		local_teext = "\"Limit Break\""
+		local local_teext = "\"Limit Break\""
 		--check the target life %
 --		if type(GetTargetHPP()) == "number" and GetTargetHPP() < limitpct then --commented out until hpp is working.
 		if type(GetTargetHP()) == "number" and ((GetTargetHP()/244446) * 100) < limitpct then
 			--cast a limit break or try to
-			if GetLimoot == GetLimitBreakBarCount() * GetLimitBreakBarValue() then
+			--seems like max lb is 1013040 when ultimate weapon buffs you to lb3 but you only have 30k on your bar O_o
+			--anyways it will trigger if lb3 is ready or when lb2 is max and it hits lb2
+			if (GetLimoot == (GetLimitBreakBarCount() * GetLimitBreakBarValue())) or GetLimoot > 29999 then
 				yield("/rotation cancel")		
-				yield("/echo Attempting Limit Break")
+				yield("/echo Attempting "..local_teext)
 				yield("/ac "..local_teext)
-				yield("/wait 1")
 			end
 			if GetLimoot < GetLimitBreakBarCount() * GetLimitBreakBarValue() then
 				yield("/rotation auto")		
 			end
-			yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
+			--yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP().." get limoot"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
 			--Ultima Weapon Phase 1 262061 HP
 			--Ultima Weapon Phase 2 244446 HP
 		end
@@ -317,7 +318,9 @@ yield("/echo Turning AI Self Follow On")
 yield("/wait 0.5")
 yield("/vbmai on")
 
-	while repeated_trial < (repeat_trial + 1) do
+while repeated_trial < (repeat_trial + 1) do
+	--yield("/echo get limoooot"..GetLimitBreakCurrentValue().."get limootmax"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
+
 	yield("/targetenemy") --this will trigger RS to do stuff.
 	if enemy_snake ~= "follow only" then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
