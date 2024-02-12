@@ -84,7 +84,7 @@ yield("/echo enemy_deest:"..enemy_deest)
 yield("/echo meh_deest:"..meh_deest)
 yield("/echo enemeh_deest:"..enemeh_deest)
 yield("/echo limituse:"..limituse)
-yield("/echo limituse:"..limitpct)
+yield("/echo limitpct:"..limitpct)
 yield("/echo limitlevel:"..limitlevel)
 
 --cleanup the variablesa  bit.  maybe well lowercase them later toohehe.
@@ -145,28 +145,19 @@ local function limitbreak()
 		end
 		local_teext = "\"Limit Break\""
 		--check the target life %
-		if type(GetTargetHPP()) == "number" and GetTargetHPP() < limitpct then
+--		if type(GetTargetHPP()) == "number" and GetTargetHPP() < limitpct then --commented out until hpp is working.
+		if type(GetTargetHP()) == "number" and ((GetTargetHP()/244446) * 100) < limitpct then
 			--cast a limit break or try to
-			--level 3
-			if limitlevel > 1 and GetLimoot > 29999 then
-				yield("/rotation cancel")		
-				yield("/wait 1")
-				yield("/echo Attempting Limit Break")
-				yield("/ac "..local_teext)
-			end
-			if limitlevel == 2 and GetLimoot > 19999  then	
-				yield("/rotation cancel")		
-				yield("/wait 1")
-				yield("/echo Attempting Limit Break")
-				yield("/ac "..local_teext)
-			end
-			if limitlevel == 1 and GetLimoot > 9999  then
+			if GetLimoot == GetLimitBreakBarCount() * GetLimitBreakBarValue() then
 				yield("/rotation cancel")		
 				yield("/wait 1")
 				yield("/echo Attempting Limit Break")
 				yield("/ac "..local_teext)
 			end
 			yield("/rotation auto")		
+			yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
+			--Ultima Weapon Phase 1 262061 HP
+			--Ultima Weapon Phase 2 244446 HP
 		end
 	end
 end
@@ -462,8 +453,6 @@ yield("/vbmai on")
 			yield("/vnavmesh rebuild")
 			if char_snake == "party leader" then
 			    yield("/vbmai on")
-				yield("/rotation auto")
-				yield("/cd 5")
 				repeated_trial = repeated_trial + 1
 			end
 		end
@@ -474,7 +463,7 @@ yield("/vbmai on")
 		dutycheckupdate = 1 --sometimes we don't want to update dutycheck because we reached phase 2 in a fight.
 		we_were_in = we_are_in --record this as we are in this area now
 	end
-	if GetCharacterCondition(34) ==true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
+	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
 		--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
 		yield("/equipguud")
 		yield("/vbmai on")
@@ -494,4 +483,4 @@ end
 --17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
 --17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
 
---v7
+--v12
