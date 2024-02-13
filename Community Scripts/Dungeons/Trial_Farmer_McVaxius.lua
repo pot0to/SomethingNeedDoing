@@ -3,6 +3,28 @@
   Author: McVaxius
 ]]
 
+--****INSTRUCTIONS****
+--just kind of proof of concept farming script for easy duties that vbm AI mode can solve
+--make sure you go into settings and disable the snd targeting
+--you need following plugins
+--vnavmesh (compile it yourself), SND (croizat fork), pandora, rotation solver, simpletweaks
+--if you dont have vnavmesh, use visland and find+replace all instead of /vnavmesh with /visland   it won't be able to follow very well in dungeons but you can still do trials like porta decumana
+--plogon config
+--simpletweaks -> turn on maincommand
+--turn on auto interact on pandora set distance to 5 dist 5 height
+--turn on vbm. turn on AI mode. your all set. script will enable ai "follow" mode which actually turns on ai movement.
+--turn on rotation solver if you like
+--set your lazyloot to /fulf need/green/pass/off etc
+--preselect port decumana in the duty finder menu on the designated party leader
+--meant for premade party but could be used for duty support
+--enjoy
+--****END OF INSTRUCTIONS****
+
+
+--todo
+--convert all variable sanity (type) checks into a generic function to reduce code clutter
+--test and start building the spread marker checker so we can farm level 90 duties with a premade in preparation for vnavmesh caching :~D
+
 --we are now going to configure everything in a ini file.
 --this way we can just copy paste the scripts and not need to edit the script per char
 
@@ -61,11 +83,13 @@ yield("/echo snake_deest:"..snake_deest)
 yield("/echo enemy_deest:"..enemy_deest)
 yield("/echo meh_deest:"..meh_deest)
 yield("/echo enemeh_deest:"..enemeh_deest)
+yield("/echo limituse:"..limituse)
+yield("/echo limitpct:"..limitpct)
+yield("/echo limitlevel:"..limitlevel)
 
 --cleanup the variablesa  bit.  maybe well lowercase them later toohehe.
 char_snake = char_snake:match("^%s*(.-)%s*$"):gsub('"', '')
 enemy_snake = enemy_snake:match("^%s*(.-)%s*$"):gsub('"', '')
-
 
 --see the .ini file for explanation on settings
 --more comments at the end
@@ -105,6 +129,37 @@ local dutycheckupdate = 1
 
 local function distance(x1, y1, z1, x2, y2, z2)
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+end
+
+local function limitbreak()
+	if limituse == 1 then --are we a limit break user? we will only trigger via script if we are a dps. however that value is pulled from the ini
+		local which_one = 666 --pointless variable init
+		which_one = GetClassJobId()
+		if type(which_one) ~= "number" then  --error trap variable type because we dont like SND pausing
+			which_one = 9000 --invalid job placeholder
+		end
+		local GetLimoot = 0 --init lb value. its 10k per 1 bar
+		GetLimoot = GetLimitBreakCurrentValue()
+		if type(GetLimoot) ~= "number" then  --error trap variable type because we dont like SND pausing
+			GetLimoot = 0 --well its 0 if its 0
+		end
+		local_teext = "\"Limit Break\""
+		--check the target life %
+--		if type(GetTargetHPP()) == "number" and GetTargetHPP() < limitpct then --commented out until hpp is working.
+		if type(GetTargetHP()) == "number" and ((GetTargetHP()/244446) * 100) < limitpct then
+			--cast a limit break or try to
+			if GetLimoot == GetLimitBreakBarCount() * GetLimitBreakBarValue() then
+				yield("/rotation cancel")		
+				yield("/wait 1")
+				yield("/echo Attempting Limit Break")
+				yield("/ac "..local_teext)
+			end
+			yield("/rotation auto")		
+			yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
+			--Ultima Weapon Phase 1 262061 HP
+			--Ultima Weapon Phase 2 244446 HP
+		end
+	end
 end
 
 local function do_we_spread()
@@ -239,7 +294,14 @@ local function porta_decumana()
 end
 
 yield("/echo starting.....")
-while repeated_trial < (repeat_trial + 1) do
+yield("/echo Turning AI On")
+yield("/wait 0.5")
+yield("/vbm cfg AI Enabled true")
+yield("/echo Turning AI Self Follow On")
+yield("/wait 0.5")
+yield("/vbmai on")
+
+	while repeated_trial < (repeat_trial + 1) do
 	yield("/targetenemy") --this will trigger RS to do stuff.
 	if enemy_snake ~= "follow only" then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
@@ -256,6 +318,8 @@ while repeated_trial < (repeat_trial + 1) do
 	mecurrentLocX = GetPlayerRawXPos(tostring(1))
 	mecurrentLocY = GetPlayerRawYPos(tostring(1))
 	mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+	
+	limitbreak() --by the power of hydaelyn i smite thee
 	
 	if GetCharacterCondition(34)==false and char_snake == "party leader" then --if we are not in a duty --try to restart duty
 		yield("/visland stop")
@@ -388,7 +452,7 @@ while repeated_trial < (repeat_trial + 1) do
 		if GetCharacterCondition(34) == true then --only trigger rebuild in a duty and when following a party leader
 			yield("/vnavmesh rebuild")
 			if char_snake == "party leader" then
-				yield("/cd 5")
+			    yield("/vbmai on")
 				repeated_trial = repeated_trial + 1
 			end
 		end
@@ -399,9 +463,11 @@ while repeated_trial < (repeat_trial + 1) do
 		dutycheckupdate = 1 --sometimes we don't want to update dutycheck because we reached phase 2 in a fight.
 		we_were_in = we_are_in --record this as we are in this area now
 	end
-	if GetCharacterCondition(34) ==true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
+	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
 		--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
 		yield("/equipguud")
+		yield("/vbmai on")
+		yield("/rotation auto")
 		yield("/cd 5")
 		yield("/send KEY_1")
 		--yield("/wait 10")
@@ -410,48 +476,11 @@ while repeated_trial < (repeat_trial + 1) do
 	end
 end
 
-
---just kind of proof of concept farming script for easy duties that vbm AI mode can solve
---make sure you go into settings and disable the snd targeting
---you need following plugins
---vnavmesh (compile it yourself), SND (croizat fork), pandora, rotation solver, simpletweaks
---if you dont have vnavmesh, use visland and find+replace all instead of /vnavmesh with /visland   it won't be able to follow very well in dungeons but you can still do trials like porta decumana
---plogon config
---simpletweaks -> turn on maincommand
---turn on auto interact on pandora set distance to 5 dist 5 height
---turn on vbm. click ai mode -> click follow. then form the group.
---turn on rotation solver if you like, set your lazyloot to /fulf need/green/pass/off etc
---preselect port decumana in the duty finder menu.
---meant for premade party but could be used for duty support
---enjoy
-
 --/xldata object table, vbm debug, automaton debug
---gotta fix this up so it actually works.. the orb mechanic in phase 2 kind of fails too often as chars are not positioned correctly with 4 real players.
+--eg
 --17BB974B6D0:40000B89[38] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53157 Z468.43414 D9 R-0.7854581 - Target: E0000000
 --17BB974E650:40000B8C[40] - BattleNpc - Aetheroplasm - X-715.5604 Y-185.53159 Z468.4341 D19 R0.78536224 - Target: E0000000
 --17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
 --17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
 
---some lbs for later maybe
---[[
-/ac Final Heaven
-/ac Dragonsong Dive
-/ac Chimatsuri
-/ac Doom of the Living
-/ac The End
-/ac Meteor
-/ac Teraflare
-/ac Vermilion Scourge
-/ac Sagittarius Arrow
-/ac Satellite Beam
-/ac Crimson Lotus
-
-/ac Bladedance
-/ac Starstorm
-/ac Desperado
-
-/ac Braver
-/ac Skyshard
-/ac Big Shot
-]]
---v3
+--v12
