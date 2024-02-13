@@ -327,6 +327,11 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-17",
+        "- Added GetTargetMaxHP()\n" +
+        "- Fixed GetTargetHPP()\n");
+
+        DisplayChangelog(
         "2024-02-11",
         "- Added the ability to toggle ending scripts when encountering certain errors.\n" +
         "- Added an alternative system for /useitem\n");
