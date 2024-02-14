@@ -3,45 +3,82 @@
   Author: McVaxius
 ]]
 
---****INSTRUCTIONS****
---just kind of proof of concept farming script for easy duties that vbm AI mode can solve
---You need following plugins
---vnavmesh (compile it yourself), SND (croizat fork), pandora, rotation solver, simpletweaks, YesAlready, TextAdvance
---if you dont have vnavmesh, use visland and find+replace all instead of /vnavmesh with /visland   it won't be able to follow very well in dungeons but you can still do trials like porta decumana
-----------------
---Plogon config
-----------------
---simpletweaks -> turn on maincommand
---pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
---bossmod -> self configured with this script
---something need doing -> go to options and disable SND targeting
---rotation solver -> self configured with this script
---lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
---yesalready -> setup a leave from instance.. the first time you exit you can auto add with teh circular plus icon
---textadvance -> auto on and add your char to the list
---Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
---															Do it in the duty support window if thats the option you are choosing
-----------------
---SCRIPT CONFIG
-----------------
---the reason we use an ini file is so you can have many different characters configured separately and also update the script without having to edit it at all. (aside from copy and paste)
---Read the ini file - it should self explain the variables.  and it respects comments. just not same-line comments
---the ini file goes into the folder you can see below
---\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
---you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
---to use this find the Trial_Farmer_MxVaxius.ini file and rename it to Trial_Farmer_Yourcharfirstlast.ini   notice no spaces.
---so if your character is named Pomelo Pup'per then you would call the .ini file   Trial_Farmer_PomeloPupper.ini
---just remember it will strip spaces and apostrophes
-----------------
---enjoy
---****END OF INSTRUCTIONS****
---misc side note. the version number at end of file is meaningless. its just there so i can see if i copy pasted successfully over remote control of another PC ;p clipboard is finicky
+--[[
+****************
+**INSTRUCTIONS**
+****************
+This is just kind of proof of concept farming script for easy duties that vbm AI mode can solve.
+
+******************
+**REQUIRED REPOS**
+******************
+https://love.puni.sh/ment.json
+https://puni.sh/api/repository/croizat
+https://puni.sh/api/repository/veyn
+https://raw.githubusercontent.com/a08381/Dalamud.SkipCutscene/dist/repo.json
+
+******************
+**OPTIONAL REPOS**
+******************
+vnavmesh compile it yourself -> https://github.com/awgil/ffxiv_navmesh
+		if you do this, change visland to vnavmesh in the .ini file
+https://puni.sh/api/repository/kawaii
+https://puni.sh/api/repository/taurenkey
+https://plugins.carvel.li
+https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json
+
+********************
+**REQUIRED PLOGONS**
+********************
+*Something Need Doing (croizat fork)
+*Pandora
+*Rotation solver
+*Simpletweaks
+*YesAlready
+*TextAdvance
+*Cutscene Skip
+********************
+**OPTIONAL PLOGONS**
+********************
+*vnavmesh (compile it yourself)
+
+*****************
+**Plogon config**
+*****************
+simpletweaks -> turn on maincommand
+simpletweaks -> (optional) turn on autoequip command and set it to /equipguud
+pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
+bossmod -> self configured with this script
+something need doing -> go to options and disable SND targeting
+rotation solver -> self configured with this script
+lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
+yesalready -> setup a leave from instance.. the first time you exit you can auto add with teh circular plus icon
+textadvance -> auto on and add your char to the list
+Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
+															Do it in the duty support window if thats the option you are choosing
+--------------
+SCRIPT CONFIG
+--------------
+the reason we use an ini file is so you can have many different characters configured separately and also update the script without having to edit it at all. (aside from copy and paste)
+Read the ini file - it should self explain the variables.  and it respects comments. just not same-line comments
+the ini file goes into the folder you can see below
+\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
+you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
+to use this find the Trial_Farmer_MxVaxius.ini file and rename it to Trial_Farmer_Yourcharfirstlast.ini   notice no spaces.
+so if your character is named Pomelo Pup'per then you would call the .ini file   Trial_Farmer_PomeloPupper.ini
+just remember it will strip spaces and apostrophes
+--------------
+enjoy
+****END OF INSTRUCTIONS****
+misc side note. the version number at end of file is meaningless. its just there so i can see if i copy pasted successfully over remote control of another PC ;p clipboard is finicky
+]]
+
 
 --todo
 --convert all variable sanity (type) checks into a generic function to reduce code clutter
 --test and start building the spread marker checker so we can farm level 90 duties with a premade in preparation for vnavmesh caching :~D
 
---we are now going to configure everything in a ini file.
+--we configure everything in a ini file.
 --this way we can just copy paste the scripts and not need to edit the script per char
 
 -- Function to load variables from a file
