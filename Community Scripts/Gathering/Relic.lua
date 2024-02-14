@@ -1,6 +1,6 @@
 --[[
   Description: auto gather collectables for the miner or botanist relic steps
-  Author:
+  Author: gabibbomannaro 
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1174327265870483456
 ]]
 
@@ -85,7 +85,7 @@ function main()
   end
 
   yield("/echo At node.")
-  current_gp = tonumber(GetNodeText("GatheringMasterpiece", 113))
+  current_gp = GetGp()
   yield("/echo Current GP: "..current_gp)
 
   if (current_gp > 700) then
