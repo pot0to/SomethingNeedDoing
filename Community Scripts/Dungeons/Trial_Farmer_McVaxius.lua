@@ -5,18 +5,32 @@
 
 --****INSTRUCTIONS****
 --just kind of proof of concept farming script for easy duties that vbm AI mode can solve
---make sure you go into settings and disable the snd targeting
---you need following plugins
+--You need following plugins
 --vnavmesh (compile it yourself), SND (croizat fork), pandora, rotation solver, simpletweaks
 --if you dont have vnavmesh, use visland and find+replace all instead of /vnavmesh with /visland   it won't be able to follow very well in dungeons but you can still do trials like porta decumana
---plogon config
+----------------
+--Plogon config
+----------------
 --simpletweaks -> turn on maincommand
---turn on auto interact on pandora set distance to 5 dist 5 height
---turn on vbm. turn on AI mode. your all set. script will enable ai "follow" mode which actually turns on ai movement.
---turn on rotation solver if you like
---set your lazyloot to /fulf need/green/pass/off etc
---preselect port decumana in the duty finder menu on the designated party leader
---meant for premade party but could be used for duty support
+--pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
+--bossmod -> self configured with this script
+--something need doing -> go to options and disable SND targeting
+--rotation solver -> self configured with this script
+--lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
+--Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader, OR
+--															Do it in the duty support window if thats the option you are choosing
+----------------
+--SCRIPT CONFIG
+----------------
+--the reason we use an ini file is so you can have many different characters configured separately and also update the script without having to edit it at all. (aside from copy and paste)
+--Read the ini file - it should self explain the variables.  and it respects comments. just not same-line comments
+--the ini file goes into the folder you can see below
+--\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
+--you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
+--to use this find the Trial_Farmer_MxVaxius.ini file and rename it to Trial_Farmer_Yourcharfirstlast.ini   notice no spaces.
+--so if your character is named Pomelo Pup'per then you would call the .ini file   Trial_Farmer_PomeloPupper.ini
+--just remember it will strip spaces and apostrophes
+----------------
 --enjoy
 --****END OF INSTRUCTIONS****
 
@@ -143,19 +157,22 @@ local function limitbreak()
 		if type(GetLimoot) ~= "number" then  --error trap variable type because we dont like SND pausing
 			GetLimoot = 0 --well its 0 if its 0
 		end
-		local_teext = "\"Limit Break\""
+		local local_teext = "\"Limit Break\""
 		--check the target life %
 --		if type(GetTargetHPP()) == "number" and GetTargetHPP() < limitpct then --commented out until hpp is working.
 		if type(GetTargetHP()) == "number" and ((GetTargetHP()/244446) * 100) < limitpct then
 			--cast a limit break or try to
-			if GetLimoot == GetLimitBreakBarCount() * GetLimitBreakBarValue() then
+			--seems like max lb is 1013040 when ultimate weapon buffs you to lb3 but you only have 30k on your bar O_o
+			--anyways it will trigger if lb3 is ready or when lb2 is max and it hits lb2
+			if (GetLimoot == (GetLimitBreakBarCount() * GetLimitBreakBarValue())) or GetLimoot > 29999 then
 				yield("/rotation cancel")		
-				yield("/wait 1")
-				yield("/echo Attempting Limit Break")
+				yield("/echo Attempting "..local_teext)
 				yield("/ac "..local_teext)
 			end
-			yield("/rotation auto")		
-			yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
+			if GetLimoot < GetLimitBreakBarCount() * GetLimitBreakBarValue() then
+				yield("/rotation auto")		
+			end
+			--yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP().." get limoot"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
 			--Ultima Weapon Phase 1 262061 HP
 			--Ultima Weapon Phase 2 244446 HP
 		end
@@ -301,7 +318,9 @@ yield("/echo Turning AI Self Follow On")
 yield("/wait 0.5")
 yield("/vbmai on")
 
-	while repeated_trial < (repeat_trial + 1) do
+while repeated_trial < (repeat_trial + 1) do
+	--yield("/echo get limoooot"..GetLimitBreakCurrentValue().."get limootmax"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
+
 	yield("/targetenemy") --this will trigger RS to do stuff.
 	if enemy_snake ~= "follow only" then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
@@ -483,4 +502,4 @@ end
 --17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
 --17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
 
---v12
+--v13
