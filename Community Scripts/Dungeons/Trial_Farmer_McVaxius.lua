@@ -3,43 +3,82 @@
   Author: McVaxius
 ]]
 
---****INSTRUCTIONS****
---just kind of proof of concept farming script for easy duties that vbm AI mode can solve
---You need following plugins
---vnavmesh (compile it yourself), SND (croizat fork), pandora, rotation solver, simpletweaks
---if you dont have vnavmesh, use visland and find+replace all instead of /vnavmesh with /visland   it won't be able to follow very well in dungeons but you can still do trials like porta decumana
-----------------
---Plogon config
-----------------
---simpletweaks -> turn on maincommand
---pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
---bossmod -> self configured with this script
---something need doing -> go to options and disable SND targeting
---rotation solver -> self configured with this script
---lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
---Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader, OR
---															Do it in the duty support window if thats the option you are choosing
-----------------
---SCRIPT CONFIG
-----------------
---the reason we use an ini file is so you can have many different characters configured separately and also update the script without having to edit it at all. (aside from copy and paste)
---Read the ini file - it should self explain the variables.  and it respects comments. just not same-line comments
---the ini file goes into the folder you can see below
---\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
---you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
---to use this find the Trial_Farmer_MxVaxius.ini file and rename it to Trial_Farmer_Yourcharfirstlast.ini   notice no spaces.
---so if your character is named Pomelo Pup'per then you would call the .ini file   Trial_Farmer_PomeloPupper.ini
---just remember it will strip spaces and apostrophes
-----------------
---enjoy
---****END OF INSTRUCTIONS****
+--[[
+****************
+**INSTRUCTIONS**
+****************
+This is just kind of proof of concept farming script for easy duties that vbm AI mode can solve.
+
+******************
+**REQUIRED REPOS**
+******************
+https://love.puni.sh/ment.json
+https://puni.sh/api/repository/croizat
+https://puni.sh/api/repository/veyn
+https://raw.githubusercontent.com/a08381/Dalamud.SkipCutscene/dist/repo.json
+
+******************
+**OPTIONAL REPOS**
+******************
+vnavmesh compile it yourself -> https://github.com/awgil/ffxiv_navmesh
+		if you do this, change visland to vnavmesh in the .ini file
+https://puni.sh/api/repository/kawaii
+https://puni.sh/api/repository/taurenkey
+https://plugins.carvel.li
+https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json
+
+********************
+**REQUIRED PLOGONS**
+********************
+*Something Need Doing (croizat fork)
+*Pandora
+*Rotation solver
+*Simpletweaks
+*YesAlready
+*TextAdvance
+*Cutscene Skip
+********************
+**OPTIONAL PLOGONS**
+********************
+*vnavmesh (compile it yourself)
+
+*****************
+**Plogon config**
+*****************
+simpletweaks -> turn on maincommand
+simpletweaks -> (optional) turn on autoequip command and set it to /equipguud
+pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
+bossmod -> self configured with this script
+something need doing -> go to options and disable SND targeting
+rotation solver -> self configured with this script
+lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
+yesalready -> setup a leave from instance.. the first time you exit you can auto add with teh circular plus icon
+textadvance -> auto on and add your char to the list
+Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
+															Do it in the duty support window if thats the option you are choosing
+--------------
+SCRIPT CONFIG
+--------------
+the reason we use an ini file is so you can have many different characters configured separately and also update the script without having to edit it at all. (aside from copy and paste)
+Read the ini file - it should self explain the variables.  and it respects comments. just not same-line comments
+the ini file goes into the folder you can see below
+\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
+you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
+to use this find the Trial_Farmer_MxVaxius.ini file and rename it to Trial_Farmer_Yourcharfirstlast.ini   notice no spaces.
+so if your character is named Pomelo Pup'per then you would call the .ini file   Trial_Farmer_PomeloPupper.ini
+just remember it will strip spaces and apostrophes
+--------------
+enjoy
+****END OF INSTRUCTIONS****
+misc side note. the version number at end of file is meaningless. its just there so i can see if i copy pasted successfully over remote control of another PC ;p clipboard is finicky
+]]
 
 
 --todo
 --convert all variable sanity (type) checks into a generic function to reduce code clutter
 --test and start building the spread marker checker so we can farm level 90 duties with a premade in preparation for vnavmesh caching :~D
 
---we are now going to configure everything in a ini file.
+--we configure everything in a ini file.
 --this way we can just copy paste the scripts and not need to edit the script per char
 
 -- Function to load variables from a file
@@ -100,6 +139,7 @@ yield("/echo enemeh_deest:"..enemeh_deest)
 yield("/echo limituse:"..limituse)
 yield("/echo limitpct:"..limitpct)
 yield("/echo limitlevel:"..limitlevel)
+yield("/echo movetype:"..movetype)
 
 --cleanup the variablesa  bit.  maybe well lowercase them later toohehe.
 char_snake = char_snake:match("^%s*(.-)%s*$"):gsub('"', '')
@@ -159,9 +199,7 @@ local function limitbreak()
 		end
 		local local_teext = "\"Limit Break\""
 		--check the target life %
---		if type(GetTargetHPP()) == "number" and GetTargetHPP() < limitpct then --commented out until hpp is working.
-		if type(GetTargetHP()) == "number" and ((GetTargetHP()/244446) * 100) < limitpct then
-			--cast a limit break or try to
+		if type(GetTargetHPP()) == "number" and GetTargetHPP() < limitpct then
 			--seems like max lb is 1013040 when ultimate weapon buffs you to lb3 but you only have 30k on your bar O_o
 			--anyways it will trigger if lb3 is ready or when lb2 is max and it hits lb2
 			if (GetLimoot == (GetLimitBreakBarCount() * GetLimitBreakBarValue())) or GetLimoot > 29999 then
@@ -172,9 +210,7 @@ local function limitbreak()
 			if GetLimoot < GetLimitBreakBarCount() * GetLimitBreakBarValue() then
 				yield("/rotation auto")		
 			end
-			--yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP().." get limoot"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
-			--Ultima Weapon Phase 1 262061 HP
-			--Ultima Weapon Phase 2 244446 HP
+			--yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP().." get limoot"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug line
 		end
 	end
 end
@@ -182,11 +218,6 @@ end
 local function do_we_spread()
     did_we_find_one = 0
 	--need to start getting the names of the ones that vbm doesn't resolve and add them here
-	spread_marker_entities = {
-	"Buttcheeks",
-	"Chuttbeeks",
-	"Kuchkeebs"
-	}
 	--now we iterate through the list of possible entities
     for _, entity_name in ipairs(spread_marker_entities) do
          if GetDistanceToObject(entity_name) < 40 then
@@ -230,7 +261,7 @@ local function spread_em(distance)
         yield("/echo Invalid direction - check partymemberENUM in your .ini file")
     end
     --time to do the movement!
-	yield("/vnavmesh moveto "..deltaX.." "..deltaY.." "..mecurrentLocZ)
+	yield("/"..movetype.." moveto "..deltaX.." "..deltaY.." "..mecurrentLocZ)
 	yield("/wait 5")
 end
 
@@ -264,16 +295,16 @@ local function porta_decumana()
 		end
 		if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
 			if partymemberENUM == 1 then
-				yield("/vnavmesh moveto -692.46704 -185.53157 468.43414")
+				yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
 			end
 			if partymemberENUM == 2 then
-				yield("/vnavmesh moveto -715.5604 -185.53159 468.4341")
+				yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
 			end
 			if partymemberENUM == 3 then
-				yield("/vnavmesh moveto -715.5605 -185.53157 491.5273")
+				yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
 			end
 			if partymemberENUM == 4 then
-				yield("/vnavmesh moveto -692.46704 -185.53159 491.52734")
+				yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
 			end
 			--yield("/wait 5") -- is this too long? we'll see!  maybe this is bad
 		end
@@ -423,7 +454,7 @@ while repeated_trial < (repeat_trial + 1) do
 			setdeest()
 			if dist_between_points > snake_deest and dist_between_points < meh_deest then
 					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ) --sneak around when navmesh being weird
-					yield("/vnavmesh moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
+					yield("/"..movetype.." moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
 					--yield("/echo vnavmesh moveto "..math.ceil(currentLocX).." "..math.ceil(currentLocY).." "..math.ceil(currentLocZ))
 					yield("/echo player follow distance between points: "..dist_between_points.." enemy deest"..enemy_deest.." char deest :"..snake_deest)
 			end
@@ -432,7 +463,7 @@ while repeated_trial < (repeat_trial + 1) do
 			setdeest()
 			if dist_between_points > enemy_deest and dist_between_points < enemeh_deest then
 					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
-					yield("/vnavmesh moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
+					yield("/"..movetype.." moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
 					--yield("/echo vnavmesh moveto "..math.ceil(currentLocX).." "..math.ceil(currentLocY).." "..math.ceil(currentLocZ))
 			end
 		end
@@ -465,7 +496,7 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/wait 10")
 	end
 	if we_are_in ~= we_were_in then
-		yield("/vnavmesh stop")
+		yield("/"..movetype.." stop")
 		yield("/wait 1")
 		--if GetCharacterCondition(34) == true and char_snake ~= "no follow" then --only trigger rebuild in a duty and when following a party leader
 		if GetCharacterCondition(34) == true then --only trigger rebuild in a duty and when following a party leader
@@ -502,4 +533,4 @@ end
 --17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
 --17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
 
---v13
+--v155
