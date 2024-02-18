@@ -147,4 +147,13 @@ public class CharacterStateCommands
     public unsafe ushort GetLimitBreakCurrentValue() => UIState.Instance()->LimitBreakController.CurrentValue;
     public unsafe uint GetLimitBreakBarValue() => UIState.Instance()->LimitBreakController.BarValue;
     public unsafe byte GetLimitBreakBarCount() => UIState.Instance()->LimitBreakController.BarCount;
+
+    public unsafe uint GetPenaltyRemainingInMinutes() => UIState.Instance()->RouletteController.GetPenaltyRemainingInMinutes(0);
+
+    public unsafe byte GetMaelstromGCRank() => PlayerState.Instance()->GCRankMaelstrom;
+    public unsafe byte GetFlamesGCRank() => PlayerState.Instance()->GCRankImmortalFlames;
+    public unsafe byte GetAddersGCRank() => PlayerState.Instance()->GCRankTwinAdders;
+    public unsafe void SetMaelstromGCRank(byte rank) => PlayerState.Instance()->GCRankMaelstrom = rank;
+    public unsafe void SetFlamesGCRank(byte rank) => PlayerState.Instance()->GCRankImmortalFlames = rank;
+    public unsafe void SetAddersGCRank(byte rank) => PlayerState.Instance()->GCRankTwinAdders = rank;
 }

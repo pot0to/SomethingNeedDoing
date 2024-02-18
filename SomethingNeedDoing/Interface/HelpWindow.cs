@@ -328,6 +328,16 @@ internal class HelpWindow : Window
 
         DisplayChangelog(
         "2024-02-17",
+        "- Added GetPenaltyRemainingInMinutes()\n" +
+        "- Added GetMaelstromGCRank()\n" +
+        "- Added GetFlamesGCRank()\n" +
+        "- Added GetAddersGCRank()\n" +
+        "- Added SetMaelstromGCRank()\n" +
+        "- Added SetFlamesGCRank()\n" +
+        "- Added SetAddersGCRank()\n");
+
+        DisplayChangelog(
+        "2024-02-13",
         "- Added GetTargetMaxHP()\n" +
         "- Fixed GetTargetHPP()\n");
 
