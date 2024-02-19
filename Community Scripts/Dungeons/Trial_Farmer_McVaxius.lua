@@ -20,8 +20,6 @@ https://raw.githubusercontent.com/a08381/Dalamud.SkipCutscene/dist/repo.json
 ******************
 **OPTIONAL REPOS**
 ******************
-vnavmesh compile it yourself -> https://github.com/awgil/ffxiv_navmesh
-		if you do this, change visland to vnavmesh in the .ini file
 https://puni.sh/api/repository/kawaii
 https://puni.sh/api/repository/taurenkey
 https://plugins.carvel.li
@@ -37,10 +35,7 @@ https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaste
 *YesAlready
 *TextAdvance
 *Cutscene Skip
-********************
-**OPTIONAL PLOGONS**
-********************
-*vnavmesh (compile it yourself)
+*vnavmesh OR visland - decide which you want to use in the .ini file
 
 *****************
 **Plogon config**
@@ -49,6 +44,7 @@ simpletweaks -> turn on maincommand
 simpletweaks -> (optional) turn on autoequip command and set it to /equipguud
 pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
 bossmod -> self configured with this script
+vnavmesh/visland -> nothing just leave it alone unless you know what you are doing
 something need doing -> go to options and disable SND targeting
 rotation solver -> self configured with this script
 lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
@@ -500,7 +496,7 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/wait 1")
 		--if GetCharacterCondition(34) == true and char_snake ~= "no follow" then --only trigger rebuild in a duty and when following a party leader
 		if GetCharacterCondition(34) == true then --only trigger rebuild in a duty and when following a party leader
-			yield("/vnavmesh rebuild")
+			--yield("/vnavmesh rebuild") --we don't rebuild anymore vnavmesh has caching
 			if char_snake == "party leader" then
 			    yield("/vbmai on")
 				repeated_trial = repeated_trial + 1
@@ -533,4 +529,4 @@ end
 --17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
 --17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
 
---v155
+--v6942
