@@ -371,7 +371,11 @@ yield("/vbmai on")
 while repeated_trial < (repeat_trial + 1) do
 	--yield("/echo get limoooot"..GetLimitBreakCurrentValue().."get limootmax"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
 
-	yield("/targetenemy") --this will trigger RS to do stuff.
+	yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
+	--some other spams.
+	--the command "targetnenemy" is unavailable at this time
+	--unable to execute command while occupied
+	--unable to execute command while mounted
 	if enemy_snake ~= "nothing" then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
 		currentLocX = GetTargetRawXPos()
@@ -418,10 +422,10 @@ while repeated_trial < (repeat_trial + 1) do
 	end
 
 	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then --if we are not in combat AND we are in a duty then we will look for an exit or shortcut
-		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 15 then
+		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 25 then
 			yield("/target exit")
 		end
-		if type(GetDistanceToObject("shortcut")) == "number" and GetDistanceToObject("shortcut") < 15 then
+		if type(GetDistanceToObject("shortcut")) == "number" and GetDistanceToObject("shortcut") < 25 then
 			yield("/target shortcut")
 		end
 		yield("/wait 0.1")
