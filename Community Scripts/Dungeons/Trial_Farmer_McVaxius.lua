@@ -20,8 +20,6 @@ https://raw.githubusercontent.com/a08381/Dalamud.SkipCutscene/dist/repo.json
 ******************
 **OPTIONAL REPOS**
 ******************
-vnavmesh compile it yourself -> https://github.com/awgil/ffxiv_navmesh
-		if you do this, change visland to vnavmesh in the .ini file
 https://puni.sh/api/repository/kawaii
 https://puni.sh/api/repository/taurenkey
 https://plugins.carvel.li
@@ -37,10 +35,7 @@ https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaste
 *YesAlready
 *TextAdvance
 *Cutscene Skip
-********************
-**OPTIONAL PLOGONS**
-********************
-*vnavmesh (compile it yourself)
+*vnavmesh OR visland - decide which you want to use in the .ini file
 
 *****************
 **Plogon config**
@@ -49,6 +44,7 @@ simpletweaks -> turn on maincommand
 simpletweaks -> (optional) turn on autoequip command and set it to /equipguud
 pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
 bossmod -> self configured with this script
+vnavmesh/visland -> nothing just leave it alone unless you know what you are doing
 something need doing -> go to options and disable SND targeting
 rotation solver -> self configured with this script
 lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
@@ -277,68 +273,91 @@ local function setdeest()
 end
 
 --duty specific functions
-local function porta_decumana()
-		--porta decumana ultima weapon orbs in phase 2 near start of phase
-		--very hacky kludge until movement isn't slidy
-		--nested ifs because we don't want to get locked into this
-		phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
-		if dutycheck == 0 and dutycheckupdate == 1 and phase2 < 40 then
-			--we in phase 2 boyo
-			dutycheck = 1
-		end
-		mecurrentLocX = GetPlayerRawXPos(tostring(1))
-		mecurrentLocY = GetPlayerRawYPos(tostring(1))
-		mecurrentLocZ = GetPlayerRawZPos(tostring(1))
-		if dutycheckupdate == 1 and dutycheckupdate == 1 and type(GetDistanceToObject("Magitek Bit")) == "number" and GetDistanceToObject("Magitek Bit") < 50 then
-			dutycheck = 0 --turn off this check
-			dutycheckupdate = 0
-		end
-		if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
-			if partymemberENUM == 1 then
-				yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
-			end
-			if partymemberENUM == 2 then
-				yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
-			end
-			if partymemberENUM == 3 then
-				yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
-			end
-			if partymemberENUM == 4 then
-				yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
-			end
-			--yield("/wait 5") -- is this too long? we'll see!  maybe this is bad
-		end
-	--[[
-	--on hold for now until movement isnt slide-time-4000
-			if type(GetDistanceToObject("Aetheroplasm")) == "number" then
-	--			if GetObjectRawXPos("Aetheroplasm") > 0 then
-				if GetDistanceToObject("Aetheroplasm") < 20 then
-					--yield("/wait 1")
-					yield("/echo Porta Decumana ball dodger distance to random ball: "..GetDistanceToObject("Aetheroplasm"))
-					yield("/visland stop")
-					yield("/vnavmesh stop")
-					--yield("/vbm cfg AI Enabled false")
-					while type(GetDistanceToObject("Aetheroplasm")) == "number" and GetDistanceToObject("Aetheroplasm") < 20 do
-						if partymemberENUM == 1 then
-							yield("/visland moveto -692.46704 -185.53157 468.43414")
-						end
-						if partymemberENUM == 2 then
-							yield("/visland moveto -715.5604 -185.53159 468.4341")
-						end
-						if partymemberENUM == 3 then
-							yield("/visland moveto -715.5605 -185.53157 491.5273")
-						end
-						if partymemberENUM == 4 then
-							yield("/visland moveto -692.46704 -185.53159 491.52734")
-						end
-						yield("/wait 5")			
+local function praetorium()
+	if type(GetZoneID()) == "number" and GetZoneID() == 1048 and char_snake ~= "party leader"  and char_snake ~= "no follow" then
+		--if we not in combat. target a terminal
+		if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then --if we aren't in combat and in praetorium
+		--GetTargetName()~="Magitek Terminal"--if we are within 5 yalms of a magitek terminal
+			if GetDistanceToObject("Magitek Terminal") < 5 then
+				if GetDistanceToObject("Magitek Terminal") < 5 then
+					if GetDistanceToObject(char_snake) > 10 then
+						yield("/target terminal")
+						yield("/wait 1")
+						yield("/lockon on")
+						yield("/automove on")
+						yield("/wait 3")
 					end
-					yield("/visland stop")
-					yield("/vnavmesh stop")
-					--yield("/vbm cfg AI Enabled true")
 				end
 			end	
-		]]
+		end
+	end
+end
+
+local function porta_decumana()
+		if type(GetZoneID()) == "number" and GetZoneID() == 1048 then
+			--check the area number before doing ANYTHING this breaks other areas.
+			--porta decumana ultima weapon orbs in phase 2 near start of phase
+			--very hacky kludge until movement isn't slidy
+			--nested ifs because we don't want to get locked into this
+			phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
+			if dutycheck == 0 and dutycheckupdate == 1 and phase2 < 40 then
+				--we in phase 2 boyo
+				dutycheck = 1
+			end
+			mecurrentLocX = GetPlayerRawXPos(tostring(1))
+			mecurrentLocY = GetPlayerRawYPos(tostring(1))
+			mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+			if dutycheckupdate == 1 and dutycheckupdate == 1 and type(GetDistanceToObject("Magitek Bit")) == "number" and GetDistanceToObject("Magitek Bit") < 50 then
+				dutycheck = 0 --turn off this check
+				dutycheckupdate = 0
+			end
+			if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
+				if partymemberENUM == 1 then
+					yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
+				end
+				if partymemberENUM == 2 then
+					yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
+				end
+				if partymemberENUM == 3 then
+					yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
+				end
+				if partymemberENUM == 4 then
+					yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
+				end
+				--yield("/wait 5") -- is this too long? we'll see!  maybe this is bad
+			end
+		--[[
+		--on hold for now until movement isnt slide-time-4000
+				if type(GetDistanceToObject("Aetheroplasm")) == "number" then
+		--			if GetObjectRawXPos("Aetheroplasm") > 0 then
+					if GetDistanceToObject("Aetheroplasm") < 20 then
+						--yield("/wait 1")
+						yield("/echo Porta Decumana ball dodger distance to random ball: "..GetDistanceToObject("Aetheroplasm"))
+						yield("/visland stop")
+						yield("/vnavmesh stop")
+						--yield("/vbm cfg AI Enabled false")
+						while type(GetDistanceToObject("Aetheroplasm")) == "number" and GetDistanceToObject("Aetheroplasm") < 20 do
+							if partymemberENUM == 1 then
+								yield("/visland moveto -692.46704 -185.53157 468.43414")
+							end
+							if partymemberENUM == 2 then
+								yield("/visland moveto -715.5604 -185.53159 468.4341")
+							end
+							if partymemberENUM == 3 then
+								yield("/visland moveto -715.5605 -185.53157 491.5273")
+							end
+							if partymemberENUM == 4 then
+								yield("/visland moveto -692.46704 -185.53159 491.52734")
+							end
+							yield("/wait 5")			
+						end
+						yield("/visland stop")
+						yield("/vnavmesh stop")
+						--yield("/vbm cfg AI Enabled true")
+					end
+				end	
+			]]
+	end
 end
 
 yield("/echo starting.....")
@@ -353,7 +372,7 @@ while repeated_trial < (repeat_trial + 1) do
 	--yield("/echo get limoooot"..GetLimitBreakCurrentValue().."get limootmax"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
 
 	yield("/targetenemy") --this will trigger RS to do stuff.
-	if enemy_snake ~= "follow only" then --check if we are forcing a target or not
+	if enemy_snake ~= "nothing" then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
 		currentLocX = GetTargetRawXPos()
 		currentLocY = GetTargetRawYPos()
@@ -399,8 +418,12 @@ while repeated_trial < (repeat_trial + 1) do
 	end
 
 	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then --if we are not in combat AND we are in a duty then we will look for an exit or shortcut
-		yield("/target exit")
-		yield("/target shortcut")
+		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 15 then
+			yield("/target exit")
+		end
+		if type(GetDistanceToObject("shortcut")) == "number" and GetDistanceToObject("shortcut") < 15 then
+			yield("/target shortcut")
+		end
 		yield("/wait 0.1")
 		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
 			local minicounter = 0
@@ -448,15 +471,17 @@ while repeated_trial < (repeat_trial + 1) do
 		if type(we_are_in) == "number" and we_are_in == 1048 then --porta decumana
 			--yield("/echo Decumana Check!")
 			porta_decumana()
+			praetorium()
 		end
 		--regular movement to target
-		if char_snake ~= "no follow" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
+		if char_snake ~= "no follow" and char_snake ~= "party leader" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
 			setdeest()
 			if dist_between_points > snake_deest and dist_between_points < meh_deest then
 					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ) --sneak around when navmesh being weird
 					yield("/"..movetype.." moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
 					--yield("/echo vnavmesh moveto "..math.ceil(currentLocX).." "..math.ceil(currentLocY).." "..math.ceil(currentLocZ))
-					yield("/echo player follow distance between points: "..dist_between_points.." enemy deest"..enemy_deest.." char deest :"..snake_deest)
+					--DEBUG echo
+					--yield("/echo player follow distance between points: "..dist_between_points.." enemy deest"..enemy_deest.." char deest :"..snake_deest)
 			end
 		end
 		if enemy_snake ~= "nothing" and dutycheck == 0 and we_are_spreading == 0 then --close gaps to enemy only if we are on follow mode
@@ -488,7 +513,7 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1")
 
 	--this part will be deprecated soon once there is some kind of autobuilding
-	--check if we chagned areas and rebuild navmesh or just wait as normal
+	--check if we chagned areas or just wait as normal
 	we_are_in = GetZoneID() --where are we?
 	if type(we_are_in) ~= "number" then
 		we_are_in = we_were_in --its an invalid type so lets just default it and wait 10 seconds
@@ -498,15 +523,15 @@ while repeated_trial < (repeat_trial + 1) do
 	if we_are_in ~= we_were_in then
 		yield("/"..movetype.." stop")
 		yield("/wait 1")
+		yield("/"..movetype.." stop")
+		yield("/wait 1")
 		--if GetCharacterCondition(34) == true and char_snake ~= "no follow" then --only trigger rebuild in a duty and when following a party leader
 		if GetCharacterCondition(34) == true then --only trigger rebuild in a duty and when following a party leader
-			yield("/vnavmesh rebuild")
 			if char_snake == "party leader" then
 			    yield("/vbmai on")
 				repeated_trial = repeated_trial + 1
 			end
 		end
-		yield("/echo we changed areas. rebuild the navmesh!")
 		yield("/echo trial has begun!")
 		--reset duty specific stuff. can make smarter checks later but for now just set the duty related stuff to 0 so it doesn't get "in the way" of stuff if you aren't doing that specific duty.
 		dutycheck = 0 --by default we aren't going to stop things because we are in a duty
@@ -518,7 +543,10 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/equipguud")
 		yield("/vbmai on")
 		yield("/rotation auto")
-		yield("/cd 5")
+		--only party leader will do cd 5 because otherwise its spammy
+		if char_snake == "party leader" then
+			yield("/cd 5")
+		end
 		yield("/send KEY_1")
 		--yield("/wait 10")
 		dutycheck = 0 --by default we aren't going to stop things because we are in a duty
@@ -533,4 +561,4 @@ end
 --17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
 --17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
 
---v155
+--v451
