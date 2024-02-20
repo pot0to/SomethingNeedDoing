@@ -8,8 +8,6 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ECommons;
 using ECommons.DalamudServices;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using SomethingNeedDoing.Misc.Commands;
@@ -17,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Interface;
 
@@ -959,7 +956,7 @@ internal class HelpWindow : Window
 
             if (ImGui.Button("Beep test"))
             {
-                Task.Run(() =>
+                System.Threading.Tasks.Task.Run(() =>
                 {
                     for (var i = 0; i < beepCount; i++)
                         Console.Beep(beepFrequency, beepDuration);
