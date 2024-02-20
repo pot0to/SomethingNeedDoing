@@ -1,5 +1,6 @@
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Keys;
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
@@ -7,6 +8,8 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ECommons;
 using ECommons.DalamudServices;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using SomethingNeedDoing.Misc.Commands;
@@ -325,6 +328,14 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+        "2024-02-17",
+        "- Added GetNearbyObjectNames()\n" +
+        "- Added GetFlagZone()\n" +
+        "- Added GetAccursedHoardRawX()\n" +
+        "- Added GetAccursedHoardRawY()\n" +
+        "- Added GetAccursedHoardRawZ()\n");
 
         DisplayChangelog(
         "2024-02-17",
@@ -1123,18 +1134,18 @@ For example:
 yield(""/ac Muscle memory <wait.3>"")
 yield(""/ac Precise touch <wait.2>"")
 yield(""/echo done!"")
-...and so on.
+...and so on.".Trim();
 
-Every script is able to access these global variables:
-Interface, IClientState, IGameGui, IDataManager, IBuddyList, IChatGui, ICommandManager, ICondition, IFateTable, IFlyTextGui, IFramework, IGameNetwork, IJobGauges, IKeyState, ILibcFunction, IObjectTable, IPartyFinderGui, IPartyList, ISigScanner, ITargetManager, IToastGui, IGameConfig, IGameLifecycle, IGamepadState, IDtrBar, IDutyState, IGameInteropProvider, ITextureProvider, IPluginLog, IAddonLifecycle, IAetheryteList, IAddonEventManager, ITextureSubstitution, ITitleScreenMenu,
+//Every script is able to access these global variables:
+//Interface, IClientState, IGameGui, IDataManager, IBuddyList, IChatGui, ICommandManager, ICondition, IFateTable, IFlyTextGui, IFramework, IGameNetwork, IJobGauges, IKeyState, ILibcFunction, IObjectTable, IPartyFinderGui, IPartyList, ISigScanner, ITargetManager, IToastGui, IGameConfig, IGameLifecycle, IGamepadState, IDtrBar, IDutyState, IGameInteropProvider, ITextureProvider, IPluginLog, IAddonLifecycle, IAetheryteList, IAddonEventManager, ITextureSubstitution, ITitleScreenMenu,
 
-ActionManager, AgentMap, EnvManager, EventFramework, FateManager, Framework, InventoryManager, LimitBreakController, PlayerState, QuestManager, RouletteController, UIState
+//ActionManager, AgentMap, EnvManager, EventFramework, FateManager, Framework, InventoryManager, LimitBreakController, PlayerState, QuestManager, RouletteController, UIState
 
-They are Dalamud services, whose code is available here
-https://github.com/goatcorp/Dalamud/tree/master/Dalamud/Plugin/Services.
+//They are Dalamud services, whose code is available here
+//https://github.com/goatcorp/Dalamud/tree/master/Dalamud/Plugin/Services.
 
-Many custom functions in SND are simple wrappers around these, but with the global variables
-you can get many properties and functions directly without them needing wrappers added to SND itself.".Trim();
+//Many custom functions in SND are simple wrappers around these, but with the global variables
+//you can get many properties and functions directly without them needing wrappers added to SND itself.
 
         ImGui.TextWrapped(text);
         ImGui.Separator();
@@ -1244,9 +1255,9 @@ you can get many properties and functions directly without them needing wrappers
                 ("Weather", this.DrawWeather),
                 ("CFC", this.DrawCFC),
                 ("Duty Roulette", this.DrawDutyRoulette),
-                //("Ocean Fishing Routes", this.DrawOceanFishingRoutes),
-                ("Fishing Spots", this.DrawOceanFishingSpots),
+                ("Ocean Fishing Spots", this.DrawOceanFishingSpots),
                 ("Achievements", this.DrawAchievements),
+                ("ObjectKinds", this.DrawObjectKinds),
             };
 
             foreach (var (title, dele) in tabs)
@@ -1267,6 +1278,17 @@ you can get many properties and functions directly without them needing wrappers
         }
 
         ImGui.EndChild();
+    }
+
+    private void DrawObjectKinds()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var value in Enum.GetValues(typeof(ObjectKind)))
+        {
+            ImGui.Text($"{Enum.GetName(typeof(ObjectKind), value)}: {(byte)value}");
+        }
+        ImGui.PopStyleColor();
     }
 
     private readonly IEnumerable<Achievement> achievementsSheet = Svc.Data.GetExcelSheet<Achievement>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
@@ -1292,18 +1314,6 @@ you can get many properties and functions directly without them needing wrappers
         }
         ImGui.PopStyleColor();
     }
-
-    //private readonly IEnumerable<IKDRoute> fishingRoutesSheet = Svc.Data.GetExcelSheet<IKDRoute>(Svc.ClientState.ClientLanguage)!.Where(x => x.RowId != 0);
-    //private void DrawOceanFishingRoutes()
-    //{
-    //    using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-    //    ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-    //    foreach (var w in fishingRoutesSheet)
-    //    {
-    //        ImGui.Text($"{w.RowId}: {string.Join(" ", w.UnkData0.ToList())}");
-    //    }
-    //    ImGui.PopStyleColor();
-    //}
 
     private readonly IEnumerable<ContentRoulette> rouletteSheet = Svc.Data.GetExcelSheet<ContentRoulette>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
     private void DrawDutyRoulette()
