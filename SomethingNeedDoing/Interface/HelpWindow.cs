@@ -327,12 +327,13 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-        "2024-02-17",
+        "2024-02-20",
         "- Added GetNearbyObjectNames()\n" +
         "- Added GetFlagZone()\n" +
         "- Added GetAccursedHoardRawX()\n" +
         "- Added GetAccursedHoardRawY()\n" +
-        "- Added GetAccursedHoardRawZ()\n");
+        "- Added GetAccursedHoardRawZ()\n" +
+        "- Fixed OpenRegularDuty\n");
 
         DisplayChangelog(
         "2024-02-17",
