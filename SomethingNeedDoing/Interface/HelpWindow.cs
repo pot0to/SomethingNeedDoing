@@ -327,6 +327,12 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-22",
+        "- Added ExecuteAction()\n" +
+        "- Added ExecuteGeneralAction()\n" +
+        "- Fixed collectables not counting in item counts\n");
+
+        DisplayChangelog(
         "2024-02-20",
         "- Added GetNearbyObjectNames()\n" +
         "- Added GetFlagZone()\n" +

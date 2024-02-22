@@ -21,8 +21,8 @@ public class InventoryCommands
         return list;
     }
     public unsafe int GetItemCount(int itemID, bool includeHQ = true) =>
-       includeHQ ? InventoryManager.Instance()->GetInventoryItemCount((uint)itemID, true) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID)
-       : InventoryManager.Instance()->GetInventoryItemCount((uint)itemID);
+       includeHQ ? InventoryManager.Instance()->GetInventoryItemCount((uint)itemID, true) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000)
+       : InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000);
 
     public unsafe int GetInventoryFreeSlotCount()
     {
