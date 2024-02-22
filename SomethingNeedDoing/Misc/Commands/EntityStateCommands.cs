@@ -23,11 +23,6 @@ internal class EntityStateCommands
         return list;
     }
 
-    public string GetTargetName() => Svc.Targets.Target?.Name.TextValue ?? "";
-    public float GetTargetRawXPos() => Svc.Targets.Target?.Position.X ?? 0;
-    public float GetTargetRawYPos() => Svc.Targets.Target?.Position.Y ?? 0;
-    public float GetTargetRawZPos() => Svc.Targets.Target?.Position.Z ?? 0;
-
     public float GetObjectRawXPos(string name) => Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))?.Position.X ?? 0;
     public float GetObjectRawYPos(string name) => Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))?.Position.Y ?? 0;
     public float GetObjectRawZPos(string name) => Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))?.Position.Z ?? 0;
@@ -36,11 +31,29 @@ internal class EntityStateCommands
     public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer!.Position);
     public float GetDistanceToObject(string name) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))?.Position ?? Vector3.Zero);
 
+    #region Target
+    public string GetTargetName() => Svc.Targets.Target?.Name.TextValue ?? "";
+    public float GetTargetRawXPos() => Svc.Targets.Target?.Position.X ?? 0;
+    public float GetTargetRawYPos() => Svc.Targets.Target?.Position.Y ?? 0;
+    public float GetTargetRawZPos() => Svc.Targets.Target?.Position.Z ?? 0;
     public unsafe bool IsTargetCasting() => ((Character*)Svc.Targets.Target?.Address!)->IsCasting;
     public unsafe uint GetTargetActionID() => ((Character*)Svc.Targets.Target?.Address!)->GetCastInfo()->ActionID;
     public unsafe uint GetTargetUsedActionID() => ((Character*)Svc.Targets.Target?.Address!)->GetCastInfo()->UsedActionId;
     public float GetTargetHP() => (Svc.Targets.Target as Dalamud.Game.ClientState.Objects.Types.Character)?.CurrentHp ?? 0;
     public float GetTargetMaxHP() => (Svc.Targets.Target as Dalamud.Game.ClientState.Objects.Types.Character)?.MaxHp ?? 0;
     public float GetTargetHPP() => GetTargetHP() / GetTargetMaxHP() * 100;
+    #endregion
 
+    #region Focus Target
+    public string GetFocusTargetName() => Svc.Targets.FocusTarget?.Name.TextValue ?? "";
+    public float GetFocusTargetRawXPos() => Svc.Targets.FocusTarget?.Position.X ?? 0;
+    public float GetFocusTargetRawYPos() => Svc.Targets.FocusTarget?.Position.Y ?? 0;
+    public float GetFocusTargetRawZPos() => Svc.Targets.FocusTarget?.Position.Z ?? 0;
+    public unsafe bool IsFocusTargetCasting() => ((Character*)Svc.Targets.FocusTarget?.Address!)->IsCasting;
+    public unsafe uint GetFocusTargetActionID() => ((Character*)Svc.Targets.FocusTarget?.Address!)->GetCastInfo()->ActionID;
+    public unsafe uint GetFocusTargetUsedActionID() => ((Character*)Svc.Targets.FocusTarget?.Address!)->GetCastInfo()->UsedActionId;
+    public float GetFocusTargetHP() => (Svc.Targets.FocusTarget as Dalamud.Game.ClientState.Objects.Types.Character)?.CurrentHp ?? 0;
+    public float GetFocusTargetMaxHP() => (Svc.Targets.FocusTarget as Dalamud.Game.ClientState.Objects.Types.Character)?.MaxHp ?? 0;
+    public float GetFocusTargetHPP() => GetFocusTargetHP() / GetFocusTargetMaxHP() * 100;
+    #endregion
 }

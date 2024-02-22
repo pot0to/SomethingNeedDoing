@@ -330,6 +330,16 @@ internal class HelpWindow : Window
         "2024-02-22",
         "- Added ExecuteAction()\n" +
         "- Added ExecuteGeneralAction()\n" +
+        "- Added GetFocusTargetName()\n" +
+        "- Added GetFocusTargetRawXPos()\n" +
+        "- Added GetFocusTargetRawYPos()\n" +
+        "- Added GetFocusTargetRawZPos()\n" +
+        "- Added IsFocusTargetCasting()\n" +
+        "- Added GetFocusTargetActionID()\n" +
+        "- Added GetFocusTargetUsedActionID()\n" +
+        "- Added GetFocusTargetHP()\n" +
+        "- Added GetFocusTargetMaxHP()\n" +
+        "- Added GetFocusTargetHPP()\n" +
         "- Fixed collectables not counting in item counts\n");
 
         DisplayChangelog(
