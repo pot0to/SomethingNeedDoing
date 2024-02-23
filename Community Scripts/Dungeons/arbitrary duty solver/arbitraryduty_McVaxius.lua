@@ -52,6 +52,7 @@ yesalready -> setup a leave from instance.. the first time you exit you can auto
 textadvance -> auto on and add your char to the list
 Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
 															Do it in the duty support window if thats the option you are choosing
+Final Fantasy XIV Itself -> Character -> Targeting -> Ground Targeting -> Unlocked --*make this a pcall later but leave a note somewhere to user so they can change it if they wanna aim imanually later.
 --------------
 SCRIPT CONFIG
 --------------
@@ -60,8 +61,8 @@ Read the ini file - it should self explain the variables.  and it respects comme
 the ini file goes into the folder you can see below
 \\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
 you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
-to use this find the Trial_Farmer_MxVaxius.ini file and rename it to Trial_Farmer_Yourcharfirstlast.ini   notice no spaces.
-so if your character is named Pomelo Pup'per then you would call the .ini file   Trial_Farmer_PomeloPupper.ini
+to use this find the arbitraryduty_McVaxius.ini file and rename it to arbitraryduty_Yourcharfirstlast.ini   notice no spaces.
+so if your character is named Pomelo Pup'per then you would call the .ini file   arbitraryduty_PomeloPupper.ini
 just remember it will strip spaces and apostrophes
 --------------
 enjoy
@@ -104,15 +105,15 @@ end
 
 -- Specify the path to your text file
 -- forward slashes are actually backslashes.
---to use this find the Trial_Farmer_MxVaxius.ini file and rename it to Trial_Farmer_Yourcharfirstlast.ini   notice no spaces.
---so if your character is named Pomelo Pup'per then you would call the .ini file   Trial_Farmer_PomeloPupper.ini
+--to use this find the arbitraryduty_McVaxius.ini file and rename it to arbitraryduty_Yourcharfirstlast.ini   notice no spaces.
+--so if your character is named Pomelo Pup'per then you would call the .ini file   arbitraryduty_PomeloPupper.ini
 --also be sure to update the folder name as per your preference
 --just remember it will strip spaces and apostrophes
 tempchar = GetCharacterName()
 --tempchar = tempchar:match("%s*(.-)%s*") --remove spaces at start and end only
 tempchar = tempchar:gsub("%s", "")  --remove all spaces
 tempchar = tempchar:gsub("'", "")   --remove all apostrophes
-local filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\Trial_Farmer_"..tempchar..".ini"
+local filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\arbitraryduty_"..tempchar..".ini"
 
 -- Call the function to load variables from the file
 loadVariablesFromFile(filename)
@@ -177,6 +178,12 @@ local we_are_spreading = 0 --by default we aren't spreading
 local dutycheck = 0
 local dutycheckupdate = 1
 
+--arbitrary duty solver
+local dutyloaded = 0
+local dutytoload = "buttcheeks"
+local doodie = {} --initialize table for waypoints
+local whereismydoodie = 1 --position in doodie table
+
 local function distance(x1, y1, z1, x2, y2, z2)
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
 end
@@ -225,6 +232,7 @@ local function do_we_spread()
 		--return true
 		we_are_spreading = 1 --indicate to the follow functions that we are spreading and not to try and do stuff
 		spread_em(5) --default 5 "distance" movement for now IMPROVE LATER with multi variable array with distances for each spread marker? and maybe some actual math because 1,1 is actually 1.4 distance from origin.
+		did_we_find_one = 0
 	end
 	if did_we_find_one == 0 then
 		--return false
@@ -272,8 +280,120 @@ local function setdeest()
 	end
 end
 
---duty specific functions
-local function praetorium()
+--duty functions
+local function load_duty_data()
+	--tablestructure: visland OR vnavmesh (0, 1), x,y,z, wait at waypoint (seconds for /wait x) before /stop visland/vnavmesh, distance to be over to end waypoint if it was an area transition. default 0
+	local file_path = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..dutytoload
+	local doodies = {}  -- Initialize an empty table
+	if dutytoload ~= "buttcheeks" then
+		yield("/echo Attempting to load -> "..file_path)
+	    local file = io.open(file_path, "r")  -- Open the file in read mode
+		if file then
+			for line in file:lines() do  -- Iterate over each line in the file
+				if line ~= "" then  -- Skip empty lines
+					local row = {}  -- Initialize an empty table for each row
+					for value in line:gmatch("[^,]+") do  -- Split the line by comma
+						table.insert(row, value)  -- Insert each value into the row table
+						--yield("/echo value "..value)
+					end
+					table.insert(doodies, row)  -- Insert the row into the main table
+				end
+			end
+			file:close()  -- Close the file
+			dutyloaded = 1
+			return doodies  -- Return the loaded table
+		else
+			yield("/echo Error: Unable to open table file '" .. file_path .. "'")
+			return nil
+		end
+	end
+end
+
+local function getmovetype(wheee)
+	local funtimes = "vnavmesh"
+	yield("/echo DEBUG get move type for muuvtype -> "..wheee)
+	if tonumber(wheee) == 0 then
+		funtimes = "visland"
+		yield("/echo DEBUG get move type for muuvtype -> SHOULD BE VISLAND")
+	end
+	return funtimes
+end
+
+local function arbitrary_duty()
+	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(1) then --Praetorium
+		--will spam 2 and auto lockon. eventually clear the garbage
+		if string.len(GetTargetName()) > 0 then
+			yield("/lockon on") --need this for various stuff hehe.
+		end
+		if GetCharacterCondition(4) == true and string.len(GetTargetName()) > 0 then
+			yield("/automove")
+			yield("/send w")
+			yield("/wait 0.3")
+			yield("/send q")
+			yield("/send KEY_2")
+			yield("/wait 0.5")
+			yield("/send e")
+			yield("/wait 0.3")
+			yield("/send KEY_2")
+			yield("/wait 0.5")
+			yield("/send KEY_2")
+			yield("/wait 0.5")
+			yield("/send w")
+			yield("/wait 0.3")
+			yield("/send KEY_2")
+			yield("/wait 0.5")
+			yield("/wait 0.3")
+			yield("/send w")
+			yield("/send KEY_2")
+			yield("/wait 0.5")
+		end
+		dutytoload = "arbitraryduty_Praetorium.duty"
+	end
+	--*if we die:
+		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
+		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
+	--*resume mode - if there is a shortcut available:
+		--*search waypoint table for a waypoint closest to where we are after entering shortcut
+		--*set the waypoint to that closest waypoint and resume
+	
+	--if we are in a duty
+	if GetCharacterCondition(34) == true then
+		--if we haven't loaded a duty file. load it
+		if dutyloaded == 0 and dutytoload ~= "buttcheeks" then --we take a doodie from a .duty file
+			doodie = load_duty_data()
+			yield("/echo Waypoints loaded for this area -> "..#doodie)
+		end
+		if whereismydoodie < (#doodie+1) then
+			local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
+			local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
+			--if we are in combat stop navmesh/visland
+			if GetCharacterCondition(26) == true then
+				yield("/visland stop")
+				yield("/vnavmesh stop")
+				yield("/automove off")
+				yield("/echo stopping nav cuz in combat")
+			end
+			if GetCharacterCondition(26) == false then
+				muuvtype = getmovetype(doodie[whereismydoodie][1]) --grab the movetype from the waypoint
+				yield("/"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4]) --move to the x y z in the waypoint
+				yield("/automove off")
+				yield("/echo starting nav cuz not in combat, WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
+			end
+			--*if we are <? yalms from waypoint, wait x seconds then stop visland/vnavmesh
+			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6]))then
+				yield("/echo Onto the next waypoint! Current WP completed --> "..whereismydoodie)
+				yield("/wait "..doodie[whereismydoodie][5])
+				whereismydoodie = whereismydoodie + 1
+				yield("/automove off")
+				yield("/visland stop")
+				yield("/vnavmesh stop")
+			end	
+		end
+	end
+end
+	--[[
+	--for followers -- probably delete once we get the above part working.
+	--i heard you liked if statements so i nested an if statement in your if statement that i nested an if statement in your if statement that i ahahahah. i could have done 5-6 more nested if 
 	if type(GetZoneID()) == "number" and GetZoneID() == 1048 and char_snake ~= "party leader"  and char_snake ~= "no follow" then
 		--if we not in combat. target a terminal
 		if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then --if we aren't in combat and in praetorium
@@ -291,7 +411,7 @@ local function praetorium()
 			end	
 		end
 	end
-end
+	]]
 
 local function porta_decumana()
 		if type(GetZoneID()) == "number" and GetZoneID() == 1048 then
@@ -422,11 +542,12 @@ while repeated_trial < (repeat_trial + 1) do
 	end
 
 	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then --if we are not in combat AND we are in a duty then we will look for an exit or shortcut
-		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 25 then
-			yield("/target exit")
-		end
-		if type(GetDistanceToObject("shortcut")) == "number" and GetDistanceToObject("shortcut") < 25 then
-			yield("/target shortcut")
+		--we dont need to manually exit. automaton can do that now
+		--if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 25 then
+		--	yield("/target exit")
+		--end
+		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 25 then
+			yield("/target Shortcut")
 		end
 		yield("/wait 0.1")
 		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
@@ -471,11 +592,12 @@ while repeated_trial < (repeat_trial + 1) do
 	if GetCharacterCondition(34)==true then --if we are in a duty
 		--check for spread_marker_entities
 		do_we_spread() --single target spread marker handler function
+		--call the waypoint system
+		arbitrary_duty()
 		--duty specific stuff
 		if type(we_are_in) == "number" and we_are_in == 1048 then --porta decumana
 			--yield("/echo Decumana Check!")
 			porta_decumana()
-			praetorium()
 		end
 		--regular movement to target
 		if char_snake ~= "no follow" and char_snake ~= "party leader" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
@@ -556,6 +678,12 @@ while repeated_trial < (repeat_trial + 1) do
 		dutycheck = 0 --by default we aren't going to stop things because we are in a duty
 		dutycheckupdate = 1 --sometimes we don't want to update dutycheck because we reached phase 2 in a fight.
 	end
+	--if we arent in a duty - reset some duty stuff
+	if GetCharacterCondition(34) == false then
+		dutyloaded = 0
+		dutytoload = "buttcheeks"
+		whereismydoodie = 1
+	end
 end
 
 --/xldata object table, vbm debug, automaton debug
@@ -565,4 +693,4 @@ end
 --17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
 --17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
 
---v451
+--v123321
