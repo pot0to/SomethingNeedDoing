@@ -381,7 +381,7 @@ local function arbitrary_duty()
 				yield("/automove off")
 				yield("/echo starting nav cuz not in combat, WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
 			end
-			--*if we are <? yalms from waypoint, wait x seconds then stop visland/vnavmesh
+			--if we are <? yalms from waypoint, wait x seconds then stop visland/vnavmesh
 			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6]))then
 				yield("/echo Onto the next waypoint! Current WP completed --> "..whereismydoodie)
 				yield("/wait "..doodie[whereismydoodie][5])
@@ -593,7 +593,7 @@ while repeated_trial < (repeat_trial + 1) do
 	--test dist to the intended party leader
 	if GetCharacterCondition(34)==true then --if we are in a duty
 		--check for spread_marker_entities
-		do_we_spread() --single target spread marker handler function
+		--do_we_spread() --single target spread marker handler function
 		--call the waypoint system if we are wanting to from the .ini file
 		if trytoload == 1 then
 			arbitrary_duty()
