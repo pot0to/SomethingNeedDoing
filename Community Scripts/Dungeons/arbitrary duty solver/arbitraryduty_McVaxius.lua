@@ -137,6 +137,7 @@ yield("/echo limituse:"..limituse)
 yield("/echo limitpct:"..limitpct)
 yield("/echo limitlevel:"..limitlevel)
 yield("/echo movetype:"..movetype)
+yield("/echo trytoload:"..trytoload)
 
 --cleanup the variablesa  bit.  maybe well lowercase them later toohehe.
 char_snake = char_snake:match("^%s*(.-)%s*$"):gsub('"', '')
@@ -347,8 +348,9 @@ local function arbitrary_duty()
 			yield("/send KEY_2")
 			yield("/wait 0.5")
 		end
-		dutytoload = "arbitraryduty_Praetorium.duty"
 	end
+	--just make it use the zoneID no more need to edit this script for it to work
+	dutytoload = GetZoneID()..".duty"
 	--*if we die:
 		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
 		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
@@ -592,8 +594,10 @@ while repeated_trial < (repeat_trial + 1) do
 	if GetCharacterCondition(34)==true then --if we are in a duty
 		--check for spread_marker_entities
 		do_we_spread() --single target spread marker handler function
-		--call the waypoint system
-		arbitrary_duty()
+		--call the waypoint system if we are wanting to from the .ini file
+		if trytoload == 1 then
+			arbitrary_duty()
+		end
 		--duty specific stuff
 		if type(we_are_in) == "number" and we_are_in == 1048 then --porta decumana
 			--yield("/echo Decumana Check!")
