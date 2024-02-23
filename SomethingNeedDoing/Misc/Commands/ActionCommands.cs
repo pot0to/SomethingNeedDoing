@@ -68,4 +68,7 @@ internal class ActionCommands
 
         return cooldown <= 0 || recastTime == 0 ? maxStacks : maxStacks - (int)Math.Ceiling(cooldown / (recastTime / maxStacks));
     }
+
+    public unsafe void ExecuteAction(uint actionID) => ActionManager.Instance()->UseAction(ActionType.Action, actionID);
+    public unsafe void ExecuteGeneralAction(uint actionID) => ActionManager.Instance()->UseAction(ActionType.GeneralAction, actionID);
 }

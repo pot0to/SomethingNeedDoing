@@ -27,7 +27,7 @@ public class AddonCommands
     }
 
     public unsafe void OpenRouletteDuty(byte contentRouletteID) => AgentContentsFinder.Instance()->OpenRouletteDuty(contentRouletteID);
-    public unsafe void OpenRegularDuty(byte cfcID) => AgentContentsFinder.Instance()->OpenRegularDuty(cfcID);
+    public unsafe void OpenRegularDuty(uint cfcID) => AgentContentsFinder.Instance()->OpenRegularDuty(cfcID);
 
     public unsafe bool IsAddonVisible(string addonName)
     {

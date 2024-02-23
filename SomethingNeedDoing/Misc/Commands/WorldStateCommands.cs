@@ -34,6 +34,7 @@ public class WorldStateCommands
 
     public unsafe float GetFlagXCoord() => AgentMap.Instance()->FlagMapMarker.XFloat;
     public unsafe float GetFlagYCoord() => AgentMap.Instance()->FlagMapMarker.YFloat;
+    public unsafe float GetFlagZone() => AgentMap.Instance()->FlagMapMarker.TerritoryId;
 
     public unsafe byte GetActiveWeatherID() => EnvManager.Instance()->ActiveWeather;
 
@@ -92,4 +93,16 @@ public class WorldStateCommands
     public unsafe uint GetCurrentOceanFishingScore() => AgentModule.Instance()->GetAgentIKDResult()->Data->Score;
     public unsafe uint GetCurrentOceanFishingTotalScore() => AgentModule.Instance()->GetAgentIKDResult()->Data->TotalScore;
     #endregion
+
+    #region DeepDungeons
+    public float GetAccursedHoardRawX() => Svc.Objects.FirstOrDefault(x => x.DataId == DeepDungeonDataIDs.AccursedHoard)?.Position.X ?? 0;
+    public float GetAccursedHoardRawY() => Svc.Objects.FirstOrDefault(x => x.DataId == DeepDungeonDataIDs.AccursedHoard)?.Position.Y ?? 0;
+    public float GetAccursedHoardRawZ() => Svc.Objects.FirstOrDefault(x => x.DataId == DeepDungeonDataIDs.AccursedHoard)?.Position.Z ?? 0;
+    #endregion
+
+    public List<string> GetNearbyObjectNames(float distance = 0, byte objectKind = 0) =>
+        Svc.Objects
+            .Where(o => o.IsTargetable && (distance == 0 || Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position) <= distance) && (objectKind == 0 || (byte)o.ObjectKind == objectKind))
+            .Select(o => o.Name.TextValue)
+            .ToList();
 }
