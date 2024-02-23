@@ -5,12 +5,32 @@ would appreciate if you help to improve it and PR your .duty files.
 --------------------------------------------
 --------how to make a .duty file------------
 --------------------------------------------
-Make a script entry in SND with the following:
---zoneID
-yield("/echo this is the zone/area ID = "..GetZoneID().." you can call the file "..GetZoneID()..".duty")
---basic line entry for the .duty file
-yield("/echo 1,"..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..",3")
+Make script entries in SND with the following:
 
+----------------------------------------------------------------------------------------
+--zoneID for filename
+yield("/echo this is the zone/area ID = "..GetZoneID().." you can call the file "..GetZoneID()..".duty")
+----------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------
+--basic line entry for the .duty file for the x,y,z values
+yield("/echo 1,"..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..",3,0")
+----------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------
+--for getting the distance after an area transition for column 6 of the .duty file
+local function distance(x1, y1, z1, x2, y2, z2)
+    return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+end
+x2 = 123
+y2 = 123
+z2 = 123
+yield("/echo distance to waypoint after area transition -> "..distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(), x2, y2, z2)) --x2 y2 z2 are up to you to input
+----------------------------------------------------------------------------------------
+
+----------------------------------------
+--------.duty file structure------------
+----------------------------------------
 Every duty file has a number of rows. each one has 6 columns separated by a comman (,) and no spaces between commmas and values.
 
 Value 1: 0, 1 || movement type || 0 Visland, 1 = Vnavmesh
