@@ -321,12 +321,10 @@ local function getmovetype(wheee)
 end
 
 local function arbitrary_duty()
-	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(1) then --Praetorium
+	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
 		--will spam 2 and auto lockon. eventually clear the garbage
 		if string.len(GetTargetName()) > 0 then
 			yield("/lockon on") --need this for various stuff hehe.
-		end
-		if GetCharacterCondition(4) == true and string.len(GetTargetName()) > 0 then
 			yield("/automove")
 			yield("/send w")
 			yield("/wait 0.3")
