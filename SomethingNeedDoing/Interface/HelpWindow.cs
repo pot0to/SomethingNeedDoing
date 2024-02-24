@@ -8,6 +8,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ECommons;
 using ECommons.DalamudServices;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using SomethingNeedDoing.Misc.Commands;
@@ -325,6 +326,22 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+        "2024-02-24",
+        "- Added SetDFLanguageJ()\n" +
+        "- Added SetDFLanguageE()\n" +
+        "- Added SetDFLanguageD()\n" +
+        "- Added SetDFLanguageF()\n" +
+        "- Added SetDFJoinInProgress()\n" +
+        "- Added SetDFUnrestricted()\n" +
+        "- Added SetDFLevelSync()\n" +
+        "- Added SetDFMinILvl()\n" +
+        "- Added SetDFSilenceEcho()\n" +
+        "- Added SetDFExplorerMode()\n" +
+        "- Added SetDFLimitedLeveling()\n" +
+        "- Added GetDiademAetherGaugeBarCount()\n" +
+        "- Added IsPlayerAvailable()\n");
 
         DisplayChangelog(
         "2024-02-22",

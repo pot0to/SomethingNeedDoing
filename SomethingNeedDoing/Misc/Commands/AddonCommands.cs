@@ -1,4 +1,6 @@
 ﻿using ECommons;
+using ECommons.DalamudServices;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -28,6 +30,19 @@ public class AddonCommands
 
     public unsafe void OpenRouletteDuty(byte contentRouletteID) => AgentContentsFinder.Instance()->OpenRouletteDuty(contentRouletteID);
     public unsafe void OpenRegularDuty(uint cfcID) => AgentContentsFinder.Instance()->OpenRegularDuty(cfcID);
+    public void SetDFLanguageJ(bool state) => Svc.GameConfig.UiConfig.Set("ContentsFinderUseLangTypeJA", state);
+    public void SetDFLanguageE(bool state) => Svc.GameConfig.UiConfig.Set("ContentsFinderUseLangTypeEN", state);
+    public void SetDFLanguageD(bool state) => Svc.GameConfig.UiConfig.Set("ContentsFinderUseLangTypeDE", state);
+    public void SetDFLanguageF(bool state) => Svc.GameConfig.UiConfig.Set("ContentsFinderUseLangTypeFR", state);
+    public void SetDFJoinInProgress(bool state) => Svc.GameConfig.UiConfig.Set("ContentsFinderSupplyEnable", state);
+    public unsafe void SetDFUnrestricted(bool state) => ContentsFinder.Instance()->IsUnrestrictedParty = state;
+    public unsafe void SetDFLevelSync(bool state) => ContentsFinder.Instance()->IsLevelSync = state;
+    public unsafe void SetDFMinILvl(bool state) => ContentsFinder.Instance()->IsMinimalIL = state;
+    public unsafe void SetDFSilenceEcho(bool state) => ContentsFinder.Instance()->IsSilenceEcho = state;
+    public unsafe void SetDFExplorerMode(bool state) => ContentsFinder.Instance()->IsExplorerMode = state;
+    public unsafe void SetDFLimitedLeveling(bool state) => ContentsFinder.Instance()->IsLimitedLevelingRoulette = state;
+
+    public unsafe int GetDiademAetherGaugeBarCount() => GenericHelpers.TryGetAddonByName<AtkUnitBase>("HWDAetherGauge", out var addon) ? addon->AtkValues[1].Int / 200 : 0;
 
     public unsafe bool IsAddonVisible(string addonName)
     {

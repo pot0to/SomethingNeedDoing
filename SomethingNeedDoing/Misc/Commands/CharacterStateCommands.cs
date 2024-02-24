@@ -1,5 +1,6 @@
 ﻿using Dalamud.Utility;
 using ECommons.DalamudServices;
+using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
@@ -26,6 +27,8 @@ public class CharacterStateCommands
         }
         return list;
     }
+
+    public bool IsPlayerAvailable() => Player.Interactable && !ECommons.GenericHelpers.IsOccupied();
 
     public unsafe bool HasStatus(string statusName)
     {
