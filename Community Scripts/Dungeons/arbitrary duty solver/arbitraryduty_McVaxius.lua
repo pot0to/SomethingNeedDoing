@@ -120,6 +120,11 @@ loadVariablesFromFile(filename)
 
 -- Now you can use the variables in your Lua script
 yield("/cl")
+
+yield("/echo ATTEMPTING TO LOAD INI FILE if you dont see -> SUCCESSFULLY LOADED ALL VARS")
+yield("/echo at the end of the next block of text.")
+yield("/echo then you need to review the template to see if your missing something")
+
 yield("/echo Character:"..GetCharacterName())
 yield("/echo Filename+path:"..filename)
 yield("/echo char_snake:"..char_snake)
@@ -138,6 +143,8 @@ yield("/echo limitpct:"..limitpct)
 yield("/echo limitlevel:"..limitlevel)
 yield("/echo movetype:"..movetype)
 yield("/echo trytoload:"..trytoload)
+
+yield("/echo SUCCESSFULLY LOADED ALL VARS")
 
 --cleanup the variablesa  bit.  maybe well lowercase them later toohehe.
 char_snake = char_snake:match("^%s*(.-)%s*$"):gsub('"', '')

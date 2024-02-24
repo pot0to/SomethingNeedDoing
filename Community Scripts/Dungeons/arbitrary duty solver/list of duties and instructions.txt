@@ -33,7 +33,7 @@ yield("/echo distance to waypoint after area transition -> "..distance(GetPlayer
 ----------------------------------------
 Every duty file has a number of rows. each one has 6 columns separated by a comman (,) and no spaces between commmas and values.
 
-Value 1: 0, 1 || movement type || 0 Visland, 1 = Vnavmesh
+Value 1: 0, 1 || movement type || 0 Visland, 1 = Vnavmesh, planned: 2 = visland+jumping, 3=vnavmesh + jumping, 4 = visland + jumping + wiggling, 5 = vnavmesh + jumping + wiggling
 Value 2: x || get from above script
 Value 3: y || get from above script
 Value 4: z || get from above script
