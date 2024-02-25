@@ -37,6 +37,7 @@ https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaste
 simpletweaks -> turn on maincommand
 simpletweaks -> (optional) turn on autoequip command and set it to /equipguud
 pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
+pandora -> open chests
 automaton -> auto leave duty . set it to like 60,000 ms or higher so that it can catch some im-dead-when-duty-ended situations while also not cheating itself out of dungeon loots
 bossmod -> self configured with this script
 vnavmesh/visland -> nothing just leave it alone unless you know what you are doing
