@@ -44,6 +44,7 @@ something need doing -> go to options and disable SND targeting
 rotation solver -> self configured with this script
 lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
 yesalready -> setup a leave from instance.. the first time you exit you can auto add with teh circular plus icon
+yesalready -> bothers -> auto commence
 textadvance -> auto on and add your char to the list
 Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
 															Do it in the duty support window if thats the option you are choosing
