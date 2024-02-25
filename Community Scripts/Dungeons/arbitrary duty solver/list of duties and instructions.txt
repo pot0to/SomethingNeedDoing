@@ -11,6 +11,20 @@ Make script entries in SND with the following:
 --zoneID for filename
 yield("/echo this is the zone/area ID = "..GetZoneID().." you can call the file "..GetZoneID()..".duty")
 ----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+--Autogenerate WP file
+local file = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\arbitraryduty_"..GetZoneID()..".duty"
+
+if file then
+	-- Write text to the file
+	file:write("1,"..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..",3,0"\n")
+	-- Close the file handle
+	file:close()
+	yield("/echo WP added to -> "..file)
+else
+	yield("/echo Error: Unable to open file for writing")
+end
+----------------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------------
 --basic line entry for the .duty file for the x,y,z values
@@ -33,7 +47,7 @@ yield("/echo distance to waypoint after area transition -> "..distance(GetPlayer
 ----------------------------------------
 Every duty file has a number of rows. each one has 6 columns separated by a comman (,) and no spaces between commmas and values.
 
-Value 1: 0, 1 || movement type || 0 Visland, 1 = Vnavmesh
+Value 1: 0, 1 || movement type || 0 Visland, 1 = Vnavmesh, planned: 2 = visland+jumping, 3=vnavmesh + jumping, 4 = visland + jumping + wiggling, 5 = vnavmesh + jumping + wiggling
 Value 2: x || get from above script
 Value 3: y || get from above script
 Value 4: z || get from above script
