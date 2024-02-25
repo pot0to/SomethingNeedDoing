@@ -1,3 +1,73 @@
+****************
+**INSTRUCTIONS**
+****************
+This is just kind of proof of concept farming script for easy duties that vbm AI mode can solve.
+
+******************
+**REQUIRED REPOS**
+******************
+https://love.puni.sh/ment.json
+https://puni.sh/api/repository/croizat
+https://puni.sh/api/repository/veyn
+https://raw.githubusercontent.com/a08381/Dalamud.SkipCutscene/dist/repo.json
+
+******************
+**OPTIONAL REPOS**
+******************
+https://puni.sh/api/repository/kawaii
+https://puni.sh/api/repository/taurenkey
+https://plugins.carvel.li
+https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json
+
+********************
+**REQUIRED PLOGONS**
+********************
+*Something Need Doing (croizat fork)
+*Pandora
+*Rotation solver
+*Simpletweaks
+*YesAlready
+*TextAdvance
+*Cutscene Skip
+*vnavmesh OR visland - decide which you want to use in the .ini file
+
+*****************
+**Plogon config**
+*****************
+simpletweaks -> turn on maincommand
+simpletweaks -> (optional) turn on autoequip command and set it to /equipguud
+pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
+automaton -> auto leave duty . set it to like 60,000 ms or higher so that it can catch some im-dead-when-duty-ended situations while also not cheating itself out of dungeon loots
+bossmod -> self configured with this script
+vnavmesh/visland -> nothing just leave it alone unless you know what you are doing
+something need doing -> go to options and disable SND targeting
+rotation solver -> self configured with this script
+lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
+yesalready -> setup a leave from instance.. the first time you exit you can auto add with teh circular plus icon
+textadvance -> auto on and add your char to the list
+Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
+															Do it in the duty support window if thats the option you are choosing
+Final Fantasy XIV Itself -> Character -> Targeting -> Ground Targeting -> Unlocked --*make this a pcall later but leave a note somewhere to user so they can change it if they wanna aim imanually later.
+--------------
+SCRIPT CONFIG
+--------------
+the reason we use an ini file is so you can have many different characters configured separately and also update the script without having to edit it at all. (aside from copy and paste)
+Read the ini file - it should self explain the variables.  and it respects comments. just not same-line comments
+the ini file goes into the folder you can see below
+\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
+you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
+to use this find the arbitraryduty_McVaxius.ini file and rename it to arbitraryduty_Yourcharfirstlast.ini   notice no spaces.
+so if your character is named Pomelo Pup'per then you would call the .ini file   arbitraryduty_PomeloPupper.ini
+just remember it will strip spaces and apostrophes
+--------------
+enjoy
+****END OF INSTRUCTIONS****
+misc side note. the version number at end of file is meaningless. its just there so i can see if i copy pasted successfully over remote control of another PC ;p clipboard is finicky
+
+
+
+
+Now for the fun part -> making waypoints and what they are etc.
 note to reader:
 please go ahead and steal the code etc.
 would appreciate if you help to improve it and PR your .duty files.
