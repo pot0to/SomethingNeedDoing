@@ -3,6 +3,10 @@
   Author: McVaxius
 ]]
 
+
+--if you see --*
+--this is a todo for some logic ill add sooner or later
+
 --[[
 ****************
 **INSTRUCTIONS**
@@ -329,28 +333,25 @@ end
 
 local function arbitrary_duty()
 	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
-		--will spam 2 and auto lockon. eventually clear the garbage
+		--will spam Photon Stream and auto lockon. eventually clear the garbage
 		if string.len(GetTargetName()) > 0 then
 			yield("/lockon on") --need this for various stuff hehe.
 			yield("/automove")
-			yield("/send w")
 			yield("/wait 0.3")
-			yield("/send q")
-			yield("/send KEY_2")
+			yield("/automove stop")
+			ExecuteAction(1129)
 			yield("/wait 0.5")
-			yield("/send e")
+			yield("/automove")
 			yield("/wait 0.3")
-			yield("/send KEY_2")
+			ExecuteAction(1129)
 			yield("/wait 0.5")
-			yield("/send KEY_2")
+			ExecuteAction(1129)
 			yield("/wait 0.5")
-			yield("/send w")
+			yield("/automove stop")
 			yield("/wait 0.3")
-			yield("/send KEY_2")
+			ExecuteAction(1129)
 			yield("/wait 0.5")
-			yield("/wait 0.3")
-			yield("/send w")
-			yield("/send KEY_2")
+			ExecuteAction(1129)
 			yield("/wait 0.5")
 		end
 	end
@@ -600,6 +601,8 @@ while repeated_trial < (repeat_trial + 1) do
 		--check for spread_marker_entities
 		--do_we_spread() --single target spread marker handler function
 		--call the waypoint system if we are wanting to from the .ini file
+		--* move towards treasure chests when they are near
+		--* move to exit if we are within 100 yalms of the end
 		if trytoload == 1 then
 			arbitrary_duty()
 		end
