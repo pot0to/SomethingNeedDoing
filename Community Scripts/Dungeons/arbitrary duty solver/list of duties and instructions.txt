@@ -12,18 +12,22 @@ Make script entries in SND with the following:
 yield("/echo this is the zone/area ID = "..GetZoneID().." you can call the file "..GetZoneID()..".duty")
 ----------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------
---Autogenerate WP file
-local file = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\arbitraryduty_"..GetZoneID()..".duty"
+-- Autogenerate WP file
+local file_path = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..GetZoneID()..".duty"
+
+-- Open file for appending (or create it if it doesn't exist)
+local file = io.open(file_path, "a")
 
 if file then
-	-- Write text to the file
-	file:write("1,"..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..",3,0"\n")
-	-- Close the file handle
-	file:close()
-	yield("/echo WP added to -> "..file)
+    -- Write text to the file
+    file:write("1,"..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..",3,0\n")
+    -- Close the file handle
+    file:close()
+    yield("/echo WP added to -> "..file_path)
 else
-	yield("/echo Error: Unable to open file for writing")
+    yield("/echo Error: Unable to open file for writing")
 end
+
 ----------------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------------
