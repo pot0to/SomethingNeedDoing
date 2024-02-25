@@ -139,4 +139,5 @@ some stuff isn't yet solved by bossmod but we can solve in SND for now
 --------------------------------------------
 ---------------List of Duties---------------
 --------------------------------------------
-1044	Level 50	The Praetorium	Some customization in .lua for mounted portion and area transition reconciliation
+584		Level 60	Alexander 9 Unsynced - some customization in .lua to target the Refurbisher. this is meant for light farming.
+1044	Level 50	The Praetorium	Some customization in .lua for mounted portion and area transition reconciliation. this is meant for mogtoming SYNCED
