@@ -325,7 +325,7 @@ local function arbitrary_duty()
 		yield("/action Auto-attack")
 		yield("/wait 2")
 		yield("/vbm cfg AI Enabled false")
-		yield("/autolock")
+		yield("/lockon")
 	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 854 then --Eden 2 Savage
 		--[[
