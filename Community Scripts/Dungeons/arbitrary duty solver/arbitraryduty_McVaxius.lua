@@ -422,10 +422,28 @@ local function arbitrary_duty()
 	end
 	--duty specific stuff
 	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
+		local praedist = 500
+		local praetargets = {
+		"Magitek Colossus",
+		"Cohort Eques",
+		"Magitek Reaper",
+		"Magitek Death Claw",
+		"Magitek Vanguard H-1"
+		}
+		for i = 1, #praetargets do
+			if string.len(GetTargetName()) == 0 and GetCharacterCondition(26) == true then --if something is whacking us but we dont have it targeted...!?!?!
+				praedist = distance(GetPlayerRawXPos(tostring(1)),GetPlayerRawYPos(tostring(1)),GetPlayerRawZPos(tostring(1)),GetObjectRawXPos(".praetargets[i].."),GetObjectRawYPos(".praetargets[i].."),GetObjectRawZPos(".praetargets[i].."))
+				if praedist < 10 then
+					yield("/target "..praetargets[i])
+				end
+			end
+		end
 		--will spam Photon Stream and auto lockon. eventually clear the garbage
 		local magiwhee = 1129 -- lasers
-		if partymemberENUM == 2 or partymemberENUM == 4 or partymemberENUM == 6 or partymemberENUM == 8 then
-			magiwhee = 1128 --big buum
+		--this shit doesn't actualy work so well just use lasers for now ;\
+		--if partymemberENUM == 2 or partymemberENUM == 4 or partymemberENUM == 6 or partymemberENUM == 8 then
+		--	magiwhee = 1128 --big buum
+		--end
 		if string.len(GetTargetName()) > 0 then
 			yield("/lockon on") --need this for various stuff hehe.
 			yield("/automove")
@@ -582,13 +600,9 @@ while repeated_trial < (repeat_trial + 1) do
 	end
 	--test dist to the intended party leader
 	if GetCharacterCondition(34)==true then --if we are in a duty
-		--check for spread_marker_entities
-		--do_we_spread() --single target spread marker handler function
 		--call the waypoint system if we are wanting to from the .ini file
-		--* move towards treasure chests when they are near
-		--* move to exit if we are within 100 yalms of the end
-		arbitrary_duty()
-
+		arbitrary_duty() --this is the big boy
+		
 		--regular movement to target
 		if char_snake ~= "no follow" and char_snake ~= "party leader" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
 			setdeest()
@@ -610,7 +624,6 @@ while repeated_trial < (repeat_trial + 1) do
 		end
 		--yield("/echo distance between points: "..dist_between_points.." snake_deest"..snake_deest.." meh_deest :"..meh_deest)
 	end
-	
 	--test dist to the intended party leader
 	i = 0
 	if GetCharacterCondition(28)==true then --if we are bound by qte
@@ -626,8 +639,6 @@ while repeated_trial < (repeat_trial + 1) do
 			end
 		end
 	end
-	yield("/wait 1")
-
 	--check if we chagned areas or just wait as normal
 	we_are_in = GetZoneID() --where are we?
 	if type(we_are_in) ~= "number" then
@@ -673,9 +684,7 @@ while repeated_trial < (repeat_trial + 1) do
 		dutytoload = "buttcheeks"
 		whereismydoodie = 1
 	end
+	yield("/wait 1") --the entire fuster cluck is looping on wait 1 haha
 end
 
-
-
-
---v666 lines of code
+--vasdfasdfasdfasdf
