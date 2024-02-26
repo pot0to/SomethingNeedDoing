@@ -1,7 +1,7 @@
 ****************
 **INSTRUCTIONS**
 ****************
-This is just kind of proof of concept farming script for easy duties that vbm AI mode can solve.
+This is just kind of proof of concept farming script for duties that vbm AI mode can solve or doesn't need to becuase your doing it unsynced.
 
 ******************
 **REQUIRED REPOS**
