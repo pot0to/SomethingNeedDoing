@@ -127,9 +127,16 @@ local dutyloaded = 0
 local dutyFile = "buttcheeks"
 local doodie = {} --initialize table for waypoints
 local whereismydoodie = 1 --position in doodie table
+local customized_targeting = 0 -- this is for custom code for specific duties
+local waitTarget = 0 --so we aren't spamming target search nonstop and breaking the WP system
 
 local function distance(x1, y1, z1, x2, y2, z2)
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+end
+
+-- random number function
+function getRandomNumber(min, max)
+  return math.random(min,max)
 end
 
 --Wrapper to get nearest objectKind
@@ -137,7 +144,7 @@ end
 --{2: BattleNpc, 4: Treasure, 6: GatheringPoint, 7:EventObj}
 local function TargetNearestObjectKind(objectKind, radius)
     local smallest_distance = 10000000000000.0
-    local closest_target
+    local closest_target = "nothing"
     local radius = radius or 0
     local nearby_objects = GetNearbyObjectNames(radius^2,objectKind)
     
@@ -298,6 +305,8 @@ end
 
 local function porta_decumana()
 		if type(GetZoneID()) == "number" and GetZoneID() == 1048 then
+			customized_targeting = 1
+			yield("/target Ultima")
 			--check the area number before doing ANYTHING this breaks other areas.
 			--porta decumana ultima weapon orbs in phase 2 near start of phase
 			--very hacky kludge until movement isn't slidy
@@ -394,7 +403,16 @@ local function arbitrary_duty()
 			end
 			if GetCharacterCondition(26) == false then
 				muuvtype = getmovetype(doodie[whereismydoodie][1]) --grab the movetype from the waypoint
-				yield("/"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4]) --move to the x y z in the waypoint
+				if target ~= doodie[whereismydoodie][7] then --dont get away from they keys and such
+					yield("/"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4]) --move to the x y z in the waypoint
+				end
+				if string.len(doodie[whereismydoodie][7]) > 1 then
+					yield("/target "..doodie[whereismydoodie][7])
+					yield("/wait 1")
+				end
+				if string.len(doodie[whereismydoodie][7]) > 1 and target == doodie[whereismydoodie][7] then
+					yield("/"..muuvtype.." moveto "..GetObjectRawXPos(doodie[whereismydoodie][7]).." "..GetObjectRawYPos(doodie[whereismydoodie][7]).." "..GetObjectRawXPos(doodie[whereismydoodie][7])) --move to the x y z in the waypoint
+				end
 				yield("/automove off")
 				yield("/echo starting nav cuz not in combat, WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
 			end
@@ -457,6 +475,21 @@ local function arbitrary_duty()
 		]]
 	end
 	--duty specific stuff
+	if type(GetZoneID()) == "number" and GetZoneID() == 1036 then --Sastasha
+		customized_targeting = 1
+		if whereismydoodie < 7 then
+			yield("/target aurelia")
+			yield("/target Chopper")
+		end
+		if whereismydoodie < 3 then
+			if getRandomNumber(1,10) == 1 then
+				yield("/gaction jump")
+			end
+			if getRandomNumber(1,10) == 2 then
+				yield("/send e")
+			end
+		end
+	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
 		local praedist = 500
 		local praetargets = {
@@ -514,9 +547,17 @@ yield("/vbmai on")
 
 while repeated_trial < (repeat_trial + 1) do
 	--yield("/echo get limoooot"..GetLimitBreakCurrentValue().."get limootmax"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
-
-	yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
-    --TargetNearestObjectKind(2) --Find nearest battlenpc --*
+    if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
+		yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
+	end
+--[[ --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
+    if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
+		waitTarget = waitTarget + 1
+		if waitTarget > 10 then
+			TargetNearestObjectKind(2) --Find nearest battlenpc 
+			waitTarget = 0
+		end
+	end]]
 	--some other spams.
 	--the command "targetnenemy" is unavailable at this time
 	--unable to execute command while occupied
@@ -721,6 +762,7 @@ while repeated_trial < (repeat_trial + 1) do
 		dutyloaded = 0
 		dutytoload = "buttcheeks"
 		whereismydoodie = 1
+		customized_targeting = 0
 	end
 	yield("/wait 1") --the entire fuster cluck is looping on wait 1 haha
 end
