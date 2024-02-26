@@ -520,10 +520,10 @@ while repeated_trial < (repeat_trial + 1) do
 			--we use simpletweaks
 			yield("/maincommand Duty Support")
 			yield("/wait 2")
-			yield("/echo attempting to trigger duty support")
-			yield("/pcall DawnStory true 11 0") --change tab to first tab
-			yield("/pcall DawnStory true 12 35")--select port decumana
-			yield("/wait 2")
+			--yield("/echo attempting to trigger duty support")
+			--yield("/pcall DawnStory true 11 0") --change tab to first tab
+			--yield("/pcall DawnStory true 12 35")--select port decumana
+			--yield("/wait 2")
 			yield("/pcall DawnStory true 14") --START THE DUTY
 		end
 	
