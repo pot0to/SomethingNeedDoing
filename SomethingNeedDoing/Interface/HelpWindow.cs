@@ -328,6 +328,24 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-26",
+        "- Added NavIsReady()\n" +
+        "- Added NavBuildProgress()\n" +
+        "- Added NavReload()\n" +
+        "- Added NavRebuild()\n" +
+        "- Added NavIsAutoLoad()\n" +
+        "- Added NavSetAutoLoad()\n" +
+        "- Added PathMoveTo()\n" +
+        "- Added PathFlyTo()\n" +
+        "- Added PathStop()\n" +
+        "- Added PathIsRunning()\n" +
+        "- Added PathNumWaypoints()\n" +
+        "- Added PathGetMovementAllowed()\n" +
+        "- Added PathSetMovementAllowed()\n" +
+        "- Added PathGetTolerance()\n" +
+        "- Added PathSetTolerance()\n");
+
+        DisplayChangelog(
         "2024-02-24",
         "- Added SetDFLanguageJ()\n" +
         "- Added SetDFLanguageE()\n" +
