@@ -377,10 +377,12 @@ local function arbitrary_duty()
 				yield("/echo starting nav cuz not in combat, WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
 			end
 			--if we are <? yalms from waypoint, wait x seconds then stop visland/vnavmesh
-			if doodie[whereismydoodie][7] == 0 then --if we are skipping chests then we skip the waypoint
+			local skipcheck = 0 --this is important if we hit a chest node and we are skipping nodes we will skip the waypoint without processing the next one immediately
+			if doodie[whereismydoodie][7] == 1 and lootchests == 0 then --if we are skipping chests then we skip the waypoint
 				whereismydoodie = whereismydoodie + 1
+				skipcheck = 1
 			end
-			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6]))then
+			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6])) and skipcheck == 0 then
 				yield("/echo Onto the next waypoint! Current WP completed --> "..whereismydoodie)
 				yield("/wait "..doodie[whereismydoodie][5])
 				whereismydoodie = whereismydoodie + 1
