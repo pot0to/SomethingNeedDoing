@@ -132,6 +132,7 @@ Value 3: y || get from above script
 Value 4: z || get from above script
 Value 5: t || seconds to wait after reaching waypoint before next waypoint trigger. default 3 seconds
 Value 6: r || value 0 normall, anything above 0 otherwise.  Explanation: if we have gone through a sub area transition like the magitek armor in prae -> basement section,
+Value 7: g || value 0 = normal wp, 1 = chest to configure on/off in settings. skippable wps
 we need to solve that. simply put in the appropriate value a few y lower than the distance to waypoint AFTER the area transition. the prae (1044.duty) preset has a few entries in it.
 
 

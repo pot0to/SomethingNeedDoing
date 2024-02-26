@@ -517,7 +517,7 @@ while repeated_trial < (repeat_trial + 1) do
 		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 80 then
 			yield("/target Shortcut")
 		end
-		--* we need to look for ... treasure chests? maybe
+
 		yield("/wait 0.1")
 		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
 			local minicounter = 0
@@ -557,8 +557,9 @@ while repeated_trial < (repeat_trial + 1) do
 			end
 			--double check target type here. shortcuts are a a-ok goto always.
 			if GetTargetName()=="Shortcut" then
-				yield("/lockon on")
-				yield("/automove on")
+				--yield("/lockon on")
+				--yield("/automove on")
+				yield("/vnavmesh moveto "..GetObjectRawXPos("Shortcut").." "..GetObjectRawYPos("Shortcut").." "..GetObjectRawZPos("Shortcut"))
 				yield("/wait 10")
 			end
 			if GetTargetName()=="Exit" then
@@ -567,8 +568,10 @@ while repeated_trial < (repeat_trial + 1) do
 					zempdist = distance(GetObjectRawXPos("Exit"),GetObjectRawYPos("Exit"),GetObjectRawZPos("Exit"),doodie[#doodie][2],doodie[#doodie][3],doodie[#doodie][4])
 				end
 				if dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie >= #doodie) then --if we didnt load a waypoint file we don't care about which exit it is
-					yield("/lockon on")
-					yield("/automove on")
+					--yield("/lockon on")
+					--yield("/automove on")
+					--replaced above with navmesh to exit
+					yield("/vnavmesh moveto "..GetObjectRawXPos("Exit").." "..GetObjectRawYPos("Exit").." "..GetObjectRawZPos("Exit"))
 				end
 			end
 		end
