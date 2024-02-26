@@ -749,7 +749,9 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/rotation auto")
 		--only party leader will do cd 5 because otherwise its spammy
 		if char_snake == "party leader" then
-			yield("/cd 5")
+			if GetCharacterCondition(26) == false and GetCharacterCondition(34) == true and string.len(GetTargetName()) > 0 then
+				yield("/cd 5")
+			end
 		end
 		yield("/send KEY_1")  --* huge fucking problem if its bound to anything but some kind of attack. maybe this hsould be default attack on?
 		yield("/action Auto-attack")
