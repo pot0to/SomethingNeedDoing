@@ -561,7 +561,7 @@ while repeated_trial < (repeat_trial + 1) do
 				if dutyloaded == 1 then
 					zempdist = distance(GetObjectRawXPos("Exit"),GetObjectRawYPos("Exit"),GetObjectRawZPos("Exit"),doodie[#doodie][2],doodie[#doodie][3],doodie[#doodie][4])
 				end
-				if dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie) then --if we didnt load a waypoint file we don't care about which exit it is
+				if dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie >= #doodie) then --if we didnt load a waypoint file we don't care about which exit it is
 					yield("/lockon on")
 					yield("/automove on")
 				end
