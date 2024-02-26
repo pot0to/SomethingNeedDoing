@@ -510,6 +510,7 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/wait 0.1")
 		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
 			local minicounter = 0
+			--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
 			if NeedsRepair(99) then
 				yield("/wait 10")
 				while not IsAddonVisible("Repair") do
@@ -638,7 +639,6 @@ while repeated_trial < (repeat_trial + 1) do
 		we_were_in = we_are_in --record this as we are in this area now
 	end
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
-		--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
 		yield("/equipguud")
 		yield("/vbmai on")
 		yield("/rotation auto")
@@ -646,12 +646,13 @@ while repeated_trial < (repeat_trial + 1) do
 		if char_snake == "party leader" then
 			yield("/cd 5")
 		end
-		yield("/send KEY_1")
+		yield("/send KEY_1")  --* huge fucking problem if its bound to anything but some kind of attack. maybe this hsould be default attack on?
+		yield("/action Auto-attack")
 		--yield("/wait 10")
 		dutycheck = 0 --by default we aren't going to stop things because we are in a duty
 		dutycheckupdate = 1 --sometimes we don't want to update dutycheck because we reached phase 2 in a fight.
 	end
-	--if we arent in a duty - reset some duty stuff
+	--if we arent in a duty - force disable / reset some duty stuff
 	if GetCharacterCondition(34) == false then
 		dutyloaded = 0
 		dutytoload = "buttcheeks"
@@ -659,11 +660,7 @@ while repeated_trial < (repeat_trial + 1) do
 	end
 end
 
---/xldata object table, vbm debug, automaton debug
---eg
---17BB974B6D0:40000B89[38] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53157 Z468.43414 D9 R-0.7854581 - Target: E0000000
---17BB974E650:40000B8C[40] - BattleNpc - Aetheroplasm - X-715.5604 Y-185.53159 Z468.4341 D19 R0.78536224 - Target: E0000000
---17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
---17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
 
---vasdfasdfasfd
+
+
+--v666 lines of code

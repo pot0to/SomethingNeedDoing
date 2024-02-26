@@ -36,10 +36,11 @@ https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaste
 *****************
 simpletweaks -> turn on maincommand
 simpletweaks -> (optional) turn on autoequip command and set it to /equipguud
-pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
-pandora -> open chests
+pandora -> turn on auto interact on pandora set distance to 5 dist 3 height
+pandora -> auto interact settings -> Exclude combat
+pandora -> open chests -> on, other options inside not checked
 automaton -> auto leave duty . set it to like 60,000 ms or higher so that it can catch some im-dead-when-duty-ended situations while also not cheating itself out of dungeon loots
-bossmod -> self configured with this script
+bossmod -> Action Tweak and Autorotation settings -> ALL OFF
 vnavmesh/visland -> nothing just leave it alone unless you know what you are doing
 something need doing -> go to options and disable SND targeting
 rotation solver -> self configured with this script
@@ -50,6 +51,8 @@ textadvance -> auto on and add your char to the list
 Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
 															Do it in the duty support window if thats the option you are choosing
 Final Fantasy XIV Itself -> Character -> Targeting -> Ground Targeting -> Unlocked --*make this a pcall later but leave a note somewhere to user so they can change it if they wanna aim imanually later.
+Final Fantasy XIV Itself -> Character -> Control Settings -> General -> LEGACY MOVEMENT
+Final Fantasy XIV Itself -> Character -> Control Settings -> General -> UNCHECK "Disable Camera Pivot"
 --------------
 SCRIPT CONFIG
 --------------
@@ -121,7 +124,7 @@ yield("/echo distance to waypoint after area transition -> "..distance(GetPlayer
 ----------------------------------------
 --------.duty file structure------------
 ----------------------------------------
-Every duty file has a number of rows. each one has 6 columns separated by a comman (,) and no spaces between commmas and values.
+Every duty file has a number of rows. each one has 6 columns separated by a comma (,) and no spaces between commmas and values.
 
 Value 1: 0, 1 || movement type || 0 Visland, 1 = Vnavmesh, planned: 2 = visland+jumping, 3=vnavmesh + jumping, 4 = visland + jumping + wiggling, 5 = vnavmesh + jumping + wiggling
 Value 2: x || get from above script
@@ -141,5 +144,6 @@ some stuff isn't yet solved by bossmod but we can solve in SND for now
 --------------------------------------------
 ---------------List of Duties---------------
 --------------------------------------------
-584		Level 60	Alexander 9 Unsynced - some customization in .lua to target the Refurbisher. this is meant for light farming.
-1044	Level 50	The Praetorium	Some customization in .lua for mounted portion and area transition reconciliation. this is meant for mogtoming SYNCED
+1044	Level 50	The Praetorium Synced Party or Duty Support		-	Some customization in .lua for mounted portion and area transition reconciliation. this is meant for mogtoming SYNCED
+445		Level 60	Alexander 4 Normal Unsycned						- 	no customizedion in lua, it will waypoint to chests when its done. this is meant for farming gc seals!
+584		Level 60	Alexander 9 Savage Unsynced						- 	Some customization in lua to target the Refurbisher. this is meant for light farming.
