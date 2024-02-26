@@ -352,24 +352,27 @@ local function arbitrary_duty()
 	--duty specific stuff
 	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
 		--will spam Photon Stream and auto lockon. eventually clear the garbage
+		local magiwhee = 1129 -- lasers
+		if partymemberENUM == 2 or partymemberENUM == 4 or partymemberENUM == 6 or partymemberENUM == 8 then
+			magiwhee = 1128 --big buum
 		if string.len(GetTargetName()) > 0 then
 			yield("/lockon on") --need this for various stuff hehe.
 			yield("/automove")
 			yield("/wait 0.3")
 			yield("/automove stop")
-			ExecuteAction(1129)
+			ExecuteAction(magiwhee)
 			yield("/wait 0.5")
 			yield("/automove")
 			yield("/wait 0.3")
-			ExecuteAction(1129)
+			ExecuteAction(magiwhee)
 			yield("/wait 0.5")
-			ExecuteAction(1129)
+			ExecuteAction(magiwhee)
 			yield("/wait 0.5")
 			yield("/automove stop")
 			yield("/wait 0.3")
-			ExecuteAction(1129)
+			ExecuteAction(magiwhee)
 			yield("/wait 0.5")
-			ExecuteAction(1129)
+			ExecuteAction(magiwhee)
 			yield("/wait 0.5")
 		end
 	end
