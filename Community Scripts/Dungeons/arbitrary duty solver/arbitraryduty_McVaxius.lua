@@ -432,6 +432,7 @@ local function arbitrary_duty()
 		}
 		for i = 1, #praetargets do
 			if string.len(GetTargetName()) == 0 and GetCharacterCondition(26) == true then --if something is whacking us but we dont have it targeted...!?!?!
+				yield("/echo We are being attacked - attempting to catch a "..praetargets[i])
 				praedist = distance(GetPlayerRawXPos(tostring(1)),GetPlayerRawYPos(tostring(1)),GetPlayerRawZPos(tostring(1)),GetObjectRawXPos(".praetargets[i].."),GetObjectRawYPos(".praetargets[i].."),GetObjectRawZPos(".praetargets[i].."))
 				if praedist < 10 then
 					yield("/target "..praetargets[i])
