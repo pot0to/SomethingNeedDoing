@@ -102,9 +102,9 @@ local currentLocY = 1
 local currentLocZ = 1
 
 --our current location
-local mecurrentLocX = GetPlayerRawXPos(tostring(1))
-local mecurrentLocY = GetPlayerRawYPos(tostring(1))
-local mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+local mecurrentLocX = GetPlayerRawXPos()
+local mecurrentLocY = GetPlayerRawYPos()
+local mecurrentLocZ = GetPlayerRawZPos()
 
 --our current area
 local we_are_in = 666
@@ -124,12 +124,35 @@ local dutycheckupdate = 1
 
 --arbitrary duty solver
 local dutyloaded = 0
-local dutytoload = "buttcheeks"
+local dutyFile = "buttcheeks"
 local doodie = {} --initialize table for waypoints
 local whereismydoodie = 1 --position in doodie table
 
 local function distance(x1, y1, z1, x2, y2, z2)
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+end
+
+--Wrapper to get nearest objectKind
+--Uses SND's targeting system
+--{2: BattleNpc, 4: Treasure, 6: GatheringPoint, 7:EventObj}
+local function TargetNearestObjectKind(objectKind, radius)
+    local smallest_distance = 10000000000000.0
+    local closest_target
+    local radius = radius or 0
+    local nearby_objects = GetNearbyObjectNames(radius^2,objectKind)
+    
+    if nearby_objects.Count > 0 then
+        for i = 0, nearby_objects.Count - 1 do
+            yield("/target "..nearby_objects[i])
+            if not GetTargetName() or nearby_objects[i] ~= GetTargetName() then
+            elseif GetDistanceToTarget() < smallest_distance then
+                smallest_distance = GetDistanceToTarget()
+                closest_target = GetTargetName()
+            end
+        end
+        if closest_target then yield("/target "..closest_target) end
+    end
+    return closest_target
 end
 
 local function limitbreak()
@@ -227,9 +250,9 @@ end
 --duty functions
 local function load_duty_data()
 	--tablestructure: visland OR vnavmesh (0, 1), x,y,z, wait at waypoint (seconds for /wait x) before /stop visland/vnavmesh, distance to be over to end waypoint if it was an area transition. default 0
-	local file_path = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..dutytoload
+	local file_path = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..dutyFile
 	local doodies = {}  -- Initialize an empty table
-	if dutytoload ~= "buttcheeks" then
+	if dutyFile ~= "buttcheeks" then
 		yield("/echo Attempting to load -> "..file_path)
 	    local file = io.open(file_path, "r")  -- Open the file in read mode
 		if file then
@@ -263,13 +286,13 @@ local function getmovetype(wheee)
 	return funtimes
 end
 
-local function fileExists(filepath)
-    local file = io.open(filepath, "r")
+local function dutyFileExists(dutyFile)
+    local file = io.open(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..dutyFile, "r")
     if file then
         io.close(file)
-        return 0
+        return true
     else
-        return 1
+        return false
     end
 end
 
@@ -279,14 +302,17 @@ local function porta_decumana()
 			--porta decumana ultima weapon orbs in phase 2 near start of phase
 			--very hacky kludge until movement isn't slidy
 			--nested ifs because we don't want to get locked into this
+			mecurrentLocX = GetPlayerRawXPos()
+			mecurrentLocY = GetPlayerRawYPos()
+			mecurrentLocZ = GetPlayerRawZPos()
 			phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
 			if dutycheck == 0 and dutycheckupdate == 1 and phase2 < 40 then
 				--we in phase 2 boyo
 				dutycheck = 1
 			end
-			mecurrentLocX = GetPlayerRawXPos(tostring(1))
-			mecurrentLocY = GetPlayerRawYPos(tostring(1))
-			mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+--			mecurrentLocX = GetPlayerRawXPos()
+--			mecurrentLocY = GetPlayerRawYPos()
+--			mecurrentLocZ = GetPlayerRawZPos()
 			if dutycheckupdate == 1 and dutycheckupdate == 1 and type(GetDistanceToObject("Magitek Bit")) == "number" and GetDistanceToObject("Magitek Bit") < 50 then
 				dutycheck = 0 --turn off this check
 				dutycheckupdate = 0
@@ -342,21 +368,17 @@ end
 
 local function arbitrary_duty()
 	--just make it use the zoneID no more need to edit this script for it to work
-	dutytoload = GetZoneID()..".duty"
+	dutyFile = GetZoneID()..".duty"
 	--*if we die:
 		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
 		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
 	--*resume mode - if there is a shortcut available:
 		--*search waypoint table for a waypoint closest to where we are after entering shortcut
 		--*set the waypoint to that closest waypoint and resume
-	local does_it_exist = 0
 	
-	--if we are in a duty and a duty file exists
-	does_it_exist = fileExists(dutytoload)
-	
-	if GetCharacterCondition(34) == true and does_it_exist == 1 then
+	if GetCharacterCondition(34) == true and dutyFileExists(dutyFile) then
 		--if we haven't loaded a duty file. load it
-		if dutyloaded == 0 and dutytoload ~= "buttcheeks" then --we take a doodie from a .duty file
+		if dutyloaded == 0 and dutyFile ~= "buttcheeks" then --we take a doodie from a .duty file
 			doodie = load_duty_data()
 			yield("/echo Waypoints loaded for this area -> "..#doodie)
 		end
@@ -382,6 +404,18 @@ local function arbitrary_duty()
 				whereismydoodie = whereismydoodie + 1
 				skipcheck = 1
 			end
+            
+            --Use TargetNearestObjectKind() to look for treasure chests
+            if lootchests == 2 and dutyloaded == 1 then
+                TargetNearestObjectKind(6)
+                if GetTargetName() then
+                    while TargetNearestObjectKind(6) == GetTargetName() do
+                        yield("/e Looking for chests...")
+                        yield("/"..muuvtype.." moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the x y z in the waypoint
+                        yield("/wait "..doodie[whereismydoodie][5])
+                    end
+                end
+            end
 			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6])) and skipcheck == 0 then
 				yield("/echo Onto the next waypoint! Current WP completed --> "..whereismydoodie)
 				yield("/wait "..doodie[whereismydoodie][5])
@@ -435,7 +469,7 @@ local function arbitrary_duty()
 		for i = 1, #praetargets do
 			if string.len(GetTargetName()) == 0 and GetCharacterCondition(26) == true then --if something is whacking us but we dont have it targeted...!?!?!
 				yield("/echo We are being attacked - attempting to catch a "..praetargets[i])
-				praedist = distance(GetPlayerRawXPos(tostring(1)),GetPlayerRawYPos(tostring(1)),GetPlayerRawZPos(tostring(1)),GetObjectRawXPos(".praetargets[i].."),GetObjectRawYPos(".praetargets[i].."),GetObjectRawZPos(".praetargets[i].."))
+				praedist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetObjectRawXPos(".praetargets[i].."),GetObjectRawYPos(".praetargets[i].."),GetObjectRawZPos(".praetargets[i].."))
 				if praedist < 10 then
 					yield("/target "..praetargets[i])
 				end
@@ -482,6 +516,7 @@ while repeated_trial < (repeat_trial + 1) do
 	--yield("/echo get limoooot"..GetLimitBreakCurrentValue().."get limootmax"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
 
 	yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
+    --TargetNearestObjectKind(2) --Find nearest battlenpc --*
 	--some other spams.
 	--the command "targetnenemy" is unavailable at this time
 	--unable to execute command while occupied
@@ -498,9 +533,9 @@ while repeated_trial < (repeat_trial + 1) do
 		currentLocZ = GetPlayerRawZPos(tostring(char_snake))
 	end
 	--yield("Target x y z "..currentLocX.." "..currentLocY.." "..currentLocZ)
-	mecurrentLocX = GetPlayerRawXPos(tostring(1))
-	mecurrentLocY = GetPlayerRawYPos(tostring(1))
-	mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+	mecurrentLocX = GetPlayerRawXPos()
+	mecurrentLocY = GetPlayerRawYPos()
+	mecurrentLocZ = GetPlayerRawZPos()
 	
 	limitbreak() --by the power of hydaelyn i smite thee
 	
@@ -537,7 +572,7 @@ while repeated_trial < (repeat_trial + 1) do
 		--we will manually exit anyways becuase we need to walk by treasure chests in some duties and trials
 		--also we will take the exit near the last waypoint and not the one near the entrance.........
 		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 80  and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
-			yield("/target exit")
+			yield("/target Exit")
 		end
 		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 80 then
 			yield("/target Shortcut")
