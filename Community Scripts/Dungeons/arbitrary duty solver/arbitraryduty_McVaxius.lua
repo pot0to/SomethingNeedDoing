@@ -78,6 +78,7 @@ yield("/echo limituse:"..limituse)
 yield("/echo limitpct:"..limitpct)
 yield("/echo limitlevel:"..limitlevel)
 yield("/echo movetype:"..movetype)
+yield("/echo LOOT_CHESTS?????:"..lootchests)
 
 yield("/echo SUCCESSFULLY LOADED ALL VARS")
 
@@ -272,6 +273,73 @@ local function fileExists(filepath)
     end
 end
 
+local function porta_decumana()
+		if type(GetZoneID()) == "number" and GetZoneID() == 1048 then
+			--check the area number before doing ANYTHING this breaks other areas.
+			--porta decumana ultima weapon orbs in phase 2 near start of phase
+			--very hacky kludge until movement isn't slidy
+			--nested ifs because we don't want to get locked into this
+			phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
+			if dutycheck == 0 and dutycheckupdate == 1 and phase2 < 40 then
+				--we in phase 2 boyo
+				dutycheck = 1
+			end
+			mecurrentLocX = GetPlayerRawXPos(tostring(1))
+			mecurrentLocY = GetPlayerRawYPos(tostring(1))
+			mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+			if dutycheckupdate == 1 and dutycheckupdate == 1 and type(GetDistanceToObject("Magitek Bit")) == "number" and GetDistanceToObject("Magitek Bit") < 50 then
+				dutycheck = 0 --turn off this check
+				dutycheckupdate = 0
+			end
+			if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
+				if partymemberENUM == 1 then
+					yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
+				end
+				if partymemberENUM == 2 then
+					yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
+				end
+				if partymemberENUM == 3 then
+					yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
+				end
+				if partymemberENUM == 4 then
+					yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
+				end
+				--yield("/wait 5") -- is this too long? we'll see!  maybe this is bad
+			end
+		--[[
+		--on hold for now until movement isnt slide-time-4000
+				if type(GetDistanceToObject("Aetheroplasm")) == "number" then
+		--			if GetObjectRawXPos("Aetheroplasm") > 0 then
+					if GetDistanceToObject("Aetheroplasm") < 20 then
+						--yield("/wait 1")
+						yield("/echo Porta Decumana ball dodger distance to random ball: "..GetDistanceToObject("Aetheroplasm"))
+						yield("/visland stop")
+						yield("/vnavmesh stop")
+						--yield("/vbm cfg AI Enabled false")
+						while type(GetDistanceToObject("Aetheroplasm")) == "number" and GetDistanceToObject("Aetheroplasm") < 20 do
+							if partymemberENUM == 1 then
+								yield("/visland moveto -692.46704 -185.53157 468.43414")
+							end
+							if partymemberENUM == 2 then
+								yield("/visland moveto -715.5604 -185.53159 468.4341")
+							end
+							if partymemberENUM == 3 then
+								yield("/visland moveto -715.5605 -185.53157 491.5273")
+							end
+							if partymemberENUM == 4 then
+								yield("/visland moveto -692.46704 -185.53159 491.52734")
+							end
+							yield("/wait 5")			
+						end
+						yield("/visland stop")
+						yield("/vnavmesh stop")
+						--yield("/vbm cfg AI Enabled true")
+					end
+				end	
+			]]
+	end
+end
+
 local function arbitrary_duty()
 	--just make it use the zoneID no more need to edit this script for it to work
 	dutytoload = GetZoneID()..".duty"
@@ -309,6 +377,9 @@ local function arbitrary_duty()
 				yield("/echo starting nav cuz not in combat, WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
 			end
 			--if we are <? yalms from waypoint, wait x seconds then stop visland/vnavmesh
+			if doodie[whereismydoodie][7] == 0 then --if we are skipping chests then we skip the waypoint
+				whereismydoodie = whereismydoodie + 1
+			end
 			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6]))then
 				yield("/echo Onto the next waypoint! Current WP completed --> "..whereismydoodie)
 				yield("/wait "..doodie[whereismydoodie][5])
@@ -375,73 +446,6 @@ local function arbitrary_duty()
 			ExecuteAction(magiwhee)
 			yield("/wait 0.5")
 		end
-	end
-end
-
-local function porta_decumana()
-		if type(GetZoneID()) == "number" and GetZoneID() == 1048 then
-			--check the area number before doing ANYTHING this breaks other areas.
-			--porta decumana ultima weapon orbs in phase 2 near start of phase
-			--very hacky kludge until movement isn't slidy
-			--nested ifs because we don't want to get locked into this
-			phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
-			if dutycheck == 0 and dutycheckupdate == 1 and phase2 < 40 then
-				--we in phase 2 boyo
-				dutycheck = 1
-			end
-			mecurrentLocX = GetPlayerRawXPos(tostring(1))
-			mecurrentLocY = GetPlayerRawYPos(tostring(1))
-			mecurrentLocZ = GetPlayerRawZPos(tostring(1))
-			if dutycheckupdate == 1 and dutycheckupdate == 1 and type(GetDistanceToObject("Magitek Bit")) == "number" and GetDistanceToObject("Magitek Bit") < 50 then
-				dutycheck = 0 --turn off this check
-				dutycheckupdate = 0
-			end
-			if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
-				if partymemberENUM == 1 then
-					yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
-				end
-				if partymemberENUM == 2 then
-					yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
-				end
-				if partymemberENUM == 3 then
-					yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
-				end
-				if partymemberENUM == 4 then
-					yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
-				end
-				--yield("/wait 5") -- is this too long? we'll see!  maybe this is bad
-			end
-		--[[
-		--on hold for now until movement isnt slide-time-4000
-				if type(GetDistanceToObject("Aetheroplasm")) == "number" then
-		--			if GetObjectRawXPos("Aetheroplasm") > 0 then
-					if GetDistanceToObject("Aetheroplasm") < 20 then
-						--yield("/wait 1")
-						yield("/echo Porta Decumana ball dodger distance to random ball: "..GetDistanceToObject("Aetheroplasm"))
-						yield("/visland stop")
-						yield("/vnavmesh stop")
-						--yield("/vbm cfg AI Enabled false")
-						while type(GetDistanceToObject("Aetheroplasm")) == "number" and GetDistanceToObject("Aetheroplasm") < 20 do
-							if partymemberENUM == 1 then
-								yield("/visland moveto -692.46704 -185.53157 468.43414")
-							end
-							if partymemberENUM == 2 then
-								yield("/visland moveto -715.5604 -185.53159 468.4341")
-							end
-							if partymemberENUM == 3 then
-								yield("/visland moveto -715.5605 -185.53157 491.5273")
-							end
-							if partymemberENUM == 4 then
-								yield("/visland moveto -692.46704 -185.53159 491.52734")
-							end
-							yield("/wait 5")			
-						end
-						yield("/visland stop")
-						yield("/vnavmesh stop")
-						--yield("/vbm cfg AI Enabled true")
-					end
-				end	
-			]]
 	end
 end
 
