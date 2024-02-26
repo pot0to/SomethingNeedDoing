@@ -544,7 +544,7 @@ while repeated_trial < (repeat_trial + 1) do
 				  end
 				end
 			end
-			if whereismydoodie == #doodie then
+			if whereismydoodie > #doodie then
 				yield("/visland stop")
 				yield("/wait 0.1")
 				yield("/vnavmesh stop")
