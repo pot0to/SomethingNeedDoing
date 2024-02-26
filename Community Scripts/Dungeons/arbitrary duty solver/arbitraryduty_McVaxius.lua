@@ -494,7 +494,72 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/echo Total Trials triggered for "..char_snake..": "..repeated_trial)
 		yield("/wait 10")
 	end
-
+	
+	--if we are not in combat AND we are in a duty then we will look for an exit or shortcut. also test if we loaded a wp file and didnt finish or if we didnt
+	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then
+		--we dont need to manually exit. automaton can do that now
+		--we will manually exit anyways becuase we need to walk by treasure chests in some duties and trials
+		--also we will take the exit near the last waypoint and not the one near the entrance.........
+		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 80  and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
+			yield("/target exit")
+		end
+		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 80 then
+			yield("/target Shortcut")
+		end
+		--* we need to look for ... treasure chests? maybe
+		yield("/wait 0.1")
+		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
+			local minicounter = 0
+			if NeedsRepair(99) then
+				yield("/wait 10")
+				while not IsAddonVisible("Repair") do
+				  yield("/generalaction repair")
+				  yield("/wait 1")
+				  minicounter = minicounter + 1
+				  if minicounter > 20 then
+					minicounter = 0
+					break
+				  end
+				end
+				yield("/pcall Repair true 0")
+				yield("/wait 0.1")
+				if IsAddonVisible("SelectYesno") then
+				  yield("/pcall SelectYesno true 0")
+				  yield("/wait 1")
+				end
+				while GetCharacterCondition(39) do yield("/wait 1")
+				yield("/wait 1")
+				yield("/pcall Repair true -1")
+				  minicounter = minicounter + 1
+				  if minicounter > 20 then
+					minicounter = 0
+					break
+				  end
+				end
+			end
+			yield("/visland stop")
+			yield("/wait 0.1")
+			yield("/vnavmesh stop")
+			yield("/wait 0.1")
+			--double check target type here. shortcuts are a a-ok goto always.
+			if GetTargetName()=="Shortcut" then
+				yield("/lockon on")
+				yield("/automove on")
+				yield("/wait 10")
+			end
+			if GetTargetName()=="Exit" then
+				local zempdist = 0
+				if dutyloaded == 1 then
+					zempdist = distance(GetObjectRawXPos("Exit"),GetObjectRawYPos("Exit"),GetObjectRawZPos("Exit"),doodie[#doodie][2],doodie[#doodie][3],doodie[#doodie][4])
+				end
+				if dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie) then --if we didnt load a waypoint file we don't care about which exit it is
+					yield("/lockon on")
+					yield("/automove on")
+				end
+			end
+		end
+	end
+	--test dist to the intended party leader
 	if GetCharacterCondition(34)==true then --if we are in a duty
 		--check for spread_marker_entities
 		--do_we_spread() --single target spread marker handler function
@@ -592,75 +657,6 @@ while repeated_trial < (repeat_trial + 1) do
 		dutytoload = "buttcheeks"
 		whereismydoodie = 1
 	end
-	
-	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then --if we are not in combat AND we are in a duty then we will look for an exit or shortcut
-		--we dont need to manually exit. automaton can do that now
-		--we will manually exit anyways becuase we need to walk by treasure chests in some duties and trials
-		--also we will take the exit near the last waypoint and not the one near the entrance.........
-		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 80 then
-			yield("/target exit")
-		end
-		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 80 then
-			yield("/target Shortcut")
-		end
-		--* we need to look for ... treasure chests? maybe
-		yield("/wait 0.1")
-		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
-			local minicounter = 0
-			if NeedsRepair(99) then
-				yield("/wait 10")
-				while not IsAddonVisible("Repair") do
-				  yield("/generalaction repair")
-				  yield("/wait 1")
-				  minicounter = minicounter + 1
-				  if minicounter > 20 then
-					minicounter = 0
-					break
-				  end
-				end
-				yield("/pcall Repair true 0")
-				yield("/wait 0.1")
-				if IsAddonVisible("SelectYesno") then
-				  yield("/pcall SelectYesno true 0")
-				  yield("/wait 1")
-				end
-				while GetCharacterCondition(39) do yield("/wait 1")
-				yield("/wait 1")
-				yield("/pcall Repair true -1")
-				  minicounter = minicounter + 1
-				  if minicounter > 20 then
-					minicounter = 0
-					break
-				  end
-				end
-			end
-			yield("/visland stop")
-			yield("/wait 0.1")
-			yield("/vnavmesh stop")
-			yield("/wait 0.1")
-			--double check target type here. shortcuts are a a-ok goto always.
-			if GetTargetName()=="Shortcut" then
-				yield("/lockon on")
-				yield("/automove on")
-				yield("/wait 10")
-			end
-			if GetTargetName()=="Exit" then
-				local zempdist = 0
-				if dutyloaded == 1 then
-					zempdist = distance(GetObjectRawXPos("Exit"),GetObjectRawYPos("Exit"),GetObjectRawZPos("Exit"),doodie[#doodie][2],doodie[#doodie][3],doodie[#doodie][4])
-				end
-				if zempdist < 80 and dutyloaded == 1 then --if we loaded a waypoing file there are multiple exists. we have to be careful
-					yield("/lockon on")
-					yield("/automove on")
-				end
-				if dutyloaded == 0 then --if we didnt load a waypoint file we don't care about which exit it is
-					yield("/lockon on")
-					yield("/automove on")
-				end
-			end
-		end
-	end
-	--test dist to the intended party leader
 end
 
 --/xldata object table, vbm debug, automaton debug
