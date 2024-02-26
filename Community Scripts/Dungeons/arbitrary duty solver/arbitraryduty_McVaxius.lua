@@ -3,73 +3,9 @@
   Author: McVaxius
 ]]
 
---[[
-****************
-**INSTRUCTIONS**
-****************
-This is just kind of proof of concept farming script for easy duties that vbm AI mode can solve.
 
-******************
-**REQUIRED REPOS**
-******************
-https://love.puni.sh/ment.json
-https://puni.sh/api/repository/croizat
-https://puni.sh/api/repository/veyn
-https://raw.githubusercontent.com/a08381/Dalamud.SkipCutscene/dist/repo.json
-
-******************
-**OPTIONAL REPOS**
-******************
-https://puni.sh/api/repository/kawaii
-https://puni.sh/api/repository/taurenkey
-https://plugins.carvel.li
-https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json
-
-********************
-**REQUIRED PLOGONS**
-********************
-*Something Need Doing (croizat fork)
-*Pandora
-*Rotation solver
-*Simpletweaks
-*YesAlready
-*TextAdvance
-*Cutscene Skip
-*vnavmesh OR visland - decide which you want to use in the .ini file
-
-*****************
-**Plogon config**
-*****************
-simpletweaks -> turn on maincommand
-simpletweaks -> (optional) turn on autoequip command and set it to /equipguud
-pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
-bossmod -> self configured with this script
-vnavmesh/visland -> nothing just leave it alone unless you know what you are doing
-something need doing -> go to options and disable SND targeting
-rotation solver -> self configured with this script
-lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
-yesalready -> setup a leave from instance.. the first time you exit you can auto add with teh circular plus icon
-textadvance -> auto on and add your char to the list
-Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
-															Do it in the duty support window if thats the option you are choosing
-Final Fantasy XIV Itself -> Character -> Targeting -> Ground Targeting -> Unlocked --*make this a pcall later but leave a note somewhere to user so they can change it if they wanna aim imanually later.
---------------
-SCRIPT CONFIG
---------------
-the reason we use an ini file is so you can have many different characters configured separately and also update the script without having to edit it at all. (aside from copy and paste)
-Read the ini file - it should self explain the variables.  and it respects comments. just not same-line comments
-the ini file goes into the folder you can see below
-\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
-you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
-to use this find the arbitraryduty_McVaxius.ini file and rename it to arbitraryduty_Yourcharfirstlast.ini   notice no spaces.
-so if your character is named Pomelo Pup'per then you would call the .ini file   arbitraryduty_PomeloPupper.ini
-just remember it will strip spaces and apostrophes
---------------
-enjoy
-****END OF INSTRUCTIONS****
-misc side note. the version number at end of file is meaningless. its just there so i can see if i copy pasted successfully over remote control of another PC ;p clipboard is finicky
-]]
-
+--if you see --*
+--this is a todo for some logic ill add sooner or later
 
 --todo
 --convert all variable sanity (type) checks into a generic function to reduce code clutter
@@ -120,6 +56,11 @@ loadVariablesFromFile(filename)
 
 -- Now you can use the variables in your Lua script
 yield("/cl")
+
+yield("/echo ATTEMPTING TO LOAD INI FILE if you dont see -> SUCCESSFULLY LOADED ALL VARS")
+yield("/echo at the end of the next block of text.")
+yield("/echo then you need to review the template to see if your missing something")
+
 yield("/echo Character:"..GetCharacterName())
 yield("/echo Filename+path:"..filename)
 yield("/echo char_snake:"..char_snake)
@@ -137,7 +78,8 @@ yield("/echo limituse:"..limituse)
 yield("/echo limitpct:"..limitpct)
 yield("/echo limitlevel:"..limitlevel)
 yield("/echo movetype:"..movetype)
-yield("/echo trytoload:"..trytoload)
+
+yield("/echo SUCCESSFULLY LOADED ALL VARS")
 
 --cleanup the variablesa  bit.  maybe well lowercase them later toohehe.
 char_snake = char_snake:match("^%s*(.-)%s*$"):gsub('"', '')
@@ -320,33 +262,17 @@ local function getmovetype(wheee)
 	return funtimes
 end
 
+local function fileExists(filepath)
+    local file = io.open(filepath, "r")
+    if file then
+        io.close(file)
+        return 0
+    else
+        return 1
+    end
+end
+
 local function arbitrary_duty()
-	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
-		--will spam 2 and auto lockon. eventually clear the garbage
-		if string.len(GetTargetName()) > 0 then
-			yield("/lockon on") --need this for various stuff hehe.
-			yield("/automove")
-			yield("/send w")
-			yield("/wait 0.3")
-			yield("/send q")
-			yield("/send KEY_2")
-			yield("/wait 0.5")
-			yield("/send e")
-			yield("/wait 0.3")
-			yield("/send KEY_2")
-			yield("/wait 0.5")
-			yield("/send KEY_2")
-			yield("/wait 0.5")
-			yield("/send w")
-			yield("/wait 0.3")
-			yield("/send KEY_2")
-			yield("/wait 0.5")
-			yield("/wait 0.3")
-			yield("/send w")
-			yield("/send KEY_2")
-			yield("/wait 0.5")
-		end
-	end
 	--just make it use the zoneID no more need to edit this script for it to work
 	dutytoload = GetZoneID()..".duty"
 	--*if we die:
@@ -355,9 +281,12 @@ local function arbitrary_duty()
 	--*resume mode - if there is a shortcut available:
 		--*search waypoint table for a waypoint closest to where we are after entering shortcut
 		--*set the waypoint to that closest waypoint and resume
+	local does_it_exist = 0
 	
-	--if we are in a duty
-	if GetCharacterCondition(34) == true then
+	--if we are in a duty and a duty file exists
+	does_it_exist = fileExists(dutytoload)
+	
+	if GetCharacterCondition(34) == true and does_it_exist == 1 then
 		--if we haven't loaded a duty file. load it
 		if dutyloaded == 0 and dutytoload ~= "buttcheeks" then --we take a doodie from a .duty file
 			doodie = load_duty_data()
@@ -390,28 +319,53 @@ local function arbitrary_duty()
 			end	
 		end
 	end
-end
-	--[[
-	--for followers -- probably delete once we get the above part working.
-	--i heard you liked if statements so i nested an if statement in your if statement that i nested an if statement in your if statement that i ahahahah. i could have done 5-6 more nested if 
-	if type(GetZoneID()) == "number" and GetZoneID() == 1048 and char_snake ~= "party leader"  and char_snake ~= "no follow" then
-		--if we not in combat. target a terminal
-		if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then --if we aren't in combat and in praetorium
-		--GetTargetName()~="Magitek Terminal"--if we are within 5 yalms of a magitek terminal
-			if GetDistanceToObject("Magitek Terminal") < 5 then
-				if GetDistanceToObject("Magitek Terminal") < 5 then
-					if GetDistanceToObject(char_snake) > 10 then
-						yield("/target terminal")
-						yield("/wait 1")
-						yield("/lockon on")
-						yield("/automove on")
-						yield("/wait 3")
-					end
-				end
-			end	
+	if type(GetZoneID()) == "number" and GetZoneID() == 584 then --Alexander 9 Savage
+		--we need to start the fight with an auto attack so RS will do its thing
+		yield("/target Refurb")
+		yield("/action Auto-attack")
+		yield("/wait 2")
+		yield("/vbm cfg AI Enabled false")
+		yield("/lockon")
+	end
+	if type(GetZoneID()) == "number" and GetZoneID() == 854 then --Eden 2 Savage
+		--[[
+		https://gamerescape.com/2019/07/17/ffxiv-shadowbringers-guide-edens-gate-descent/
+		Dark fire III mechanics probably all we need
+		The real challenge in this fight is coordinating the extended timers on spells from the “Spell-in-Waiting” ability the boss uses. 
+		One easy trick to keep in mind, as a player with the “Dark Fire” AoE on you, is that if you have more then 5 seconds left on your extended 
+		Fire count-down, you’re safe to stack, and should. At 5 seconds, when the icon above your head starts its count-down animation, scatter.
+		]]
+	end
+	if type(GetZoneID()) == "number" and GetZoneID() == 856 then --Eden 4 Savage
+		--[[
+		https://gamerescape.com/2019/07/18/ffxiv-shadowbringers-guide-edens-gate-sepulture/
+		]]
+	end
+	--duty specific stuff
+	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
+		--will spam Photon Stream and auto lockon. eventually clear the garbage
+		if string.len(GetTargetName()) > 0 then
+			yield("/lockon on") --need this for various stuff hehe.
+			yield("/automove")
+			yield("/wait 0.3")
+			yield("/automove stop")
+			ExecuteAction(1129)
+			yield("/wait 0.5")
+			yield("/automove")
+			yield("/wait 0.3")
+			ExecuteAction(1129)
+			yield("/wait 0.5")
+			ExecuteAction(1129)
+			yield("/wait 0.5")
+			yield("/automove stop")
+			yield("/wait 0.3")
+			ExecuteAction(1129)
+			yield("/wait 0.5")
+			ExecuteAction(1129)
+			yield("/wait 0.5")
 		end
 	end
-	]]
+end
 
 local function porta_decumana()
 		if type(GetZoneID()) == "number" and GetZoneID() == 1048 then
@@ -540,15 +494,19 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/echo Total Trials triggered for "..char_snake..": "..repeated_trial)
 		yield("/wait 10")
 	end
-
-	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then --if we are not in combat AND we are in a duty then we will look for an exit or shortcut
+	
+	--if we are not in combat AND we are in a duty then we will look for an exit or shortcut. also test if we loaded a wp file and didnt finish or if we didnt
+	if GetCharacterCondition(26)==false and GetCharacterCondition(34)==true then
 		--we dont need to manually exit. automaton can do that now
-		--if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 25 then
-		--	yield("/target exit")
-		--end
-		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 25 then
+		--we will manually exit anyways becuase we need to walk by treasure chests in some duties and trials
+		--also we will take the exit near the last waypoint and not the one near the entrance.........
+		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 80  and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
+			yield("/target exit")
+		end
+		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 80 then
 			yield("/target Shortcut")
 		end
+		--* we need to look for ... treasure chests? maybe
 		yield("/wait 0.1")
 		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
 			local minicounter = 0
@@ -569,7 +527,7 @@ while repeated_trial < (repeat_trial + 1) do
 				  yield("/pcall SelectYesno true 0")
 				  yield("/wait 1")
 				end
-				while GetCharacterCondition(39) do yield("/wait 1") end
+				while GetCharacterCondition(39) do yield("/wait 1")
 				yield("/wait 1")
 				yield("/pcall Repair true -1")
 				  minicounter = minicounter + 1
@@ -577,25 +535,38 @@ while repeated_trial < (repeat_trial + 1) do
 					minicounter = 0
 					break
 				  end
+				end
 			end
 			yield("/visland stop")
 			yield("/wait 0.1")
 			yield("/vnavmesh stop")
 			yield("/wait 0.1")
-			yield("/lockon on")
-			yield("/automove on")
-			yield("/wait 10")
+			--double check target type here. shortcuts are a a-ok goto always.
+			if GetTargetName()=="Shortcut" then
+				yield("/lockon on")
+				yield("/automove on")
+				yield("/wait 10")
+			end
+			if GetTargetName()=="Exit" then
+				local zempdist = 0
+				if dutyloaded == 1 then
+					zempdist = distance(GetObjectRawXPos("Exit"),GetObjectRawYPos("Exit"),GetObjectRawZPos("Exit"),doodie[#doodie][2],doodie[#doodie][3],doodie[#doodie][4])
+				end
+				if dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie) then --if we didnt load a waypoint file we don't care about which exit it is
+					yield("/lockon on")
+					yield("/automove on")
+				end
+			end
 		end
 	end
-
 	--test dist to the intended party leader
 	if GetCharacterCondition(34)==true then --if we are in a duty
 		--check for spread_marker_entities
 		--do_we_spread() --single target spread marker handler function
 		--call the waypoint system if we are wanting to from the .ini file
-		if trytoload == 1 then
-			arbitrary_duty()
-		end
+		--* move towards treasure chests when they are near
+		--* move to exit if we are within 100 yalms of the end
+		arbitrary_duty()
 		--duty specific stuff
 		if type(we_are_in) == "number" and we_are_in == 1048 then --porta decumana
 			--yield("/echo Decumana Check!")
@@ -695,4 +666,4 @@ end
 --17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
 --17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
 
---v123321
+--vasdfasdfasfd

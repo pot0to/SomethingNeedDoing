@@ -1,3 +1,75 @@
+****************
+**INSTRUCTIONS**
+****************
+This is just kind of proof of concept farming script for easy duties that vbm AI mode can solve.
+
+******************
+**REQUIRED REPOS**
+******************
+https://love.puni.sh/ment.json
+https://puni.sh/api/repository/croizat
+https://puni.sh/api/repository/veyn
+https://raw.githubusercontent.com/a08381/Dalamud.SkipCutscene/dist/repo.json
+
+******************
+**OPTIONAL REPOS**
+******************
+https://puni.sh/api/repository/kawaii
+https://puni.sh/api/repository/taurenkey
+https://plugins.carvel.li
+https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json
+
+********************
+**REQUIRED PLOGONS**
+********************
+*Something Need Doing (croizat fork)
+*Pandora
+*Rotation solver
+*Simpletweaks
+*YesAlready
+*TextAdvance
+*Cutscene Skip
+*vnavmesh OR visland - decide which you want to use in the .ini file
+
+*****************
+**Plogon config**
+*****************
+simpletweaks -> turn on maincommand
+simpletweaks -> (optional) turn on autoequip command and set it to /equipguud
+pandora -> turn on auto interact on pandora set distance to 5 dist 5 height
+pandora -> open chests
+automaton -> auto leave duty . set it to like 60,000 ms or higher so that it can catch some im-dead-when-duty-ended situations while also not cheating itself out of dungeon loots
+bossmod -> self configured with this script
+vnavmesh/visland -> nothing just leave it alone unless you know what you are doing
+something need doing -> go to options and disable SND targeting
+rotation solver -> self configured with this script
+lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
+yesalready -> setup a leave from instance.. the first time you exit you can auto add with teh circular plus icon
+yesalready -> bothers -> auto commence
+textadvance -> auto on and add your char to the list
+Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
+															Do it in the duty support window if thats the option you are choosing
+Final Fantasy XIV Itself -> Character -> Targeting -> Ground Targeting -> Unlocked --*make this a pcall later but leave a note somewhere to user so they can change it if they wanna aim imanually later.
+--------------
+SCRIPT CONFIG
+--------------
+the reason we use an ini file is so you can have many different characters configured separately and also update the script without having to edit it at all. (aside from copy and paste)
+Read the ini file - it should self explain the variables.  and it respects comments. just not same-line comments
+the ini file goes into the folder you can see below
+\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
+you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
+to use this find the arbitraryduty_McVaxius.ini file and rename it to arbitraryduty_Yourcharfirstlast.ini   notice no spaces.
+so if your character is named Pomelo Pup'per then you would call the .ini file   arbitraryduty_PomeloPupper.ini
+just remember it will strip spaces and apostrophes
+--------------
+enjoy
+****END OF INSTRUCTIONS****
+misc side note. the version number at end of file is meaningless. its just there so i can see if i copy pasted successfully over remote control of another PC ;p clipboard is finicky
+
+
+
+
+Now for the fun part -> making waypoints and what they are etc.
 note to reader:
 please go ahead and steal the code etc.
 would appreciate if you help to improve it and PR your .duty files.
@@ -10,6 +82,24 @@ Make script entries in SND with the following:
 ----------------------------------------------------------------------------------------
 --zoneID for filename
 yield("/echo this is the zone/area ID = "..GetZoneID().." you can call the file "..GetZoneID()..".duty")
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+-- Autogenerate WP file
+local file_path = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..GetZoneID()..".duty"
+
+-- Open file for appending (or create it if it doesn't exist)
+local file = io.open(file_path, "a")
+
+if file then
+    -- Write text to the file
+    file:write("1,"..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..",3,0\n")
+    -- Close the file handle
+    file:close()
+    yield("/echo WP added to -> "..file_path)
+else
+    yield("/echo Error: Unable to open file for writing")
+end
+
 ----------------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------------
@@ -33,7 +123,7 @@ yield("/echo distance to waypoint after area transition -> "..distance(GetPlayer
 ----------------------------------------
 Every duty file has a number of rows. each one has 6 columns separated by a comman (,) and no spaces between commmas and values.
 
-Value 1: 0, 1 || movement type || 0 Visland, 1 = Vnavmesh
+Value 1: 0, 1 || movement type || 0 Visland, 1 = Vnavmesh, planned: 2 = visland+jumping, 3=vnavmesh + jumping, 4 = visland + jumping + wiggling, 5 = vnavmesh + jumping + wiggling
 Value 2: x || get from above script
 Value 3: y || get from above script
 Value 4: z || get from above script
@@ -51,4 +141,5 @@ some stuff isn't yet solved by bossmod but we can solve in SND for now
 --------------------------------------------
 ---------------List of Duties---------------
 --------------------------------------------
-1044	Level 50	The Praetorium	Some customization in .lua for mounted portion and area transition reconciliation
+584		Level 60	Alexander 9 Unsynced - some customization in .lua to target the Refurbisher. this is meant for light farming.
+1044	Level 50	The Praetorium	Some customization in .lua for mounted portion and area transition reconciliation. this is meant for mogtoming SYNCED
