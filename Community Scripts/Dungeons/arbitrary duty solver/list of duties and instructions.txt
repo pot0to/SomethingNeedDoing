@@ -1,7 +1,7 @@
 ****************
 **INSTRUCTIONS**
 ****************
-This is just kind of proof of concept farming script for easy duties that vbm AI mode can solve.
+This is just kind of proof of concept farming script for duties that vbm AI mode can solve or doesn't need to becuase your doing it unsynced.
 
 ******************
 **REQUIRED REPOS**
@@ -29,7 +29,8 @@ https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaste
 *YesAlready
 *TextAdvance
 *Cutscene Skip
-*vnavmesh OR visland - decide which you want to use in the .ini file
+*vnavmesh
+*visland
 
 *****************
 **Plogon config**
@@ -46,10 +47,9 @@ something need doing -> go to options and disable SND targeting
 rotation solver -> self configured with this script
 lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
 yesalready -> setup a leave from instance.. the first time you exit you can auto add with teh circular plus icon
-yesalready -> bothers -> auto commence
+yesalready -> bothers -> auto commence duty
 textadvance -> auto on and add your char to the list
-Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
-															Do it in the duty support window if thats the option you are choosing
+Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR do it in the duty support window if thats the option you are choosing
 Final Fantasy XIV Itself -> Character -> Targeting -> Ground Targeting -> Unlocked --*make this a pcall later but leave a note somewhere to user so they can change it if they wanna aim imanually later.
 Final Fantasy XIV Itself -> Character -> Control Settings -> General -> LEGACY MOVEMENT
 Final Fantasy XIV Itself -> Character -> Control Settings -> General -> UNCHECK "Disable Camera Pivot"
