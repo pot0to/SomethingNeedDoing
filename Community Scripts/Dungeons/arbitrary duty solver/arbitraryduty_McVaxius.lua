@@ -324,11 +324,13 @@ local function arbitrary_duty()
 	--yield("/echo Decumana Check!")
 		porta_decumana()
 	end
-		
+	if type(GetZoneID()) == "number" and GetZoneID() == 584 then --Alexander 4 Normal
+	--rotation manual because we dont want to change targets
+		yield("/rotation Manual")
+	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 584 then --Alexander 9 Savage
 		--we need to start the fight with an auto attack so RS will do its thing
 		yield("/target Refurb")
-		yield("/action Auto-attack")
 		yield("/wait 2")
 		yield("/vbm cfg AI Enabled false")
 		yield("/lockon")
