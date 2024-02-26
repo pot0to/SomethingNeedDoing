@@ -393,11 +393,11 @@ local function arbitrary_duty()
 		end
 	end
 	
-	if type(we_are_in) == "number" and we_are_in == 1048 then --porta decumana
+	if type(we_are_in) == "number" and we_are_in == 1048 then --Porta Decumana
 	--yield("/echo Decumana Check!")
 		porta_decumana()
 	end
-	if type(GetZoneID()) == "number" and GetZoneID() == 584 then --Alexander 4 Normal
+	if type(GetZoneID()) == "number" and GetZoneID() == 445 then --Alexander 4 Normal
 	--rotation manual because we dont want to change targets
 		yield("/rotation Manual")
 	end
