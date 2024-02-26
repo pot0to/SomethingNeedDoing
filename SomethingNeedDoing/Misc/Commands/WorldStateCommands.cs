@@ -102,6 +102,7 @@ public class WorldStateCommands
 
     public List<string> GetNearbyObjectNames(float distance = 0, byte objectKind = 0) =>
         Svc.Objects
+            .OrderBy(o => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position))
             .Where(o => o.IsTargetable && (distance == 0 || Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position) <= distance) && (objectKind == 0 || (byte)o.ObjectKind == objectKind))
             .Select(o => o.Name.TextValue)
             .ToList();

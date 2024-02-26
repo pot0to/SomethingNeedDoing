@@ -343,7 +343,11 @@ internal class HelpWindow : Window
         "- Added PathGetMovementAllowed()\n" +
         "- Added PathSetMovementAllowed()\n" +
         "- Added PathGetTolerance()\n" +
-        "- Added PathSetTolerance()\n");
+        "- Added PathSetTolerance()\n" +
+        "- Added TargetClosestEnemy()\n" +
+        "- Added GetTargetObjectKind()\n" +
+        "- Added GetTargetSubKind()\n" +
+        "- Fixed GetNearbyObjectNames() to return sorted by distance");
 
         DisplayChangelog(
         "2024-02-24",
