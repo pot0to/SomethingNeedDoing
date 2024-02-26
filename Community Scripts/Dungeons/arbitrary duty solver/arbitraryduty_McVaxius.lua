@@ -319,6 +319,12 @@ local function arbitrary_duty()
 			end	
 		end
 	end
+	
+	if type(we_are_in) == "number" and we_are_in == 1048 then --porta decumana
+	--yield("/echo Decumana Check!")
+		porta_decumana()
+	end
+		
 	if type(GetZoneID()) == "number" and GetZoneID() == 584 then --Alexander 9 Savage
 		--we need to start the fight with an auto attack so RS will do its thing
 		yield("/target Refurb")
@@ -538,10 +544,12 @@ while repeated_trial < (repeat_trial + 1) do
 				  end
 				end
 			end
-			yield("/visland stop")
-			yield("/wait 0.1")
-			yield("/vnavmesh stop")
-			yield("/wait 0.1")
+			if whereismydoodie == #doodie then
+				yield("/visland stop")
+				yield("/wait 0.1")
+				yield("/vnavmesh stop")
+				yield("/wait 0.1")
+			end
 			--double check target type here. shortcuts are a a-ok goto always.
 			if GetTargetName()=="Shortcut" then
 				yield("/lockon on")
@@ -568,11 +576,7 @@ while repeated_trial < (repeat_trial + 1) do
 		--* move towards treasure chests when they are near
 		--* move to exit if we are within 100 yalms of the end
 		arbitrary_duty()
-		--duty specific stuff
-		if type(we_are_in) == "number" and we_are_in == 1048 then --porta decumana
-			--yield("/echo Decumana Check!")
-			porta_decumana()
-		end
+
 		--regular movement to target
 		if char_snake ~= "no follow" and char_snake ~= "party leader" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
 			setdeest()
@@ -612,7 +616,6 @@ while repeated_trial < (repeat_trial + 1) do
 	end
 	yield("/wait 1")
 
-	--this part will be deprecated soon once there is some kind of autobuilding
 	--check if we chagned areas or just wait as normal
 	we_are_in = GetZoneID() --where are we?
 	if type(we_are_in) ~= "number" then
