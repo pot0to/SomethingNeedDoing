@@ -79,6 +79,7 @@ yield("/echo limitpct:"..limitpct)
 yield("/echo limitlevel:"..limitlevel)
 yield("/echo movetype:"..movetype)
 yield("/echo LOOT_CHESTS?????:"..lootchests)
+yield("/echo getout:"..getout)
 
 yield("/echo SUCCESSFULLY LOADED ALL VARS")
 
@@ -488,7 +489,7 @@ local function arbitrary_duty()
 		if statoos == 999 then
 			statoos = GetStatusTimeRemaining(2455)
 		end
-		if statoos < 999 end statoos > 5 then
+		if statoos < 999 and statoos > 5 then
 			yield("/"..movetype.." 99.897399902344 0.0 102.01305389404")
 		end
 		--this will spread near end of dark fire 3 and when the slicey time happens at start and i think repeated later if dps is low
@@ -510,7 +511,7 @@ local function arbitrary_duty()
 		end
 		--figure out which side hand of erebos is on and get to that side so we don't get KB off platform
 		--empty hate IDs: 15941,15942,15961,15962,22748
-		if GetTargetActionID() == 15941 or GetTargetActionID() == 15942 or GetTargetActionID() == 15961 or GetTargetActionID() == 15962 or GetTargetActionID() == 22748
+		if GetTargetActionID() == 15941 or GetTargetActionID() == 15942 or GetTargetActionID() == 15961 or GetTargetActionID() == 15962 or GetTargetActionID() == 22748 then
 			--figure out which side and just go over there maintaining same y,z or is it x,y
 			--fuck it we pop kb immunity
 			yield("/wait 1")
@@ -676,7 +677,7 @@ while repeated_trial < (repeat_trial + 1) do
 		--we dont need to manually exit. automaton can do that now
 		--we will manually exit anyways becuase we need to walk by treasure chests in some duties and trials
 		--also we will take the exit near the last waypoint and not the one near the entrance.........
-		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 80  and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
+		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 100 and getout == 1 and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
 			yield("/target Exit")
 		end
 		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 80 then
@@ -833,4 +834,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping on wait 1 haha
 end
 
---vasdfasdfasdfasdf
+--zzzz
