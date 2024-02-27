@@ -328,6 +328,13 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-27",
+        "- Added ClearTarget()\n" +
+        "- Added ClearFocusTarget()\n" +
+        "- Added /targetenemy\n" +
+        "- Fixed TargetClosestEnemy()");
+
+        DisplayChangelog(
         "2024-02-26",
         "- Added NavIsReady()\n" +
         "- Added NavBuildProgress()\n" +

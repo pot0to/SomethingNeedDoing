@@ -25,13 +25,13 @@ internal class EntityStateCommands
         return list;
     }
 
-    public float GetObjectRawXPos(string name) => Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Position.X ?? 0;
-    public float GetObjectRawYPos(string name) => Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Position.Y ?? 0;
-    public float GetObjectRawZPos(string name) => Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Position.Z ?? 0;
+    public float GetObjectRawXPos(string name) => Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Position.X ?? 0;
+    public float GetObjectRawYPos(string name) => Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Position.Y ?? 0;
+    public float GetObjectRawZPos(string name) => Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Position.Z ?? 0;
 
     public float GetDistanceToPoint(float x, float y, float z) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, new Vector3(x, y, z));
     public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer!.Position);
-    public float GetDistanceToObject(string name) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Objects.FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Position ?? Vector3.Zero);
+    public float GetDistanceToObject(string name) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Position ?? Vector3.Zero);
 
     #region Target
     public string GetTargetName() => Svc.Targets.Target?.Name.TextValue ?? "";
@@ -49,6 +49,8 @@ internal class EntityStateCommands
     public byte? GetTargetSubKind() => Svc.Targets.Target?.SubKind;
 
     public unsafe void TargetClosestEnemy(float distance = 0) => Svc.Targets.Target = Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(o => o.IsTargetable && o.IsHostile() && !o.IsDead && (distance == 0 || DistanceToObject(o) <= distance));
+
+    public void ClearTarget() => Svc.Targets.Target = null;
     #endregion
 
     #region Focus Target
@@ -62,6 +64,7 @@ internal class EntityStateCommands
     public float GetFocusTargetHP() => (Svc.Targets.FocusTarget as Dalamud.Game.ClientState.Objects.Types.Character)?.CurrentHp ?? 0;
     public float GetFocusTargetMaxHP() => (Svc.Targets.FocusTarget as Dalamud.Game.ClientState.Objects.Types.Character)?.MaxHp ?? 0;
     public float GetFocusTargetHPP() => GetFocusTargetHP() / GetFocusTargetMaxHP() * 100;
+    public void ClearFocusTarget() => Svc.Targets.FocusTarget = null;
     #endregion
 
     private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.GameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position);
