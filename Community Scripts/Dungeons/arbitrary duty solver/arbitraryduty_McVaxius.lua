@@ -502,6 +502,7 @@ local function arbitrary_duty()
 			if getRandomNumber(1,10) == 2 then
 				yield("/send e")
 			end
+			yield("/target Giant Clam")
 		end
 	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
