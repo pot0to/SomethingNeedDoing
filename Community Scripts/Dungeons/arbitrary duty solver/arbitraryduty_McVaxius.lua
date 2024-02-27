@@ -486,7 +486,7 @@ local function arbitrary_duty()
 	
 	if type(we_are_in) == "number" and we_are_in == 1048 then --Porta Decumana
 	--yield("/echo Decumana Check!")
-		porta_decumana()
+		porta_decumana() --supposedly we don't need this anymore. lets find out -- actually we do need it
 	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 445 then --Alexander 4 Normal
 	--rotation manual because we dont want to change targets
@@ -511,9 +511,9 @@ local function arbitrary_duty()
 		--Dark Fire III
 		--customized_targeting = 1
 		yield("/vbm cfg AI Enabled false")
-		yield("/echo Turning AI Self Follow Off")
+		--yield("/echo Turning AI Self Follow Off")
 		yield("/wait 0.5")
-		yield("/vbmai off")
+		--yield("/vbmai off")
 		customized_behaviour = 1
 		local statoos = GetStatusTimeRemaining(1810) or 999
 		if statoos == 999 then
@@ -521,7 +521,7 @@ local function arbitrary_duty()
 		end
 		movetype = "visland"
 
-		--also unholy darkness tank stack go to middle
+		--[[--also unholy darkness tank stack go to middle
 		if statoos < 999 and statoos > 5 or GetTargetActionID() == 15955 or GetTargetActionID() == 15956 then
 			yield("/"..movetype.." 99.897399902344 0.0 102.01305389404")
 			yield("/echo Dark Fire start or stack marker -> going to middle")
@@ -530,17 +530,14 @@ local function arbitrary_duty()
 			yield("/wait 0.3")
 		end
 		--this will spread near end of dark fire 3 and when the slicey time happens at start and i think repeated later if dps is low
-		if statoos < 7 or GetTargetActionID() == 1810 or GetTargetActionID() == 2455 then
+		if statoos < 7 or GetTargetActionID() == 1810 or GetTargetActionID() == 2455 then]]
+		if getRandomNumber(1,10) == 1 then
 			--if we see dark fire <6 seconds. get to clock positions!
 			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
 			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
 			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
 			--yield("/visland stop")
 			--yield("/vnavmesh stop")
-			--100.0659942627 0.0 105.06355285645
-			--94.064888000488 0.0 100.0080871582
-			--99.64151763916 0.0 92.986808776855
-			--104.58055877686 0.0 100.89888763428
 			if partymemberENUM == 1 then
 				yield("/"..movetype.." moveto 100.0659942627 0.0 105.06355285645")
 			end
@@ -552,6 +549,18 @@ local function arbitrary_duty()
 			end
 			if partymemberENUM == 4 then
 				yield("/"..movetype.." moveto 104.58055877686 0.0 100.89888763428")
+			end
+			if partymemberENUM == 5 then
+				yield("/"..movetype.." moveto 96.30509185791 0.0 96.319915771484")
+			end
+			if partymemberENUM == 6 then
+				yield("/"..movetype.." moveto 95.438690185547 0.0 104.02600097656")
+			end
+			if partymemberENUM == 7 then
+				yield("/"..movetype.." moveto 104.17021942139 0.0 104.16522216797")
+			end
+			if partymemberENUM == 8 then
+				yield("/"..movetype.." moveto 103.32738494873 0.0 95.443405151367")
 			end
 			yield("/wait 0.3")
 		end
@@ -606,7 +615,7 @@ local function arbitrary_duty()
 			yield("/ac \"Arm's Length\"")
 			yield("/ac \"Surecast\"")
 			yield("/ac \"Arm's Length\"")
-			yield("/wait 0.3")
+			yield("/wait 0.1")
 		--end
 		--if type(GetDistanceToObject("The Hand of Erebos")) == "number" and GetDistanceToObject("The Hand of Erebos") < 120 then
 		--	local newX, newY, newZ = interpolate(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos("The Hand of Erebos"), GetObjectRawYPos("The Hand of Erebos"), GetObjectRawZPos("The Hand of Erebos"), 0.95)
