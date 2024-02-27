@@ -56,14 +56,25 @@ Final Fantasy XIV Itself -> Character -> Control Settings -> General -> UNCHECK 
 --------------
 SCRIPT CONFIG
 --------------
+--------------
+--.ini files--
+--------------
 the reason we use an ini file is so you can have many different characters configured separately and also update the script without having to edit it at all. (aside from copy and paste)
 Read the ini file - it should self explain the variables.  and it respects comments. just not same-line comments
 the ini file goes into the folder you can see below
-\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
+%AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
 to use this find the arbitraryduty_McVaxius.ini file and rename it to arbitraryduty_Yourcharfirstlast.ini   notice no spaces.
 so if your character is named Pomelo Pup'per then you would call the .ini file   arbitraryduty_PomeloPupper.ini
 just remember it will strip spaces and apostrophes
+---------------
+--.duty files--
+---------------
+in the repo you will see something suspicious that look like number.duty
+those are waypoint files!
+you need to place them in the same folder as the .ini files in order to make use of waypoints
+this is the same place that the auto generated WP from the code snippet below will place your newly minted waypoint files
+%AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 --------------
 enjoy
 ****END OF INSTRUCTIONS****
@@ -145,8 +156,13 @@ some stuff isn't yet solved by bossmod but we can solve in SND for now
 --------------------------------------------
 ---------------List of Duties---------------
 --------------------------------------------
-1035	Level 15	Sastasha Synced									-	New features added to make this work :~D Minor customization in lua
-???		Level 50	Porta Decumana Synced Party or Duty Support		-	no WP file Some customization in lua for the aether orbs until veyn accepts male' PR for the bossmod version which is better
-1044	Level 50	The Praetorium Synced Party or Duty Support		-	Some customization in .lua for mounted portion and area transition reconciliation. this is meant for mogtoming SYNCED
-445		Level 60	Alexander 4 Normal Unsycned						- 	no customizedion in lua, it will waypoint to chests when its done. this is meant for farming gc seals!
-584		Level 60	Alexander 9 Savage Unsynced						- 	Some customization in lua to target the Refurbisher. this is meant for light farming.
+1035	WP		LUA		Level 15	Sastasha Synced		-	Synced.
+1043	WP		-		Level 50	Castrum Meridianum	- 	Synced.
+1044	WP		LUA		Level 50	The Praetorium		-	Synced.
+1048	-		LUA		Level 50	Porta Decumana		-	Synced. Requires ENUM for party members (4).
+445		WP		LUA		Level 60	Alexander 4 Normal	- 	Unsynced.
+584		WP		LUA		Level 60	Alexander 9 Savage	- 	Unsynced.
+854		-		LUA		Level 80	Eden 2 Savage		-	Unsynced. Requires ENUM for party members (4)
+856		-		WIP		Level 80	Eden 4 Savage		-	WIP
+???		-		WIP		Level 80	Eden 8 Savage		-	WIP
+???		-		WIP		Level 80	Eden 12 Savage		-	WIP
