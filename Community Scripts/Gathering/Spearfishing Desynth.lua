@@ -69,7 +69,7 @@ while (not GetCharacterCondition(6)) and (not GetCharacterCondition(39)) do
   elseif (not IsAddonVisible("PurifyResult")) and IsAddonVisible("PurifyItemSelector") then
     yield("/pcall PurifyItemSelector true 12 0")
     yield("/wait 4")
-    yield("/echo Selecting first item"
+    yield("/echo Selecting first item")
   elseif (not IsAddonVisible("PurifyItemSelector")) and (not GetCharacterCondition(4)) then
     yield('/ac "Aetherial Reduction"')
     yield("/wait 0.5")
@@ -77,7 +77,7 @@ while (not GetCharacterCondition(6)) and (not GetCharacterCondition(39)) do
   elseif IsAddonVisible("PurifyItemSelector") and GetCharacterCondition(4) then
     yield("/pcall PurifyItemSelector True -1")
     yield("/wait 0.5")
-    yield("/echo Desynth window was open while on mount"
+    yield("/echo Desynth window was open while on mount")
   elseif GetCharacterCondition(4) then
     yield("/ac dismount")
     yield("/wait 3")
