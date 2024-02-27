@@ -156,9 +156,13 @@ some stuff isn't yet solved by bossmod but we can solve in SND for now
 --------------------------------------------
 ---------------List of Duties---------------
 --------------------------------------------
-1035	Level 15	Sastasha Synced									-	New features added to make this work :~D Minor customization in lua
-???		Level 50	Porta Decumana Synced Party or Duty Support		-	no WP file Some customization in lua for the aether orbs until veyn accepts male' PR for the bossmod version which is better
-1043	Level 50	Castrum Meridianum								- 	no customization.  It just works (tm)
-1044	Level 50	The Praetorium Synced Party or Duty Support		-	Some customization in .lua for mounted portion and area transition reconciliation. this is meant for mogtoming SYNCED
-445		Level 60	Alexander 4 Normal Unsycned						- 	no customizedion in lua, it will waypoint to chests when its done. this is meant for farming gc seals!
-584		Level 60	Alexander 9 Savage Unsynced						- 	Some customization in lua to target the Refurbisher. this is meant for light farming.
+1035	WP		LUA		Level 15	Sastasha Synced		-	Synced.
+1043	WP		-		Level 50	Castrum Meridianum	- 	Synced.
+1044	WP		LUA		Level 50	The Praetorium		-	Synced.
+1048	-		LUA		Level 50	Porta Decumana		-	Synced. Requires ENUM for party members (4).
+445		WP		LUA		Level 60	Alexander 4 Normal	- 	Unsynced.
+584		WP		LUA		Level 60	Alexander 9 Savage	- 	Unsynced.
+854		-		LUA		Level 80	Eden 2 Savage		-	Unsynced. Requires ENUM for party members (4)
+856		-		WIP		Level 80	Eden 4 Savage		-	WIP
+???		-		WIP		Level 80	Eden 8 Savage		-	WIP
+???		-		WIP		Level 80	Eden 12 Savage		-	WIP

@@ -482,6 +482,41 @@ local function arbitrary_duty()
 		One easy trick to keep in mind, as a player with the “Dark Fire” AoE on you, is that if you have more then 5 seconds left on your extended 
 		Fire count-down, you’re safe to stack, and should. At 5 seconds, when the icon above your head starts its count-down animation, scatter.
 		]]
+		--if we see basic dark fire >5 seconds get to center!
+		--Dark Fire III
+		local statoos = GetStatusTimeRemaining(1810) or 999
+		if statoos == 999 then
+			statoos = GetStatusTimeRemaining(2455)
+		end
+		if statoos < 999 end statoos > 5 then
+			yield("/"..movetype.." 99.897399902344 0.0 102.01305389404")
+		end
+		--this will spread near end of dark fire 3 and when the slicey time happens at start and i think repeated later if dps is low
+		if statoos < 7 or GetTargetActionID() == 1810 or  GetTargetActionID() == 2455 then
+			--if we see dark fire <6 seconds. get to clock positions!
+			if partymemberENUM == 1 then
+				yield("/"..movetype.." moveto 100.18762207031 0.0 110.19063568115")
+			end
+			if partymemberENUM == 2 then
+				yield("/"..movetype.." moveto 89.719314575195 0.0 99.845504760742")
+			end
+			if partymemberENUM == 3 then
+				yield("/"..movetype.." moveto 109.67974090576 0.0 100.17778015137")
+			end
+			if partymemberENUM == 4 then
+				yield("/"..movetype.." moveto 100.15099334717 0.0 83.888427734375")
+			end
+			yield("/wait 8")
+		end
+		--figure out which side hand of erebos is on and get to that side so we don't get KB off platform
+		--empty hate IDs: 15941,15942,15961,15962,22748
+		if GetTargetActionID() == 15941 or GetTargetActionID() == 15942 or GetTargetActionID() == 15961 or GetTargetActionID() == 15962 or GetTargetActionID() == 22748
+			--figure out which side and just go over there maintaining same y,z or is it x,y
+			--fuck it we pop kb immunity
+			yield("/wait 1")
+			yield("/ac Surecast")
+			yield("/ac Arm's Length")
+		end
 	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 856 then --Eden 4 Savage
 		--[[
@@ -502,7 +537,9 @@ local function arbitrary_duty()
 			if getRandomNumber(1,10) == 2 then
 				yield("/send e")
 			end
-			yield("/target Giant Clam")
+			if string.len(GetTargetName()) == 0 then
+				yield("/target Giant Clam")
+			end
 		end
 	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
