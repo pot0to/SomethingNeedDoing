@@ -71,6 +71,7 @@ internal static class MacroParser
             "/hold" => HoldCommand.Parse(line),
             "/release" => ReleaseCommand.Parse(line),
             "/target" when Service.Configuration.UseSNDTargeting => TargetCommand.Parse(line),
+            "/targetenemy" when Service.Configuration.UseSNDTargeting => TargetEnemyCommand.Parse(line),
             "/waitaddon" => WaitAddonCommand.Parse(line),
             "/wait" => WaitCommand.Parse(line),
             _ => NativeCommand.Parse(line),

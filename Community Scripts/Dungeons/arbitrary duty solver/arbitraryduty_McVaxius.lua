@@ -78,6 +78,7 @@ yield("/echo limituse:"..limituse)
 yield("/echo limitpct:"..limitpct)
 yield("/echo limitlevel:"..limitlevel)
 yield("/echo movetype:"..movetype)
+yield("/echo LOOT_CHESTS?????:"..lootchests)
 
 yield("/echo SUCCESSFULLY LOADED ALL VARS")
 
@@ -101,9 +102,9 @@ local currentLocY = 1
 local currentLocZ = 1
 
 --our current location
-local mecurrentLocX = GetPlayerRawXPos(tostring(1))
-local mecurrentLocY = GetPlayerRawYPos(tostring(1))
-local mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+local mecurrentLocX = GetPlayerRawXPos()
+local mecurrentLocY = GetPlayerRawYPos()
+local mecurrentLocZ = GetPlayerRawZPos()
 
 --our current area
 local we_are_in = 666
@@ -123,12 +124,53 @@ local dutycheckupdate = 1
 
 --arbitrary duty solver
 local dutyloaded = 0
-local dutytoload = "buttcheeks"
+local dutyFile = "buttcheeks"
 local doodie = {} --initialize table for waypoints
 local whereismydoodie = 1 --position in doodie table
+local customized_targeting = 0 -- this is for custom code for specific duties
+local waitTarget = 0 --so we aren't spamming target search nonstop and breaking the WP system
 
 local function distance(x1, y1, z1, x2, y2, z2)
+	--following block to error trap some bs when changing areas
+	local x1 = x1 or 0
+	local y1 = y1 or 0
+	local z1 = z1 or 0
+	local x2 = x2 or 0
+	local y2 = y2 or 0
+	local z2 = z2 or 0
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+end
+
+-- random number function
+local function getRandomNumber(min, max)
+  return math.random(min,max)
+end
+
+--Wrapper to get nearest objectKind
+--Uses SND's targeting system
+--{2: BattleNpc, 4: Treasure, 6: GatheringPoint, 7:EventObj}
+function TargetNearestObjectKind(objectKind, radius)
+    local smallest_distance = 10000000000000.0
+    local closest_target
+    local radius = radius or 0
+    local nearby_objects = GetNearbyObjectNames(radius^2,objectKind)
+
+    if nearby_objects.Count > 0 then
+        for i = 0, nearby_objects.Count - 1 do
+            yield("/target "..nearby_objects[i])
+            yield("/e [DEBUG]i: "..nearby_objects[i])
+            yield("/e [DEBUG]tar: "..GetTargetName())
+            if not GetTargetName() or nearby_objects[i] ~= GetTargetName() then
+                yield("/e [DEBUG]Not Evaluated")
+            elseif GetDistanceToTarget() < smallest_distance then
+                smallest_distance = GetDistanceToTarget()
+                closest_target = GetTargetName()
+                yield("/e [DEBUG]s_dst: "..smallest_distance)
+            end
+        end
+        if closest_target then yield("/target "..closest_target) end
+    end
+    return closest_target
 end
 
 local function limitbreak()
@@ -226,9 +268,9 @@ end
 --duty functions
 local function load_duty_data()
 	--tablestructure: visland OR vnavmesh (0, 1), x,y,z, wait at waypoint (seconds for /wait x) before /stop visland/vnavmesh, distance to be over to end waypoint if it was an area transition. default 0
-	local file_path = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..dutytoload
+	local file_path = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..dutyFile
 	local doodies = {}  -- Initialize an empty table
-	if dutytoload ~= "buttcheeks" then
+	if dutyFile ~= "buttcheeks" then
 		yield("/echo Attempting to load -> "..file_path)
 	    local file = io.open(file_path, "r")  -- Open the file in read mode
 		if file then
@@ -262,125 +304,35 @@ local function getmovetype(wheee)
 	return funtimes
 end
 
-local function fileExists(filepath)
-    local file = io.open(filepath, "r")
+local function dutyFileExists(dutyFile)
+    local file = io.open(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..dutyFile, "r")
     if file then
         io.close(file)
-        return 0
+        return true
     else
-        return 1
+        return false
     end
-end
-
-local function arbitrary_duty()
-	--just make it use the zoneID no more need to edit this script for it to work
-	dutytoload = GetZoneID()..".duty"
-	--*if we die:
-		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
-		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
-	--*resume mode - if there is a shortcut available:
-		--*search waypoint table for a waypoint closest to where we are after entering shortcut
-		--*set the waypoint to that closest waypoint and resume
-	local does_it_exist = 0
-	
-	--if we are in a duty and a duty file exists
-	does_it_exist = fileExists(dutytoload)
-	
-	if GetCharacterCondition(34) == true and does_it_exist == 1 then
-		--if we haven't loaded a duty file. load it
-		if dutyloaded == 0 and dutytoload ~= "buttcheeks" then --we take a doodie from a .duty file
-			doodie = load_duty_data()
-			yield("/echo Waypoints loaded for this area -> "..#doodie)
-		end
-		if whereismydoodie < (#doodie+1) then
-			local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
-			local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
-			--if we are in combat stop navmesh/visland
-			if GetCharacterCondition(26) == true then
-				yield("/visland stop")
-				yield("/vnavmesh stop")
-				yield("/automove off")
-				yield("/echo stopping nav cuz in combat")
-			end
-			if GetCharacterCondition(26) == false then
-				muuvtype = getmovetype(doodie[whereismydoodie][1]) --grab the movetype from the waypoint
-				yield("/"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4]) --move to the x y z in the waypoint
-				yield("/automove off")
-				yield("/echo starting nav cuz not in combat, WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
-			end
-			--if we are <? yalms from waypoint, wait x seconds then stop visland/vnavmesh
-			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6]))then
-				yield("/echo Onto the next waypoint! Current WP completed --> "..whereismydoodie)
-				yield("/wait "..doodie[whereismydoodie][5])
-				whereismydoodie = whereismydoodie + 1
-				yield("/automove off")
-				yield("/visland stop")
-				yield("/vnavmesh stop")
-			end	
-		end
-	end
-	if type(GetZoneID()) == "number" and GetZoneID() == 584 then --Alexander 9 Savage
-		--we need to start the fight with an auto attack so RS will do its thing
-		yield("/target Refurb")
-		yield("/action Auto-attack")
-		yield("/wait 2")
-		yield("/vbm cfg AI Enabled false")
-		yield("/lockon")
-	end
-	if type(GetZoneID()) == "number" and GetZoneID() == 854 then --Eden 2 Savage
-		--[[
-		https://gamerescape.com/2019/07/17/ffxiv-shadowbringers-guide-edens-gate-descent/
-		Dark fire III mechanics probably all we need
-		The real challenge in this fight is coordinating the extended timers on spells from the “Spell-in-Waiting” ability the boss uses. 
-		One easy trick to keep in mind, as a player with the “Dark Fire” AoE on you, is that if you have more then 5 seconds left on your extended 
-		Fire count-down, you’re safe to stack, and should. At 5 seconds, when the icon above your head starts its count-down animation, scatter.
-		]]
-	end
-	if type(GetZoneID()) == "number" and GetZoneID() == 856 then --Eden 4 Savage
-		--[[
-		https://gamerescape.com/2019/07/18/ffxiv-shadowbringers-guide-edens-gate-sepulture/
-		]]
-	end
-	--duty specific stuff
-	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
-		--will spam Photon Stream and auto lockon. eventually clear the garbage
-		if string.len(GetTargetName()) > 0 then
-			yield("/lockon on") --need this for various stuff hehe.
-			yield("/automove")
-			yield("/wait 0.3")
-			yield("/automove stop")
-			ExecuteAction(1129)
-			yield("/wait 0.5")
-			yield("/automove")
-			yield("/wait 0.3")
-			ExecuteAction(1129)
-			yield("/wait 0.5")
-			ExecuteAction(1129)
-			yield("/wait 0.5")
-			yield("/automove stop")
-			yield("/wait 0.3")
-			ExecuteAction(1129)
-			yield("/wait 0.5")
-			ExecuteAction(1129)
-			yield("/wait 0.5")
-		end
-	end
 end
 
 local function porta_decumana()
 		if type(GetZoneID()) == "number" and GetZoneID() == 1048 then
+			customized_targeting = 1
+			yield("/target Ultima")
 			--check the area number before doing ANYTHING this breaks other areas.
 			--porta decumana ultima weapon orbs in phase 2 near start of phase
 			--very hacky kludge until movement isn't slidy
 			--nested ifs because we don't want to get locked into this
+			mecurrentLocX = GetPlayerRawXPos()
+			mecurrentLocY = GetPlayerRawYPos()
+			mecurrentLocZ = GetPlayerRawZPos()
 			phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
 			if dutycheck == 0 and dutycheckupdate == 1 and phase2 < 40 then
 				--we in phase 2 boyo
 				dutycheck = 1
 			end
-			mecurrentLocX = GetPlayerRawXPos(tostring(1))
-			mecurrentLocY = GetPlayerRawYPos(tostring(1))
-			mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+--			mecurrentLocX = GetPlayerRawXPos()
+--			mecurrentLocY = GetPlayerRawYPos()
+--			mecurrentLocZ = GetPlayerRawZPos()
 			if dutycheckupdate == 1 and dutycheckupdate == 1 and type(GetDistanceToObject("Magitek Bit")) == "number" and GetDistanceToObject("Magitek Bit") < 50 then
 				dutycheck = 0 --turn off this check
 				dutycheckupdate = 0
@@ -434,6 +386,218 @@ local function porta_decumana()
 	end
 end
 
+local function arbitrary_duty()
+	--just make it use the zoneID no more need to edit this script for it to work
+	dutyFile = "123.duty"
+	if type(GetZoneID()) == "number" then
+		dutyFile = GetZoneID()..".duty"
+	end
+	--*if we die:
+		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
+		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
+	--*resume mode - if there is a shortcut available:
+		--*search waypoint table for a waypoint closest to where we are after entering shortcut
+		--*set the waypoint to that closest waypoint and resume
+	
+	if GetCharacterCondition(34) == true and dutyFileExists(dutyFile) then
+		--if we haven't loaded a duty file. load it
+		if dutyloaded == 0 and dutyFile ~= "buttcheeks" then --we take a doodie from a .duty file
+			doodie = load_duty_data()
+			yield("/echo Waypoints loaded for this area -> "..#doodie)
+		end
+		if whereismydoodie < (#doodie+1) then
+			local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
+			local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
+			--if we are in combat stop navmesh/visland
+			if GetCharacterCondition(26) == true then
+				yield("/visland stop")
+				yield("/vnavmesh stop")
+				yield("/automove off")
+				yield("/echo stopping nav cuz in combat")
+			end
+			if GetCharacterCondition(26) == false then
+				muuvtype = getmovetype(doodie[whereismydoodie][1]) --grab the movetype from the waypoint
+				if target ~= doodie[whereismydoodie][7] then --dont get away from they keys and such
+					yield("/"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4]) --move to the x y z in the waypoint
+				end
+				if string.len(doodie[whereismydoodie][7]) > 1 then
+					yield("/target "..doodie[whereismydoodie][7])
+					yield("/wait 1")
+				end
+				if string.len(doodie[whereismydoodie][7]) > 1 and target == doodie[whereismydoodie][7] then
+					yield("/"..muuvtype.." moveto "..GetObjectRawXPos(doodie[whereismydoodie][7]).." "..GetObjectRawYPos(doodie[whereismydoodie][7]).." "..GetObjectRawXPos(doodie[whereismydoodie][7])) --move to the x y z in the waypoint
+				end
+				yield("/automove off")
+				yield("/echo starting nav cuz not in combat, WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
+			end
+			--if we are <? yalms from waypoint, wait x seconds then stop visland/vnavmesh
+			local skipcheck = 0 --this is important if we hit a chest node and we are skipping nodes we will skip the waypoint without processing the next one immediately
+			if doodie[whereismydoodie][7] == 1 and lootchests == 0 then --if we are skipping chests then we skip the waypoint
+				whereismydoodie = whereismydoodie + 1
+				skipcheck = 1
+			end
+            
+            --Use TargetNearestObjectKind() to look for treasure chests
+            if lootchests == 2 and dutyloaded == 1 then
+                TargetNearestObjectKind(6)
+                if GetTargetName() then
+                    while TargetNearestObjectKind(6) == GetTargetName() do
+                        yield("/e Looking for chests...")
+                        yield("/"..muuvtype.." moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the x y z in the waypoint
+                        yield("/wait "..doodie[whereismydoodie][5])
+                    end
+                end
+            end
+			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6])) and skipcheck == 0 then
+				yield("/echo Onto the next waypoint! Current WP completed --> "..whereismydoodie)
+				yield("/wait "..doodie[whereismydoodie][5])
+				whereismydoodie = whereismydoodie + 1
+				yield("/automove off")
+				yield("/visland stop")
+				yield("/vnavmesh stop")
+			end	
+		end
+	end
+	
+	if type(we_are_in) == "number" and we_are_in == 1048 then --Porta Decumana
+	--yield("/echo Decumana Check!")
+		porta_decumana()
+	end
+	if type(GetZoneID()) == "number" and GetZoneID() == 445 then --Alexander 4 Normal
+	--rotation manual because we dont want to change targets
+		yield("/rotation Manual")
+	end
+	if type(GetZoneID()) == "number" and GetZoneID() == 584 then --Alexander 9 Savage
+		--we need to start the fight with an auto attack so RS will do its thing
+		yield("/target Refurb")
+		yield("/wait 2")
+		yield("/vbm cfg AI Enabled false")
+		yield("/lockon")
+	end
+	if type(GetZoneID()) == "number" and GetZoneID() == 854 then --Eden 2 Savage
+		--[[
+		https://gamerescape.com/2019/07/17/ffxiv-shadowbringers-guide-edens-gate-descent/
+		Dark fire III mechanics probably all we need
+		The real challenge in this fight is coordinating the extended timers on spells from the “Spell-in-Waiting” ability the boss uses. 
+		One easy trick to keep in mind, as a player with the “Dark Fire” AoE on you, is that if you have more then 5 seconds left on your extended 
+		Fire count-down, you’re safe to stack, and should. At 5 seconds, when the icon above your head starts its count-down animation, scatter.
+		]]
+		--if we see basic dark fire >5 seconds get to center!
+		--Dark Fire III
+		local statoos = GetStatusTimeRemaining(1810) or 999
+		if statoos == 999 then
+			statoos = GetStatusTimeRemaining(2455)
+		end
+		if statoos < 999 end statoos > 5 then
+			yield("/"..movetype.." 99.897399902344 0.0 102.01305389404")
+		end
+		--this will spread near end of dark fire 3 and when the slicey time happens at start and i think repeated later if dps is low
+		if statoos < 7 or GetTargetActionID() == 1810 or  GetTargetActionID() == 2455 then
+			--if we see dark fire <6 seconds. get to clock positions!
+			if partymemberENUM == 1 then
+				yield("/"..movetype.." moveto 100.18762207031 0.0 110.19063568115")
+			end
+			if partymemberENUM == 2 then
+				yield("/"..movetype.." moveto 89.719314575195 0.0 99.845504760742")
+			end
+			if partymemberENUM == 3 then
+				yield("/"..movetype.." moveto 109.67974090576 0.0 100.17778015137")
+			end
+			if partymemberENUM == 4 then
+				yield("/"..movetype.." moveto 100.15099334717 0.0 83.888427734375")
+			end
+			yield("/wait 8")
+		end
+		--figure out which side hand of erebos is on and get to that side so we don't get KB off platform
+		--empty hate IDs: 15941,15942,15961,15962,22748
+		if GetTargetActionID() == 15941 or GetTargetActionID() == 15942 or GetTargetActionID() == 15961 or GetTargetActionID() == 15962 or GetTargetActionID() == 22748
+			--figure out which side and just go over there maintaining same y,z or is it x,y
+			--fuck it we pop kb immunity
+			yield("/wait 1")
+			yield("/ac Surecast")
+			yield("/ac Arm's Length")
+		end
+	end
+	if type(GetZoneID()) == "number" and GetZoneID() == 856 then --Eden 4 Savage
+		--[[
+		https://gamerescape.com/2019/07/18/ffxiv-shadowbringers-guide-edens-gate-sepulture/
+		]]
+	end
+	--duty specific stuff
+	if type(GetZoneID()) == "number" and GetZoneID() == 1036 then --Sastasha
+		customized_targeting = 1
+		if whereismydoodie < 7 then
+			yield("/target aurelia")
+			yield("/target Chopper")
+		end
+		if whereismydoodie < 3 then
+			if getRandomNumber(1,10) == 1 then
+				yield("/gaction jump")
+			end
+			if getRandomNumber(1,10) == 2 then
+				yield("/send e")
+			end
+			if string.len(GetTargetName()) == 0 then
+				yield("/target Giant Clam")
+			end
+		end
+	end
+	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
+		if string.len(GetTargetName()) == 0 then
+			TargetClosestEnemy()
+		end
+		--[[
+		local praedist = 500
+		local praetargets = {
+		"Magitek Colossus",
+		"Cohort Eques",
+		"Magitek Reaper",
+		"Magitek Death Claw",
+		"Magitek Vanguard H-1"
+		}
+		for i = 1, #praetargets do
+			if string.len(GetTargetName()) == 0 and GetCharacterCondition(26) == true then --if something is whacking us but we dont have it targeted...!?!?!
+				yield("/echo We are being attacked - attempting to catch a "..praetargets[i])
+				praedist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetObjectRawXPos(".praetargets[i].."),GetObjectRawYPos(".praetargets[i].."),GetObjectRawZPos(".praetargets[i].."))
+				if praedist < 10 then
+					yield("/target "..praetargets[i])
+				end
+			end
+		end]] -- if TargetClosestEnemy works we don't need this commented out block anymore
+		--will spam Photon Stream and auto lockon. eventually clear the garbage
+		local magiwhee = 1128
+			if getRandomNumber(1,2) == 1 then
+				magiwhee = 1129
+			end
+		--this shit doesn't actualy work so well just use lasers for now ;\
+		--if partymemberENUM == 2 or partymemberENUM == 4 or partymemberENUM == 6 or partymemberENUM == 8 then
+		--	magiwhee = 1128 --big buum
+		--	magiwhee = 1129 --lasers
+		--end
+		yield("/lockon on") --need this for various stuff hehe.
+--			yield("/automove")
+		yield("/send q")
+		yield("/wait 0.3")
+--			yield("/automove stop")
+		ExecuteAction(magiwhee)
+		yield("/wait 0.5")
+--			yield("/automove")
+		yield("/send w")
+		yield("/wait 0.3")
+		ExecuteAction(magiwhee)
+		yield("/wait 0.5")
+		ExecuteAction(magiwhee)
+		yield("/wait 0.5")
+--			yield("/automove stop")
+		yield("/send e")
+		yield("/wait 0.3")
+		ExecuteAction(magiwhee)
+		yield("/wait 0.5")
+		ExecuteAction(magiwhee)
+		yield("/wait 0.5")
+	end
+end
+
 yield("/echo starting.....")
 yield("/echo Turning AI On")
 yield("/wait 0.5")
@@ -444,8 +608,20 @@ yield("/vbmai on")
 
 while repeated_trial < (repeat_trial + 1) do
 	--yield("/echo get limoooot"..GetLimitBreakCurrentValue().."get limootmax"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
-
-	yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
+    if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
+		--yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
+		TargetClosestEnemy()
+	end
+	--[[
+ --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
+    if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
+		waitTarget = waitTarget + 1
+		if waitTarget > 10 then
+			TargetNearestObjectKind(2) --Find nearest battlenpc 
+			waitTarget = 0
+		end
+	end
+	]]
 	--some other spams.
 	--the command "targetnenemy" is unavailable at this time
 	--unable to execute command while occupied
@@ -462,9 +638,9 @@ while repeated_trial < (repeat_trial + 1) do
 		currentLocZ = GetPlayerRawZPos(tostring(char_snake))
 	end
 	--yield("Target x y z "..currentLocX.." "..currentLocY.." "..currentLocZ)
-	mecurrentLocX = GetPlayerRawXPos(tostring(1))
-	mecurrentLocY = GetPlayerRawYPos(tostring(1))
-	mecurrentLocZ = GetPlayerRawZPos(tostring(1))
+	mecurrentLocX = GetPlayerRawXPos()
+	mecurrentLocY = GetPlayerRawYPos()
+	mecurrentLocZ = GetPlayerRawZPos()
 	
 	limitbreak() --by the power of hydaelyn i smite thee
 	
@@ -484,10 +660,10 @@ while repeated_trial < (repeat_trial + 1) do
 			--we use simpletweaks
 			yield("/maincommand Duty Support")
 			yield("/wait 2")
-			yield("/echo attempting to trigger duty support")
-			yield("/pcall DawnStory true 11 0") --change tab to first tab
-			yield("/pcall DawnStory true 12 35")--select port decumana
-			yield("/wait 2")
+			--yield("/echo attempting to trigger duty support")
+			--yield("/pcall DawnStory true 11 0") --change tab to first tab
+			--yield("/pcall DawnStory true 12 35")--select port decumana
+			--yield("/wait 2")
 			yield("/pcall DawnStory true 14") --START THE DUTY
 		end
 	
@@ -501,15 +677,16 @@ while repeated_trial < (repeat_trial + 1) do
 		--we will manually exit anyways becuase we need to walk by treasure chests in some duties and trials
 		--also we will take the exit near the last waypoint and not the one near the entrance.........
 		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 80  and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
-			yield("/target exit")
+			yield("/target Exit")
 		end
 		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 80 then
 			yield("/target Shortcut")
 		end
-		--* we need to look for ... treasure chests? maybe
+
 		yield("/wait 0.1")
 		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
 			local minicounter = 0
+			--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
 			if NeedsRepair(99) then
 				yield("/wait 10")
 				while not IsAddonVisible("Repair") do
@@ -537,14 +714,17 @@ while repeated_trial < (repeat_trial + 1) do
 				  end
 				end
 			end
-			yield("/visland stop")
-			yield("/wait 0.1")
-			yield("/vnavmesh stop")
-			yield("/wait 0.1")
+			if whereismydoodie > #doodie then
+				yield("/visland stop")
+				yield("/wait 0.1")
+				yield("/vnavmesh stop")
+				yield("/wait 0.1")
+			end
 			--double check target type here. shortcuts are a a-ok goto always.
 			if GetTargetName()=="Shortcut" then
-				yield("/lockon on")
-				yield("/automove on")
+				--yield("/lockon on")
+				--yield("/automove on")
+				yield("/vnavmesh moveto "..GetObjectRawXPos("Shortcut").." "..GetObjectRawYPos("Shortcut").." "..GetObjectRawZPos("Shortcut"))
 				yield("/wait 10")
 			end
 			if GetTargetName()=="Exit" then
@@ -552,26 +732,20 @@ while repeated_trial < (repeat_trial + 1) do
 				if dutyloaded == 1 then
 					zempdist = distance(GetObjectRawXPos("Exit"),GetObjectRawYPos("Exit"),GetObjectRawZPos("Exit"),doodie[#doodie][2],doodie[#doodie][3],doodie[#doodie][4])
 				end
-				if dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie) then --if we didnt load a waypoint file we don't care about which exit it is
-					yield("/lockon on")
-					yield("/automove on")
+				if dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie >= #doodie) then --if we didnt load a waypoint file we don't care about which exit it is
+					--yield("/lockon on")
+					--yield("/automove on")
+					--replaced above with navmesh to exit
+					yield("/vnavmesh moveto "..GetObjectRawXPos("Exit").." "..GetObjectRawYPos("Exit").." "..GetObjectRawZPos("Exit"))
 				end
 			end
 		end
 	end
 	--test dist to the intended party leader
 	if GetCharacterCondition(34)==true then --if we are in a duty
-		--check for spread_marker_entities
-		--do_we_spread() --single target spread marker handler function
 		--call the waypoint system if we are wanting to from the .ini file
-		--* move towards treasure chests when they are near
-		--* move to exit if we are within 100 yalms of the end
-		arbitrary_duty()
-		--duty specific stuff
-		if type(we_are_in) == "number" and we_are_in == 1048 then --porta decumana
-			--yield("/echo Decumana Check!")
-			porta_decumana()
-		end
+		arbitrary_duty() --this is the big boy
+		
 		--regular movement to target
 		if char_snake ~= "no follow" and char_snake ~= "party leader" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
 			setdeest()
@@ -593,7 +767,6 @@ while repeated_trial < (repeat_trial + 1) do
 		end
 		--yield("/echo distance between points: "..dist_between_points.." snake_deest"..snake_deest.." meh_deest :"..meh_deest)
 	end
-	
 	--test dist to the intended party leader
 	i = 0
 	if GetCharacterCondition(28)==true then --if we are bound by qte
@@ -609,9 +782,6 @@ while repeated_trial < (repeat_trial + 1) do
 			end
 		end
 	end
-	yield("/wait 1")
-
-	--this part will be deprecated soon once there is some kind of autobuilding
 	--check if we chagned areas or just wait as normal
 	we_are_in = GetZoneID() --where are we?
 	if type(we_are_in) ~= "number" then
@@ -638,32 +808,29 @@ while repeated_trial < (repeat_trial + 1) do
 		we_were_in = we_are_in --record this as we are in this area now
 	end
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
-		--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
 		yield("/equipguud")
 		yield("/vbmai on")
 		yield("/rotation auto")
 		--only party leader will do cd 5 because otherwise its spammy
 		if char_snake == "party leader" then
-			yield("/cd 5")
+			if GetCharacterCondition(26) == false and GetCharacterCondition(34) == true and string.len(GetTargetName()) > 0 then
+				yield("/cd 5")
+			end
 		end
-		yield("/send KEY_1")
+		yield("/send KEY_1")  --* huge fucking problem if its bound to anything but some kind of attack. maybe this hsould be default attack on?
+		yield("/action Auto-attack")
 		--yield("/wait 10")
 		dutycheck = 0 --by default we aren't going to stop things because we are in a duty
 		dutycheckupdate = 1 --sometimes we don't want to update dutycheck because we reached phase 2 in a fight.
 	end
-	--if we arent in a duty - reset some duty stuff
+	--if we arent in a duty - force disable / reset some duty stuff
 	if GetCharacterCondition(34) == false then
 		dutyloaded = 0
 		dutytoload = "buttcheeks"
 		whereismydoodie = 1
+		customized_targeting = 0
 	end
+	yield("/wait 1") --the entire fuster cluck is looping on wait 1 haha
 end
 
---/xldata object table, vbm debug, automaton debug
---eg
---17BB974B6D0:40000B89[38] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53157 Z468.43414 D9 R-0.7854581 - Target: E0000000
---17BB974E650:40000B8C[40] - BattleNpc - Aetheroplasm - X-715.5604 Y-185.53159 Z468.4341 D19 R0.78536224 - Target: E0000000
---17BB97515D0:40000B8A[42] - BattleNpc - Aetheroplasm - X-715.5605 Y-185.53157 Z491.5273 D21 R2.3561823 - Target: E0000000
---17BB9754550:40000B8B[44] - BattleNpc - Aetheroplasm - X-692.46704 Y-185.53159 Z491.52734 D12 R-2.3562784 - Target: E0000000
-
---vasdfasdfasfd
+--vasdfasdfasdfasdf

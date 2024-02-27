@@ -30,6 +30,7 @@ public class IpcCommands
     {
         this._autoRetainerApi = new();
         VislandIPC.Init();
+        NavmeshIPC.Init();
         DeliverooIPC.Init();
         PandorasBoxIPC.Init();
     }
@@ -38,6 +39,7 @@ public class IpcCommands
     {
         this._autoRetainerApi.Dispose();
         VislandIPC.Dispose();
+        NavmeshIPC.Dispose();
         DeliverooIPC.Dispose();
         PandorasBoxIPC.Dispose();
     }
@@ -67,6 +69,24 @@ public class IpcCommands
 
     #region visland
     public unsafe bool IsVislandRouteRunning() => VislandIPC.IsRouteRunning!.InvokeFunc();
+    #endregion
+
+    #region navmesh
+    public bool NavIsReady() => NavmeshIPC.NavIsReady!.InvokeFunc();
+    public float NavBuildProgress() => NavmeshIPC.NavBuildProgress!.InvokeFunc();
+    public void NavReload() => NavmeshIPC.NavReload!.InvokeAction();
+    public void NavRebuild() => NavmeshIPC.NavRebuild!.InvokeAction();
+    public bool NavIsAutoLoad() => NavmeshIPC.NavIsAutoLoad!.InvokeFunc();
+    public void NavSetAutoLoad(bool state) => NavmeshIPC.NavSetAutoLoad!.InvokeAction(state);
+    public void PathMoveTo(float x, float y, float z) => NavmeshIPC.PathMoveTo!.InvokeAction(new System.Numerics.Vector3(x, y, z));
+    public void PathFlyTo(float x, float y, float z) => NavmeshIPC.PathFlyTo!.InvokeAction(new System.Numerics.Vector3(x, y, z));
+    public void PathStop() => NavmeshIPC.PathStop!.InvokeFunc();
+    public bool PathIsRunning() => NavmeshIPC.PathIsRunning!.InvokeFunc();
+    public int PathNumWaypoints() => NavmeshIPC.PathNumWaypoints!.InvokeFunc();
+    public bool PathGetMovementAllowed() => NavmeshIPC.PathGetMovementAllowed!.InvokeFunc();
+    public void PathSetMovementAllowed(bool state) => NavmeshIPC.PathSetMovementAllowed!.InvokeAction(state);
+    public float PathGetTolerance() => NavmeshIPC.PathGetTolerance!.InvokeFunc();
+    public void PathSetTolerance(bool state) => NavmeshIPC.PathSetTolerance!.InvokeAction(state);
     #endregion
 
     #region AutoRetainer
