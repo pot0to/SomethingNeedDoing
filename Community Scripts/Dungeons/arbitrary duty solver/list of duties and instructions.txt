@@ -162,7 +162,7 @@ some stuff isn't yet solved by bossmod but we can solve in SND for now
 1048	-		LUA		Level 50	Porta Decumana		-	Synced. Requires ENUM for party members (4).
 445		WP		LUA		Level 60	Alexander 4 Normal	- 	Unsynced.
 584		WP		LUA		Level 60	Alexander 9 Savage	- 	Unsynced.
-854		-		LUA		Level 80	Eden 2 Savage		-	Unsynced. Requires ENUM for party members (4)
+854		-		LUA		Level 80	Eden 2 Savage		-	Unsynced. Requires ENUM for party members (4). 1 tank and at least 2 healers :p
 856		-		WIP		Level 80	Eden 4 Savage		-	WIP
 ???		-		WIP		Level 80	Eden 8 Savage		-	WIP
 ???		-		WIP		Level 80	Eden 12 Savage		-	WIP

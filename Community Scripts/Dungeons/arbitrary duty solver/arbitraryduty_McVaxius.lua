@@ -79,6 +79,7 @@ yield("/echo limitpct:"..limitpct)
 yield("/echo limitlevel:"..limitlevel)
 yield("/echo movetype:"..movetype)
 yield("/echo LOOT_CHESTS?????:"..lootchests)
+yield("/echo getout:"..getout)
 
 yield("/echo SUCCESSFULLY LOADED ALL VARS")
 
@@ -129,6 +130,7 @@ local doodie = {} --initialize table for waypoints
 local whereismydoodie = 1 --position in doodie table
 local customized_targeting = 0 -- this is for custom code for specific duties
 local waitTarget = 0 --so we aren't spamming target search nonstop and breaking the WP system
+local customized_behaviour = 0
 
 local function distance(x1, y1, z1, x2, y2, z2)
 	--following block to error trap some bs when changing areas
@@ -141,33 +143,56 @@ local function distance(x1, y1, z1, x2, y2, z2)
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
 end
 
+local function interpolate(x1, y1, z1, x2, y2, z2, t)
+    -- t is the parameter representing the percentage of the distance from (x1, y1, z1) to (x2, y2, z2)
+    -- t should be a value between 0 and 1, where 0 represents (x1, y1, z1) and 1 represents (x2, y2, z2)
+    local distance = math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+    local newX = x1 + (x2 - x1) * t
+    local newY = y1 + (y2 - y1) * t
+    local newZ = z1 + (z2 - z1) * t
+    return newX, newY, newZ
+end
+
+-- Function to determine cardinal direction
+local function getCardinalDirection(rotation)
+    if (rotation >= -45 and rotation <= 45) or (rotation < -135 and rotation >= -180) or (rotation > 135 and rotation <= 180) then
+        return "North"
+    elseif rotation > 45 and rotation <= 135 then
+        return "East"
+    elseif rotation > -135 and rotation <= -45 then
+        return "South"
+    else
+        return "West"
+    end
+end
+
 -- random number function
 local function getRandomNumber(min, max)
   return math.random(min,max)
 end
 
 --Wrapper to get nearest objectKind
+--Returns name of closest objectKind
 --Uses SND's targeting system
---{2: BattleNpc, 4: Treasure, 6: GatheringPoint, 7:EventObj}
-function TargetNearestObjectKind(objectKind, radius)
+--Looks for enemies by default if looking for battlenpc
+function TargetNearestObjectKind(objectKind, radius, subKind)
     local smallest_distance = 10000000000000.0
     local closest_target
     local radius = radius or 0
-    local nearby_objects = GetNearbyObjectNames(radius^2,objectKind)
-
+    local subKind = subKind or 5
+    local nearby_objects = GetNearbyObjectNames(radius^2, objectKind)
+    
     if nearby_objects.Count > 0 then
         for i = 0, nearby_objects.Count - 1 do
             yield("/target "..nearby_objects[i])
-            yield("/e [DEBUG]i: "..nearby_objects[i])
-            yield("/e [DEBUG]tar: "..GetTargetName())
-            if not GetTargetName() or nearby_objects[i] ~= GetTargetName() then
-                yield("/e [DEBUG]Not Evaluated")
+            if not GetTargetName() or nearby_objects[i] ~= GetTargetName()
+                or (objectKind == 2 and subKind ~= GetTargetSubKind()) then
             elseif GetDistanceToTarget() < smallest_distance then
                 smallest_distance = GetDistanceToTarget()
                 closest_target = GetTargetName()
-                yield("/e [DEBUG]s_dst: "..smallest_distance)
             end
         end
+        ClearTarget()
         if closest_target then yield("/target "..closest_target) end
     end
     return closest_target
@@ -484,38 +509,107 @@ local function arbitrary_duty()
 		]]
 		--if we see basic dark fire >5 seconds get to center!
 		--Dark Fire III
+		--customized_targeting = 1
+		yield("/vbm cfg AI Enabled false")
+		yield("/echo Turning AI Self Follow Off")
+		yield("/wait 0.5")
+		yield("/vbmai off")
+		customized_behaviour = 1
 		local statoos = GetStatusTimeRemaining(1810) or 999
 		if statoos == 999 then
 			statoos = GetStatusTimeRemaining(2455)
 		end
-		if statoos < 999 end statoos > 5 then
+		--movetype = "visland"
+
+		--also unholy darkness tank stack go to middle
+		if statoos < 999 and statoos > 5 or GetTargetActionID() == 15955 or GetTargetActionID() == 15956 then
 			yield("/"..movetype.." 99.897399902344 0.0 102.01305389404")
+			yield("/echo Dark Fire start or stack marker -> going to middle")
+			yield("/echo Dark Fire start or stack marker -> going to middle")
+			yield("/echo Dark Fire start or stack marker -> going to middle")
+			yield("/wait 1")
 		end
 		--this will spread near end of dark fire 3 and when the slicey time happens at start and i think repeated later if dps is low
-		if statoos < 7 or GetTargetActionID() == 1810 or  GetTargetActionID() == 2455 then
+		if statoos < 7 or GetTargetActionID() == 1810 or GetTargetActionID() == 2455 then
 			--if we see dark fire <6 seconds. get to clock positions!
+			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
+			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
+			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
+			yield("/visland stop")
+			yield("/vnavmesh stop")
+			--100.0659942627 0.0 105.06355285645
+			--94.064888000488 0.0 100.0080871582
+			--99.64151763916 0.0 92.986808776855
+			--104.58055877686 0.0 100.89888763428
 			if partymemberENUM == 1 then
-				yield("/"..movetype.." moveto 100.18762207031 0.0 110.19063568115")
+				yield("/"..movetype.." moveto 100.0659942627 0.0 105.06355285645")
 			end
 			if partymemberENUM == 2 then
-				yield("/"..movetype.." moveto 89.719314575195 0.0 99.845504760742")
+				yield("/"..movetype.." moveto 94.064888000488 0.0 100.0080871582")
 			end
 			if partymemberENUM == 3 then
-				yield("/"..movetype.." moveto 109.67974090576 0.0 100.17778015137")
+				yield("/"..movetype.." moveto 99.64151763916 0.0 92.986808776855")
 			end
 			if partymemberENUM == 4 then
-				yield("/"..movetype.." moveto 100.15099334717 0.0 83.888427734375")
+				yield("/"..movetype.." moveto 104.58055877686 0.0 100.89888763428")
 			end
-			yield("/wait 8")
+			yield("/wait 1")
 		end
 		--figure out which side hand of erebos is on and get to that side so we don't get KB off platform
 		--empty hate IDs: 15941,15942,15961,15962,22748
-		if GetTargetActionID() == 15941 or GetTargetActionID() == 15942 or GetTargetActionID() == 15961 or GetTargetActionID() == 15962 or GetTargetActionID() == 22748
+		--if GetObjectActionID("The Hand of Erebos") == 15941 or GetObjectActionID("The Hand of Erebos") == 15942 or GetObjectActionID("The Hand of Erebos") == 15961 or GetObjectActionID("The Hand of Erebos") == 15962 or GetObjectActionID("The Hand of Erebos") == 22748 then
+		while IsObjectCasting("The Hand of Erebos") == true and type(IsObjectCasting("The Hand of Erebos")) == "boolean" do
+			-- Get the rotation value
+			local rrr = GetObjectRotation("The Hand of Erebos")
+			-- Get the cardinal direction
+			local cardinalDirection = "asdfasdfasdf"
+			cardinalDirection = getCardinalDirection(rrr)
+			yield("/echo cardinalDirection -> "..cardinalDirection.. " rotation -> "..rrr)
+			--100.34774780273,0.0,118.00609588623
+			--87.239952087402,0.0,101.13842010498
+			--98.70711517334,0.0,83.799194335938
+			--112.9762878418,0.0,103.01834106445
+			if cardinalDirection == "West" then
+				yield("/"..movetype.." moveto 100.34774780273 0.0 118.00609588623")
+			end
+			if cardinalDirection == "North" then
+				yield("/"..movetype.." moveto 87.239952087402 0.0 101.13842010498")
+			end
+			if cardinalDirection == "East" then
+				yield("/"..movetype.." 98.70711517334 0.0 83.799194335938")
+			end
+			if cardinalDirection == "South" then
+				yield("/"..movetype.." moveto 112.9762878418 0.0 103.01834106445")
+			end
 			--figure out which side and just go over there maintaining same y,z or is it x,y
 			--fuck it we pop kb immunity
+			yield("/echo Empty Hate - MOVE TO THE HAND or use surecast/armslength")
+			yield("/echo Empty Hate - MOVE TO THE HAND or use surecast/armslength")
+			yield("/echo Empty Hate - MOVE TO THE HAND or use surecast/armslength")
+			--[[
+			yield("/echo Empty Hate - MOVE TO THE HAND - following party member 2 (the tank should be played manually)")
+			yield("/echo Empty Hate - MOVE TO THE HAND - following party member 2 (the tank should be played manually)")
+			yield("/echo Empty Hate - MOVE TO THE HAND - following party member 2 (the tank should be played manually)")
 			yield("/wait 1")
-			yield("/ac Surecast")
-			yield("/ac Arm's Length")
+			yield("/visland stop")
+			yield("/vnavmesh stop")]]
+			yield("/ac \"Surecast\"")
+			yield("/ac \"Arm's Length\"")
+			yield("/ac \"Surecast\"")
+			yield("/ac \"Arm's Length\"")
+			yield("/ac \"Surecast\"")
+			yield("/ac \"Arm's Length\"")
+			yield("/ac \"Surecast\"")
+			yield("/ac \"Arm's Length\"")
+			yield("/wait 8")
+		--end
+		--if type(GetDistanceToObject("The Hand of Erebos")) == "number" and GetDistanceToObject("The Hand of Erebos") < 120 then
+		--	local newX, newY, newZ = interpolate(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos("The Hand of Erebos"), GetObjectRawYPos("The Hand of Erebos"), GetObjectRawZPos("The Hand of Erebos"), 0.95)
+		--	yield("/"..movetype.." moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2)).." ") 
+		--	yield("/echo Empty Hate - MOVING NEAR THE HAND OF EREBOS - follow the player in 2nd slot of party list")
+			--yield("/"..movetype.." "..newX.." "..newY.." "..newZ.." ")
+			--yield("/echo -> "..movetype.." moveto "..newX.." "..newY.." "..newZ.."  The hand of Erebos is at -> "..GetObjectRawXPos("The Hand of Erebos").." "..GetObjectRawYPos("The Hand of Erebos").." "..GetObjectRawZPos("The Hand of Erebos"))
+			--yield("/wait 5")
 		end
 	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 856 then --Eden 4 Savage
@@ -609,8 +703,8 @@ yield("/vbmai on")
 while repeated_trial < (repeat_trial + 1) do
 	--yield("/echo get limoooot"..GetLimitBreakCurrentValue().."get limootmax"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
     if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
-		--yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
-		TargetClosestEnemy()
+		yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
+		--TargetClosestEnemy() --this is really bad it targets through walls and floors
 	end
 	--[[
  --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
@@ -676,7 +770,7 @@ while repeated_trial < (repeat_trial + 1) do
 		--we dont need to manually exit. automaton can do that now
 		--we will manually exit anyways becuase we need to walk by treasure chests in some duties and trials
 		--also we will take the exit near the last waypoint and not the one near the entrance.........
-		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 80  and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
+		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 100 and getout == 1 and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
 			yield("/target Exit")
 		end
 		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 80 then
@@ -747,7 +841,7 @@ while repeated_trial < (repeat_trial + 1) do
 		arbitrary_duty() --this is the big boy
 		
 		--regular movement to target
-		if char_snake ~= "no follow" and char_snake ~= "party leader" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
+		if customized_behaviour == 0 and char_snake ~= "no follow" and char_snake ~= "party leader" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
 			setdeest()
 			if dist_between_points > snake_deest and dist_between_points < meh_deest then
 					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ) --sneak around when navmesh being weird
@@ -757,7 +851,7 @@ while repeated_trial < (repeat_trial + 1) do
 					--yield("/echo player follow distance between points: "..dist_between_points.." enemy deest"..enemy_deest.." char deest :"..snake_deest)
 			end
 		end
-		if enemy_snake ~= "nothing" and dutycheck == 0 and we_are_spreading == 0 then --close gaps to enemy only if we are on follow mode
+		if customized_behaviour == 0 and enemy_snake ~= "nothing" and dutycheck == 0 and we_are_spreading == 0 then --close gaps to enemy only if we are on follow mode
 			setdeest()
 			if dist_between_points > enemy_deest and dist_between_points < enemeh_deest then
 					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
@@ -829,8 +923,9 @@ while repeated_trial < (repeat_trial + 1) do
 		dutytoload = "buttcheeks"
 		whereismydoodie = 1
 		customized_targeting = 0
+		customized_behaviour = 0
 	end
 	yield("/wait 1") --the entire fuster cluck is looping on wait 1 haha
 end
 
---vasdfasdfasdfasdf
+--cardinal
