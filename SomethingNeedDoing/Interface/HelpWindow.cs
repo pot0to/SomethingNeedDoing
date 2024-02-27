@@ -332,7 +332,17 @@ internal class HelpWindow : Window
         "- Added ClearTarget()\n" +
         "- Added ClearFocusTarget()\n" +
         "- Added /targetenemy\n" +
-        "- Fixed TargetClosestEnemy()");
+        "- Added IsObjectCasting()\n" +
+        "- Added GetObjectActionID()\n" +
+        "- Added GetObjectUsedActionID()\n" +
+        "- Added GetObjectHP()\n" +
+        "- Added GetObjectMaxHP()\n" +
+        "- Added GetObjectHPP()\n" +
+        "- Added GetDistanceToFocusTarget()\n" +
+        "- Added GetTargetRotation()\n" +
+        "- Added GetFocusTargetRotation()\n" +
+        "- Added GetObjectRotation()\n" +
+        "- Fixed TargetClosestEnemy()\n");
 
         DisplayChangelog(
         "2024-02-26",
@@ -354,7 +364,7 @@ internal class HelpWindow : Window
         "- Added TargetClosestEnemy()\n" +
         "- Added GetTargetObjectKind()\n" +
         "- Added GetTargetSubKind()\n" +
-        "- Fixed GetNearbyObjectNames() to return sorted by distance");
+        "- Fixed GetNearbyObjectNames() to return sorted by distance\n");
 
         DisplayChangelog(
         "2024-02-24",
