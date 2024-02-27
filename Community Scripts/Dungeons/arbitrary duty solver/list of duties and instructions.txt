@@ -56,14 +56,25 @@ Final Fantasy XIV Itself -> Character -> Control Settings -> General -> UNCHECK 
 --------------
 SCRIPT CONFIG
 --------------
+--------------
+--.ini files--
+--------------
 the reason we use an ini file is so you can have many different characters configured separately and also update the script without having to edit it at all. (aside from copy and paste)
 Read the ini file - it should self explain the variables.  and it respects comments. just not same-line comments
 the ini file goes into the folder you can see below
-\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
+%AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 you can change that to a different folder if you wish. just find the appropriate line of code in here to do that.
 to use this find the arbitraryduty_McVaxius.ini file and rename it to arbitraryduty_Yourcharfirstlast.ini   notice no spaces.
 so if your character is named Pomelo Pup'per then you would call the .ini file   arbitraryduty_PomeloPupper.ini
 just remember it will strip spaces and apostrophes
+---------------
+--.duty files--
+---------------
+in the repo you will see somethign suspicious that look like number.duty
+those are waypoint files!
+you need to place them in the same folder as the .ini files in order to make use of waypoints
+this is the same place that the auto generated WP from the code snippet below will place your newly minted waypoint files
+%AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 --------------
 enjoy
 ****END OF INSTRUCTIONS****
