@@ -2,13 +2,17 @@
     Name: GatheringHelper
     Description: General gathering node recorder and movement script for MIN/BTN
     Author: LeafFriend, plottingCreeper (food and repair)
-    Version: 0.1.3.1
+    Version: 0.1.3.4
     Needed Plugins: vnavmesh, Pandora
-    Needed Plugin Settings enabled: Pandora Quick Gather
+    Needed Plugin Settings: Pandora Quick Gather enabled, SND targeting system enabled
 ]]
 
 --[[
     <Changelog>
+    0.1.3.4 - Implemented enhanced search function with GetNearbyObjectNames()
+            - Accounted for diving in VnavmeshMoveFly()
+    0.1.3.3 - Added Ephemeral nodes to table of node names
+    0.1.3.2 - Handle condition when diving for vnavmesh movement
     0.1.3.1 - Properly implement zone change script termination implementation
     0.1.3   - Implemented class checker to wipe found_nodes if class is changed and prompt if not DoL
             - Implemented food check before homing into found gathering node
@@ -36,19 +40,19 @@
 --[[
     <TODO>
     - More Optimisation, eventually...
-    -- See if GetNearbyObjectNames() helps
-    -- Use plottingCreeper's MoveNear() 
+    -- Use plottingCreeper's MoveNear()
     - Implement node checker to wipe found_nodes if gathered item is not gatherable from current node
     - Implement randomised wait time
     - Implement verbose/rate-limiting Id_Print()
     - Implement distance-based mounting before moving to next node
     - Implement spiritbond checking
     - Implement Diadem aetheromatic auger usage
+    - Implement better dislodgement logic
 --]]
 
 --Settings
 ---Food Settings
-food_to_eat = false                   --Name of the food you want to use, in quotes. Set false otherwise. 
+food_to_eat = false                   --Name of the food you want to use, in quotes. Set false otherwise.
                                       --Include <hq> if high quality. (i.e. "[Name of food] <hq>") DOES NOT CHECK ITEM COUNT YET
 eat_food_threshold = 10               --Maximum number of times to check if food is consumed
 
@@ -57,6 +61,7 @@ do_repair = false                    --false, "npc" or "self". Add a number to s
 
 ---Gathering logic Settings
 interval_rate = 1                     --Seconds to wait for each action
+ping_radius = 50                      --Radius of the gathering node search
 min_distance_to_dismount = 5          --Minimum distance before dismounting while travelling to gathering node
 time_to_wait_after_gather = 3         --Seconds to wait after finishing gathering and before looking for the next gathering node
 missing_node_distance_tolerance = 3   --Maximum distance before script considers node moving to is not interactable
@@ -214,6 +219,7 @@ function ClassCheck()
                 "Mature Tree", "Lush Vegetation Patch",
                 "Unspoiled Mature Tree", "Unspoiled Lush Vegetation Patch",
                 "Legendary Mature Tree", "Legendary Lush Vegetation Patch",
+                "Ephemeral Mature Tree", "Ephemeral Lush Vegetation Patch",
             }
         elseif job_id == 18 then --FSH
             gathering_node_names = {
@@ -264,7 +270,7 @@ function RepairCheck()
             end
         end
     end
-    
+
     local repair_token = IsNeedRepair()
     if repair_token then
         if repair_token == "self" then
@@ -332,9 +338,9 @@ end
 
 --Return the closest gathering node found thus far given by found_nodes, and not went to given by nodes_went
 function FindNearestFoundNodeNotGathered()
-    local least_distance_to_nodes_not_went = 10000000000000.0  
+    local least_distance_to_nodes_not_went = 10000000000000.0
     local node_with_least_distance_not_went = nil
-  
+
     for node,_ in pairs(found_nodes) do
         if node ~= last_node_gathered and not QueueContains(nodes_went, node) then
             local distance_to_node = GetDistanceToNode(node)
@@ -354,14 +360,35 @@ function ZoneBasedMovingCountThreshold()
     else return moving_count_threshold end
 end
 
+--Wrapper to get nearest gathering node, replacing /tnpc
+function GetNearestNode()
+    local smallest_distance = 10000000000000.0
+    local closest_node_name
+    local nearby_gathering_nodes = GetNearbyObjectNames(ping_radius^2, 6)
+
+    if nearby_gathering_nodes.Count > 0 then
+        for i = 0, nearby_gathering_nodes.Count - 1 do
+            repeat
+                yield("/target "..nearby_gathering_nodes[i])
+                yield("/wait "..interval_rate * 0.1)
+            until GetTargetName()
+            if GetDistanceToObject(GetTargetName()) < smallest_distance then
+                smallest_distance = GetDistanceToObject(GetTargetName())
+                closest_node_name = GetTargetName()
+            end
+        end
+        if not closest_node_name then yield("/target "..closest_node_name) end
+    end
+end
+
 --Wrapper to handle data as needed
 function HandleDataAsNeeded()
     local do_pop = false
     for k,_ in pairs(found_nodes) do
         if k == last_node_gathered and QueueContains(nodes_went, k) then do_pop = true end
     end
-    if do_pop then 
-        QueuePop(nodes_went) 
+    if do_pop then
+        QueuePop(nodes_went)
     end
 end
 
@@ -380,7 +407,7 @@ end
 --Wrapper to handle vnavmesh Movement
 function VnavmeshMoveFly(x, y, z, force_moveto)
     local force_moveto = force_moveto or false
-    if not force_moveto and GetCharacterCondition(4) and GetCharacterCondition(77) then
+    if not force_moveto and ((GetCharacterCondition(4) and GetCharacterCondition(77)) or GetCharacterCondition(81)) then
         yield("/vnavmesh flyto "..x.. " "..y.." "..z)
     else
         yield("/vnavmesh moveto "..x.. " "..y.." "..z)
@@ -414,7 +441,7 @@ function main()
     Id_Print("[DEBUG0]len(found_nodes): "..SetLength(found_nodes))
     --Prints out nodes went
     PrintQueue(nodes_went, "DEBUG0")
-    Id_Print("[DEBUG0]len(nodes_went): "..QueueLength(nodes_went))  
+    Id_Print("[DEBUG0]len(nodes_went): "..QueueLength(nodes_went))
     Id_Print("[DEBUG0]last_node_gathered: "..last_node_gathered)
 --]]
 
@@ -423,16 +450,16 @@ function main()
     ---Check if there's inventory space left
     ---Check if zone has changed
     ::BEFORE_GATHER::
-    if not RepairCheck() 
+    if not RepairCheck()
         or GetInventoryFreeSlotCount() <= num_inventory_free_slot_threshold
-        or not CheckIfSameZoneSinceScriptStart() then 
+        or not CheckIfSameZoneSinceScriptStart() then
             if GetInventoryFreeSlotCount() <= num_inventory_free_slot_threshold then
-                Id_Print("Inventory free slot threshold reached.") 
+                Id_Print("Inventory free slot threshold reached.")
             end
             if not CheckIfSameZoneSinceScriptStart() then
                 Id_Print("Zone change detected.")
             end
-        
+
         stop_main = true
         return
     end
@@ -447,7 +474,6 @@ function main()
     repeat
         last_job_id = ClassCheck()
         if not CheckIfSameZoneSinceScriptStart() then goto BEFORE_GATHER end
-        Id_Print("Pinging for nearby Gathering Nodes...")
 
         if nextNodeToMoveTo == nil then
             Id_Print("Traversed all found nodes!")
@@ -466,11 +492,12 @@ function main()
             else
                 not_moving_count = not_moving_count + 1
             end
-            if GetDistanceToNode(nextNodeToMoveTo) < missing_node_distance_tolerance 
-                and not gathering_nodes[GetTargetName()] then 
+            if GetDistanceToNode(nextNodeToMoveTo) < missing_node_distance_tolerance
+                and not gathering_nodes[GetTargetName()] then
                 Id_Print("Gathering Node not Found!")
                 AddNodeDataToSetOrQueue(nextNodeToMoveTo, nodes_went, "nodes_went")
                 yield("/vnavmesh stop")
+                moving_count = 0
                 goto CHECK_DATA
             elseif moving_count > ZoneBasedMovingCountThreshold() then
                 ActionsIfDetectedNotMoving()
@@ -480,15 +507,16 @@ function main()
                 not_moving_count = 0
             end
         end
-        
-        yield("/tnpc")
+
+        Id_Print("Pinging for nearby Gathering Nodes...")
+        GetNearestNode()
         yield("/wait "..interval_rate)
     until gathering_nodes[GetTargetName()]
 
     Id_Print("Gathering Node found!")
     yield("/vnavmesh stop")
     yield("/automove off")
-    EatFood()
+    if not GetCharacterCondition(6) then EatFood() end
     moving_count = 0
     not_moving_count = 0
 
@@ -511,7 +539,7 @@ function main()
             Id_Print("Moving to Target...")
             yield("/wait "..interval_rate)
         end
-        
+
         if IsMoving() then
             moving_count = moving_count + 1
         else
@@ -524,7 +552,7 @@ function main()
             ActionsIfDetectedNotMoving()
             not_moving_count = 0
         end
-        
+
         yield("/wait "..interval_rate)
     until GetCharacterCondition(6)
 
@@ -534,7 +562,7 @@ function main()
     last_node_gathered = current_target
     yield("/vnavmesh stop")
     yield("/pinteract")
-  
+
     --Wait for gathering to finish
     ::FINISH_GATHER::
     repeat
@@ -543,7 +571,7 @@ function main()
             yield("/runmacro "..collectables_script_name)
             yield("/wait "..interval_rate * 0.1)
         end
-        
+
         yield("/wait "..interval_rate * 0.1)
     until not GetCharacterCondition(6)
     Id_Print("Finished gathering from current gathering node!")
