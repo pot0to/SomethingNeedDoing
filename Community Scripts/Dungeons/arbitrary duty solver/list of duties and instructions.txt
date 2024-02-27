@@ -1,7 +1,7 @@
 ****************
 **INSTRUCTIONS**
 ****************
-This is just kind of proof of concept farming script for easy duties that vbm AI mode can solve.
+This is just kind of proof of concept farming script for duties that vbm AI mode can solve or doesn't need to becuase your doing it unsynced.
 
 ******************
 **REQUIRED REPOS**
@@ -29,7 +29,8 @@ https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaste
 *YesAlready
 *TextAdvance
 *Cutscene Skip
-*vnavmesh OR visland - decide which you want to use in the .ini file
+*vnavmesh
+*visland
 
 *****************
 **Plogon config**
@@ -46,10 +47,9 @@ something need doing -> go to options and disable SND targeting
 rotation solver -> self configured with this script
 lazyloot -> optional you decide. set your lazyloot to /fulf need/green/pass/off etc
 yesalready -> setup a leave from instance.. the first time you exit you can auto add with teh circular plus icon
-yesalready -> bothers -> auto commence
+yesalready -> bothers -> auto commence duty
 textadvance -> auto on and add your char to the list
-Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR
-															Do it in the duty support window if thats the option you are choosing
+Final Fantasy XIV Itself -> Preselect port decumana in the duty finder menu on the designated party leader then close the window, OR do it in the duty support window if thats the option you are choosing
 Final Fantasy XIV Itself -> Character -> Targeting -> Ground Targeting -> Unlocked --*make this a pcall later but leave a note somewhere to user so they can change it if they wanna aim imanually later.
 Final Fantasy XIV Itself -> Character -> Control Settings -> General -> LEGACY MOVEMENT
 Final Fantasy XIV Itself -> Character -> Control Settings -> General -> UNCHECK "Disable Camera Pivot"
@@ -95,7 +95,7 @@ local file = io.open(file_path, "a")
 
 if file then
     -- Write text to the file
-    file:write("1,"..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..",3,0,1\n")
+    file:write("1,"..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..",3,0,0\n")
     -- Close the file handle
     file:close()
     yield("/echo WP added to -> "..file_path)
@@ -132,7 +132,8 @@ Value 3: y || get from above script
 Value 4: z || get from above script
 Value 5: t || seconds to wait after reaching waypoint before next waypoint trigger. default 3 seconds
 Value 6: r || value 0 normall, anything above 0 otherwise.  Explanation: if we have gone through a sub area transition like the magitek armor in prae -> basement section, we need to solve that. simply put in the appropriate value a few y lower than the distance to waypoint AFTER the area transition. the prae (1044.duty) preset has a few entries in it.
-Value 7: g || value 0 = normal wp, 1 = chest to configure on/off in settings. skippable wps, defaulted to 1 for on. later maybe we can sneak other stuff in this field.
+Value 7: g || value 0 = normal wp, 1 = chest via WP default is 1 for WP chest
+			secret bonus: if you put text in value 7, it will search for that . like a key or something. this way we can grab keydrops... make sure you have at least 5 seconds delay for such interactions
 
 
 General tips:
@@ -144,6 +145,8 @@ some stuff isn't yet solved by bossmod but we can solve in SND for now
 --------------------------------------------
 ---------------List of Duties---------------
 --------------------------------------------
+1035	Level 15	Sastasha Synced									-	New features added to make this work :~D Minor customization in lua
+???		Level 50	Porta Decumana Synced Party or Duty Support		-	no WP file Some customization in lua for the aether orbs until veyn accepts male' PR for the bossmod version which is better
 1044	Level 50	The Praetorium Synced Party or Duty Support		-	Some customization in .lua for mounted portion and area transition reconciliation. this is meant for mogtoming SYNCED
 445		Level 60	Alexander 4 Normal Unsycned						- 	no customizedion in lua, it will waypoint to chests when its done. this is meant for farming gc seals!
 584		Level 60	Alexander 9 Savage Unsynced						- 	Some customization in lua to target the Refurbisher. this is meant for light farming.
