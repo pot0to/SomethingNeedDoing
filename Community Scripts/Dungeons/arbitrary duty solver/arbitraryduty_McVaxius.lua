@@ -131,30 +131,41 @@ local customized_targeting = 0 -- this is for custom code for specific duties
 local waitTarget = 0 --so we aren't spamming target search nonstop and breaking the WP system
 
 local function distance(x1, y1, z1, x2, y2, z2)
+	--following block to error trap some bs when changing areas
+	local x1 = x1 or 0
+	local y1 = y1 or 0
+	local z1 = z1 or 0
+	local x2 = x2 or 0
+	local y2 = y2 or 0
+	local z2 = z2 or 0
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
 end
 
 -- random number function
-function getRandomNumber(min, max)
+local function getRandomNumber(min, max)
   return math.random(min,max)
 end
 
 --Wrapper to get nearest objectKind
 --Uses SND's targeting system
 --{2: BattleNpc, 4: Treasure, 6: GatheringPoint, 7:EventObj}
-local function TargetNearestObjectKind(objectKind, radius)
+function TargetNearestObjectKind(objectKind, radius)
     local smallest_distance = 10000000000000.0
-    local closest_target = "nothing"
+    local closest_target
     local radius = radius or 0
     local nearby_objects = GetNearbyObjectNames(radius^2,objectKind)
-    
+
     if nearby_objects.Count > 0 then
         for i = 0, nearby_objects.Count - 1 do
             yield("/target "..nearby_objects[i])
+            yield("/e [DEBUG]i: "..nearby_objects[i])
+            yield("/e [DEBUG]tar: "..GetTargetName())
             if not GetTargetName() or nearby_objects[i] ~= GetTargetName() then
+                yield("/e [DEBUG]Not Evaluated")
             elseif GetDistanceToTarget() < smallest_distance then
                 smallest_distance = GetDistanceToTarget()
                 closest_target = GetTargetName()
+                yield("/e [DEBUG]s_dst: "..smallest_distance)
             end
         end
         if closest_target then yield("/target "..closest_target) end
@@ -377,7 +388,10 @@ end
 
 local function arbitrary_duty()
 	--just make it use the zoneID no more need to edit this script for it to work
-	dutyFile = GetZoneID()..".duty"
+	dutyFile = "123.duty"
+	if type(GetZoneID()) == "number" then
+		dutyFile = GetZoneID()..".duty"
+	end
 	--*if we die:
 		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
 		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
@@ -509,34 +523,36 @@ local function arbitrary_duty()
 			end
 		end
 		--will spam Photon Stream and auto lockon. eventually clear the garbage
-		local magiwhee = 1129 -- lasers
+		local magiwhee = 1128
+			if getRandomNumber(1,2) == 1 then
+				magiwhee = 1129
+			end
 		--this shit doesn't actualy work so well just use lasers for now ;\
 		--if partymemberENUM == 2 or partymemberENUM == 4 or partymemberENUM == 6 or partymemberENUM == 8 then
 		--	magiwhee = 1128 --big buum
+		--	magiwhee = 1129 --lasers
 		--end
-		if string.len(GetTargetName()) > 0 then
-			yield("/lockon on") --need this for various stuff hehe.
-			yield("/automove")
-			yield("/send q")
-			yield("/wait 0.3")
-			yield("/automove stop")
-			ExecuteAction(magiwhee)
-			yield("/wait 0.5")
-			yield("/automove")
-			yield("/send w")
-			yield("/wait 0.3")
-			ExecuteAction(magiwhee)
-			yield("/wait 0.5")
-			ExecuteAction(magiwhee)
-			yield("/wait 0.5")
-			yield("/automove stop")
-			yield("/send e")
-			yield("/wait 0.3")
-			ExecuteAction(magiwhee)
-			yield("/wait 0.5")
-			ExecuteAction(magiwhee)
-			yield("/wait 0.5")
-		end
+		yield("/lockon on") --need this for various stuff hehe.
+--			yield("/automove")
+		yield("/send q")
+		yield("/wait 0.3")
+--			yield("/automove stop")
+		ExecuteAction(magiwhee)
+		yield("/wait 0.5")
+--			yield("/automove")
+		yield("/send w")
+		yield("/wait 0.3")
+		ExecuteAction(magiwhee)
+		yield("/wait 0.5")
+		ExecuteAction(magiwhee)
+		yield("/wait 0.5")
+--			yield("/automove stop")
+		yield("/send e")
+		yield("/wait 0.3")
+		ExecuteAction(magiwhee)
+		yield("/wait 0.5")
+		ExecuteAction(magiwhee)
+		yield("/wait 0.5")
 	end
 end
 
@@ -553,14 +569,16 @@ while repeated_trial < (repeat_trial + 1) do
     if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
 		yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
 	end
---[[ --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
+	--[[
+ --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
     if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
 		waitTarget = waitTarget + 1
 		if waitTarget > 10 then
 			TargetNearestObjectKind(2) --Find nearest battlenpc 
 			waitTarget = 0
 		end
-	end]]
+	end
+	]]
 	--some other spams.
 	--the command "targetnenemy" is unavailable at this time
 	--unable to execute command while occupied
