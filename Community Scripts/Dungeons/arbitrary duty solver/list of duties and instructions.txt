@@ -70,7 +70,7 @@ just remember it will strip spaces and apostrophes
 ---------------
 --.duty files--
 ---------------
-in the repo you will see somethign suspicious that look like number.duty
+in the repo you will see something suspicious that look like number.duty
 those are waypoint files!
 you need to place them in the same folder as the .ini files in order to make use of waypoints
 this is the same place that the auto generated WP from the code snippet below will place your newly minted waypoint files
