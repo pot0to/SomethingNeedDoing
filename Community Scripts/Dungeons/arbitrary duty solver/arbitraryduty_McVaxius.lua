@@ -543,7 +543,7 @@ local function arbitrary_duty()
 		end
 	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
-		if string.len(GetTargetName()) == 0
+		if string.len(GetTargetName()) == 0 then
 			TargetClosestEnemy()
 		end
 		--[[
