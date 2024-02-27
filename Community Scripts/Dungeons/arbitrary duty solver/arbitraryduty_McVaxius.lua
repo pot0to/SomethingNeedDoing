@@ -543,6 +543,10 @@ local function arbitrary_duty()
 		end
 	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
+		if string.len(GetTargetName()) == 0
+			TargetClosestEnemy()
+		end
+		--[[
 		local praedist = 500
 		local praetargets = {
 		"Magitek Colossus",
@@ -559,7 +563,7 @@ local function arbitrary_duty()
 					yield("/target "..praetargets[i])
 				end
 			end
-		end
+		end]] -- if TargetClosestEnemy works we don't need this commented out block anymore
 		--will spam Photon Stream and auto lockon. eventually clear the garbage
 		local magiwhee = 1128
 			if getRandomNumber(1,2) == 1 then
@@ -605,7 +609,8 @@ yield("/vbmai on")
 while repeated_trial < (repeat_trial + 1) do
 	--yield("/echo get limoooot"..GetLimitBreakCurrentValue().."get limootmax"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
     if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
-		yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
+		--yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
+		TargetClosestEnemy()
 	end
 	--[[
  --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
