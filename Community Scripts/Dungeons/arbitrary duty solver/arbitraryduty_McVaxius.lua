@@ -517,9 +517,9 @@ local function arbitrary_duty()
 		customized_behaviour = 1
 		local statoos = GetStatusTimeRemaining(1810) or 999
 		if statoos == 999 then
-			statoos = GetStatusTimeRemaining(2455)
+			statoos = GetStatusTimeRemaining(2455) or 999
 		end
-		--movetype = "visland"
+		movetype = "visland"
 
 		--also unholy darkness tank stack go to middle
 		if statoos < 999 and statoos > 5 or GetTargetActionID() == 15955 or GetTargetActionID() == 15956 then
@@ -527,7 +527,7 @@ local function arbitrary_duty()
 			yield("/echo Dark Fire start or stack marker -> going to middle")
 			yield("/echo Dark Fire start or stack marker -> going to middle")
 			yield("/echo Dark Fire start or stack marker -> going to middle")
-			yield("/wait 1")
+			yield("/wait 0.3")
 		end
 		--this will spread near end of dark fire 3 and when the slicey time happens at start and i think repeated later if dps is low
 		if statoos < 7 or GetTargetActionID() == 1810 or GetTargetActionID() == 2455 then
@@ -535,8 +535,8 @@ local function arbitrary_duty()
 			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
 			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
 			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
-			yield("/visland stop")
-			yield("/vnavmesh stop")
+			--yield("/visland stop")
+			--yield("/vnavmesh stop")
 			--100.0659942627 0.0 105.06355285645
 			--94.064888000488 0.0 100.0080871582
 			--99.64151763916 0.0 92.986808776855
@@ -553,12 +553,14 @@ local function arbitrary_duty()
 			if partymemberENUM == 4 then
 				yield("/"..movetype.." moveto 104.58055877686 0.0 100.89888763428")
 			end
-			yield("/wait 1")
+			yield("/wait 0.3")
 		end
 		--figure out which side hand of erebos is on and get to that side so we don't get KB off platform
 		--empty hate IDs: 15941,15942,15961,15962,22748
 		--if GetObjectActionID("The Hand of Erebos") == 15941 or GetObjectActionID("The Hand of Erebos") == 15942 or GetObjectActionID("The Hand of Erebos") == 15961 or GetObjectActionID("The Hand of Erebos") == 15962 or GetObjectActionID("The Hand of Erebos") == 22748 then
 		while IsObjectCasting("The Hand of Erebos") == true and type(IsObjectCasting("The Hand of Erebos")) == "boolean" do
+			--yield("/visland stop")
+			--yield("/vnavmesh stop")
 			-- Get the rotation value
 			local rrr = GetObjectRotation("The Hand of Erebos")
 			-- Get the cardinal direction
@@ -571,15 +573,19 @@ local function arbitrary_duty()
 			--112.9762878418,0.0,103.01834106445
 			if cardinalDirection == "West" then
 				yield("/"..movetype.." moveto 100.34774780273 0.0 118.00609588623")
+				yield("/echo moving weest")
 			end
 			if cardinalDirection == "North" then
 				yield("/"..movetype.." moveto 87.239952087402 0.0 101.13842010498")
+				yield("/echo moving neeerth")
 			end
 			if cardinalDirection == "East" then
 				yield("/"..movetype.." 98.70711517334 0.0 83.799194335938")
+				yield("/echo moving eaasst")
 			end
 			if cardinalDirection == "South" then
 				yield("/"..movetype.." moveto 112.9762878418 0.0 103.01834106445")
+				yield("/echo moving sooorth")
 			end
 			--figure out which side and just go over there maintaining same y,z or is it x,y
 			--fuck it we pop kb immunity
@@ -590,7 +596,6 @@ local function arbitrary_duty()
 			yield("/echo Empty Hate - MOVE TO THE HAND - following party member 2 (the tank should be played manually)")
 			yield("/echo Empty Hate - MOVE TO THE HAND - following party member 2 (the tank should be played manually)")
 			yield("/echo Empty Hate - MOVE TO THE HAND - following party member 2 (the tank should be played manually)")
-			yield("/wait 1")
 			yield("/visland stop")
 			yield("/vnavmesh stop")]]
 			yield("/ac \"Surecast\"")
@@ -601,7 +606,7 @@ local function arbitrary_duty()
 			yield("/ac \"Arm's Length\"")
 			yield("/ac \"Surecast\"")
 			yield("/ac \"Arm's Length\"")
-			yield("/wait 8")
+			yield("/wait 0.3")
 		--end
 		--if type(GetDistanceToObject("The Hand of Erebos")) == "number" and GetDistanceToObject("The Hand of Erebos") < 120 then
 		--	local newX, newY, newZ = interpolate(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos("The Hand of Erebos"), GetObjectRawYPos("The Hand of Erebos"), GetObjectRawZPos("The Hand of Erebos"), 0.95)
@@ -925,7 +930,7 @@ while repeated_trial < (repeat_trial + 1) do
 		customized_targeting = 0
 		customized_behaviour = 0
 	end
-	yield("/wait 1") --the entire fuster cluck is looping on wait 1 haha
+	yield("/wait 0.3") --the entire fuster cluck is looping on wait 1 haha
 end
 
---cardinal
+--cardinal0.3bn
