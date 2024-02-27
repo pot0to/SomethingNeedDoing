@@ -134,12 +134,12 @@ local customized_behaviour = 0
 
 local function distance(x1, y1, z1, x2, y2, z2)
 	--following block to error trap some bs when changing areas
-	local x1 = x1 or 0
-	local y1 = y1 or 0
-	local z1 = z1 or 0
-	local x2 = x2 or 0
-	local y2 = y2 or 0
-	local z2 = z2 or 0
+	local x1 = x1 or 2
+	local y1 = y1 or 2
+	local z1 = z1 or 2
+	local x2 = x2 or 1
+	local y2 = y2 or 1
+	local z2 = z2 or 1
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
 end
 
@@ -413,10 +413,11 @@ end
 
 local function arbitrary_duty()
 	--just make it use the zoneID no more need to edit this script for it to work
-	dutyFile = "123.duty"
+	dutyFile = "whee.duty"
 	if type(GetZoneID()) == "number" then
 		dutyFile = GetZoneID()..".duty"
 	end
+	if dutyFile ~= "whee.duty" then
 	--*if we die:
 		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
 		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
@@ -705,6 +706,7 @@ local function arbitrary_duty()
 		yield("/wait 0.5")
 	end
 end
+end
 
 yield("/echo starting.....")
 yield("/echo Turning AI On")
@@ -942,4 +944,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 0.3") --the entire fuster cluck is looping on wait 1 haha
 end
 
---cardinal0.3bn
+--cardinal0.3bnz
