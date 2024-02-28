@@ -449,16 +449,16 @@ local function arbitrary_duty()
 				--yield("/echo stopping nav cuz in combat")
 				--conditionally stop nav for navmesh only........ then path to target if we are over 3 yalms away, this is a waypoint farming system after all.
 				if PathIsRunning() then
-					if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos()) > 3 then
-						yield("/echo Stopping Nav -> distance to target > 3")
+					if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos()) > 1 then
+						yield("/echo Stopping Nav -> distance to target > 1")
 						PathStop()
 						yield("/wait 0.1")
 						yield("/echo Sending player to target using navmesh")
 						--yield("/"..muuvtype.." moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
 						yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
-						--while PathIsRunning() and (tonumber(doodie[whereismydoodie][6])) == 0 do --wait for it to get there --update all movement in this script with this kind of logic... it will fix alot of bs i think.
-						--	yield("/wait 0.1")
-						--end
+						while PathIsRunning() and (tonumber(doodie[whereismydoodie][6])) == 0 do --wait for it to get there --update all movement in this script with this kind of logic... it will fix alot of bs i think.
+							yield("/wait 0.1")
+						end
 					end
 				end
 			end
@@ -966,4 +966,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---lets fix it. ITS FIXED maybe
+--meridianum works i guess
