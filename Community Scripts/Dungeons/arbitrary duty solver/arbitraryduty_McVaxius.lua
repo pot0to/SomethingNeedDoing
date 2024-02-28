@@ -743,7 +743,7 @@ while repeated_trial < (repeat_trial + 1) do
 	--the command "targetnenemy" is unavailable at this time
 	--unable to execute command while occupied
 	--unable to execute command while mounted
-	if enemy_snake ~= "nothing" then --check if we are forcing a target or not
+	if enemy_snake ~= "nothing" and string.len(GetTargetName())==0 then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
 		currentLocX = GetTargetRawXPos()
 		currentLocY = GetTargetRawYPos()
