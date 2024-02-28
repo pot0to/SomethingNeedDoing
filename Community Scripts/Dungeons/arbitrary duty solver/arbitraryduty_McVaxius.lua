@@ -381,6 +381,12 @@ local function porta_decumana()
 				dutycheck = 0 --turn off this check
 				dutycheckupdate = 0
 			end
+			if getRandomNumber(1,5) == 1 then
+				--move to the spot we are at to fix teh sliding bug
+				yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
+				yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
+				yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
+			end
 			if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
 				if partymemberENUM == 1 then
 					yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
