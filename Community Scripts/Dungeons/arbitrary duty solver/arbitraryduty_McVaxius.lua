@@ -442,7 +442,7 @@ local function arbitrary_duty()
 		local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
 		if whereismydoodie < (#doodie+1) then
 			--if we are in combat stop navmesh/visland
-			if GetCharacterCondition(26) == true and string.len(GetTargetName()) > 1 then
+			if GetCharacterCondition(26) == true and type(GetTargetName()) == "string" and string.len(GetTargetName()) > 1 then
 				--yield("/visland stop")
 				--yield("/vnavmesh stop")
 				--yield("/automove off")
@@ -966,4 +966,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---meridianum works i guess
+--meridianum works i guesszzzzzzzzzzzzzzzzzzzzzzz
