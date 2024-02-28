@@ -358,6 +358,12 @@ local function porta_decumana()
 			mecurrentLocY = GetPlayerRawYPos()
 			mecurrentLocZ = GetPlayerRawZPos()
 			phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
+			if dutycheck == 0 then
+				--check our distance to target and get over there.
+				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos()) > 2 then
+					yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
+				end
+			end
 			if dutycheck == 0 and dutycheckupdate == 1 and phase2 < 40 then
 				--we in phase 2 boyo
 				dutycheck = 1
@@ -462,8 +468,8 @@ local function arbitrary_duty()
 						end
 					end
 				end
-				--check if we are farther than 5 yalms from group member 2 and try to move closer
-				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetPlayerRawXPos(tostring(2)),GetPlayerRawYPos(tostring(2)),GetPlayerRawZPos(tostring(2))) > 5 then
+				--check if we are farther than 3 yalms from group member 2 and try to move closer
+				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetPlayerRawXPos(tostring(2)),GetPlayerRawYPos(tostring(2)),GetPlayerRawZPos(tostring(2))) > 3 then
 					yield("/vnavmesh moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
 					yield("/echo Gathering party up a bit during combat")
 				end
@@ -978,4 +984,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---m
+--mdddd
