@@ -139,14 +139,14 @@ local function distance(x1, y1, z1, x2, y2, z2)
 	local z1 = z1 or 2
 	local x2 = x2 or 1
 	local y2 = y2 or 1
-	local z2 = z2 or 1]]
+	local z2 = z2 or 1
 	if type(x1) ~= "number" then x1 = 1 end
 	if type(y1) ~= "number" then y1 = 1 end
 	if type(z1) ~= "number" then z1 = 1 end
 	if type(x2) ~= "number" then x2 = 2 end
 	if type(y2) ~= "number" then y2 = 2 end
 	if type(z2) ~= "number" then z2 = 2 end
-	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) ~= "number" then return 0 end
+	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) ~= "number" then return 0 end]]
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
 end
 
@@ -328,7 +328,7 @@ end
 
 local function getmovetype(wheee)
 	local funtimes = "vnavmesh"
-	yield("/echo DEBUG get move type for muuvtype -> "..wheee)
+	--yield("/echo DEBUG get move type for muuvtype -> "..wheee)
 	if tonumber(wheee) == 0 then
 		funtimes = "visland"
 		yield("/echo DEBUG get move type for muuvtype -> SHOULD BE VISLAND")
@@ -438,9 +438,9 @@ local function arbitrary_duty()
 			doodie = load_duty_data()
 			yield("/echo Waypoints loaded for this area -> "..#doodie)
 		end
+		local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
+		local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
 		if whereismydoodie < (#doodie+1) then
-			local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
-			local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
 			--if we are in combat stop navmesh/visland
 			if GetCharacterCondition(26) == true and string.len(GetTargetName()) > 1 then
 				--yield("/visland stop")
@@ -456,9 +456,9 @@ local function arbitrary_duty()
 						yield("/echo Sending player to target using navmesh")
 						--yield("/"..muuvtype.." moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
 						yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
-						while PathIsRunning() do --wait for it to get there --update all movement in this script with this kind of logic... it will fix alot of bs i think.
-							yield("/wait 0.1")
-						end
+						--while PathIsRunning() and (tonumber(doodie[whereismydoodie][6])) == 0 do --wait for it to get there --update all movement in this script with this kind of logic... it will fix alot of bs i think.
+						--	yield("/wait 0.1")
+						--end
 					end
 				end
 			end
@@ -466,6 +466,7 @@ local function arbitrary_duty()
 				muuvtype = getmovetype(doodie[whereismydoodie][1]) --grab the movetype from the waypoint
 				if target ~= doodie[whereismydoodie][7] then --dont get away from they keys and such
 					yield("/"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4]) --move to the x y z in the waypoint
+					yield("/echo No Combat - Regular NAV , WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
 				end
 				if string.len(doodie[whereismydoodie][7]) > 1 then
 					yield("/target "..doodie[whereismydoodie][7])
@@ -473,9 +474,9 @@ local function arbitrary_duty()
 				end
 				if string.len(doodie[whereismydoodie][7]) > 1 and target == doodie[whereismydoodie][7] then
 					yield("/"..muuvtype.." moveto "..GetObjectRawXPos(doodie[whereismydoodie][7]).." "..GetObjectRawYPos(doodie[whereismydoodie][7]).." "..GetObjectRawXPos(doodie[whereismydoodie][7])) --move to the x y z in the waypoint
+					yield("/echo No Combat - Special Object NAV , WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
 				end
-				yield("/automove off")
-				yield("/echo starting nav cuz not in combat, WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
+				yield("/automove off")	
 			end
 			--if we are <? yalms from waypoint, wait x seconds then stop visland/vnavmesh
 			local skipcheck = 0 --this is important if we hit a chest node and we are skipping nodes we will skip the waypoint without processing the next one immediately
@@ -757,7 +758,7 @@ while repeated_trial < (repeat_trial + 1) do
 	--the command "targetnenemy" is unavailable at this time
 	--unable to execute command while occupied
 	--unable to execute command while mounted
-	if enemy_snake ~= "nothing" and string.len(GetTargetName())==0 and GetObjectRawXPos(enemy_snake) > 0 then --check if we are forcing a target or not
+	if enemy_snake ~= "nothing" and string.len(GetTargetName())==0 and type(GetObjectRawXPos(enemy_snake)) == "number" then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
 		currentLocX = GetTargetRawXPos()
 		currentLocY = GetTargetRawYPos()
@@ -965,4 +966,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---meh
+--lets fix it. ITS FIXED maybe
