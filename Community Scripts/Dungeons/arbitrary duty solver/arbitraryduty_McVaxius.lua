@@ -893,6 +893,7 @@ while repeated_trial < (repeat_trial + 1) do
 					--yield("/automove on")
 					--replaced above with navmesh to exit
 					yield("/vnavmesh moveto "..GetObjectRawXPos("Exit").." "..GetObjectRawYPos("Exit").." "..GetObjectRawZPos("Exit"))
+					yield("/wait 10")
 				end
 			end
 		end
@@ -990,4 +991,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---funmathz
+--exiiit
