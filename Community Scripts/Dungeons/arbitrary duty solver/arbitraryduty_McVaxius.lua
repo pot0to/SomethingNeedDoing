@@ -147,7 +147,11 @@ local function distance(x1, y1, z1, x2, y2, z2)
 	if type(y2) ~= "number" then y2 = 2 end
 	if type(z2) ~= "number" then z2 = 2 end
 	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) ~= "number" then return 0 end]]
-    return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+	local funmath = 1
+	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) == "number" then
+		funmath = math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+	end
+    return funmath 
 end
 
 local function interpolate(x1, y1, z1, x2, y2, z2, t)
@@ -984,4 +988,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---mdddd
+--funmath
