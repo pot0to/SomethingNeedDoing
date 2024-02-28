@@ -148,8 +148,10 @@ local function distance(x1, y1, z1, x2, y2, z2)
 	if type(z2) ~= "number" then z2 = 2 end
 	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) ~= "number" then return 0 end]]
 	local funmath = 1
-	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) == "number" then
-		funmath = math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+	if type(y1) == "number" and type(x1) == "number" and type(z1) == "number" then
+		if type(y2) == "number" and type(x2) == "number" and type(z2) == "number" then
+			funmath = math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+		end
 	end
     return funmath 
 end
@@ -988,4 +990,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---funmath
+--funmathz
