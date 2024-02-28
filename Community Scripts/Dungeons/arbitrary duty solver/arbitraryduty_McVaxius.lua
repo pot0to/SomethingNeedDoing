@@ -134,12 +134,19 @@ local customized_behaviour = 0
 
 local function distance(x1, y1, z1, x2, y2, z2)
 	--following block to error trap some bs when changing areas
-	local x1 = x1 or 2
+--[[	local x1 = x1 or 2
 	local y1 = y1 or 2
 	local z1 = z1 or 2
 	local x2 = x2 or 1
 	local y2 = y2 or 1
-	local z2 = z2 or 1
+	local z2 = z2 or 1]]
+	if type(x1) ~= "number" then x1 = 1 end
+	if type(y1) ~= "number" then y1 = 1 end
+	if type(z1) ~= "number" then z1 = 1 end
+	if type(x2) ~= "number" then x2 = 2 end
+	if type(y2) ~= "number" then y2 = 2 end
+	if type(z2) ~= "number" then z2 = 2 end
+	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) ~= "number" then return 0 end
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
 end
 
@@ -944,4 +951,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 0.3") --the entire fuster cluck is looping on wait 1 haha
 end
 
---cardinal0.3bnz
+--ccc
