@@ -134,12 +134,19 @@ local customized_behaviour = 0
 
 local function distance(x1, y1, z1, x2, y2, z2)
 	--following block to error trap some bs when changing areas
-	local x1 = x1 or 0
-	local y1 = y1 or 0
-	local z1 = z1 or 0
-	local x2 = x2 or 0
-	local y2 = y2 or 0
-	local z2 = z2 or 0
+--[[	local x1 = x1 or 2
+	local y1 = y1 or 2
+	local z1 = z1 or 2
+	local x2 = x2 or 1
+	local y2 = y2 or 1
+	local z2 = z2 or 1]]
+	if type(x1) ~= "number" then x1 = 1 end
+	if type(y1) ~= "number" then y1 = 1 end
+	if type(z1) ~= "number" then z1 = 1 end
+	if type(x2) ~= "number" then x2 = 2 end
+	if type(y2) ~= "number" then y2 = 2 end
+	if type(z2) ~= "number" then z2 = 2 end
+	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) ~= "number" then return 0 end
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
 end
 
@@ -413,10 +420,11 @@ end
 
 local function arbitrary_duty()
 	--just make it use the zoneID no more need to edit this script for it to work
-	dutyFile = "123.duty"
+	dutyFile = "whee.duty"
 	if type(GetZoneID()) == "number" then
 		dutyFile = GetZoneID()..".duty"
 	end
+	if dutyFile ~= "whee.duty" then
 	--*if we die:
 		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
 		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
@@ -434,13 +442,27 @@ local function arbitrary_duty()
 			local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
 			local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
 			--if we are in combat stop navmesh/visland
-			if GetCharacterCondition(26) == true then
-				yield("/visland stop")
-				yield("/vnavmesh stop")
-				yield("/automove off")
-				yield("/echo stopping nav cuz in combat")
+			if GetCharacterCondition(26) == true and string.len(GetTargetName()) > 1 then
+				--yield("/visland stop")
+				--yield("/vnavmesh stop")
+				--yield("/automove off")
+				--yield("/echo stopping nav cuz in combat")
+				--conditionally stop nav for navmesh only........ then path to target if we are over 3 yalms away, this is a waypoint farming system after all.
+				if PathIsRunning() then
+					if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos()) > 3 then
+						yield("/echo Stopping Nav -> distance to target > 3")
+						PathStop()
+						yield("/wait 0.1")
+						yield("/echo Sending player to target using navmesh")
+						--yield("/"..muuvtype.." moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
+						yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
+						while PathIsRunning() do --wait for it to get there --update all movement in this script with this kind of logic... it will fix alot of bs i think.
+							yield("/wait 0.1")
+						end
+					end
+				end
 			end
-			if GetCharacterCondition(26) == false then
+			if GetCharacterCondition(26) == false or string.len(GetTargetName()) == 0 then --we want waypoints to work even if someone else aggros stuff as we may not have a target yet. this might solve prae/meri shenanigans
 				muuvtype = getmovetype(doodie[whereismydoodie][1]) --grab the movetype from the waypoint
 				if target ~= doodie[whereismydoodie][7] then --dont get away from they keys and such
 					yield("/"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4]) --move to the x y z in the waypoint
@@ -486,7 +508,7 @@ local function arbitrary_duty()
 	
 	if type(we_are_in) == "number" and we_are_in == 1048 then --Porta Decumana
 	--yield("/echo Decumana Check!")
-		porta_decumana()
+		porta_decumana() --supposedly we don't need this anymore. lets find out -- actually we do need it
 	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 445 then --Alexander 4 Normal
 	--rotation manual because we dont want to change targets
@@ -511,36 +533,33 @@ local function arbitrary_duty()
 		--Dark Fire III
 		--customized_targeting = 1
 		yield("/vbm cfg AI Enabled false")
-		yield("/echo Turning AI Self Follow Off")
+		--yield("/echo Turning AI Self Follow Off")
 		yield("/wait 0.5")
-		yield("/vbmai off")
+		--yield("/vbmai off")
 		customized_behaviour = 1
 		local statoos = GetStatusTimeRemaining(1810) or 999
 		if statoos == 999 then
-			statoos = GetStatusTimeRemaining(2455)
+			statoos = GetStatusTimeRemaining(2455) or 999
 		end
-		--movetype = "visland"
+		movetype = "visland"
 
-		--also unholy darkness tank stack go to middle
+		--[[--also unholy darkness tank stack go to middle
 		if statoos < 999 and statoos > 5 or GetTargetActionID() == 15955 or GetTargetActionID() == 15956 then
 			yield("/"..movetype.." 99.897399902344 0.0 102.01305389404")
 			yield("/echo Dark Fire start or stack marker -> going to middle")
 			yield("/echo Dark Fire start or stack marker -> going to middle")
 			yield("/echo Dark Fire start or stack marker -> going to middle")
-			yield("/wait 1")
+			yield("/wait 0.3")
 		end
 		--this will spread near end of dark fire 3 and when the slicey time happens at start and i think repeated later if dps is low
-		if statoos < 7 or GetTargetActionID() == 1810 or GetTargetActionID() == 2455 then
+		if statoos < 7 or GetTargetActionID() == 1810 or GetTargetActionID() == 2455 then]]
+		if getRandomNumber(1,10) == 1 then
 			--if we see dark fire <6 seconds. get to clock positions!
 			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
 			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
 			yield("/echo Dark Fire or spread slice -> going to Clock Spots")
-			yield("/visland stop")
-			yield("/vnavmesh stop")
-			--100.0659942627 0.0 105.06355285645
-			--94.064888000488 0.0 100.0080871582
-			--99.64151763916 0.0 92.986808776855
-			--104.58055877686 0.0 100.89888763428
+			--yield("/visland stop")
+			--yield("/vnavmesh stop")
 			if partymemberENUM == 1 then
 				yield("/"..movetype.." moveto 100.0659942627 0.0 105.06355285645")
 			end
@@ -553,12 +572,26 @@ local function arbitrary_duty()
 			if partymemberENUM == 4 then
 				yield("/"..movetype.." moveto 104.58055877686 0.0 100.89888763428")
 			end
-			yield("/wait 1")
+			if partymemberENUM == 5 then
+				yield("/"..movetype.." moveto 96.30509185791 0.0 96.319915771484")
+			end
+			if partymemberENUM == 6 then
+				yield("/"..movetype.." moveto 95.438690185547 0.0 104.02600097656")
+			end
+			if partymemberENUM == 7 then
+				yield("/"..movetype.." moveto 104.17021942139 0.0 104.16522216797")
+			end
+			if partymemberENUM == 8 then
+				yield("/"..movetype.." moveto 103.32738494873 0.0 95.443405151367")
+			end
+			yield("/wait 0.3")
 		end
 		--figure out which side hand of erebos is on and get to that side so we don't get KB off platform
 		--empty hate IDs: 15941,15942,15961,15962,22748
 		--if GetObjectActionID("The Hand of Erebos") == 15941 or GetObjectActionID("The Hand of Erebos") == 15942 or GetObjectActionID("The Hand of Erebos") == 15961 or GetObjectActionID("The Hand of Erebos") == 15962 or GetObjectActionID("The Hand of Erebos") == 22748 then
 		while IsObjectCasting("The Hand of Erebos") == true and type(IsObjectCasting("The Hand of Erebos")) == "boolean" do
+			--yield("/visland stop")
+			--yield("/vnavmesh stop")
 			-- Get the rotation value
 			local rrr = GetObjectRotation("The Hand of Erebos")
 			-- Get the cardinal direction
@@ -571,15 +604,19 @@ local function arbitrary_duty()
 			--112.9762878418,0.0,103.01834106445
 			if cardinalDirection == "West" then
 				yield("/"..movetype.." moveto 100.34774780273 0.0 118.00609588623")
+				yield("/echo moving weest")
 			end
 			if cardinalDirection == "North" then
 				yield("/"..movetype.." moveto 87.239952087402 0.0 101.13842010498")
+				yield("/echo moving neeerth")
 			end
 			if cardinalDirection == "East" then
 				yield("/"..movetype.." 98.70711517334 0.0 83.799194335938")
+				yield("/echo moving eaasst")
 			end
 			if cardinalDirection == "South" then
 				yield("/"..movetype.." moveto 112.9762878418 0.0 103.01834106445")
+				yield("/echo moving sooorth")
 			end
 			--figure out which side and just go over there maintaining same y,z or is it x,y
 			--fuck it we pop kb immunity
@@ -590,7 +627,6 @@ local function arbitrary_duty()
 			yield("/echo Empty Hate - MOVE TO THE HAND - following party member 2 (the tank should be played manually)")
 			yield("/echo Empty Hate - MOVE TO THE HAND - following party member 2 (the tank should be played manually)")
 			yield("/echo Empty Hate - MOVE TO THE HAND - following party member 2 (the tank should be played manually)")
-			yield("/wait 1")
 			yield("/visland stop")
 			yield("/vnavmesh stop")]]
 			yield("/ac \"Surecast\"")
@@ -601,7 +637,7 @@ local function arbitrary_duty()
 			yield("/ac \"Arm's Length\"")
 			yield("/ac \"Surecast\"")
 			yield("/ac \"Arm's Length\"")
-			yield("/wait 8")
+			yield("/wait 0.1")
 		--end
 		--if type(GetDistanceToObject("The Hand of Erebos")) == "number" and GetDistanceToObject("The Hand of Erebos") < 120 then
 		--	local newX, newY, newZ = interpolate(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos("The Hand of Erebos"), GetObjectRawYPos("The Hand of Erebos"), GetObjectRawZPos("The Hand of Erebos"), 0.95)
@@ -691,6 +727,7 @@ local function arbitrary_duty()
 		yield("/wait 0.5")
 	end
 end
+end
 
 yield("/echo starting.....")
 yield("/echo Turning AI On")
@@ -720,7 +757,7 @@ while repeated_trial < (repeat_trial + 1) do
 	--the command "targetnenemy" is unavailable at this time
 	--unable to execute command while occupied
 	--unable to execute command while mounted
-	if enemy_snake ~= "nothing" then --check if we are forcing a target or not
+	if enemy_snake ~= "nothing" and string.len(GetTargetName())==0 and GetObjectRawXPos(enemy_snake) > 0 then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
 		currentLocX = GetTargetRawXPos()
 		currentLocY = GetTargetRawYPos()
@@ -770,10 +807,10 @@ while repeated_trial < (repeat_trial + 1) do
 		--we dont need to manually exit. automaton can do that now
 		--we will manually exit anyways becuase we need to walk by treasure chests in some duties and trials
 		--also we will take the exit near the last waypoint and not the one near the entrance.........
-		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 100 and getout == 1 and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
+		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 100 and GetDistanceToObject("Exit") > 0 and getout == 1 and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
 			yield("/target Exit")
 		end
-		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 80 then
+		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("Shortcut") < 80 and GetDistanceToObject("Shortcut") > 0 then
 			yield("/target Shortcut")
 		end
 
@@ -902,7 +939,7 @@ while repeated_trial < (repeat_trial + 1) do
 		we_were_in = we_are_in --record this as we are in this area now
 	end
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
-		yield("/equipguud")
+		--yield("/equipguud") --this is super annoying and not needed
 		yield("/vbmai on")
 		yield("/rotation auto")
 		--only party leader will do cd 5 because otherwise its spammy
@@ -925,7 +962,7 @@ while repeated_trial < (repeat_trial + 1) do
 		customized_targeting = 0
 		customized_behaviour = 0
 	end
-	yield("/wait 1") --the entire fuster cluck is looping on wait 1 haha
+	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---cardinal
+--meh
