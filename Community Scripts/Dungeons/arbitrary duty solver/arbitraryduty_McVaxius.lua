@@ -757,7 +757,7 @@ while repeated_trial < (repeat_trial + 1) do
 	--the command "targetnenemy" is unavailable at this time
 	--unable to execute command while occupied
 	--unable to execute command while mounted
-	if enemy_snake ~= "nothing" and string.len(GetTargetName())==0 then --check if we are forcing a target or not
+	if enemy_snake ~= "nothing" and string.len(GetTargetName())==0 and GetObjectRawXPos(enemy_snake) > 0 then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
 		currentLocX = GetTargetRawXPos()
 		currentLocY = GetTargetRawYPos()
@@ -807,10 +807,10 @@ while repeated_trial < (repeat_trial + 1) do
 		--we dont need to manually exit. automaton can do that now
 		--we will manually exit anyways becuase we need to walk by treasure chests in some duties and trials
 		--also we will take the exit near the last waypoint and not the one near the entrance.........
-		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 100 and getout == 1 and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
+		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 100 and GetDistanceToObject("Exit") > 0 and getout == 1 and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
 			yield("/target Exit")
 		end
-		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("shortcut") < 80 then
+		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("Shortcut") < 80 and GetDistanceToObject("Shortcut") > 0 then
 			yield("/target Shortcut")
 		end
 
@@ -939,7 +939,7 @@ while repeated_trial < (repeat_trial + 1) do
 		we_were_in = we_are_in --record this as we are in this area now
 	end
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
-		yield("/equipguud")
+		--yield("/equipguud") --this is super annoying and not needed
 		yield("/vbmai on")
 		yield("/rotation auto")
 		--only party leader will do cd 5 because otherwise its spammy
@@ -962,7 +962,7 @@ while repeated_trial < (repeat_trial + 1) do
 		customized_targeting = 0
 		customized_behaviour = 0
 	end
-	yield("/wait 0.3") --the entire fuster cluck is looping on wait 1 haha
+	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---qwertycz
+--meh
