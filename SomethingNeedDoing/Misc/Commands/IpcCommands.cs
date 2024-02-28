@@ -4,6 +4,7 @@ using SomethingNeedDoing.IPC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 
 namespace SomethingNeedDoing.Misc.Commands;
@@ -78,13 +79,18 @@ public class IpcCommands
     public void NavRebuild() => NavmeshIPC.NavRebuild!.InvokeAction();
     public bool NavIsAutoLoad() => NavmeshIPC.NavIsAutoLoad!.InvokeFunc();
     public void NavSetAutoLoad(bool state) => NavmeshIPC.NavSetAutoLoad!.InvokeAction(state);
-    public void PathMoveTo(float x, float y, float z) => NavmeshIPC.PathMoveTo!.InvokeAction(new System.Numerics.Vector3(x, y, z));
-    public void PathFlyTo(float x, float y, float z) => NavmeshIPC.PathFlyTo!.InvokeAction(new System.Numerics.Vector3(x, y, z));
+    public float? QueryMeshNearestPointX(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint!.InvokeFunc(new Vector3(x, y, z), radius)?.X;
+    public float? QueryMeshNearestPointY(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint!.InvokeFunc(new Vector3(x, y, z), radius)?.Y;
+    public float? QueryMeshNearestPointZ(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint!.InvokeFunc(new Vector3(x, y, z), radius)?.Z;
+    public void PathMoveTo(float x, float y, float z) => NavmeshIPC.PathMoveTo!.InvokeAction(new Vector3(x, y, z));
+    public void PathFlyTo(float x, float y, float z) => NavmeshIPC.PathFlyTo!.InvokeAction(new Vector3(x, y, z));
     public void PathStop() => NavmeshIPC.PathStop!.InvokeFunc();
     public bool PathIsRunning() => NavmeshIPC.PathIsRunning!.InvokeFunc();
     public int PathNumWaypoints() => NavmeshIPC.PathNumWaypoints!.InvokeFunc();
     public bool PathGetMovementAllowed() => NavmeshIPC.PathGetMovementAllowed!.InvokeFunc();
     public void PathSetMovementAllowed(bool state) => NavmeshIPC.PathSetMovementAllowed!.InvokeAction(state);
+    public bool PathGetAlignCamera() => NavmeshIPC.PathGetAlignCamera!.InvokeFunc();
+    public void PathSetAlignCamera(bool state) => NavmeshIPC.PathSetAlignCamera!.InvokeAction(state);
     public float PathGetTolerance() => NavmeshIPC.PathGetTolerance!.InvokeFunc();
     public void PathSetTolerance(bool state) => NavmeshIPC.PathSetTolerance!.InvokeAction(state);
     #endregion

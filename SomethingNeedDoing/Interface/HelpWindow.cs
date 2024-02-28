@@ -328,6 +328,14 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-28",
+        "- Added QueryMeshNearestPointX()\n" +
+        "- Added QueryMeshNearestPointY()\n" +
+        "- Added QueryMeshNearestPointZ()\n" +
+        "- Added PathGetAlignCamera()\n" +
+        "- Added PathSetAlignCamera()\n");
+
+        DisplayChangelog(
         "2024-02-27",
         "- Added ClearTarget()\n" +
         "- Added ClearFocusTarget()\n" +
