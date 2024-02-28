@@ -442,13 +442,27 @@ local function arbitrary_duty()
 			local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
 			local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
 			--if we are in combat stop navmesh/visland
-			if GetCharacterCondition(26) == true then
-				yield("/visland stop")
-				yield("/vnavmesh stop")
-				yield("/automove off")
-				yield("/echo stopping nav cuz in combat")
+			if GetCharacterCondition(26) == true and string.len(GetTargetName()) > 1 then
+				--yield("/visland stop")
+				--yield("/vnavmesh stop")
+				--yield("/automove off")
+				--yield("/echo stopping nav cuz in combat")
+				--conditionally stop nav for navmesh only........ then path to target if we are over 3 yalms away, this is a waypoint farming system after all.
+				if PathIsRunning() then
+					if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos()) > 3 then
+						yield("/echo Stopping Nav -> distance to target > 3")
+						PathStop()
+						yield("/wait 0.1")
+						yield("/echo Sending player to target using navmesh")
+						--yield("/"..muuvtype.." moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
+						yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
+						while PathIsRunning() do --wait for it to get there --update all movement in this script with this kind of logic... it will fix alot of bs i think.
+							yield("/wait 0.1")
+						end
+					end
+				end
 			end
-			if GetCharacterCondition(26) == false then
+			if GetCharacterCondition(26) == false or string.len(GetTargetName()) == 0 then --we want waypoints to work even if someone else aggros stuff as we may not have a target yet. this might solve prae/meri shenanigans
 				muuvtype = getmovetype(doodie[whereismydoodie][1]) --grab the movetype from the waypoint
 				if target ~= doodie[whereismydoodie][7] then --dont get away from they keys and such
 					yield("/"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4]) --move to the x y z in the waypoint
@@ -951,4 +965,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 0.3") --the entire fuster cluck is looping on wait 1 haha
 end
 
---ccc
+--qwertycz
