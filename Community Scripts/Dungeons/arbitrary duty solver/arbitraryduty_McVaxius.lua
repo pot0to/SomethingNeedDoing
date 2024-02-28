@@ -435,6 +435,7 @@ local function arbitrary_duty()
 	if GetCharacterCondition(34) == true and dutyFileExists(dutyFile) then
 		--if we haven't loaded a duty file. load it
 		if dutyloaded == 0 and dutyFile ~= "buttcheeks" then --we take a doodie from a .duty file
+			yield("/wait 5")
 			doodie = load_duty_data()
 			yield("/echo Waypoints loaded for this area -> "..#doodie)
 		end
@@ -460,6 +461,11 @@ local function arbitrary_duty()
 							yield("/wait 0.1")
 						end
 					end
+				end
+				--check if we are farther than 5 yalms from group member 2 and try to move closer
+				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetPlayerRawXPos(tostring(2)),GetPlayerRawYPos(tostring(2)),GetPlayerRawZPos(tostring(2))) > 5 then
+					yield("/vnavmesh moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
+					yield("/echo Gathering party up a bit during combat")
 				end
 			end
 			if GetCharacterCondition(26) == false or string.len(GetTargetName()) == 0 then --we want waypoints to work even if someone else aggros stuff as we may not have a target yet. this might solve prae/meri shenanigans
@@ -706,25 +712,31 @@ local function arbitrary_duty()
 		--	magiwhee = 1129 --lasers
 		--end
 		yield("/lockon on") --need this for various stuff hehe.
+		yield("/gaction jump") --just in case
 --			yield("/automove")
 		yield("/send q")
 		yield("/wait 0.3")
 --			yield("/automove stop")
-		ExecuteAction(magiwhee)
+--		ExecuteAction(magiwhee)
+		yield("/send KEY_2")
 		yield("/wait 0.5")
 --			yield("/automove")
 		yield("/send w")
 		yield("/wait 0.3")
-		ExecuteAction(magiwhee)
+--		ExecuteAction(magiwhee)
+		yield("/send KEY_2")
 		yield("/wait 0.5")
-		ExecuteAction(magiwhee)
+--		ExecuteAction(magiwhee)
+		yield("/send KEY_2")
 		yield("/wait 0.5")
 --			yield("/automove stop")
 		yield("/send e")
 		yield("/wait 0.3")
-		ExecuteAction(magiwhee)
+--		ExecuteAction(magiwhee)
+		yield("/send KEY_2")
 		yield("/wait 0.5")
-		ExecuteAction(magiwhee)
+--		ExecuteAction(magiwhee)
+		yield("/send KEY_2")
 		yield("/wait 0.5")
 	end
 end
@@ -966,4 +978,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---meridianum works i guesszzzzzzzzzzzzzzzzzzzzzzz
+--m
