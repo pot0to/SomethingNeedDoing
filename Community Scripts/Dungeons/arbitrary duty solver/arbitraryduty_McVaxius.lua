@@ -381,24 +381,22 @@ local function porta_decumana()
 				dutycheck = 0 --turn off this check
 				dutycheckupdate = 0
 			end
-			if getRandomNumber(1,5) == 1 then
-				--move to the spot we are at to fix teh sliding bug
-				yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
-				yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
-				yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
-			end
 			if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
 				if partymemberENUM == 1 then
-					yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
+					--yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
+					yield("/"..movetype.." moveto -698.85711669922 -185.53157043457 485.63247680664")
 				end
 				if partymemberENUM == 2 then
-					yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
+					--yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
+					yield("/"..movetype.." moveto -708.22570800781 -185.53158569336 485.37371826172")
 				end
 				if partymemberENUM == 3 then
-					yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
+					--yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
+					yield("/"..movetype.." moveto -705.68145751953 -185.67491149902 478.03894042969")
 				end
 				if partymemberENUM == 4 then
-					yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
+					--yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
+					yield("/"..movetype.." moveto -698.59442138672 -185.53158569336 474.63607788086")
 				end
 				--yield("/wait 5") -- is this too long? we'll see!  maybe this is bad
 			end
@@ -528,6 +526,15 @@ local function arbitrary_duty()
 				yield("/visland stop")
 				yield("/vnavmesh stop")
 			end	
+		end
+	end
+	
+	if GetCharacterCondition(26) == true then --fix sliding bug
+		if getRandomNumber(1,5) == 1 then
+			--move to the spot we are at to fix teh sliding bug
+			yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
+			yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
+			yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
 		end
 	end
 	
@@ -774,6 +781,11 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
 		--TargetClosestEnemy() --this is really bad it targets through walls and floors
 	end
+    if GetCharacterCondition(34)==true and GetCharacterCondition(26)==true and string.len(GetTargetName()) > 0 then 
+		if type(GetTargetHPP()) == "number" and GetTargetHPP() > 95 then
+			yield("/ac provoke")
+		end
+	end
 	--[[
  --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
     if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
@@ -936,8 +948,9 @@ while repeated_trial < (repeat_trial + 1) do
 		if GetCharacterCondition(29)==true then --if we are bound by qte
 			while i < 150 do
 				i = i + 1
-				yield("/send SPACE")
-				yield("/send SPACE")
+				--yield("/send SPACE")
+				yield("/gaction jump")
+				yield("/gaction jump")
 				yield("/wait 0.1")
 				if GetCharacterCondition(28)==false then --if we are not bound by qte get out of the space bar spamming so we can resume following or whatever
 					i = 150
@@ -997,4 +1010,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---exiiit
+--closerdecuman4
