@@ -781,6 +781,11 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
 		--TargetClosestEnemy() --this is really bad it targets through walls and floors
 	end
+    if GetCharacterCondition(34)==true and GetCharacterCondition(26)==true and string.len(GetTargetName()) > 0 then 
+		if type(GetTargetHPP()) == "number" and GetTargetHPP() > 95 then
+			yield("/ac provoke")
+		end
+	end
 	--[[
  --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
     if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
@@ -943,8 +948,9 @@ while repeated_trial < (repeat_trial + 1) do
 		if GetCharacterCondition(29)==true then --if we are bound by qte
 			while i < 150 do
 				i = i + 1
-				yield("/send SPACE")
-				yield("/send SPACE")
+				--yield("/send SPACE")
+				yield("/gaction jump")
+				yield("/gaction jump")
 				yield("/wait 0.1")
 				if GetCharacterCondition(28)==false then --if we are not bound by qte get out of the space bar spamming so we can resume following or whatever
 					i = 150
@@ -1004,4 +1010,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---closerdecuman3
+--closerdecuman4
