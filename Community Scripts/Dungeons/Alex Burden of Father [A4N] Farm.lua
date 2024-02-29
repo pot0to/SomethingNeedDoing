@@ -7,7 +7,8 @@
   This is meant to be used for Alexander - The Burden of the Father (NORMAL NOT SAVAGE)
   It's setup to where you should be able to loop it as many time as you want, and be able to farm mats for GC seals
   Known classes to work: ALL
-  Version: 3.3
+  Version: 3.3.1
+    -> 3.3.1: Added some checks to wait till you're fully loaded out (in case of high ping) [Chest fix is next on the list for high ping]
     -> 3.3: Repair Functionality & Potentional duty load check (@leaf update)
   Created by: Ice, Class Support: Ellipsis | Menu Optimizing: Leaf
 
@@ -20,9 +21,13 @@
 
   Plugins that are used are:
   -> Visland (for pathing) : https://puni.sh/api/repository/veyn
+  -> NEW Vnavmesh (needed for visland) : https://puni.sh/api/repository/veyn  (this might be temporary, waiting on some news/update, but for now)
   -> Pandora (Setting "Open Chest") : https://love.puni.sh/ment.json
   -> RotationSolver : https://puni.sh/api/repository/croizat
   -> Something Need Doing [Expanded Edition] : https://puni.sh/api/repository/croizat
+    -> In the SND window, press the question mark to make the help setting's menu open 
+    -> Go to options tab -> /target -> DISABLE THIS!! "Stop macro if target not found (only applies to SND's targeting system')"
+
 ]]
 
 --[[
@@ -47,8 +52,10 @@
   CastingDebug = false -- true | false option
   -- Just something for me to debug test w/
 
-  ManualRepair = true -- if you want to repair between the loops that you do. [defaults is true | off is false]
+  ManualRepair = false -- if you want to repair between the loops that you do. [defaults is false | on is true]
   RepairAmount = 75 -- lowest point your gear will 
+  
+  
 
 --[[
 
@@ -79,6 +86,10 @@ elseif NumberofLoops < CurrentLoop then
     goto StopLoop
 end
 
+repeat
+yield("/wait 0.1")
+until IsPlayerAvailable()
+
 -- Repair Functionality
 if ManualRepair == true then
   if NeedsRepair(99) then
@@ -97,6 +108,10 @@ if ManualRepair == true then
     yield("/pcall Repair true -1")
   end
 end
+
+repeat
+yield("/wait 0.1")
+until IsPlayerAvailable()
 
 ::DutyFinder::
 if DutyFail == 4 then
@@ -199,6 +214,9 @@ while not GetCharacterCondition(26) do
         current_target = GetTargetName()
         if current_target == "" then
             yield("/wait "..rate)
+            if CastingDebug == true then
+              yield("/e Target system is working, if it's targeting something here")
+            end
         end
     end
 
@@ -212,6 +230,9 @@ while not GetCharacterCondition(26) do
             yield("/visland moveto " .. enemy_x .. " " .. enemy_y .. " " .. enemy_z)
             yield("/wait "..rate)
             yield("/rotation manual")
+            if CastingDebug == true then 
+              yield("/e Break B")
+            end
         else
             yield("/visland stop")  -- Stop movement after reaching near the target
         end
