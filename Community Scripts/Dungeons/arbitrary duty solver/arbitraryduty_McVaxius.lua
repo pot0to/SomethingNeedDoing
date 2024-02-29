@@ -383,16 +383,20 @@ local function porta_decumana()
 			end
 			if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
 				if partymemberENUM == 1 then
-					yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
+					--yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
+					yield("/"..movetype.." moveto -698.85711669922 -185.53157043457 485.63247680664")
 				end
 				if partymemberENUM == 2 then
-					yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
+					--yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
+					yield("/"..movetype.." moveto -708.22570800781 -185.53158569336 485.37371826172")
 				end
 				if partymemberENUM == 3 then
-					yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
+					--yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
+					yield("/"..movetype.." moveto -705.68145751953 -185.67491149902 478.03894042969")
 				end
 				if partymemberENUM == 4 then
-					yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
+					--yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
+					yield("/"..movetype.." moveto -698.59442138672 -185.53158569336 474.63607788086")
 				end
 				--yield("/wait 5") -- is this too long? we'll see!  maybe this is bad
 			end
@@ -1000,4 +1004,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---exiiit
+--closerdecuman3
