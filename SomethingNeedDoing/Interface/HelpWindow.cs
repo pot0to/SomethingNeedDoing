@@ -328,11 +328,29 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-02-28",
+        "- Added QueryMeshNearestPointX()\n" +
+        "- Added QueryMeshNearestPointY()\n" +
+        "- Added QueryMeshNearestPointZ()\n" +
+        "- Added PathGetAlignCamera()\n" +
+        "- Added PathSetAlignCamera()\n");
+
+        DisplayChangelog(
         "2024-02-27",
         "- Added ClearTarget()\n" +
         "- Added ClearFocusTarget()\n" +
         "- Added /targetenemy\n" +
-        "- Fixed TargetClosestEnemy()");
+        "- Added IsObjectCasting()\n" +
+        "- Added GetObjectActionID()\n" +
+        "- Added GetObjectUsedActionID()\n" +
+        "- Added GetObjectHP()\n" +
+        "- Added GetObjectMaxHP()\n" +
+        "- Added GetObjectHPP()\n" +
+        "- Added GetDistanceToFocusTarget()\n" +
+        "- Added GetTargetRotation()\n" +
+        "- Added GetFocusTargetRotation()\n" +
+        "- Added GetObjectRotation()\n" +
+        "- Fixed TargetClosestEnemy()\n");
 
         DisplayChangelog(
         "2024-02-26",
@@ -354,7 +372,7 @@ internal class HelpWindow : Window
         "- Added TargetClosestEnemy()\n" +
         "- Added GetTargetObjectKind()\n" +
         "- Added GetTargetSubKind()\n" +
-        "- Fixed GetNearbyObjectNames() to return sorted by distance");
+        "- Fixed GetNearbyObjectNames() to return sorted by distance\n");
 
         DisplayChangelog(
         "2024-02-24",
