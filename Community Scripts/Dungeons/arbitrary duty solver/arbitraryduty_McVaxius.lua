@@ -131,6 +131,11 @@ local whereismydoodie = 1 --position in doodie table
 local customized_targeting = 0 -- this is for custom code for specific duties
 local waitTarget = 0 --so we aren't spamming target search nonstop and breaking the WP system
 local customized_behaviour = 0
+local WPsearchcounter = 0 -- init counter
+local WPsearchX = 1
+local WPsearchY = 1
+local WPsearchZ = 1
+local cycleTime = 1 --how many seconds to wait between cycles. might move this to the .ini file later
 
 local function distance(x1, y1, z1, x2, y2, z2)
 	--following block to error trap some bs when changing areas
@@ -434,6 +439,45 @@ local function porta_decumana()
 	end
 end
 
+local function searchNearestWP()
+	--WP file is loaded, we arent in combat and we are in a duty
+	local searchPCT = 5
+	if dutyloaded == 1 and GetCharacterCondition(26) == false and GetCharacterCondition(34) == true then
+		--everything is normal reset the counter
+		if (math.abs(((WPsearchX - GetPlayerRawXPos())/WPsearchX)) * 100) > searchPCT or (math.abs(((WPsearchY - GetPlayerRawXPos())/WPsearchY)) * 100) > searchPCT or (math.abs(((WPsearchZ - GetPlayerRawXPos())/WPsearchZ)) * 100) > searchPCT then
+			WPsearchcounter = 0
+			WPsearchX = GetObjectRawXPos
+			WPsearchY = GetObjectRawYPos
+			WPsearchZ = GetObjectRawZPos
+		end
+		--we've entered into combat
+		if GetCharacterCondition(26) == true and GetCharacterCondition(34) == true then
+			WPsearchcounter = 0
+			WPsearchX = GetObjectRawXPos
+			WPsearchY = GetObjectRawYPos
+			WPsearchZ = GetObjectRawZPos
+		end
+		if (math.abs(((WPsearchX - GetPlayerRawXPos())/WPsearchX)) * 100) < searchPCT and (math.abs(((WPsearchY - GetPlayerRawXPos())/WPsearchY)) * 100) < searchPCT and (math.abs(((WPsearchZ - GetPlayerRawXPos())/WPsearchZ)) * 100) < searchPCT then
+			WPsearchcounter = WPsearchcounter + 1
+			yield("/echo We are potentially stuck WPsearchcounter -> "..WPsearchcounter)
+		end
+		if WPsearchcounter > 10 then
+			yield("This waypoint is defective/incorrect -> "..whereismydoodie)
+			local tempsearchdist = 9000
+			local tempstoredist = 0
+			for i=2, #doodies do
+				tempstoredist = distance(GetPlayerRawXPos,GetObjectRawYPos,GetObjectRawZPos,doodies[i][2],doodies[i][3],doodies[i][4])
+				if  tempstoredist < tempsearchdist then
+					tempsearchdist = tempstoredist
+					whereismydoodie = i
+				end
+			end
+			yield("Found a closer waypoint -> "..whereismydoodie)
+			WPsearchcounter = 0
+		end
+	end
+end
+
 local function arbitrary_duty()
 	--just make it use the zoneID no more need to edit this script for it to work
 	dutyFile = "whee.duty"
@@ -444,9 +488,8 @@ local function arbitrary_duty()
 	--*if we die:
 		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
 		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
-	--*resume mode - if there is a shortcut available:
-		--*search waypoint table for a waypoint closest to where we are after entering shortcut
-		--*set the waypoint to that closest waypoint and resume
+
+	searchNearestWP() --just in case we stuck somewhere for 10 seconds + duty is loaded we will search for nearestWP
 	
 	if GetCharacterCondition(34) == true and dutyFileExists(dutyFile) then
 		--if we haven't loaded a duty file. load it
@@ -786,6 +829,7 @@ while repeated_trial < (repeat_trial + 1) do
 			yield("/ac provoke")
 		end
 	end
+
 	--[[
  --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
     if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
@@ -900,6 +944,7 @@ while repeated_trial < (repeat_trial + 1) do
 				--yield("/automove on")
 				yield("/vnavmesh moveto "..GetObjectRawXPos("Shortcut").." "..GetObjectRawYPos("Shortcut").." "..GetObjectRawZPos("Shortcut"))
 				yield("/wait 10")
+				searchNearestWP() --update the waypoint . we just used a shorcut!
 			end
 			if GetTargetName()=="Exit" then
 				local zempdist = 0
@@ -1007,7 +1052,7 @@ while repeated_trial < (repeat_trial + 1) do
 		customized_targeting = 0
 		customized_behaviour = 0
 	end
-	yield("/wait 1") --the entire fuster cluck is looping at this rate
+	yield("/wait "..cycleTime) --the entire fuster cluck is looping at this rate
 end
 
 --closerdecuman4
