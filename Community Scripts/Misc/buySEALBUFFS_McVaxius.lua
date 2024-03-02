@@ -93,10 +93,10 @@ yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 
 --walk back to entrance properly
 local islanders = {
-	['Goldbert Manderville'] = '/visland execonce FChalicarnassus',
-	['Katrav Aiatanamada'] = '/visland execonce FCmaduin',
-	['Adam Smasher'] = '/visland execonce FCmarilith',
-	['Pyrotess Ashram'] = '/visland execonce FCseraph'
+	['char name'] = '/visland execonce FChalicarnassus',
+	['char name'] = '/visland execonce FCmaduin',
+	['char name'] = '/visland execonce FCmarilith',
+	['char name'] = '/visland execonce FCseraph'
 }
 
 if islanders[GetCharacterName()] then

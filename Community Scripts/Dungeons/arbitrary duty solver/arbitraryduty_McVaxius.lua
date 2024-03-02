@@ -139,15 +139,21 @@ local function distance(x1, y1, z1, x2, y2, z2)
 	local z1 = z1 or 2
 	local x2 = x2 or 1
 	local y2 = y2 or 1
-	local z2 = z2 or 1]]
+	local z2 = z2 or 1
 	if type(x1) ~= "number" then x1 = 1 end
 	if type(y1) ~= "number" then y1 = 1 end
 	if type(z1) ~= "number" then z1 = 1 end
 	if type(x2) ~= "number" then x2 = 2 end
 	if type(y2) ~= "number" then y2 = 2 end
 	if type(z2) ~= "number" then z2 = 2 end
-	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) ~= "number" then return 0 end
-    return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) ~= "number" then return 0 end]]
+	local funmath = 1
+	if type(y1) == "number" and type(x1) == "number" and type(z1) == "number" then
+		if type(y2) == "number" and type(x2) == "number" and type(z2) == "number" then
+			funmath = math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+		end
+	end
+    return funmath 
 end
 
 local function interpolate(x1, y1, z1, x2, y2, z2, t)
@@ -328,7 +334,7 @@ end
 
 local function getmovetype(wheee)
 	local funtimes = "vnavmesh"
-	yield("/echo DEBUG get move type for muuvtype -> "..wheee)
+	--yield("/echo DEBUG get move type for muuvtype -> "..wheee)
 	if tonumber(wheee) == 0 then
 		funtimes = "visland"
 		yield("/echo DEBUG get move type for muuvtype -> SHOULD BE VISLAND")
@@ -358,6 +364,12 @@ local function porta_decumana()
 			mecurrentLocY = GetPlayerRawYPos()
 			mecurrentLocZ = GetPlayerRawZPos()
 			phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
+			if dutycheck == 0 then
+				--check our distance to target and get over there.
+				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos()) > 2 then
+					yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
+				end
+			end
 			if dutycheck == 0 and dutycheckupdate == 1 and phase2 < 40 then
 				--we in phase 2 boyo
 				dutycheck = 1
@@ -371,16 +383,20 @@ local function porta_decumana()
 			end
 			if dutycheck == 1 and phase2 < 40 and GetDistanceToObject("The Ultima Weapon") < 40 then
 				if partymemberENUM == 1 then
-					yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
+					--yield("/"..movetype.." moveto -692.46704 -185.53157 468.43414")
+					yield("/"..movetype.." moveto -698.85711669922 -185.53157043457 485.63247680664")
 				end
 				if partymemberENUM == 2 then
-					yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
+					--yield("/"..movetype.." moveto -715.5604 -185.53159 468.4341")
+					yield("/"..movetype.." moveto -708.22570800781 -185.53158569336 485.37371826172")
 				end
 				if partymemberENUM == 3 then
-					yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
+					--yield("/"..movetype.." moveto -715.5605 -185.53157 491.5273")
+					yield("/"..movetype.." moveto -705.68145751953 -185.67491149902 478.03894042969")
 				end
 				if partymemberENUM == 4 then
-					yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
+					--yield("/"..movetype.." moveto -692.46704 -185.53159 491.52734")
+					yield("/"..movetype.." moveto -698.59442138672 -185.53158569336 474.63607788086")
 				end
 				--yield("/wait 5") -- is this too long? we'll see!  maybe this is bad
 			end
@@ -435,37 +451,44 @@ local function arbitrary_duty()
 	if GetCharacterCondition(34) == true and dutyFileExists(dutyFile) then
 		--if we haven't loaded a duty file. load it
 		if dutyloaded == 0 and dutyFile ~= "buttcheeks" then --we take a doodie from a .duty file
+			yield("/wait 5")
 			doodie = load_duty_data()
 			yield("/echo Waypoints loaded for this area -> "..#doodie)
 		end
+		local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
+		local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
 		if whereismydoodie < (#doodie+1) then
-			local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
-			local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
 			--if we are in combat stop navmesh/visland
-			if GetCharacterCondition(26) == true and string.len(GetTargetName()) > 1 then
+			if GetCharacterCondition(26) == true and type(GetTargetName()) == "string" and string.len(GetTargetName()) > 1 then
 				--yield("/visland stop")
 				--yield("/vnavmesh stop")
 				--yield("/automove off")
 				--yield("/echo stopping nav cuz in combat")
 				--conditionally stop nav for navmesh only........ then path to target if we are over 3 yalms away, this is a waypoint farming system after all.
 				if PathIsRunning() then
-					if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos()) > 3 then
-						yield("/echo Stopping Nav -> distance to target > 3")
+					if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos()) > 1 then
+						yield("/echo Stopping Nav -> distance to target > 1")
 						PathStop()
 						yield("/wait 0.1")
 						yield("/echo Sending player to target using navmesh")
 						--yield("/"..muuvtype.." moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
 						yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
-						while PathIsRunning() do --wait for it to get there --update all movement in this script with this kind of logic... it will fix alot of bs i think.
+						while PathIsRunning() and (tonumber(doodie[whereismydoodie][6])) == 0 do --wait for it to get there --update all movement in this script with this kind of logic... it will fix alot of bs i think.
 							yield("/wait 0.1")
 						end
 					end
+				end
+				--check if we are farther than 3 yalms from group member 2 and try to move closer
+				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetPlayerRawXPos(tostring(2)),GetPlayerRawYPos(tostring(2)),GetPlayerRawZPos(tostring(2))) > 3 then
+					yield("/vnavmesh moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
+					yield("/echo Gathering party up a bit during combat")
 				end
 			end
 			if GetCharacterCondition(26) == false or string.len(GetTargetName()) == 0 then --we want waypoints to work even if someone else aggros stuff as we may not have a target yet. this might solve prae/meri shenanigans
 				muuvtype = getmovetype(doodie[whereismydoodie][1]) --grab the movetype from the waypoint
 				if target ~= doodie[whereismydoodie][7] then --dont get away from they keys and such
 					yield("/"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4]) --move to the x y z in the waypoint
+					yield("/echo No Combat - Regular NAV , WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
 				end
 				if string.len(doodie[whereismydoodie][7]) > 1 then
 					yield("/target "..doodie[whereismydoodie][7])
@@ -473,9 +496,9 @@ local function arbitrary_duty()
 				end
 				if string.len(doodie[whereismydoodie][7]) > 1 and target == doodie[whereismydoodie][7] then
 					yield("/"..muuvtype.." moveto "..GetObjectRawXPos(doodie[whereismydoodie][7]).." "..GetObjectRawYPos(doodie[whereismydoodie][7]).." "..GetObjectRawXPos(doodie[whereismydoodie][7])) --move to the x y z in the waypoint
+					yield("/echo No Combat - Special Object NAV , WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
 				end
-				yield("/automove off")
-				yield("/echo starting nav cuz not in combat, WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
+				yield("/automove off")	
 			end
 			--if we are <? yalms from waypoint, wait x seconds then stop visland/vnavmesh
 			local skipcheck = 0 --this is important if we hit a chest node and we are skipping nodes we will skip the waypoint without processing the next one immediately
@@ -503,6 +526,15 @@ local function arbitrary_duty()
 				yield("/visland stop")
 				yield("/vnavmesh stop")
 			end	
+		end
+	end
+	
+	if GetCharacterCondition(26) == true then --fix sliding bug
+		if getRandomNumber(1,5) == 1 then
+			--move to the spot we are at to fix teh sliding bug
+			yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
+			yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
+			yield("/vnavmesh moveto "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos())
 		end
 	end
 	
@@ -705,25 +737,31 @@ local function arbitrary_duty()
 		--	magiwhee = 1129 --lasers
 		--end
 		yield("/lockon on") --need this for various stuff hehe.
+		yield("/gaction jump") --just in case
 --			yield("/automove")
 		yield("/send q")
 		yield("/wait 0.3")
 --			yield("/automove stop")
-		ExecuteAction(magiwhee)
+--		ExecuteAction(magiwhee)
+		yield("/send KEY_2")
 		yield("/wait 0.5")
 --			yield("/automove")
 		yield("/send w")
 		yield("/wait 0.3")
-		ExecuteAction(magiwhee)
+--		ExecuteAction(magiwhee)
+		yield("/send KEY_2")
 		yield("/wait 0.5")
-		ExecuteAction(magiwhee)
+--		ExecuteAction(magiwhee)
+		yield("/send KEY_2")
 		yield("/wait 0.5")
 --			yield("/automove stop")
 		yield("/send e")
 		yield("/wait 0.3")
-		ExecuteAction(magiwhee)
+--		ExecuteAction(magiwhee)
+		yield("/send KEY_2")
 		yield("/wait 0.5")
-		ExecuteAction(magiwhee)
+--		ExecuteAction(magiwhee)
+		yield("/send KEY_2")
 		yield("/wait 0.5")
 	end
 end
@@ -743,6 +781,11 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/targetenemy") --this will trigger RS to do stuff. this is also kind of spammy in the text box. how do i fix this so its not spammy?
 		--TargetClosestEnemy() --this is really bad it targets through walls and floors
 	end
+    if GetCharacterCondition(34)==true and GetCharacterCondition(26)==true and string.len(GetTargetName()) > 0 then 
+		if type(GetTargetHPP()) == "number" and GetTargetHPP() > 95 then
+			yield("/ac provoke")
+		end
+	end
 	--[[
  --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
     if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
@@ -757,7 +800,7 @@ while repeated_trial < (repeat_trial + 1) do
 	--the command "targetnenemy" is unavailable at this time
 	--unable to execute command while occupied
 	--unable to execute command while mounted
-	if enemy_snake ~= "nothing" and string.len(GetTargetName())==0 and GetObjectRawXPos(enemy_snake) > 0 then --check if we are forcing a target or not
+	if enemy_snake ~= "nothing" and string.len(GetTargetName())==0 and type(GetObjectRawXPos(enemy_snake)) == "number" then --check if we are forcing a target or not
 		yield("/target "..enemy_snake) --this will trigger RS to do stuff.
 		currentLocX = GetTargetRawXPos()
 		currentLocY = GetTargetRawYPos()
@@ -868,6 +911,7 @@ while repeated_trial < (repeat_trial + 1) do
 					--yield("/automove on")
 					--replaced above with navmesh to exit
 					yield("/vnavmesh moveto "..GetObjectRawXPos("Exit").." "..GetObjectRawYPos("Exit").." "..GetObjectRawZPos("Exit"))
+					yield("/wait 10")
 				end
 			end
 		end
@@ -904,8 +948,9 @@ while repeated_trial < (repeat_trial + 1) do
 		if GetCharacterCondition(29)==true then --if we are bound by qte
 			while i < 150 do
 				i = i + 1
-				yield("/send SPACE")
-				yield("/send SPACE")
+				--yield("/send SPACE")
+				yield("/gaction jump")
+				yield("/gaction jump")
 				yield("/wait 0.1")
 				if GetCharacterCondition(28)==false then --if we are not bound by qte get out of the space bar spamming so we can resume following or whatever
 					i = 150
@@ -965,4 +1010,4 @@ while repeated_trial < (repeat_trial + 1) do
 	yield("/wait 1") --the entire fuster cluck is looping at this rate
 end
 
---meh
+--closerdecuman4
