@@ -139,28 +139,36 @@ local cycleTime = 1 --how many seconds to wait between cycles. might move this t
 local deathCounter = 0
 
 local function distance(x1, y1, z1, x2, y2, z2)
-	--following block to error trap some bs when changing areas
---[[	local x1 = x1 or 2
-	local y1 = y1 or 2
-	local z1 = z1 or 2
-	local x2 = x2 or 1
-	local y2 = y2 or 1
-	local z2 = z2 or 1
-	if type(x1) ~= "number" then x1 = 1 end
-	if type(y1) ~= "number" then y1 = 1 end
-	if type(z1) ~= "number" then z1 = 1 end
-	if type(x2) ~= "number" then x2 = 2 end
-	if type(y2) ~= "number" then y2 = 2 end
-	if type(z2) ~= "number" then z2 = 2 end
-	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) ~= "number" then return 0 end]]
-	local funmath = 1
-	if type(y1) == "number" and type(x1) == "number" and type(z1) == "number" then
-		if type(y2) == "number" and type(x2) == "number" and type(z2) == "number" then
-			funmath = math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
-		end
-	end
-    return funmath 
+    -- Following block to error trap some issues when changing areas
+    local success, x1_num = pcall(tonumber, x1)
+    if not success then yield("/echo Failed to convert x1: " .. tostring(x1) .. " to number") end
+
+    local success, y1_num = pcall(tonumber, y1)
+    if not success then yield("/echo Failed to convert y1: " .. tostring(y1) .. " to number") end
+
+    local success, z1_num = pcall(tonumber, z1)
+    if not success then yield("/echo Failed to convert z1: " .. tostring(z1) .. " to number") end
+
+    local success, x2_num = pcall(tonumber, x2)
+    if not success then yield("/echo Failed to convert x2: " .. tostring(x2) .. " to number") end
+
+    local success, y2_num = pcall(tonumber, y2)
+    if not success then yield("/echo Failed to convert y2: " .. tostring(y2) .. " to number") end
+
+    local success, z2_num = pcall(tonumber, z2)
+    if not success then yield("/echo Failed to convert z2: " .. tostring(z2) .. " to number") end
+
+    local funmath = 42069420
+    if type(y1_num) == "number" and type(x1_num) == "number" and type(z1_num) == "number" then
+        if type(y2_num) == "number" and type(x2_num) == "number" and type(z2_num) == "number" then
+            -- Calculate distance only if all inputs are numbers
+            funmath = math.sqrt((x2_num - x1_num)^2 + (y2_num - y1_num)^2 + (z2_num - z1_num)^2)
+        end
+    end
+
+    return funmath
 end
+
 
 local function interpolate(x1, y1, z1, x2, y2, z2, t)
     -- t is the parameter representing the percentage of the distance from (x1, y1, z1) to (x2, y2, z2)
@@ -447,16 +455,16 @@ local function searchNearestWP()
 		--everything is normal reset the counter
 		if (math.abs(((WPsearchX - GetPlayerRawXPos())/WPsearchX)) * 100) > searchPCT or (math.abs(((WPsearchY - GetPlayerRawXPos())/WPsearchY)) * 100) > searchPCT or (math.abs(((WPsearchZ - GetPlayerRawXPos())/WPsearchZ)) * 100) > searchPCT then
 			WPsearchcounter = 0
-			WPsearchX = GetObjectRawXPos
-			WPsearchY = GetObjectRawYPos
-			WPsearchZ = GetObjectRawZPos
+			WPsearchX = GetPlayerRawXPos()
+			WPsearchY = GetPlayerRawYPos()
+			WPsearchZ = GetPlayerRawZPos()
 		end
 		--we've entered into combat
 		if GetCharacterCondition(26) == true and GetCharacterCondition(34) == true then
 			WPsearchcounter = 0
-			WPsearchX = GetObjectRawXPos
-			WPsearchY = GetObjectRawYPos
-			WPsearchZ = GetObjectRawZPos
+			WPsearchX = GetPlayerRawXPos()
+			WPsearchY = GetPlayerRawYPos()
+			WPsearchZ = GetPlayerRawZPos()
 		end
 		if (math.abs(((WPsearchX - GetPlayerRawXPos())/WPsearchX)) * 100) < searchPCT and (math.abs(((WPsearchY - GetPlayerRawXPos())/WPsearchY)) * 100) < searchPCT and (math.abs(((WPsearchZ - GetPlayerRawXPos())/WPsearchZ)) * 100) < searchPCT then
 			WPsearchcounter = WPsearchcounter + 1
@@ -499,6 +507,7 @@ local function arbitrary_duty()
 		yield("/pcall _Notification false 0 0 \"ed\" ")  --brings up the window if its closed for some reason
 		yield("/pcall SelectYesno true 0")
 	end
+	
 	searchNearestWP() --just in case we stuck somewhere for 10 seconds + duty is loaded we will search for nearestWP
 	
 	if GetCharacterCondition(34) == true and dutyFileExists(dutyFile) then
@@ -509,6 +518,8 @@ local function arbitrary_duty()
 			yield("/echo Waypoints loaded for this area -> "..#doodie)
 		end
 		local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
+		--DEBUG xyz stuff
+		--yield("/echo distance("..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..","..doodie[whereismydoodie][2]..","..doodie[whereismydoodie][3]..","..doodie[whereismydoodie][4])
 		local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
 		if whereismydoodie < (#doodie+1) then
 			--if we are in combat stop navmesh/visland
@@ -533,7 +544,7 @@ local function arbitrary_duty()
 				end
 				--check if we are farther than 3 yalms from group member 2 and try to move closer
 				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetPlayerRawXPos(tostring(2)),GetPlayerRawYPos(tostring(2)),GetPlayerRawZPos(tostring(2))) > 3 then
-					yield("/vnavmesh moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
+					yield("/"..muuvtype.." "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
 					yield("/echo Gathering party up a bit during combat")
 				end
 			end
@@ -571,7 +582,8 @@ local function arbitrary_duty()
                     end
                 end
             end
-			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6])) and skipcheck == 0 then
+			--42069420 is the value that indicates distance() failed for some reason
+			if (tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6])) and skipcheck == 0) and tempdist ~= 42069420 then
 				yield("/echo Onto the next waypoint! Current WP completed --> "..whereismydoodie)
 				--check for npcs rq if its brayflox.
 				if GetZoneID() == 1041 then
