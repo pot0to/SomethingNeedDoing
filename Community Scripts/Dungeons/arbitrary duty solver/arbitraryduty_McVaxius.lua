@@ -136,6 +136,7 @@ local WPsearchX = 1
 local WPsearchY = 1
 local WPsearchZ = 1
 local cycleTime = 1 --how many seconds to wait between cycles. might move this to the .ini file later
+local deathCounter = 0
 
 local function distance(x1, y1, z1, x2, y2, z2)
 	--following block to error trap some bs when changing areas
@@ -485,10 +486,19 @@ local function arbitrary_duty()
 		dutyFile = GetZoneID()..".duty"
 	end
 	if dutyFile ~= "whee.duty" then
-	--*if we die:
-		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
-		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
-
+	--if we die:
+		--wait 30 seconds then accept respawn (new counter var.. just in case we get a rez
+		--maybe throw this as ini file configuration later
+	if GetCharacterCondition(34) == true and IsPlayerDead()==false then
+		deathCounter = 0
+	end
+	if GetCharacterCondition(34) == true and IsPlayerDead() then
+		deathCounter = deathCounter + 1
+	end
+	if IsPlayerDead() and deathCounter > 30 and (dutyloaded == 1 or GetCharacterCondition(26) == false) then
+		yield("/pcall _Notification false 0 0 \"ed\" ")  --brings up the window if its closed for some reason
+		yield("/pcall SelectYesno true 0")
+	end
 	searchNearestWP() --just in case we stuck somewhere for 10 seconds + duty is loaded we will search for nearestWP
 	
 	if GetCharacterCondition(34) == true and dutyFileExists(dutyFile) then
@@ -563,6 +573,12 @@ local function arbitrary_duty()
             end
 			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6])) and skipcheck == 0 then
 				yield("/echo Onto the next waypoint! Current WP completed --> "..whereismydoodie)
+				--check for npcs rq if its brayflox.
+				if GetZoneID() == 1041 then
+					yield("/targetnpc")
+					yield("/wait 0.5")
+					yield("/pinteract")
+				end
 				yield("/wait "..doodie[whereismydoodie][5])
 				whereismydoodie = whereismydoodie + 1
 				yield("/automove off")
