@@ -18,12 +18,4 @@ internal static class DeliverooIPC
         TurnInStarted = Service.Interface.GetIpcSubscriber<object>(TurnInStartedStr);
         TurnInStopped = Service.Interface.GetIpcSubscriber<object>(TurnInStoppedStr);
     }
-
-    internal static void Dispose()
-    {
-        IsTurnInRunning = null;
-        TurnInStarted = null;
-        TurnInStopped = null;
-        IsTurnInRunning = null;
-    }
 }

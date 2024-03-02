@@ -39,18 +39,14 @@ public class IpcCommands
     internal void Dispose()
     {
         this._autoRetainerApi.Dispose();
-        VislandIPC.Dispose();
-        NavmeshIPC.Dispose();
-        DeliverooIPC.Dispose();
-        PandorasBoxIPC.Dispose();
     }
 
     #region PandorasBox
-    public bool? PandoraGetFeatureEnabled(string feature) => PandorasBoxIPC.GetFeatureEnabled.InvokeFunc(feature);
-    public bool? PandoraGetFeatureConfigEnabled(string feature, string config) => PandorasBoxIPC.GetConfigEnabled.InvokeFunc(feature, config);
-    public void PandoraSetFeatureState(string feature, bool state) => PandorasBoxIPC.SetFeatureEnabled.InvokeFunc(feature, state);
-    public void PandoraSetFeatureConfigState(string feature, string config, bool state) => PandorasBoxIPC.SetConfigEnabled.InvokeFunc(feature, config, state);
-    public void PandoraPauseFeature(string feature, int ms) => PandorasBoxIPC.PauseFeature.InvokeFunc(feature, ms);
+    public bool? PandoraGetFeatureEnabled(string feature) => PandorasBoxIPC.GetFeatureEnabled?.InvokeFunc(feature);
+    public bool? PandoraGetFeatureConfigEnabled(string feature, string config) => PandorasBoxIPC.GetConfigEnabled?.InvokeFunc(feature, config);
+    public void PandoraSetFeatureState(string feature, bool state) => PandorasBoxIPC.SetFeatureEnabled?.InvokeFunc(feature, state);
+    public void PandoraSetFeatureConfigState(string feature, string config, bool state) => PandorasBoxIPC.SetConfigEnabled?.InvokeFunc(feature, config, state);
+    public void PandoraPauseFeature(string feature, int ms) => PandorasBoxIPC.PauseFeature?.InvokeFunc(feature, ms);
     #endregion
 
     #region AutoHook
@@ -73,26 +69,26 @@ public class IpcCommands
     #endregion
 
     #region navmesh
-    public bool NavIsReady() => NavmeshIPC.NavIsReady!.InvokeFunc();
-    public float NavBuildProgress() => NavmeshIPC.NavBuildProgress!.InvokeFunc();
-    public void NavReload() => NavmeshIPC.NavReload!.InvokeAction();
-    public void NavRebuild() => NavmeshIPC.NavRebuild!.InvokeAction();
-    public bool NavIsAutoLoad() => NavmeshIPC.NavIsAutoLoad!.InvokeFunc();
-    public void NavSetAutoLoad(bool state) => NavmeshIPC.NavSetAutoLoad!.InvokeAction(state);
-    public float? QueryMeshNearestPointX(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint!.InvokeFunc(new Vector3(x, y, z), radius)?.X;
-    public float? QueryMeshNearestPointY(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint!.InvokeFunc(new Vector3(x, y, z), radius)?.Y;
-    public float? QueryMeshNearestPointZ(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint!.InvokeFunc(new Vector3(x, y, z), radius)?.Z;
-    public void PathMoveTo(float x, float y, float z) => NavmeshIPC.PathMoveTo!.InvokeAction(new Vector3(x, y, z));
-    public void PathFlyTo(float x, float y, float z) => NavmeshIPC.PathFlyTo!.InvokeAction(new Vector3(x, y, z));
-    public void PathStop() => NavmeshIPC.PathStop!.InvokeFunc();
-    public bool PathIsRunning() => NavmeshIPC.PathIsRunning!.InvokeFunc();
-    public int PathNumWaypoints() => NavmeshIPC.PathNumWaypoints!.InvokeFunc();
-    public bool PathGetMovementAllowed() => NavmeshIPC.PathGetMovementAllowed!.InvokeFunc();
-    public void PathSetMovementAllowed(bool state) => NavmeshIPC.PathSetMovementAllowed!.InvokeAction(state);
-    public bool PathGetAlignCamera() => NavmeshIPC.PathGetAlignCamera!.InvokeFunc();
-    public void PathSetAlignCamera(bool state) => NavmeshIPC.PathSetAlignCamera!.InvokeAction(state);
-    public float PathGetTolerance() => NavmeshIPC.PathGetTolerance!.InvokeFunc();
-    public void PathSetTolerance(bool state) => NavmeshIPC.PathSetTolerance!.InvokeAction(state);
+    public bool NavIsReady() => NavmeshIPC.NavIsReady();
+    public float NavBuildProgress() => NavmeshIPC.NavBuildProgress();
+    public void NavReload() => NavmeshIPC.NavReload();
+    public void NavRebuild() => NavmeshIPC.NavRebuild();
+    public bool NavIsAutoLoad() => NavmeshIPC.NavIsAutoLoad();
+    public void NavSetAutoLoad(bool state) => NavmeshIPC.NavSetAutoLoad(state);
+    public float? QueryMeshNearestPointX(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint(new Vector3(x, y, z), radius)?.X;
+    public float? QueryMeshNearestPointY(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint(new Vector3(x, y, z), radius)?.Y;
+    public float? QueryMeshNearestPointZ(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint(new Vector3(x, y, z), radius)?.Z;
+    public void PathMoveTo(float x, float y, float z) => NavmeshIPC.PathMoveTo(new Vector3(x, y, z));
+    public void PathFlyTo(float x, float y, float z) => NavmeshIPC.PathFlyTo(new Vector3(x, y, z));
+    public void PathStop() => NavmeshIPC.PathStop();
+    public bool PathIsRunning() => NavmeshIPC.PathIsRunning();
+    public int PathNumWaypoints() => NavmeshIPC.PathNumWaypoints();
+    public bool PathGetMovementAllowed() => NavmeshIPC.PathGetMovementAllowed();
+    public void PathSetMovementAllowed(bool state) => NavmeshIPC.PathSetMovementAllowed(state);
+    public bool PathGetAlignCamera() => NavmeshIPC.PathGetAlignCamera();
+    public void PathSetAlignCamera(bool state) => NavmeshIPC.PathSetAlignCamera(state);
+    public float PathGetTolerance() => NavmeshIPC.PathGetTolerance();
+    public void PathSetTolerance(float t) => NavmeshIPC.PathSetTolerance(t);
     #endregion
 
     #region AutoRetainer

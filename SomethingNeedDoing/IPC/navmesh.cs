@@ -1,76 +1,110 @@
 ﻿using Dalamud.Plugin.Ipc;
+using ECommons;
+using System;
 using System.Numerics;
 
 namespace SomethingNeedDoing.IPC;
 internal class NavmeshIPC
 {
-    internal static readonly string PluginName = "vnavmesh";
-    internal static ICallGateSubscriber<bool>? NavIsReady;
-    internal static ICallGateSubscriber<float>? NavBuildProgress;
-    internal static ICallGateSubscriber<object>? NavReload;
-    internal static ICallGateSubscriber<object>? NavRebuild;
-    internal static ICallGateSubscriber<bool>? NavIsAutoLoad;
-    internal static ICallGateSubscriber<bool, object>? NavSetAutoLoad;
+    internal static readonly string Name = "vnavmesh";
+    private static ICallGateSubscriber<bool>? _navIsReady;
+    private static ICallGateSubscriber<float>? _navBuildProgress;
+    private static ICallGateSubscriber<object>? _navReload;
+    private static ICallGateSubscriber<object>? _navRebuild;
+    private static ICallGateSubscriber<bool>? _navIsAutoLoad;
+    private static ICallGateSubscriber<bool, object>? _navSetAutoLoad;
 
-    internal static ICallGateSubscriber<Vector3, float, Vector3?>? QueryMeshNearestPoint;
+    private static ICallGateSubscriber<Vector3, float, Vector3?>? _queryMeshNearestPoint;
 
-    internal static ICallGateSubscriber<Vector3, object>? PathMoveTo;
-    internal static ICallGateSubscriber<Vector3, object>? PathFlyTo;
-    internal static ICallGateSubscriber<object>? PathStop;
-    internal static ICallGateSubscriber<bool>? PathIsRunning;
-    internal static ICallGateSubscriber<int>? PathNumWaypoints;
-    internal static ICallGateSubscriber<bool>? PathGetMovementAllowed;
-    internal static ICallGateSubscriber<bool, object>? PathSetMovementAllowed;
-    internal static ICallGateSubscriber<bool>? PathGetAlignCamera;
-    internal static ICallGateSubscriber<bool, object>? PathSetAlignCamera;
-    internal static ICallGateSubscriber<float>? PathGetTolerance;
-    internal static ICallGateSubscriber<bool, object>? PathSetTolerance;
+    private static ICallGateSubscriber<Vector3, object>? _pathMoveTo;
+    private static ICallGateSubscriber<Vector3, object>? _pathFlyTo;
+    private static ICallGateSubscriber<object>? _pathStop;
+    private static ICallGateSubscriber<bool>? _pathIsRunning;
+    private static ICallGateSubscriber<int>? _pathNumWaypoints;
+    private static ICallGateSubscriber<bool>? _pathGetMovementAllowed;
+    private static ICallGateSubscriber<bool, object>? _pathSetMovementAllowed;
+    private static ICallGateSubscriber<bool>? _pathGetAlignCamera;
+    private static ICallGateSubscriber<bool, object>? _pathSetAlignCamera;
+    private static ICallGateSubscriber<float>? _pathGetTolerance;
+    private static ICallGateSubscriber<float, object>? _pathSetTolerance;
 
     internal static void Init()
     {
-        NavIsReady = Service.Interface.GetIpcSubscriber<bool>($"{PluginName}.Nav.IsReady");
-        NavBuildProgress = Service.Interface.GetIpcSubscriber<float>($"{PluginName}.Nav.BuildProgress");
-        NavReload = Service.Interface.GetIpcSubscriber<object>($"{PluginName}.Nav.Reload");
-        NavRebuild = Service.Interface.GetIpcSubscriber<object>($"{PluginName}.Nav.Rebuild");
-        NavIsAutoLoad = Service.Interface.GetIpcSubscriber<bool>($"{PluginName}.Nav.IsAutoLoad");
-        NavSetAutoLoad = Service.Interface.GetIpcSubscriber<bool, object>($"{PluginName}.Nav.SetAutoLoad");
+        try
+        {
+            _navIsReady = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Nav.IsReady");
+            _navBuildProgress = Service.Interface.GetIpcSubscriber<float>($"{Name}.Nav.BuildProgress");
+            _navReload = Service.Interface.GetIpcSubscriber<object>($"{Name}.Nav.Reload");
+            _navRebuild = Service.Interface.GetIpcSubscriber<object>($"{Name}.Nav.Rebuild");
+            _navIsAutoLoad = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Nav.IsAutoLoad");
+            _navSetAutoLoad = Service.Interface.GetIpcSubscriber<bool, object>($"{Name}.Nav.SetAutoLoad");
 
-        QueryMeshNearestPoint = Service.Interface.GetIpcSubscriber<Vector3, float, Vector3?>($"{PluginName}.Query.Mesh.NearestPoint");
+            _queryMeshNearestPoint = Service.Interface.GetIpcSubscriber<Vector3, float, Vector3?>($"{Name}.Query.Mesh.NearestPoint");
 
-        PathMoveTo = Service.Interface.GetIpcSubscriber<Vector3, object>($"{PluginName}.Path.MoveTo");
-        PathFlyTo = Service.Interface.GetIpcSubscriber<Vector3, object>($"{PluginName}.Path.FlyTo");
-        PathStop = Service.Interface.GetIpcSubscriber<object>($"{PluginName}.Path.Stop");
-        PathIsRunning = Service.Interface.GetIpcSubscriber<bool>($"{PluginName}.Path.IsRunning");
-        PathNumWaypoints = Service.Interface.GetIpcSubscriber<int>($"{PluginName}.Path.NumWaypoints");
-        PathGetMovementAllowed = Service.Interface.GetIpcSubscriber<bool>($"{PluginName}.Path.GetMovementAllowed");
-        PathSetMovementAllowed = Service.Interface.GetIpcSubscriber<bool, object>($"{PluginName}.Path.SetMovementAllowed");
-        PathGetAlignCamera = Service.Interface.GetIpcSubscriber<bool>($"{PluginName}.Path.GetAlignCamera");
-        PathSetAlignCamera = Service.Interface.GetIpcSubscriber<bool, object>($"{PluginName}.Path.SetAlignCamera");
-        PathGetTolerance = Service.Interface.GetIpcSubscriber<float>($"{PluginName}.Path.GetTolerance");
-        PathSetTolerance = Service.Interface.GetIpcSubscriber<bool, object>($"{PluginName}.Path.SetTolerance");
+            _pathMoveTo = Service.Interface.GetIpcSubscriber<Vector3, object>($"{Name}.Path.MoveTo");
+            _pathFlyTo = Service.Interface.GetIpcSubscriber<Vector3, object>($"{Name}.Path.FlyTo");
+            _pathStop = Service.Interface.GetIpcSubscriber<object>($"{Name}.Path.Stop");
+            _pathIsRunning = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Path.IsRunning");
+            _pathNumWaypoints = Service.Interface.GetIpcSubscriber<int>($"{Name}.Path.NumWaypoints");
+            _pathGetMovementAllowed = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Path.GetMovementAllowed");
+            _pathSetMovementAllowed = Service.Interface.GetIpcSubscriber<bool, object>($"{Name}.Path.SetMovementAllowed");
+            _pathGetAlignCamera = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Path.GetAlignCamera");
+            _pathSetAlignCamera = Service.Interface.GetIpcSubscriber<bool, object>($"{Name}.Path.SetAlignCamera");
+            _pathGetTolerance = Service.Interface.GetIpcSubscriber<float>($"{Name}.Path.GetTolerance");
+            _pathSetTolerance = Service.Interface.GetIpcSubscriber<float, object>($"{Name}.Path.SetTolerance");
+        }
+        catch (Exception ex) { ex.Log(); }
     }
 
-    internal static void Dispose()
+    internal static T? Execute<T>(Func<T> func)
     {
-        NavIsReady = null;
-        NavBuildProgress = null;
-        NavReload = null;
-        NavRebuild = null;
-        NavIsAutoLoad = null;
-        NavSetAutoLoad = null;
+        try
+        {
+            if (func != null)
+                return func();
+        }
+        catch (Exception ex) { ex.Log(); }
 
-        QueryMeshNearestPoint = null;
-
-        PathMoveTo = null;
-        PathFlyTo = null;
-        PathStop = null;
-        PathIsRunning = null;
-        PathNumWaypoints = null;
-        PathGetMovementAllowed = null;
-        PathSetMovementAllowed = null;
-        PathGetAlignCamera = null;
-        PathSetAlignCamera = null;
-        PathGetTolerance = null;
-        PathSetTolerance = null;
+        return default;
     }
+
+    internal static void Execute<T>(Action<T> action, T param)
+    {
+        try
+        {
+            action?.Invoke(param);
+        }
+        catch (Exception ex) { ex.Log(); }
+    }
+
+    internal static void Execute(Action action)
+    {
+        try
+        {
+            action?.Invoke();
+        }
+        catch (Exception ex) { ex.Log(); }
+    }
+
+    internal static bool NavIsReady() => Execute(() => _navIsReady!.InvokeFunc());
+    internal static float NavBuildProgress() => Execute(() => _navBuildProgress!.InvokeFunc());
+    internal static void NavReload() => Execute(_navReload!.InvokeAction);
+    internal static void NavRebuild() => Execute(_navRebuild!.InvokeAction);
+    internal static bool NavIsAutoLoad() => Execute(() => _navIsAutoLoad!.InvokeFunc());
+    internal static void NavSetAutoLoad(bool value) => Execute(_navSetAutoLoad!.InvokeAction, value);
+
+    internal static Vector3? QueryMeshNearestPoint(Vector3 pos, float maxDistance) => Execute(() => _queryMeshNearestPoint!.InvokeFunc(pos, maxDistance));
+
+    internal static void PathMoveTo(Vector3 pos) => Execute(_pathMoveTo!.InvokeAction, pos);
+    internal static void PathFlyTo(Vector3 pos) => Execute(_pathFlyTo!.InvokeAction, pos);
+    internal static void PathStop() => Execute(_pathStop!.InvokeAction);
+    internal static bool PathIsRunning() => Execute(() => _pathIsRunning!.InvokeFunc());
+    internal static int PathNumWaypoints() => Execute(() => _pathNumWaypoints!.InvokeFunc());
+    internal static bool PathGetMovementAllowed() => Execute(() => _pathGetMovementAllowed!.InvokeFunc());
+    internal static void PathSetMovementAllowed(bool value) => Execute(_pathSetMovementAllowed!.InvokeAction, value);
+    internal static bool PathGetAlignCamera() => Execute(() => _pathGetAlignCamera!.InvokeFunc());
+    internal static void PathSetAlignCamera(bool value) => Execute(_pathSetAlignCamera!.InvokeAction, value);
+    internal static float PathGetTolerance() => Execute(() => _pathGetTolerance!.InvokeFunc());
+    internal static void PathSetTolerance(float tolerance) => Execute(_pathSetTolerance!.InvokeAction, tolerance);
 }
+
