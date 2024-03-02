@@ -158,6 +158,13 @@ local function distance(x1, y1, z1, x2, y2, z2)
     local success, z2_num = pcall(tonumber, z2)
     if not success then yield("/echo Failed to convert z2: " .. tostring(z2) .. " to number") end
 
+	--[[yield("/echo x1_num: " .. tostring(x1_num))
+	yield("/echo y1_num: " .. tostring(y1_num))
+	yield("/echo z1_num: " .. tostring(z1_num))
+	yield("/echo x2_num: " .. tostring(x2_num))
+	yield("/echo y2_num: " .. tostring(y2_num))
+	yield("/echo z2_num: " .. tostring(z2_num))]]
+
     local funmath = 42069420
     if type(y1_num) == "number" and type(x1_num) == "number" and type(z1_num) == "number" then
         if type(y2_num) == "number" and type(x2_num) == "number" and type(z2_num) == "number" then
@@ -544,7 +551,8 @@ local function arbitrary_duty()
 				end
 				--check if we are farther than 3 yalms from group member 2 and try to move closer
 				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetPlayerRawXPos(tostring(2)),GetPlayerRawYPos(tostring(2)),GetPlayerRawZPos(tostring(2))) > 3 then
-					yield("/"..muuvtype.." "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
+					--yield("/"..muuvtype.." moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
+					yield("/vnavmesh moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
 					yield("/echo Gathering party up a bit during combat")
 				end
 			end
