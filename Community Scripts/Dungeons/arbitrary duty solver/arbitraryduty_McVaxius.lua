@@ -131,30 +131,51 @@ local whereismydoodie = 1 --position in doodie table
 local customized_targeting = 0 -- this is for custom code for specific duties
 local waitTarget = 0 --so we aren't spamming target search nonstop and breaking the WP system
 local customized_behaviour = 0
+local WPsearchcounter = 0 -- init counter
+local WPsearchX = 1
+local WPsearchY = 1
+local WPsearchZ = 1
+local cycleTime = 1 --how many seconds to wait between cycles. might move this to the .ini file later
+local deathCounter = 0
 
 local function distance(x1, y1, z1, x2, y2, z2)
-	--following block to error trap some bs when changing areas
---[[	local x1 = x1 or 2
-	local y1 = y1 or 2
-	local z1 = z1 or 2
-	local x2 = x2 or 1
-	local y2 = y2 or 1
-	local z2 = z2 or 1
-	if type(x1) ~= "number" then x1 = 1 end
-	if type(y1) ~= "number" then y1 = 1 end
-	if type(z1) ~= "number" then z1 = 1 end
-	if type(x2) ~= "number" then x2 = 2 end
-	if type(y2) ~= "number" then y2 = 2 end
-	if type(z2) ~= "number" then z2 = 2 end
-	if type(math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)) ~= "number" then return 0 end]]
-	local funmath = 1
-	if type(y1) == "number" and type(x1) == "number" and type(z1) == "number" then
-		if type(y2) == "number" and type(x2) == "number" and type(z2) == "number" then
-			funmath = math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
-		end
-	end
-    return funmath 
+    -- Following block to error trap some issues when changing areas
+    local success, x1_num = pcall(tonumber, x1)
+    if not success then yield("/echo Failed to convert x1: " .. tostring(x1) .. " to number") end
+
+    local success, y1_num = pcall(tonumber, y1)
+    if not success then yield("/echo Failed to convert y1: " .. tostring(y1) .. " to number") end
+
+    local success, z1_num = pcall(tonumber, z1)
+    if not success then yield("/echo Failed to convert z1: " .. tostring(z1) .. " to number") end
+
+    local success, x2_num = pcall(tonumber, x2)
+    if not success then yield("/echo Failed to convert x2: " .. tostring(x2) .. " to number") end
+
+    local success, y2_num = pcall(tonumber, y2)
+    if not success then yield("/echo Failed to convert y2: " .. tostring(y2) .. " to number") end
+
+    local success, z2_num = pcall(tonumber, z2)
+    if not success then yield("/echo Failed to convert z2: " .. tostring(z2) .. " to number") end
+
+	--[[yield("/echo x1_num: " .. tostring(x1_num))
+	yield("/echo y1_num: " .. tostring(y1_num))
+	yield("/echo z1_num: " .. tostring(z1_num))
+	yield("/echo x2_num: " .. tostring(x2_num))
+	yield("/echo y2_num: " .. tostring(y2_num))
+	yield("/echo z2_num: " .. tostring(z2_num))]]
+
+    local funmath = 42069420
+    if type(y1_num) == "number" and type(x1_num) == "number" and type(z1_num) == "number" then
+        if type(y2_num) == "number" and type(x2_num) == "number" and type(z2_num) == "number" then
+            -- Calculate distance only if all inputs are numbers
+            funmath = math.sqrt((x2_num - x1_num)^2 + (y2_num - y1_num)^2 + (z2_num - z1_num)^2)
+        end
+    end
+
+    return funmath
 end
+
 
 local function interpolate(x1, y1, z1, x2, y2, z2, t)
     -- t is the parameter representing the percentage of the distance from (x1, y1, z1) to (x2, y2, z2)
@@ -434,6 +455,45 @@ local function porta_decumana()
 	end
 end
 
+local function searchNearestWP()
+	--WP file is loaded, we arent in combat and we are in a duty
+	local searchPCT = 5
+	if dutyloaded == 1 and GetCharacterCondition(26) == false and GetCharacterCondition(34) == true then
+		--everything is normal reset the counter
+		if (math.abs(((WPsearchX - GetPlayerRawXPos())/WPsearchX)) * 100) > searchPCT or (math.abs(((WPsearchY - GetPlayerRawXPos())/WPsearchY)) * 100) > searchPCT or (math.abs(((WPsearchZ - GetPlayerRawXPos())/WPsearchZ)) * 100) > searchPCT then
+			WPsearchcounter = 0
+			WPsearchX = GetPlayerRawXPos()
+			WPsearchY = GetPlayerRawYPos()
+			WPsearchZ = GetPlayerRawZPos()
+		end
+		--we've entered into combat
+		if GetCharacterCondition(26) == true and GetCharacterCondition(34) == true then
+			WPsearchcounter = 0
+			WPsearchX = GetPlayerRawXPos()
+			WPsearchY = GetPlayerRawYPos()
+			WPsearchZ = GetPlayerRawZPos()
+		end
+		if (math.abs(((WPsearchX - GetPlayerRawXPos())/WPsearchX)) * 100) < searchPCT and (math.abs(((WPsearchY - GetPlayerRawXPos())/WPsearchY)) * 100) < searchPCT and (math.abs(((WPsearchZ - GetPlayerRawXPos())/WPsearchZ)) * 100) < searchPCT then
+			WPsearchcounter = WPsearchcounter + 1
+			yield("/echo We are potentially stuck WPsearchcounter -> "..WPsearchcounter)
+		end
+		if WPsearchcounter > 10 then
+			yield("This waypoint is defective/incorrect -> "..whereismydoodie)
+			local tempsearchdist = 9000
+			local tempstoredist = 0
+			for i=2, #doodies do
+				tempstoredist = distance(GetPlayerRawXPos,GetObjectRawYPos,GetObjectRawZPos,doodies[i][2],doodies[i][3],doodies[i][4])
+				if  tempstoredist < tempsearchdist then
+					tempsearchdist = tempstoredist
+					whereismydoodie = i
+				end
+			end
+			yield("Found a closer waypoint -> "..whereismydoodie)
+			WPsearchcounter = 0
+		end
+	end
+end
+
 local function arbitrary_duty()
 	--just make it use the zoneID no more need to edit this script for it to work
 	dutyFile = "whee.duty"
@@ -441,12 +501,21 @@ local function arbitrary_duty()
 		dutyFile = GetZoneID()..".duty"
 	end
 	if dutyFile ~= "whee.duty" then
-	--*if we die:
-		--*wait 20 seconds then accept respawn (new counter var.. just in case we get a rez
-		--*set waypoint to 1 so the whole thing can start over again. walk of shame back to boss.
-	--*resume mode - if there is a shortcut available:
-		--*search waypoint table for a waypoint closest to where we are after entering shortcut
-		--*set the waypoint to that closest waypoint and resume
+	--if we die:
+		--wait 30 seconds then accept respawn (new counter var.. just in case we get a rez
+		--maybe throw this as ini file configuration later
+	if GetCharacterCondition(34) == true and IsPlayerDead()==false then
+		deathCounter = 0
+	end
+	if GetCharacterCondition(34) == true and IsPlayerDead() then
+		deathCounter = deathCounter + 1
+	end
+	if IsPlayerDead() and deathCounter > 30 and (dutyloaded == 1 or GetCharacterCondition(26) == false) then
+		yield("/pcall _Notification false 0 0 \"ed\" ")  --brings up the window if its closed for some reason
+		yield("/pcall SelectYesno true 0")
+	end
+	
+	searchNearestWP() --just in case we stuck somewhere for 10 seconds + duty is loaded we will search for nearestWP
 	
 	if GetCharacterCondition(34) == true and dutyFileExists(dutyFile) then
 		--if we haven't loaded a duty file. load it
@@ -456,6 +525,8 @@ local function arbitrary_duty()
 			yield("/echo Waypoints loaded for this area -> "..#doodie)
 		end
 		local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
+		--DEBUG xyz stuff
+		--yield("/echo distance("..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..","..doodie[whereismydoodie][2]..","..doodie[whereismydoodie][3]..","..doodie[whereismydoodie][4])
 		local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
 		if whereismydoodie < (#doodie+1) then
 			--if we are in combat stop navmesh/visland
@@ -480,6 +551,7 @@ local function arbitrary_duty()
 				end
 				--check if we are farther than 3 yalms from group member 2 and try to move closer
 				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetPlayerRawXPos(tostring(2)),GetPlayerRawYPos(tostring(2)),GetPlayerRawZPos(tostring(2))) > 3 then
+					--yield("/"..muuvtype.." moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
 					yield("/vnavmesh moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
 					yield("/echo Gathering party up a bit during combat")
 				end
@@ -518,8 +590,15 @@ local function arbitrary_duty()
                     end
                 end
             end
-			if tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6])) and skipcheck == 0 then
+			--42069420 is the value that indicates distance() failed for some reason
+			if (tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6])) and skipcheck == 0) and tempdist ~= 42069420 then
 				yield("/echo Onto the next waypoint! Current WP completed --> "..whereismydoodie)
+				--check for npcs rq if its brayflox.
+				if GetZoneID() == 1041 then
+					yield("/targetnpc")
+					yield("/wait 0.5")
+					yield("/pinteract")
+				end
 				yield("/wait "..doodie[whereismydoodie][5])
 				whereismydoodie = whereismydoodie + 1
 				yield("/automove off")
@@ -786,6 +865,7 @@ while repeated_trial < (repeat_trial + 1) do
 			yield("/ac provoke")
 		end
 	end
+
 	--[[
  --this is fully broken atm as it just kind of hangs everything and keeps trying to target stuff
     if GetCharacterCondition(34)==true and GetCharacterCondition(26)==false and customized_targeting == 0 and string.len(GetTargetName())==0 then 
@@ -900,6 +980,7 @@ while repeated_trial < (repeat_trial + 1) do
 				--yield("/automove on")
 				yield("/vnavmesh moveto "..GetObjectRawXPos("Shortcut").." "..GetObjectRawYPos("Shortcut").." "..GetObjectRawZPos("Shortcut"))
 				yield("/wait 10")
+				searchNearestWP() --update the waypoint . we just used a shorcut!
 			end
 			if GetTargetName()=="Exit" then
 				local zempdist = 0
@@ -1007,7 +1088,7 @@ while repeated_trial < (repeat_trial + 1) do
 		customized_targeting = 0
 		customized_behaviour = 0
 	end
-	yield("/wait 1") --the entire fuster cluck is looping at this rate
+	yield("/wait "..cycleTime) --the entire fuster cluck is looping at this rate
 end
 
 --closerdecuman4
