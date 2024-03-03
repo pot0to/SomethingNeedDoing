@@ -20,13 +20,4 @@ internal static class PandorasBoxIPC
         SetConfigEnabled = Svc.PluginInterface.GetIpcSubscriber<string, string, bool, object>($"PandorasBox.SetConfigEnabled");
         PauseFeature = Svc.PluginInterface.GetIpcSubscriber<string, int, object>("PandorasBox.PauseFeature");
     }
-
-    internal static void Dispose()
-    {
-        GetFeatureEnabled = null;
-        GetConfigEnabled = null;
-        SetFeatureEnabled = null;
-        SetConfigEnabled = null;
-        PauseFeature = null;
-    }
 }
