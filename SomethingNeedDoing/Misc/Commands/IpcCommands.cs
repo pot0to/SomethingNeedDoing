@@ -73,13 +73,16 @@ public class IpcCommands
     public float NavBuildProgress() => NavmeshIPC.NavBuildProgress();
     public void NavReload() => NavmeshIPC.NavReload();
     public void NavRebuild() => NavmeshIPC.NavRebuild();
+    public void NavPathfind(float x, float y, float z, bool fly = false) => NavmeshIPC.NavPathfind(Svc.ClientState.LocalPlayer!.Position, new Vector3(x, y, z), fly);
     public bool NavIsAutoLoad() => NavmeshIPC.NavIsAutoLoad();
     public void NavSetAutoLoad(bool state) => NavmeshIPC.NavSetAutoLoad(state);
-    public float? QueryMeshNearestPointX(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint(new Vector3(x, y, z), radius)?.X;
-    public float? QueryMeshNearestPointY(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint(new Vector3(x, y, z), radius)?.Y;
-    public float? QueryMeshNearestPointZ(float x, float y, float z, float radius) => NavmeshIPC.QueryMeshNearestPoint(new Vector3(x, y, z), radius)?.Z;
-    public void PathMoveTo(float x, float y, float z) => NavmeshIPC.PathMoveTo(new Vector3(x, y, z));
-    public void PathFlyTo(float x, float y, float z) => NavmeshIPC.PathFlyTo(new Vector3(x, y, z));
+    public float? QueryMeshNearestPointX(float x, float y, float z, float halfExtentXZ, float halfExtentY) => NavmeshIPC.QueryMeshNearestPoint(new Vector3(x, y, z), halfExtentXZ, halfExtentY)?.X;
+    public float? QueryMeshNearestPointY(float x, float y, float z, float halfExtentXZ, float halfExtentY) => NavmeshIPC.QueryMeshNearestPoint(new Vector3(x, y, z), halfExtentXZ, halfExtentY)?.Y;
+    public float? QueryMeshNearestPointZ(float x, float y, float z, float halfExtentXZ, float halfExtentY) => NavmeshIPC.QueryMeshNearestPoint(new Vector3(x, y, z), halfExtentXZ, halfExtentY)?.Z;
+    public float? QueryMeshPointOnFloorX(float x, float y, float z, float halfExtentXZ) => NavmeshIPC.QueryMeshPointOnFloor(new Vector3(x, y, z), halfExtentXZ)?.X;
+    public float? QueryMeshPointOnFloorY(float x, float y, float z, float halfExtentXZ) => NavmeshIPC.QueryMeshPointOnFloor(new Vector3(x, y, z), halfExtentXZ)?.Y;
+    public float? QueryMeshPointOnFloorZ(float x, float y, float z, float halfExtentXZ) => NavmeshIPC.QueryMeshPointOnFloor(new Vector3(x, y, z), halfExtentXZ)?.Z;
+    public void PathMoveTo(float x, float y, float z, bool fly) => NavmeshIPC.PathMoveTo([new Vector3(x, y, z)], fly);
     public void PathStop() => NavmeshIPC.PathStop();
     public bool PathIsRunning() => NavmeshIPC.PathIsRunning();
     public int PathNumWaypoints() => NavmeshIPC.PathNumWaypoints();
@@ -89,6 +92,8 @@ public class IpcCommands
     public void PathSetAlignCamera(bool state) => NavmeshIPC.PathSetAlignCamera(state);
     public float PathGetTolerance() => NavmeshIPC.PathGetTolerance();
     public void PathSetTolerance(float t) => NavmeshIPC.PathSetTolerance(t);
+    public void PathfindAndMoveTo(float x, float y, float z, bool fly) => NavmeshIPC.PathfindAndMoveTo(new Vector3(x, y, z), fly);
+    public bool PathfindInProgress() => NavmeshIPC.PathfindInProgress();
     #endregion
 
     #region AutoRetainer
