@@ -157,6 +157,7 @@ some stuff isn't yet solved by bossmod but we can solve in SND for now
 ---------------List of Duties---------------
 --------------------------------------------
 1035	WP		LUA		Level 15	Sastasha Synced		-	Synced.
+1041	WP		LUA		Level 32	Brayflox Longstop	-	Synced.
 1043	WP		-		Level 50	Castrum Meridianum	- 	Synced.
 1044	WP		LUA		Level 50	The Praetorium		-	Synced.
 1048	-		LUA		Level 50	Porta Decumana		-	Synced. Requires ENUM for party members (4).

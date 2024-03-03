@@ -328,6 +328,21 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-03-03",
+        "- Added /equipitem()\n" +
+        "- Added NavPathfind()\n" +
+        "- Changed QueryMeshNearestPointX()\n" +
+        "- Changed QueryMeshNearestPointY()\n" +
+        "- Changed QueryMeshNearestPointZ()\n" +
+        "- Added QueryMeshPointOnFloorX()\n" +
+        "- Added QueryMeshPointOnFloorY()\n" +
+        "- Added QueryMeshPointOnFloorZ()\n" +
+        "- Changed PathMoveTo()\n" +
+        "- Removed PathFlyTo()\n" +
+        "- Added PathfindAndMoveTo()\n" +
+        "- Added PathfindInProgress()\n");
+
+        DisplayChangelog(
         "2024-02-28",
         "- Added QueryMeshNearestPointX()\n" +
         "- Added QueryMeshNearestPointY()\n" +
