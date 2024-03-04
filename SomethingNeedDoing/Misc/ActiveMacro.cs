@@ -257,6 +257,7 @@ internal partial class ActiveMacro : IDisposable
         RegisterClassMethods(this.lua, QuestCommands.Instance);
         RegisterClassMethods(this.lua, SystemCommands.Instance);
         RegisterClassMethods(this.lua, WorldStateCommands.Instance);
+        RegisterClassMethods(this.lua, InternalCommands.Instance);
         #endregion
 
         script = string.Format(EntrypointTemplate, script);
@@ -315,6 +316,8 @@ internal partial class ActiveMacro : IDisposable
 //        #endregion
 
         this.lua.DoString(FStringSnippet);
+        this.lua.DoString(PackageSearchersSnippet);
+
         var results = this.lua.DoString(script);
 
         if (results.Length == 0 || results[0] is not LuaFunction coro)
@@ -367,4 +370,10 @@ function f(str)
       end
    end))
 end";
+
+    private const string PackageSearchersSnippet = @"
+table.insert(package.searchers, 1, function(name)
+  return assert(load(InternalGetMacroText(name), name), ""`require` target not found: '"" .. name .. ""'"")
+end)
+";
 }
