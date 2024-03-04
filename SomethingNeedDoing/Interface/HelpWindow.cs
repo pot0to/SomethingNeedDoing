@@ -332,7 +332,9 @@ internal class HelpWindow : Window
         "- Added LogInfo()\n" +
         "- Added LogDebug()\n" +
         "- Added LogVerbose()\n" +
-        "- Added counter node support to GetNodeText()\n");
+        "- Added counter node support to GetNodeText()\n" +
+        "- Navmesh ipc fixes\n" +
+        "- Added support for require() to require other macros (thanks kurenaj!)\n");
 
         DisplayChangelog(
         "2024-03-03",
