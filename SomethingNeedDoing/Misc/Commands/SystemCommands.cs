@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Client.System.Framework;
+﻿using ECommons.DalamudServices;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
 using System.Collections.Generic;
@@ -28,4 +29,8 @@ public class SystemCommands
     public void SetClipboard(string text) => ImGui.SetClipboardText(text);
 
     public unsafe void CrashTheGame() => Framework.Instance()->UIModule = (UIModule*)0;
+
+    public void LogInfo(string text) => Svc.Log.Info(text);
+    public void LogDebug(string text) => Svc.Log.Debug(text);
+    public void LogVerbose(string text) => Svc.Log.Verbose(text);
 }

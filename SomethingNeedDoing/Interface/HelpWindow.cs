@@ -328,6 +328,13 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-03-04",
+        "- Added LogInfo()\n" +
+        "- Added LogDebug()\n" +
+        "- Added LogVerbose()\n" +
+        "- Added counter node support to GetNodeText()\n");
+
+        DisplayChangelog(
         "2024-03-03",
         "- Added /equipitem()\n" +
         "- Added NavPathfind()\n" +
