@@ -2,11 +2,12 @@
     Name: AutoCollectables
     Description: General collectables script for MIN/BTN, based on auto gather collectables for the miner or botanist relic steps from Em
     Author: LeafFriend, Em
-    Version: 0.1.1.1
+    Version: 0.1.1.2
 ]]
 
 --[[
     <Changelog>
+    0.1.1.2 - Fixed condition checking for looping
     0.1.1.1 - Added support for calling script in GatheringHelper
     0.1.1   - Refactored Ageless Words/Solid Reason code block into its own wrapper
             - Added above wrapper to low stat rotation
@@ -14,7 +15,7 @@
 ]]
 
 --Settings
-ignore_nodes_went = false       --Loop this script
+ignore_nodes_went = false       --Loop this script, ignoring number of nodes gathered if true
 nodes_went_threshold = 1        --How many times to loop this script before it terminates
 interval_rate = 0.5             --Seconds to wait for each action
 time_to_wait_after_gather = 0.1 --Seconds to wait after finishing gathering and before looking for the next gathering node
@@ -48,7 +49,7 @@ function action(action_name)
     yield("/wait "..interval_rate)
 
     while(GetCharacterCondition(42)) do yield("/wait "..interval_rate) end
-  
+
     --Ensure Scrutiny is active
     if (action_name == "Scrutiny" and not HasStatus("Scrutiny")) then
         Id_Print("\"Scrutiny\" not active, Attempting again...")
@@ -99,7 +100,7 @@ function min_coll()
 end
 
 --Wrapper for gaining more gathering attempts to Collect
-function gain_more_action() 
+function gain_more_action()
     while (GetGp() >= action_one_more_gp) do
         if (actions_left() < max_actions()) then action(action_name_one_more) end
         if (HasStatus("Eureka Moment")) then
@@ -135,7 +136,7 @@ function standard()
     else
         action("Scour")
     end
-    if (actions_left() > 1) then 
+    if (actions_left() > 1) then
         action("Collect")
     end
 
@@ -147,7 +148,7 @@ end
 --[[
   Low Stat Rotation, for when not enough GP for Standard Rotation,
   or when maximum possible base Collectability gain (Scour without Scrutiny at max gathering) not reached
---]] 
+--]]
 function low_stat()
     Id_Print("Doing Low Stat Rotation...")
 
@@ -189,7 +190,7 @@ function ephemeral()
             action("Scour")
         end
     end
-  
+
     collect_all()
 end
 
@@ -203,7 +204,7 @@ function main()
     current_gp = GetGp()
     Id_Print("Current GP: "..current_gp)
     class_check()
-  
+
     --Logic for which rotation to perform
     if (scour_coll() == max_base_scour_coll and current_gp >= 2 * scrutiny_gp + action_one_more_gp) then
         standard()
@@ -212,7 +213,7 @@ function main()
     else
         ephemeral()
     end
-  
+
     Id_Print("Done gathering!")
     yield("/wait "..time_to_wait_after_gather)
 end
@@ -222,5 +223,5 @@ nodes_went = 0
 repeat
     main()
     nodes_went = nodes_went + 1
-until ignore_nodes_went or nodes_went >= nodes_went_threshold
+until not ignore_nodes_went and nodes_went >= nodes_went_threshold
 Id_Print("----------Stopping AutoCollectables----------")
