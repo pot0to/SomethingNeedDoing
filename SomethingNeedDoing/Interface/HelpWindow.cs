@@ -328,6 +328,24 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-03-03",
+        "- Added TargetHasStatus()\n" +
+        "- Added FocusTargetHasStatus()\n" +
+        "- Added ObjectHasStatus()\n" +
+        "- Added GetPartyMemberRawXPos()\n" +
+        "- Added GetPartyMemberRawYPos()\n" +
+        "- Added GetPartyMemberRawZPos()\n" +
+        "- Added GetDistanceToPartyMember()\n" +
+        "- Added IsPartyMemberCasting()\n" +
+        "- Added GetPartyMemberActionID()\n" +
+        "- Added GetPartyMemberUsedActionID()\n" +
+        "- Added GetPartyMemberHP()\n" +
+        "- Added GetPartyMemberMaxHP()\n" +
+        "- Added GetPartyMemberHPP()\n" +
+        "- Added GetPartyMemberRotation()\n" +
+        "- Added PartyMemberHasStatus()\n");
+
+        DisplayChangelog(
         "2024-03-04",
         "- Added LogInfo()\n" +
         "- Added LogDebug()\n" +

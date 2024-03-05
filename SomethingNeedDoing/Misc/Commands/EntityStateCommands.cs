@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace SomethingNeedDoing.Misc.Commands;
 
@@ -46,6 +47,7 @@ internal class EntityStateCommands
     public unsafe void TargetClosestEnemy(float distance = 0) => Svc.Targets.Target = Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(o => o.IsTargetable && o.IsHostile() && !o.IsDead && (distance == 0 || DistanceToObject(o) <= distance));
     public void ClearTarget() => Svc.Targets.Target = null;
     public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer!.Position);
+    public unsafe bool TargetHasStatus(uint statusID) => ((Character*)Svc.Targets.Target?.Address!)->GetStatusManager()->HasStatus(statusID);
     #endregion
 
     #region Focus Target
@@ -62,6 +64,7 @@ internal class EntityStateCommands
     public float GetFocusTargetRotation() => (float)(Svc.Targets.FocusTarget?.Rotation * (180 / Math.PI) ?? 0);
     public void ClearFocusTarget() => Svc.Targets.FocusTarget = null;
     public float GetDistanceToFocusTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.FocusTarget?.Position ?? Svc.ClientState.LocalPlayer!.Position);
+    public unsafe bool FocusTargetHasStatus(uint statusID) => ((Character*)Svc.Targets.FocusTarget?.Address!)->GetStatusManager()->HasStatus(statusID);
     #endregion
 
     #region Any Object
@@ -76,6 +79,22 @@ internal class EntityStateCommands
     public float GetObjectMaxHP(string name) => (GetGameObjectFromName(name) as Dalamud.Game.ClientState.Objects.Types.Character)?.MaxHp ?? 0;
     public float GetObjectHPP(string name) => GetObjectHP(name) / GetObjectMaxHP(name) * 100;
     public float GetObjectRotation(string name) => (float)(GetGameObjectFromName(name)?.Rotation * (180 / Math.PI) ?? 0);
+    public unsafe bool ObjectHasStatus(string name, uint statusID) => ((Character*)GetGameObjectFromName(name)?.Address!)->GetStatusManager()->HasStatus(statusID);
+    #endregion
+
+    #region Party Members
+    public float GetPartyMemberRawXPos(int index) => Svc.Party[index]?.Position.X ?? 0;
+    public float GetPartyMemberRawYPos(int index) => Svc.Party[index]?.Position.Y ?? 0;
+    public float GetPartyMemberRawZPos(int index) => Svc.Party[index]?.Position.Z ?? 0;
+    public float GetDistanceToPartyMember(int index) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Party[index]?.Position ?? Vector3.Zero);
+    public unsafe bool IsPartyMemberCasting(int index) => ((Character*)Svc.Party[index]?.Address!)->IsCasting;
+    public unsafe uint GetPartyMemberActionID(int index) => ((Character*)Svc.Party[index]?.Address!)->GetCastInfo()->ActionID;
+    public unsafe uint GetPartyMemberUsedActionID(int index) => ((Character*)Svc.Party[index]?.Address!)->GetCastInfo()->UsedActionId;
+    public float GetPartyMemberHP(int index) => Svc.Party[index]?.CurrentHP ?? 0;
+    public float GetPartyMemberMaxHP(int index) => Svc.Party[index]?.MaxHP ?? 0;
+    public float GetPartyMemberHPP(int index) => GetPartyMemberHP(index) / GetPartyMemberMaxHP(index) * 100;
+    public float GetPartyMemberRotation(int index) => (float)(Svc.Party[index]?.GameObject?.Rotation * (180 / Math.PI) ?? 0);
+    public unsafe bool PartyMemberHasStatus(int index, uint statusID) => Svc.Party[index]?.Statuses.Any(s => s.StatusId == statusID) ?? false;
     #endregion
 
     private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.GameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position);
