@@ -328,7 +328,7 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-        "2024-03-03",
+        "2024-03-05",
         "- Added TargetHasStatus()\n" +
         "- Added FocusTargetHasStatus()\n" +
         "- Added ObjectHasStatus()\n" +
