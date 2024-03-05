@@ -44,15 +44,15 @@ for i = 0, chars.Count - 1 do
     yield("/wait 1")
   end
   if GetPlayerGC() == 2 then
-    PathMoveTo(-67.7, -0.5, -8.6)
+    PathfindAndMoveTo(-67.7, -0.5, -8.6)
   elseif GetPlayerGC() == 1 then
     yield("/li aftcastle")
     while IsInZone(128) == false or IsPlayerAvailable() == false do
       yield("/wait 1")
     end
-    PathMoveTo(93.4, 40.3, 75.3)
+    PathfindAndMoveTo(93.4, 40.3, 75.3)
   elseif GetPlayerGC() == 3 then
-    PathMoveTo(-142.2, 4.1, -106.6)
+    PathfindAndMoveTo(-142.2, 4.1, -106.6)
   end
     yield("/wait 3")
   while PathIsRunning() == true do
