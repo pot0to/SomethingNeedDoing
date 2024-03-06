@@ -326,6 +326,9 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+        DisplayChangelog(
+        "2024-03-06",
+        "- Further improvements to require(). Support for absolute and relative paths, or macros (thanks stjornur!)\n");
 
         DisplayChangelog(
         "2024-03-05",
@@ -352,7 +355,7 @@ internal class HelpWindow : Window
         "- Added LogVerbose()\n" +
         "- Added counter node support to GetNodeText()\n" +
         "- Navmesh ipc fixes\n" +
-        "- Added support for require() to require other macros (thanks kurenaj!)\n");
+        "- Added support for require() to require other macros (thanks stjornur!)\n");
 
         DisplayChangelog(
         "2024-03-03",
