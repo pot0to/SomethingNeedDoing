@@ -143,20 +143,23 @@ public class AddonCommands
             debugString += $"[{nodeNumber}]";
 
             if (node == null)
-                throw new MacroCommandError($"{addonName} addon node{debugString} is null");
+                throw new MacroCommandError($"{addonName} addon node {debugString} is null");
 
             // More nodes to traverse
             if (i < nodeNumbers.Length - 1)
             {
                 if ((int)node->Type < 1000)
-                    throw new MacroCommandError($"{addonName} addon node{debugString} is not a component");
+                    throw new MacroCommandError($"{addonName} addon node {debugString} is not a component");
 
                 uld = ((AtkComponentNode*)node)->Component->UldManager;
             }
         }
 
-        if (node->Type != NodeType.Text)
-            throw new MacroCommandError($"{addonName} addon node{debugString} is not a text node");
+        if (node->Type is not NodeType.Text or NodeType.Counter)
+            throw new MacroCommandError($"{addonName} addon node {debugString} is not a text node");
+
+        if (node->Type == NodeType.Counter)
+            return ((AtkCounterNode*)node)->NodeText.ToString();
 
         var textNode = (AtkTextNode*)node;
         return textNode->NodeText.ToString();

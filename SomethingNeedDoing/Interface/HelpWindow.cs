@@ -326,6 +326,36 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+        DisplayChangelog(
+        "2024-03-06",
+        "- Further improvements to require(). Support for absolute and relative paths, or macros (thanks stjornur!)\n");
+
+        DisplayChangelog(
+        "2024-03-05",
+        "- Added TargetHasStatus()\n" +
+        "- Added FocusTargetHasStatus()\n" +
+        "- Added ObjectHasStatus()\n" +
+        "- Added GetPartyMemberRawXPos()\n" +
+        "- Added GetPartyMemberRawYPos()\n" +
+        "- Added GetPartyMemberRawZPos()\n" +
+        "- Added GetDistanceToPartyMember()\n" +
+        "- Added IsPartyMemberCasting()\n" +
+        "- Added GetPartyMemberActionID()\n" +
+        "- Added GetPartyMemberUsedActionID()\n" +
+        "- Added GetPartyMemberHP()\n" +
+        "- Added GetPartyMemberMaxHP()\n" +
+        "- Added GetPartyMemberHPP()\n" +
+        "- Added GetPartyMemberRotation()\n" +
+        "- Added PartyMemberHasStatus()\n");
+
+        DisplayChangelog(
+        "2024-03-04",
+        "- Added LogInfo()\n" +
+        "- Added LogDebug()\n" +
+        "- Added LogVerbose()\n" +
+        "- Added counter node support to GetNodeText()\n" +
+        "- Navmesh ipc fixes\n" +
+        "- Added support for require() to require other macros (thanks stjornur!)\n");
 
         DisplayChangelog(
         "2024-03-03",

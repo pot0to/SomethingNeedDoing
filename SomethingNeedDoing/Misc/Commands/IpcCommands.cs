@@ -82,7 +82,7 @@ public class IpcCommands
     public float? QueryMeshPointOnFloorX(float x, float y, float z, float halfExtentXZ) => NavmeshIPC.QueryMeshPointOnFloor(new Vector3(x, y, z), halfExtentXZ)?.X;
     public float? QueryMeshPointOnFloorY(float x, float y, float z, float halfExtentXZ) => NavmeshIPC.QueryMeshPointOnFloor(new Vector3(x, y, z), halfExtentXZ)?.Y;
     public float? QueryMeshPointOnFloorZ(float x, float y, float z, float halfExtentXZ) => NavmeshIPC.QueryMeshPointOnFloor(new Vector3(x, y, z), halfExtentXZ)?.Z;
-    public void PathMoveTo(float x, float y, float z, bool fly) => NavmeshIPC.PathMoveTo([new Vector3(x, y, z)], fly);
+    public void PathMoveTo(float x, float y, float z, bool fly = false) => NavmeshIPC.PathMoveTo([new Vector3(x, y, z)], fly);
     public void PathStop() => NavmeshIPC.PathStop();
     public bool PathIsRunning() => NavmeshIPC.PathIsRunning();
     public int PathNumWaypoints() => NavmeshIPC.PathNumWaypoints();
@@ -92,7 +92,7 @@ public class IpcCommands
     public void PathSetAlignCamera(bool state) => NavmeshIPC.PathSetAlignCamera(state);
     public float PathGetTolerance() => NavmeshIPC.PathGetTolerance();
     public void PathSetTolerance(float t) => NavmeshIPC.PathSetTolerance(t);
-    public void PathfindAndMoveTo(float x, float y, float z, bool fly) => NavmeshIPC.PathfindAndMoveTo(new Vector3(x, y, z), fly);
+    public void PathfindAndMoveTo(float x, float y, float z, bool fly = false) => NavmeshIPC.PathfindAndMoveTo(new Vector3(x, y, z), fly);
     public bool PathfindInProgress() => NavmeshIPC.PathfindInProgress();
     #endregion
 
