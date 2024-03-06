@@ -391,15 +391,17 @@ table.insert(package.searchers, function(name) -- find files
 
   local abs_file = package.searchpath("""", name, '/') -- check absolute path
   if abs_file ~= nil then
-    return loadfile(abs_file, chunkname)
+    local loaded, err = loadfile(abs_file)
+    return assert(loaded, err), chunkname
   end
 
   for _, v in ipairs(snd.require.paths) do -- check in paths from snd.require.paths
     local path = v:gsub(""[/\\]*$"", """")
-    local file = package.searchpath("""", name, '/')
+    local rel_file = package.searchpath("""", name, '/')
         or package.searchpath(name, path .. ""\\?;"" .. path .. ""\\?.lua"", '/')
-    if file ~= nil then
-      return loadfile(file, chunkname)
+    if rel_file ~= nil then
+      local loaded, err = loadfile(rel_file)
+      return assert(loaded, err), chunkname
     end
   end
 
@@ -414,7 +416,8 @@ table.insert(package.searchers, function(name) -- find macros
   local chunkname = 'macro[""' .. macro .. '""]'
   local macro_text = InternalGetMacroText(macro)
   if macro_text ~= nil then
-    return load(macro_text, chunkname), chunkname
+    local loaded, err = load(macro_text)
+    return assert(loaded, err), chunkname
   end
   return 'no matching macro: ' .. chunkname
 end)
