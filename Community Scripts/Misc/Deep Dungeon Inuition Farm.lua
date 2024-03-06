@@ -1,4 +1,4 @@
---[[
+﻿--[[
 
   ****************
   * Authors Note *
@@ -7,16 +7,18 @@
   Authors note: TECHNICALLY if you get a Concealment, you are going to be WAY quicker on your runs. It's a 1 pom usage vs 2, which shaves off ~3 seconds per run
                 And that can add up... VERY quickly. I have went through and made this as fast as I can (possibly) made it at this second. 
 
-  Author: Ice 
+  Author: Leontopodium Nivale
   Quick note: thank you the two of you who kept bug fixing my things and asking for new features
               this wouldn't have gotten better w/o you buggin me in my dms
 
   **************
   *  Version:  *
-  *    1.1     *
+  *   1.1.1    *
   **************
 
   Version Update Notes:
+  1.1.2   -> Forgot that floors 21-30 has a different zone ID... woops. Also, standard is now supported by default, so no need for extra menu-ing/changing control schemes
+  1.1.1   -> Added tracker to tell you how many you've gotten as you farm, false by default
   1.1     -> NVM. Turns out this is faster than I could before. Updated timers again, added one before loading into NPC to make it more normalish on loadout
   1.0.4.2 -> Fixed sprint, made it constantly try to use while moving to spot
   1.0.4.1 -> Concealment save file setting added
@@ -59,24 +61,39 @@
   **************
 ]]
 
+
+  Save_Slot = 0
   --Save Data Slot 
   --Top Slot = 0, Bottom Slot = 1, change the value to the save file you want to farm the achievement
-  Save_Slot = 1
 
+  ManualMovement = false
   -- If an Intuition is on the floor, and out of range, do you want to still get it manually?
   -- false will leave and try to find one closer
   -- true will make it to where you are in control till you get the Intuition
-  ManualMovement = false
 
-  -- If you're running on standard control scheme (like my raid mates), make sure to change this to false, it'll make vnavmesh work properly
-  -- Options: true | false 
-  MovementLegacy = true
-
+  ConcealmentSaveFile = true 
   -- This setting is so you can mark off if you have concealment or not 
   -- Concealment is 100% quicker, so if you do have it in a save, would highly recommend setting this to true 
   -- if not, it'll use a primal + safety for movmement (sight doesn't really do TOO much, safety is so you don't hit a luring on the way there lol)
   -- Options: true | false 
-  ConcealmentSaveFile = true 
+
+  ChatTracker = true
+  -- Option to track how many intuitions you've found over time 
+  -- false by default, if you would like it to tell you upon every return back in front of the NPC, set it to true 
+  -- Options: true | false 
+
+  --[[
+   
+    ********************
+    *  Script Start    *
+    *      Point       *
+    ********************
+
+  ]]
+
+  IntuitFound = 0 
+  IntuitNotFound  = 0
+  IntuitOutofRanged = 0 
 
 ::DeepDungeon::
 while IsInZone(613) == false do
@@ -85,11 +102,18 @@ while IsInZone(613) == false do
 end
 
 while GetCharacterCondition(45) do
-yield("/wait 0.1")
+  yield("/wait 0.1")
 end
 
 if IsInZone(613) then
   yield("/wait 0.5")
+  if ChatTracker == true then 
+    yield("/e ┣━━━━━━━━━━━━━━━━━┫")
+    yield("/e ->  Intuitions Found Currently at: "..IntuitFound)
+    yield("/e ->  Intuitions Not Found: "..IntuitNotFound)
+    yield("/e ->  Intuitions Out of Range: "..IntuitOutofRanged)
+    yield("/e ┣━━━━━━━━━━━━━━━━━┫")
+  end
   while GetCharacterCondition(34, false) and GetCharacterCondition(45, false) do
     if IsAddonVisible("ContentsFinderConfirm") then
       yield("/pcall ContentsFinderConfirm true 8")
@@ -110,7 +134,7 @@ end
 
 ::ZoneCheck::
 
-if GetZoneID() == 771 then
+if (GetZoneID() == 771 or GetZoneID() == 772) then
   repeat 
     yield("/wait 0.1")
   until IsPlayerAvailable()
@@ -135,22 +159,13 @@ if GetToastNodeText(2, 3) == "You sense the Accursed Hoard calling you..." then
   end  
   if GetAccursedHoardRawX() == 0.0 and GetAccursedHoardRawY() == 0.0 and ManualMovement == false then
     yield("/e It's out of range, getting out of here")
+    IntuitOutofRanged = IntuitOutofRanged + 1
     LeaveDuty()
     goto DeepDungeon
   end
 
   yield("/echo Hey! A Hoard is here and in range.")
-  if MovementLegacy == false then 
-    yield("/characterconfig")
-    yield("/pcall ConfigCharacter True 10 0 0 1") -- Makes sure you're on the Contorl Settings Tab
-    yield("/wait 0.2")
-    yield("/pcall ConfigCharaOpeGeneral True 18 143 1 0") --Legacy Button
-    yield("/wait 0.2")
-    yield("/pcall ConfigCharacter True 0") -- Applies the settings
-    yield("/wait 0.2")
-    yield("/pcall ConfigCharacter True 1") -- Closes the Config Menu
-    yield("/wait 1")
-  end
+    yield("/vnavmesh moveto "..string.format("%.2f", GetAccursedHoardRawX()).." "..string.format("%.2f", GetAccursedHoardRawY()).." "..string.format("%.2f", GetAccursedHoardRawZ()))
     if ConcealmentSaveFile == true then 
       yield("/pcall DeepDungeonStatus True 11 18") -- Concealment pomander
       repeat 
@@ -165,16 +180,16 @@ if GetToastNodeText(2, 3) == "You sense the Accursed Hoard calling you..." then
         yield("/wait 0.1")
       until IsPlayerAvailable()
     end
-  yield("/vnavmesh moveto "..string.format("%.2f", GetAccursedHoardRawX()).." "..string.format("%.2f", GetAccursedHoardRawY()).." "..string.format("%.2f", GetAccursedHoardRawZ()))
   Chest_Got = false
   
 elseif GetToastNodeText(2, 3) == "You do not sense the call of the Accursed Hoard on this floor..." then
+    IntuitNotFound = IntuitNotFound + 1
     LeaveDuty()
     goto DeepDungeon
 end
 
 ::IntuitionTime::
-while Chest_Got == false do
+while Chest_Got == false and (GetZoneID() == 771 or GetZoneID() == 772) do
   yield("/wait 0.1")
   yield("/ac sprint")
   if GetToastNodeText(2, 3) == "You obtain a piece of the Accursed Hoard." then
@@ -184,23 +199,15 @@ while Chest_Got == false do
   end
 end
 
-if Chest_Got == true then 
+if Chest_Got == true and (GetZoneID() == 771 or GetZoneID() == 772) then 
   while GetCharacterCondition(26) do
     yield("/wait 1")
   end
   yield("/wait 1")
-  if MovementLegacy == false then 
-    yield("/characterconfig")
-    yield("/pcall ConfigCharacter True 10 0 0 1") -- Makes sure you're on the Contorl Settings Tab
-    yield("/wait 0.2")
-    yield("/pcall ConfigCharaOpeGeneral True 18 143 0 0") --Standard Button
-    yield("/wait 0.2")
-    yield("/pcall ConfigCharacter True 0") -- saves the Settings
-    yield("/wait 0.2")
-    yield("/pcall ConfigCharacter True 1") -- closes the character config
-    yield("/wait 0.2")
-  end
+
+  IntuitFound = IntuitFound + 1
     
   LeaveDuty()
-  goto DeepDungeon
 end
+
+  goto DeepDungeon
