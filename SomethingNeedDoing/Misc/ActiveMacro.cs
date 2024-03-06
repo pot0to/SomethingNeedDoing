@@ -372,8 +372,54 @@ function f(str)
 end";
 
     private const string PackageSearchersSnippet = @"
-table.insert(package.searchers, 1, function(name)
-  return assert(load(InternalGetMacroText(name), name), ""`require` target not found: '"" .. name .. ""'"")
+_G.snd = {
+  require = {
+    paths = {},
+    add_paths = function(...)
+      for k, v in pairs({ ... }) do
+        table.insert(snd.require.paths, v)
+      end
+    end
+  }
+}
+
+package.original_searchers = package.searchers
+package.searchers = { package.original_searchers[1] } -- keep the preload searcher
+table.insert(package.searchers, function(name) -- find files
+  if name:match("".macro$"") then return end
+  local chunkname = 'file[""' .. name .. '""]'
+
+  local abs_file = package.searchpath("""", name, '/') -- check absolute path
+  if abs_file ~= nil then
+    local loaded, err = loadfile(abs_file)
+    return assert(loaded, err), chunkname
+  end
+
+  for _, v in ipairs(snd.require.paths) do -- check in paths from snd.require.paths
+    local path = v:gsub(""[/\\]*$"", """")
+    local rel_file = package.searchpath("""", name, '/')
+        or package.searchpath(name, path .. ""\\?;"" .. path .. ""\\?.lua"", '/')
+    if rel_file ~= nil then
+      local loaded, err = loadfile(rel_file)
+      return assert(loaded, err), chunkname
+    end
+  end
+
+  if #snd.require.paths > 0 then
+    return 'no matching file: ' .. chunkname .. ' in searched paths:\n  ' .. table.concat(snd.require.paths, '\n  ')
+  else
+    return 'no matching file: ' .. chunkname .. ' (and snd.require.paths was empty)'
+  end
+end)
+table.insert(package.searchers, function(name) -- find macros
+  local macro = string.gsub(name, "".macro$"", """")
+  local chunkname = 'macro[""' .. macro .. '""]'
+  local macro_text = InternalGetMacroText(macro)
+  if macro_text ~= nil then
+    local loaded, err = load(macro_text)
+    return assert(loaded, err), chunkname
+  end
+  return 'no matching macro: ' .. chunkname
 end)
 ";
 }
