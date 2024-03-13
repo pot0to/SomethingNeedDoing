@@ -561,6 +561,7 @@ local function arbitrary_duty()
 				if target ~= doodie[whereismydoodie][7] then --dont get away from they keys and such
 					yield("/"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4]) --move to the x y z in the waypoint
 					yield("/echo No Combat - Regular NAV , WP -> "..whereismydoodie.." navtype -> "..muuvtype.." nav code -> "..doodie[whereismydoodie][1].."  current dist to objective -> "..tempdist)
+					--yield("/echo No Combat - Regular NAV , DEBUG -> /"..muuvtype.." moveto "..doodie[whereismydoodie][2].." "..doodie[whereismydoodie][3].." "..doodie[whereismydoodie][4].."<-- line end")
 				end
 				if string.len(doodie[whereismydoodie][7]) > 1 then
 					yield("/target "..doodie[whereismydoodie][7])
