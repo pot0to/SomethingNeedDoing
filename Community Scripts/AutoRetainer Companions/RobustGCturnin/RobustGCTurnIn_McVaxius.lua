@@ -116,6 +116,7 @@ function Final_GC_Cleaning()
 		yield("/target \"Summoning Bell\"")
 		yield("/wait 2")
 		PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
+		visland_stop_moving() --added so we don't accidentally end before we get to the bell
 	end
 	
 --[[ dumping out this part. opening venture coffers is kind of annoying waste of time. maybe we make it optional later -->TODO<--
