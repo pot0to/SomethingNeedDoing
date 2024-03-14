@@ -4,6 +4,37 @@
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1190858719546835065
 ]]
 
+--enter in names of characters that will be responsible for triggering FC Buffs
+local chars_FCBUFF = {
+ "First Last@Server",
+ "First Last@Server",
+ "First Last@Server",
+ "First Last@Server",
+ "First Last@Server"
+}
+
+--characters with servername, fc house or bell (0, 1)
+local chars_fn = {
+ {"First Last@Server", 0},
+ {"First Last@Server", 0},
+ {"First Last@Server", 0},
+ {"First Last@Server", 0},
+ {"First Last@Server", 0},
+ {"First Last@Server", 0},
+ {"First Last@Server", 0},
+ {"First Last@Server", 0}
+}
+
+--total retainer abusers
+local total_rcucks = 22
+--starting the counter at 1
+local rcuck_count = 1
+--do we bother with fc buffs? 0 = no 1 = yes
+local process_fc_buffs = 1
+--do we run each city?
+local process_players = 1
+
+
 --some ideas for next version
 --deliveroo config suggestion: add some seals. and we can have a seal 0 or 1 option in settings
 --add instructions for how to use this script
@@ -11,28 +42,14 @@
 --check direction of where we spawned in gridania and uldah to adjust, and include new vislands
 --change any vislands to use base64 var passed to visland
 --use snd useitem
+--https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
 
--- Function to load variables from a file
-function loadVariablesFromFile(filename)
-    local file = io.open(filename, "r")
-    if file then
-        for line in file:lines() do
-            -- Remove single-line comments (lines starting with --) before processing
-            line = line:gsub("%s*%-%-.*", "")
-            -- Extract variable name and value
-            local variable, value = line:match("(%S+)%s*=%s*(.+)")
-            if variable and value then
-                -- Convert the value to the appropriate type (number or string)
-                value = tonumber(value) or value
-                _G[variable] = value  -- Set the global variable with the extracted name and value
-            end
-        end
-        io.close(file)
-    else
-        print("Error: Unable to open file " .. filename)
-    end
-end
-
+--borrowed some code and ideas from the wonderful:  (make sure the _functions is in the snd folder)
+--https://github.com/elijabesu/ffxiv-scripts/blob/main/snd/_functions.lua
+loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
+functionsToLoad = loadfile(loadfiyel)
+functionsToLoad()
+DidWeLoadcorrectly()
 
 -- Specify the path to your text file
 --[[
@@ -42,26 +59,6 @@ end
 	tempchar = tempchar:gsub("%s", "")  --remove all spaces
 	tempchar = tempchar:gsub("'", "")   --remove all apostrophes
 ]]
-local filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\RobustGCTurnIn_McVaxius.ini"
-
--- Call the function to load variables from the file
-loadVariablesFromFile(filename)
-
-function recordFCRANK()
-	local file = io.open(folderPath .. "FCranks.txt", "a")
-    local currentTime = os.date("*t")
-    local formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
-	if file then
-		-- Write text to the file
-		--file:write("Hello, this is some text written to a file using Lua!\n")
-		file:write(formattedTime.." - Char:"..GetCharacterName().." - FC: "..charFCS[GetCharacterName()].." - FC Rank - "..GetFCRank().."\n")
-		-- Close the file handle
-		file:close()
-		yield("/echo Text has been written to '" .. folderPath .. "FCranks.txt'")
-	else
-		yield("/echo Error: Unable to open file for writing")
-	end
-end
 
 function Final_GC_Cleaning()
 	--turn around in case we aren't facing the correct way
@@ -104,15 +101,26 @@ function Final_GC_Cleaning()
 	yield("/wait 15")
 	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 
-    yield("/hold W <wait.1.0>")
-    yield("/release W")
-	yield("/target Entrance <wait.1>")
-	yield("/lockon on")
-	yield("/automove on <wait.2.5>")
-	yield("/automove off <wait.1.5>")
-	yield("/hold Q <wait.2.0>")
-    yield("/release Q")
+	--normal small house shenanigans
+	if chars_fn[rcuck_count][2] == 0 then
+		yield("/hold W <wait.1.0>")
+		yield("/release W")
+		yield("/target Entrance <wait.1>")
+		yield("/lockon on")
+		yield("/automove on <wait.2.5>")
+		yield("/automove off <wait.1.5>")
+		yield("/hold Q <wait.2.0>")
+		yield("/release Q")
+	end
 
+	--retainer bell nearby shenanigans
+	if chars_fn[rcuck_count][2] == 1 then
+		yield("/target \"Summoning Bell\"")
+		yield("/wait 2")
+		PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
+	end
+	
+--[[ dumping out this part. opening venture coffers is kind of annoying waste of time. maybe we make it optional later -->TODO<--
 	--Code for opening venture coffers
 	yield("/wait 3")
 	yield("/echo Number of Venture Coffers to open: "..GetItemCount(32161))
@@ -125,10 +133,10 @@ function Final_GC_Cleaning()
 		VCnum = GetItemCount(32161)
 		yield("/echo Number of Venture Coffers left: "..GetItemCount(32161))
 	end
+	]]
 	--yield("/autorun off")
 	--Code for opening FC menu so allagan tools can pull the FC points
 	yield("/freecompanycmd")
-	recordFCRANK()
 	yield("/wait 3")
 end
 
@@ -153,26 +161,6 @@ function visland_stop_moving()
  yield("/wait 3")
 end
 
-function open_aetheryte()
- yield("/waitaddon NamePlate <wait.1>")
- yield("/wait 10")
- yield("/target Aetheryte <wait.1>")
- yield("/lockon")
- yield("/automove")
- yield("/send E")
- yield("/wait 0.5")
- yield("/send E")
- yield("/wait 0.5")
- yield("/send E")
- yield("/wait 0.5")
- yield("/send E")
- yield("/wait 0.5")
- yield("/send E")
- yield("/wait 0.5")
- yield("/pinteract <wait.1>")
- yield("/pcall SelectString true 0")
-end
-
 --first turn on FC buffs
 if process_fc_buffs == 1 then
 	for _, char in ipairs(chars_FCBUFF) do
@@ -191,73 +179,22 @@ if process_fc_buffs == 1 then
 	 end
 	yield("/wait 3")
 end
---gridania
-if process_gridania == 1 then
-	for _, char in ipairs(chars_gridania) do
-	 yield("/echo "..char)
-	 yield("/ays relog " ..char)
-	 yield("/echo 15 second wait")
-	 yield("/wait 15")
-	 yield("/waitaddon NamePlate <maxwait.600> <wait.5>")
+
+--gc turn in
+if process_players == 1 then
+	for i=1, #chars_fn do
+	 yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
 	 yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..total_rcucks)
-	 yield("/tp New Gridania <wait.8>")
-	 open_aetheryte()
-	 yield("/pcall TelepotTown false 11 1u")
-	 yield("/pcall TelepotTown false 11 1u")
-	 yield("/wait 5")
-	 yield("/ac Sprint")
-	 yield("/ac Sprint")
-	 yield("/ac Sprint")
-	 yield("/visland execonce GCgrid")
-	 visland_stop_moving()
+	 yield("/ays relog " ..chars_fn[i][1])
+	 --yield("/echo 15 second wait")
+	yield("/wait 2")
+	CharacterSafeWait()
+	 yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..total_rcucks)
+	TeleportToGCTown()
+	ZoneTransition()
+	WalkToGC()
 	 Final_GC_Cleaning()
 	 rcuck_count = rcuck_count + 1
-	end
-end
---uldah
-if process_uldah == 1 then
-	for _, char in ipairs(chars_uldah) do
-	 yield("/echo "..char)
-	 yield("/ays relog " ..char)
-	 yield("/echo 15 second wait")
-	 yield("/wait 15")
-	 yield("/waitaddon NamePlate <maxwait.600> <wait.5>")
-	 yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..total_rcucks)
-	 rcuck_count = rcuck_count + 1
-	 yield("/tp Ul'dah - Steps of Nald <wait.8>")
-	 open_aetheryte()
-	 yield("/pcall TelepotTown false 11 2u")
-	 yield("/pcall TelepotTown false 11 2u")
-	 yield("/wait 5")
-	 yield("/ac Sprint")
-	 yield("/ac Sprint")
-	 yield("/ac Sprint")
-	 yield("/visland execonce GCuld")
-	 visland_stop_moving()
-	 Final_GC_Cleaning()
-	end
-end
---limsa
-if process_toilet == 1 then
-	for _, char in ipairs(chars_toilet) do
-	 yield("/echo "..char)
-	 yield("/ays relog " ..char)
-	 yield("/echo 15 second wait")
-	 yield("/wait 15")
-	 yield("/waitaddon NamePlate <maxwait.600> <wait.5>")
-	 yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..total_rcucks)
-	 rcuck_count = rcuck_count + 1
-	 yield("/tp Limsa Lominsa <wait.8>")
-	 open_aetheryte()
-	 yield("/pcall TelepotTown false 11 1u")
-	 yield("/pcall TelepotTown false 11 1u")
-	 yield("/wait 5")
-	 yield("/ac Sprint")
-	 yield("/ac Sprint")
-	 yield("/ac Sprint")
-	 yield("/visland execonce GClimsa")
-	 visland_stop_moving()
-	 Final_GC_Cleaning()
 	end
 end
 --last one out turn off the lights
