@@ -25,8 +25,6 @@ local chars_fn = {
  {"First Last@Server", 0}
 }
 
---total retainer abusers
-local total_rcucks = 22
 --starting the counter at 1
 local rcuck_count = 1
 --do we bother with fc buffs? 0 = no 1 = yes
@@ -84,7 +82,7 @@ function Final_GC_Cleaning()
 		yield("/wait 5")
 		dellyroo = DeliverooIsTurnInRunning()
 		dellycount = dellycount + 1
-		yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..total_rcucks)
+		yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..#chars_fn)
 		if dellycount > 100 then
 			--do some stuff like turning off deliveroo and targeting and untargeting an npc
 			--i think we just need to target the quartermaster and open the dialog with him
@@ -184,17 +182,17 @@ end
 if process_players == 1 then
 	for i=1, #chars_fn do
 	 yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
-	 yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..total_rcucks)
+	 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
 	 yield("/ays relog " ..chars_fn[i][1])
 	 --yield("/echo 15 second wait")
 	yield("/wait 2")
 	CharacterSafeWait()
-	 yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..total_rcucks)
+	 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
 	TeleportToGCTown()
 	ZoneTransition()
 	WalkToGC()
-	 Final_GC_Cleaning()
-	 rcuck_count = rcuck_count + 1
+	Final_GC_Cleaning()
+	rcuck_count = i
 	end
 end
 --last one out turn off the lights
