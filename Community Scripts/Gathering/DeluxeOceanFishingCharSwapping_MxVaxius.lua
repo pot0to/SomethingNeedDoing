@@ -1,3 +1,5 @@
+--log path
+local folderPath = "F:/FF14/!gil/"
 
 --define the fisherpeople here
 local which_one = {
@@ -83,9 +85,6 @@ end
 function getRandomNumber(min, max)
   return math.random(min,max)
 end
-
---log path
-local folderPath = "F:/FF14/!gil/"
 
 -- main fishing function will run per set interval time
 -- first char cardinality and variable declaration
@@ -280,7 +279,7 @@ while true do
 			feesh_c = feesh_c - 1
 			vich_one()
 			-- Open a file in write mode within the specified folder
-			local file = io.open(folderPath .. "output.txt", "a")
+			local file = io.open(folderPath .. "FeeshLevels.txt", "a")
 
 			if file then
 				-- Write text to the file
@@ -292,7 +291,7 @@ while true do
 				-- Close the file handle
 				file:close()
 				--print("Text has been written to '" .. folderPath .. "output.txt'")
-				yield("/echo Text has been written to '" .. folderPath .. "output.txt'")
+				yield("/echo Text has been written to '" .. folderPath .. "FeeshLevels.txt'")
 			else
 				--print("Error: Unable to open file for writing")
 				yield("/echo Error: Unable to open file for writing")
