@@ -247,55 +247,6 @@ function fishing()
 
 end --of fishing()
 
---in case times are offset?!?!
-
-local taskTimes = {
-[1] = true,
-[3] = true,
-[5] = true,
-[7] = true,
-[9] = true,
-[11] = true,
-[13] = true,
-[15] = true,
-[17] = true,
-[19] = true,
-[21] = true,
-[23] = true
-}
-
---[[
-local taskTimes = {
-[0] = true,
-[2] = true,
-[4] = true,
-[6] = true,
-[8] = true,
-[10] = true,
-[12] = true,
-[14] = true,
-[16] = true,
-[18] = true,
-[20] = true,
-[22] = true
-}
-]]--
-
-local taskTimeMin = {
-[1] = true,
-[2] = true,
-[3] = true,
-[4] = true,
-[5] = true,
-[6] = true,
-[7] = true,
-[8] = true,
-[9] = true,
-[10] = true,
-[11] = true,
-[12] = true
-}
-
 while true do 
   local currentTime = os.date("*t")
   local formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
@@ -320,7 +271,8 @@ while true do
    if wheeequeheeheheheheheehhhee == 1 then
 	if GetCharacterCondition(31)==false then
 		if GetCharacterCondition(32)==false then
-			 yield("/ays multi")
+			 --yield("/ays multi")
+			 yield("/ays multi d")
 			 yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 			 fishing()
 			 --drop a log file entry on the charname + Level
@@ -348,7 +300,8 @@ while true do
 			end
 			feesh_c = feesh_c + 1
 			vich_one()
- 			yield("/ays multi")
+ 			--yield("/ays multi")
+ 			yield("/ays multi e")
 		end
 	end
    end  -- end if
