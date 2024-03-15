@@ -277,6 +277,9 @@ while true do
 		if GetCharacterCondition(32)==false then
 			 --yield("/ays multi")
 			 yield("/ays multi d")
+		 	 yield("/send ESCAPE <wait.1.5>")
+			 yield("/send ESCAPE <wait.1.5>")
+			 yield("/send ESCAPE <wait.1.5>")
 			 yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 			 fishing()
 			 --drop a log file entry on the charname + Level
