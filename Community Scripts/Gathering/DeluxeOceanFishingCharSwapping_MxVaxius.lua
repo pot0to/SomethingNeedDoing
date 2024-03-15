@@ -1,5 +1,7 @@
 --log path
 local folderPath = "F:/FF14/!gil/"
+-- first char cardinality and variable declaration
+local feesh_c = 2
 
 --define the fisherpeople here
 local which_one = {
@@ -87,8 +89,6 @@ function getRandomNumber(min, max)
 end
 
 -- main fishing function will run per set interval time
--- first char cardinality and variable declaration
-local feesh_c = 2
 local feesh_char = "firstname lastname@server"  --placeholder don't change this variable
 
 --for echoing later
@@ -140,9 +140,6 @@ function fishing()
 	yield("/pcall TelepotTown false 11 3u <wait.1>")
 	yield("/wait 10")
 
-	-- from Arcanists' Guild to Ocean Fishing
-	--yield("/visland execonce OC_Arc_Guild") -- create a path from Arcanists' Guild to Dryskthota
-	
 	yield("/ac sprint")
 	--TODO better / faster way to get to dryskthoa
 	PathfindAndMoveTo(-409.42459106445,3.9999997615814,74.483444213867,false) 
@@ -160,22 +157,31 @@ function fishing()
 		muuvZ = GetPlayerRawZPos()
 	 end
 	yield("/wait 1")
-
-	yield("/target Dryskthota")
-	yield("/pinteract <wait.2>")
-	yield("/wait 1")
-	yield("/send ESCAPE <wait.1.5>")
-	yield("/send ESCAPE <wait.1.5>")
-	yield("/send ESCAPE <wait.1.5>")
-	yield("/send ESCAPE <wait.1>")
-	yield("/wait 1")
+	fishqtest = false
+	toolong = 0
+	fishqtest = GetCharacterCondition(91)
+	while (type(fishqtest) == "boolean" and fishqtest == false) do
+		yield("/target Dryskthota")
+		yield("/pinteract <wait.2>")
+		yield("/wait 1")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1>")
+		yield("/wait 10")
+		fishqtest = GetCharacterCondition(91)
+		toolong = toolong  + 1
+		if toolong > 30 then
+			fishqtest = true
+		end
+	end
 
 	--get current area
 	yield("/echo Current area"..GetZoneID())
 	zown = GetZoneID()
 	fzown = GetZoneID()
 	--check if area has changed every 5 seconds.
-	while (zown == fzown) do
+	while (zown == fzown) and (toolong < 30) do
 		fzown = GetZoneID()	
 		yield("/wait 5")
 	end
@@ -222,7 +228,6 @@ function fishing()
 	yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
 	yield("/tp Estate Hall <wait.10>")
 	yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
-
 
 	--normal small house shenanigans
 	if which_one[feesh_c][2] == 0 then
