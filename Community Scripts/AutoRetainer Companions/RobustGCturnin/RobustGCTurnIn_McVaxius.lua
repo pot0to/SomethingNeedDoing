@@ -139,27 +139,6 @@ function Final_GC_Cleaning()
 	yield("/wait 3")
 end
 
-function visland_stop_moving()
- yield("/equipguud")
- yield("/wait 3")
- muuv = 1
- muuvX = GetPlayerRawXPos()
- muuvY = GetPlayerRawYPos()
- muuvZ = GetPlayerRawZPos()
- while muuv == 1 do
-	yield("/wait 1")
-	if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
-		muuv = 0
-	end
-	muuvX = GetPlayerRawXPos()
-	muuvY = GetPlayerRawYPos()
-	muuvZ = GetPlayerRawZPos()
- end
- yield("/echo movement stopped - time for GC turn ins or whatever")
- yield("/visland stop")
- yield("/wait 3")
-end
-
 --first turn on FC buffs
 if process_fc_buffs == 1 then
 	for _, char in ipairs(chars_FCBUFF) do

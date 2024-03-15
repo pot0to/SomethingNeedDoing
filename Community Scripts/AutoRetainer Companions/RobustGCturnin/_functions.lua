@@ -43,3 +43,24 @@ function CharacterSafeWait()
 	 yield("/waitaddon NamePlate <maxwait.600> <wait.5>")
 
 end
+
+function visland_stop_moving()
+ yield("/equipguud")
+ yield("/wait 3")
+ muuv = 1
+ muuvX = GetPlayerRawXPos()
+ muuvY = GetPlayerRawYPos()
+ muuvZ = GetPlayerRawZPos()
+ while muuv == 1 do
+	yield("/wait 1")
+	if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
+		muuv = 0
+	end
+	muuvX = GetPlayerRawXPos()
+	muuvY = GetPlayerRawYPos()
+	muuvZ = GetPlayerRawZPos()
+ end
+ yield("/echo movement stopped - time for GC turn ins or whatever")
+ yield("/visland stop")
+ yield("/wait 3")
+end
