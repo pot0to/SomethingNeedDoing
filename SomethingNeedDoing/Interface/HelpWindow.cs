@@ -326,6 +326,17 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+        "2024-03-15",
+        "- Added GetTargetFateID()\n" +
+        "- Added GetFocusTargetFateID()\n" +
+        "- Added GetObjectFateID()\n");
+
+        DisplayChangelog(
+        "2024-03-07",
+        "- Added GetPartyMemberName()\n");
+
         DisplayChangelog(
         "2024-03-06",
         "- Further improvements to require(). Support for absolute and relative paths, or macros (thanks stjornur!)\n");

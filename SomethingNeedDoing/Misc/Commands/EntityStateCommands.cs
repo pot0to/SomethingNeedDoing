@@ -48,6 +48,7 @@ internal class EntityStateCommands
     public void ClearTarget() => Svc.Targets.Target = null;
     public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer!.Position);
     public unsafe bool TargetHasStatus(uint statusID) => ((Character*)Svc.Targets.Target?.Address!)->GetStatusManager()->HasStatus(statusID);
+    public unsafe uint GetTargetFateID() => Svc.Targets.Target != null ? Svc.Targets.Target.Struct()->FateId : 0;
     #endregion
 
     #region Focus Target
@@ -65,6 +66,7 @@ internal class EntityStateCommands
     public void ClearFocusTarget() => Svc.Targets.FocusTarget = null;
     public float GetDistanceToFocusTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.FocusTarget?.Position ?? Svc.ClientState.LocalPlayer!.Position);
     public unsafe bool FocusTargetHasStatus(uint statusID) => ((Character*)Svc.Targets.FocusTarget?.Address!)->GetStatusManager()->HasStatus(statusID);
+    public unsafe uint GetFocusTargetFateID() => Svc.Targets.FocusTarget != null ? Svc.Targets.FocusTarget.Struct()->FateId : 0;
     #endregion
 
     #region Any Object
@@ -80,9 +82,11 @@ internal class EntityStateCommands
     public float GetObjectHPP(string name) => GetObjectHP(name) / GetObjectMaxHP(name) * 100;
     public float GetObjectRotation(string name) => (float)(GetGameObjectFromName(name)?.Rotation * (180 / Math.PI) ?? 0);
     public unsafe bool ObjectHasStatus(string name, uint statusID) => ((Character*)GetGameObjectFromName(name)?.Address!)->GetStatusManager()->HasStatus(statusID);
+    public unsafe uint GetObjectFateID(string name) => GetGameObjectFromName(name) != null ? GetGameObjectFromName(name).Struct()->FateId : 0;
     #endregion
 
     #region Party Members
+    public string GetPartyMemberName(int index) => Svc.Party[index]?.Name.TextValue ?? "";
     public float GetPartyMemberRawXPos(int index) => Svc.Party[index]?.Position.X ?? 0;
     public float GetPartyMemberRawYPos(int index) => Svc.Party[index]?.Position.Y ?? 0;
     public float GetPartyMemberRawZPos(int index) => Svc.Party[index]?.Position.Z ?? 0;
