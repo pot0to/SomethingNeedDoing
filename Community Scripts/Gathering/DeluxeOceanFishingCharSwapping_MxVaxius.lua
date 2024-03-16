@@ -304,7 +304,7 @@ while true do
 			else
 				--print("Error: Unable to open file for writing")
 				yield("/echo Error: Unable to open file for writing")
-				file:write("Error: Unable to open file for writing\n")
+				--file:write("Error: Unable to open file for writing\n")
 			end
 			feesh_c = feesh_c + 1
 			vich_one()
