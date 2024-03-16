@@ -19,11 +19,11 @@ local which_one = {
 the above table works like this:
 firstname last name@server (obvious), ?
 ? = 0 or 1,
-0 means teleport home and try to get into FC. 
-1 means teleport home and use a nearby retainer bell.
+0 means teleport to fc estate and try to get into FC entrance. 
+1 means teleport to fc estate and use a nearby retainer bell (navmesh)
 
 
-you need visland, you need to not use "wait in lobby" in autoretainer
+you need navmesh and visland, you need to NOT use "wait in lobby" in autoretainer
 you need the version of snd related to the repo where you found this
 you need to have each char on the fisher job.  lalter version will fix this.
 having liza's discard helper will help with discarding garbage fish
