@@ -16,19 +16,20 @@ local which_one = {
 }
 
 --[[
-This text isnt commented because I want you to read this before you copy paste it
-go to  this part
-    if randomNum == 1 then yield("/visland moveto 6.641 6.711 -0.335")
-and fiddle with the numbers a bit
-then delete these first 5 lines and enjoy.
-]]
---you need visland, you need to not use "wait in lobby" in autoretainer
---you need the version of snd related to the repo where you found this
---you need to have each char on the fisher job.  lalter version will fix this.
---having liza's discard helper will help with discarding garbage fish
+the above table works like this:
+firstname last name@server (obvious), ?
+? = 0 or 1,
+0 means teleport home and try to get into FC. 
+1 means teleport home and use a nearby retainer bell.
 
 
---[[
+you need visland, you need to not use "wait in lobby" in autoretainer
+you need the version of snd related to the repo where you found this
+you need to have each char on the fisher job.  lalter version will fix this.
+having liza's discard helper will help with discarding garbage fish
+
+
+
 ---------
 ---TODO
 ---------
