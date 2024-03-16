@@ -171,8 +171,8 @@ if process_players == 1 then
 	TeleportToGCTown()
 	ZoneTransition()
 	WalkToGC()
-	Final_GC_Cleaning()
 	rcuck_count = i
+	Final_GC_Cleaning()
 	end
 end
 --last one out turn off the lights
