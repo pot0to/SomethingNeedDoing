@@ -41,7 +41,7 @@ end
 --to exit summary
 
 --add this somewhere to verify right char
-GetCharacterName()
+GetCharacterName(true) gives full name and server
 
 --check pinned mesages with @em for some stuff like changing jobs automatically whicih requires gearsets for instructions
 --add in config file that checks levels of chars. if they are under 90 they will be considered. and lowest level one will be selected
@@ -113,14 +113,20 @@ function fishing()
 	feesh_c = feesh_c + 1
 
 	yield("/echo "..feesh_char)
-	yield("/ays relog " ..feesh_char)
-	yield("/wait 3")
+	
+	--now we have to keep trying until we are on the right character.... just in case we are not.
+	while feesh_char ~= GetCharacterName(true) do
+		yield("/ays relog " ..feesh_char)
+		yield("/wait 3")
 
-    -- set the echo variable again so we can say what is next
-	vich_one()
+		-- set the echo variable again so we can say what is next
+		vich_one()
 
-	yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
+		yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
+	end
 
+	--ok we made it to the right character. let us continue.
+	
 	-- Teleport to Lisma
 	yield("/tp Limsa Lominsa Lower Decks <wait.5>")
 	yield("/waitaddon _ActionBar <maxwait.600><wait.10>")

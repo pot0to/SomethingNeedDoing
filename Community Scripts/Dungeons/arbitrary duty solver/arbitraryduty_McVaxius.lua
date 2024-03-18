@@ -9,7 +9,7 @@
 
 --todo
 --convert all variable sanity (type) checks into a generic function to reduce code clutter
---test and start building the spread marker checker so we can farm level 90 duties with a premade in preparation for vnavmesh caching :~D
+--add in some check if we are doing trust/squad/DS and then follow an npc in party when in combat so we resolve stack markers
 
 --we configure everything in a ini file.
 --this way we can just copy paste the scripts and not need to edit the script per char
