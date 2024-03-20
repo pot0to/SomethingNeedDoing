@@ -65,7 +65,7 @@ function ZoneTransition()
 end
 
 --begin!
-yield("/useitem "..maptype)
+yield("/item "..maptype)
 safewait()
 
 if GetZoneID() ~= GetFlagZone() then
