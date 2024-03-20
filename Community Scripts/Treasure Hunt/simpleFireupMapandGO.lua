@@ -53,6 +53,16 @@ local function safewait()
     until IsPlayerAvailable()
 	yield("/wait 1")
 end
+function ZoneTransition()
+	repeat 
+		yield("/wait 0.5")
+		yield("/echo Casting TP")
+	until not IsPlayerAvailable()
+	repeat 
+		yield("/wait 0.5")
+		yield("/echo Arriving from TP")
+	until IsPlayerAvailable()
+end
 
 --begin!
 yield("/useitem "..maptype)
@@ -61,16 +71,7 @@ safewait()
 if GetZoneID() ~= GetFlagZone() then
 	--we need to get there!
     yield("/p <flag>")
-	function ZoneTransition()
-		repeat 
-			yield("/wait 0.5")
-			yield("/echo Casting TP")
-		until not IsPlayerAvailable()
-		repeat 
-			yield("/wait 0.5")
-			yield("/echo Arriving from TP")
-		until IsPlayerAvailable()
-	end
+	ZoneTransition()
 end
 
 --either we TPed there or we were there already.
