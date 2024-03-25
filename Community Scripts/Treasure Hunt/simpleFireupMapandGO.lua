@@ -73,6 +73,8 @@ yield("/wait 1")
 yield("/pcall SelectIconString true 0")
 safewait()
 
+yield("target zone -> "..GetFlagZone())
+
 if GetZoneID() ~= GetFlagZone() then
 	--we need to get there!
     yield("/p <flag>")
@@ -83,11 +85,18 @@ end
 --now lets get our butts to the place.  no wait first lets see if we are close enough to the flag already to just waltz over
 
 -- if we are far from the flag (>5 yalm) path to it
-if distance(GetPlayerRawXPos(), GetPlayerRawZPos(), GetFlagXCoord(),GetFlagYCoord()) < 5 then
+tempdist = distance(GetPlayerRawXPos(), GetPlayerRawZPos(), GetFlagXCoord(),GetFlagYCoord())
+yield("tempdist -> "..tempdist)
+if tempdist > 5 then
 	PathfindAndMoveTo(GetFlagXCoord(), GetPlayerRawYPos(), GetFlagYCoord(), false)
 end
 
 --pop dig
+while GetCharacterCondition(4) do
+	yield("/ac dismount")
+	yield("/wait 2")
+end
+yield("/wait 1")
 yield("/ac dig")
 yield("/wait 7")
 	
