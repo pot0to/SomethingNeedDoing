@@ -10,6 +10,7 @@ Something Neeed Doing -> Yes you need this
 Rotation Solver -> :D
 Boss Mod -> :D
 Lazyloot -> optional for "/fulf pass" or whatever you want to do with it
+YesAlready -> the first time you decipher a map just add it to your yesalready
 
 pseudocode
 -> start
@@ -65,7 +66,11 @@ function ZoneTransition()
 end
 
 --begin!
-yield("/item "..maptype)
+--yield("/item "..maptype)
+--yield("/item Ostensibly Special Timeworn Map") --this doesnt actually work for some reason. it doesnt give an error though
+yield("/gaction decipher")
+yield("/wait 1")
+yield("/pcall SelectIconString true 0")
 safewait()
 
 if GetZoneID() ~= GetFlagZone() then
