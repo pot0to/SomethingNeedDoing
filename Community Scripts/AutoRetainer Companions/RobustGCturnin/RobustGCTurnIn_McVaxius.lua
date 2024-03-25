@@ -172,6 +172,7 @@ if process_players == 1 then
 	ZoneTransition()
 	WalkToGC()
 	rcuck_count = i
+	yield("/wait 2")
 	Final_GC_Cleaning()
 	end
 end
