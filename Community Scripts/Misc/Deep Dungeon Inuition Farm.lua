@@ -13,10 +13,14 @@
 
   **************
   *  Version:  *
-  *   1.1.1    *
+  *  1.1.3.3   *
   **************
 
   Version Update Notes:
+  1.1.3.3 -> Fixed it getting stuck on a step sometimes.... 
+  1.1.3.2 -> make it to where sprint would toggle off upon exit
+  1.1.3.1 -> Made it to where if you get spotted w/o Concealment, it'll pop a Magicite for safety
+  1.1.3   -> New plugin suggestion: "Burnt Toast". Esentially saves you ~3-6 seconds per pull. 
   1.1.2   -> Forgot that floors 21-30 has a different zone ID... woops. Also, standard is now supported by default, so no need for extra menu-ing/changing control schemes
   1.1.1   -> Added tracker to tell you how many you've gotten as you farm, false by default
   1.1     -> NVM. Turns out this is faster than I could before. Updated timers again, added one before loading into NPC to make it more normalish on loadout
@@ -51,6 +55,15 @@
 
    -> Pandora's Box | https://love.puni.sh/ment.json
    -> VNavmesh (was last tested on 0.0.0.10) | https://puni.sh/api/repository/veyn
+   -> Burnt Toast | 1PP Plugin (ty dev team)
+     -> Open the config and add the following: 
+       -> You can now discern the call of the Accursed Hoard.
+       -> The current duty uses an independent leveling system.
+       -> All the traps on this floor have disappeared!
+       -> You use a splinter of Inferno magicite.
+       -> You use a splinter of Crag magicite.
+       -> The Beacon of Passage is activated!
+       -> The Beacon of Return begins to glow!
 
 ]]
 
@@ -82,6 +95,21 @@
   -- false by default, if you would like it to tell you upon every return back in front of the NPC, set it to true 
   -- Options: true | false 
 
+ --[[
+
+    ********************
+    *  Safety Options  *
+    ********************
+
+ ]]
+
+   DemiSafety = false 
+   -- if for whatever reason you're in concealment and it either doesn't activate for you, or you manage to get stuck on a step(this has happened before more than I'd like to admit)
+   -- this will make it to where you activate a demi -> safety to ensure you don't hit the trap by accident
+
+   ConcealmentSafety = false 
+   -- if you get stuck on a step and your concealment
+
   --[[
    
     ********************
@@ -95,6 +123,29 @@
   IntuitNotFound  = 0
   IntuitOutofRanged = 0 
 
+-- Functions
+function SafetyProtocolDemi()
+  yield("/pcall DeepDungeonStatus True 12 0") -- primal summon
+  yield("/wait 3")
+  yield("/pcall DeepDungeonStatus True 11 1") -- safety pomander
+  yield("/wait 0.5")
+  repeat 
+    yield("/wait 0.1")
+  until IsPlayerAvailable()
+end
+
+function DistancetoHoard()
+  DistanceCheckStart = GetDistanceToPoint(tonumber(HoardX), tonumber(HoardY), tonumber(HoardZ))
+  yield("/wait 0.1")
+  DistanceCheckEnd = GetDistanceToPoint(tonumber(HoardX), tonumber(HoardY), tonumber(HoardZ))
+  yield("/wait 0.1")
+  if DistanceCheckStart == DistanceCheckEnd and PathIsRunning() then 
+    yield("/gaction jump")
+  end
+end
+
+
+
 ::DeepDungeon::
 while IsInZone(613) == false do
   PathStop()
@@ -107,6 +158,7 @@ end
 
 if IsInZone(613) then
   yield("/wait 0.5")
+  yield("/statusoff sprint")
   if ChatTracker == true then 
     yield("/e ┣━━━━━━━━━━━━━━━━━┫")
     yield("/e ->  Intuitions Found Currently at: "..IntuitFound)
@@ -141,11 +193,13 @@ if (GetZoneID() == 771 or GetZoneID() == 772) then
 end
 
 ::IntuitionCheck::
-yield("/wait 0.2")
-yield("/pcall DeepDungeonStatus True 11 14")
 
 repeat 
-  yield("/wait 0.1")
+    yield("/wait 0.1")
+    yield("/pcall DeepDungeonStatus True 11 14")
+    repeat 
+      yield("/wait 0.1")
+    until IsPlayerAvailable()
 until GetToastNodeText(2, 3) == "You sense the Accursed Hoard calling you..." or GetToastNodeText(2, 3) == "You do not sense the call of the Accursed Hoard on this floor..."
 
 if GetToastNodeText(2, 3) == "You sense the Accursed Hoard calling you..." then
@@ -166,21 +220,16 @@ if GetToastNodeText(2, 3) == "You sense the Accursed Hoard calling you..." then
 
   yield("/echo Hey! A Hoard is here and in range.")
     yield("/vnavmesh moveto "..string.format("%.2f", GetAccursedHoardRawX()).." "..string.format("%.2f", GetAccursedHoardRawY()).." "..string.format("%.2f", GetAccursedHoardRawZ()))
+    yield("/wait 1")
+    Chest_Got = false
     if ConcealmentSaveFile == true then 
       yield("/pcall DeepDungeonStatus True 11 18") -- Concealment pomander
       repeat 
         yield("/wait 0.1")
       until IsPlayerAvailable()
     elseif ConcealmentSaveFile == false then 
-      yield("/pcall DeepDungeonStatus True 12 0") -- primal summon
-      yield("/wait 3")
-      yield("/pcall DeepDungeonStatus True 11 1") -- safety pomander
-      yield("/wait 0.5")
-      repeat 
-        yield("/wait 0.1")
-      until IsPlayerAvailable()
+      SafetyProtocolDemi()
     end
-  Chest_Got = false
   
 elseif GetToastNodeText(2, 3) == "You do not sense the call of the Accursed Hoard on this floor..." then
     IntuitNotFound = IntuitNotFound + 1
@@ -188,10 +237,20 @@ elseif GetToastNodeText(2, 3) == "You do not sense the call of the Accursed Hoar
     goto DeepDungeon
 end
 
+HoardX = string.format("%.2f", GetAccursedHoardRawX())
+HoardY = string.format("%.2f", GetAccursedHoardRawY())
+HoardZ = string.format("%.2f", GetAccursedHoardRawZ())
+
 ::IntuitionTime::
 while Chest_Got == false and (GetZoneID() == 771 or GetZoneID() == 772) do
-  yield("/wait 0.1")
-  yield("/ac sprint")
+  yield("/wait 0.2")
+  if HasStatusId(50) == false then
+    yield("/ac sprint")
+  end
+  DistancetoHoard()
+  if GetCharacterCondition(26) == true and DemiSafety == true then 
+    SafetyProtocolDemi()
+  end
   if GetToastNodeText(2, 3) == "You obtain a piece of the Accursed Hoard." then
     Chest_Got = true
   elseif GetToastNodeText(2, 3) == "You discover a piece of the Accursed Hoard!" then
@@ -203,7 +262,7 @@ if Chest_Got == true and (GetZoneID() == 771 or GetZoneID() == 772) then
   while GetCharacterCondition(26) do
     yield("/wait 1")
   end
-  yield("/wait 1")
+  yield("/wait 0.2")
 
   IntuitFound = IntuitFound + 1
     
