@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace SomethingNeedDoing.Misc.Commands;
 
@@ -26,7 +25,7 @@ internal class EntityStateCommands
         return list;
     }
 
-    
+
 
     public float GetDistanceToPoint(float x, float y, float z) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, new Vector3(x, y, z));
 
@@ -83,6 +82,7 @@ internal class EntityStateCommands
     public float GetObjectRotation(string name) => (float)(GetGameObjectFromName(name)?.Rotation * (180 / Math.PI) ?? 0);
     public unsafe bool ObjectHasStatus(string name, uint statusID) => ((Character*)GetGameObjectFromName(name)?.Address!)->GetStatusManager()->HasStatus(statusID);
     public unsafe uint GetObjectFateID(string name) => GetGameObjectFromName(name) != null ? GetGameObjectFromName(name).Struct()->FateId : 0;
+    public bool DoesObjectExist(string name) => GetGameObjectFromName(name) != null;
     #endregion
 
     #region Party Members

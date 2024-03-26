@@ -328,6 +328,11 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-03-26",
+        "- Added DoesObjectExist()\n" +
+        "- Fixed window position resetting after each update.\n");
+
+        DisplayChangelog(
         "2024-03-25",
         "- Updated TeleportToGCTown to use aetheryte tickets if you have them.()\n" +
         "- Updated QueryMeshPointOnFloor to latest navmesh IPC\n");

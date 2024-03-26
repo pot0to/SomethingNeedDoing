@@ -27,7 +27,7 @@ internal class MacroWindow : Window
     /// Initializes a new instance of the <see cref="MacroWindow"/> class.
     /// </summary>
     public MacroWindow()
-        : base($"Something Need Doing {Service.Plugin.GetType().Assembly.GetName().Version}")
+        : base($"Something Need Doing {Service.Plugin.GetType().Assembly.GetName().Version}###SomethingNeedDoing")
     {
         this.Size = new Vector2(525, 600);
         this.SizeCondition = ImGuiCond.FirstUseEver;
