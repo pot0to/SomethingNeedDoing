@@ -1,5 +1,6 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,18 @@ internal class ActionCommands
             3 => 9u,
             _ => 0u
         };
-        Telepo.Instance()->Teleport(aetheryte, 0);
+        var ticket = gc switch
+        {
+            0 => 0u,
+            1 => 21069u,
+            2 => 21070u,
+            3 => 21071u,
+            _ => 0u
+        };
+        if (InventoryManager.Instance()->GetInventoryItemCount(ticket) > 0)
+            AgentInventoryContext.Instance()->UseItem(ticket);
+        else
+            Telepo.Instance()->Teleport(aetheryte, 0);
     }
 
     private unsafe uint GetSpellActionId(uint actionId) => ActionManager.Instance()->GetAdjustedActionId(actionId);

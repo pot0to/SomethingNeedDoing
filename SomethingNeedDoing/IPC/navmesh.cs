@@ -18,7 +18,7 @@ internal class NavmeshIPC
     private static ICallGateSubscriber<bool, object>? _navSetAutoLoad;
 
     private static ICallGateSubscriber<Vector3, float, float, Vector3?>? _queryMeshNearestPoint;
-    private static ICallGateSubscriber<Vector3, float, Vector3?>? _queryMeshPointOnFloor;
+    private static ICallGateSubscriber<Vector3, bool, float, Vector3?>? _queryMeshPointOnFloor;
 
     private static ICallGateSubscriber<List<Vector3>, bool, object>? _pathMoveTo;
     private static ICallGateSubscriber<object>? _pathStop;
@@ -47,7 +47,7 @@ internal class NavmeshIPC
             _navSetAutoLoad = Service.Interface.GetIpcSubscriber<bool, object>($"{Name}.Nav.SetAutoLoad");
 
             _queryMeshNearestPoint = Service.Interface.GetIpcSubscriber<Vector3, float, float, Vector3?>($"{Name}.Query.Mesh.NearestPoint");
-            _queryMeshPointOnFloor = Service.Interface.GetIpcSubscriber<Vector3, float, Vector3?>($"{Name}.Query.Mesh.PointOnFloor");
+            _queryMeshPointOnFloor = Service.Interface.GetIpcSubscriber<Vector3, bool, float, Vector3?>($"{Name}.Query.Mesh.PointOnFloor");
 
             _pathMoveTo = Service.Interface.GetIpcSubscriber<List<Vector3>, bool, object>($"{Name}.Path.MoveTo");
             _pathStop = Service.Interface.GetIpcSubscriber<object>($"{Name}.Path.Stop");
@@ -114,7 +114,7 @@ internal class NavmeshIPC
     internal static void NavSetAutoLoad(bool value) => Execute(_navSetAutoLoad!.InvokeAction, value);
 
     internal static Vector3? QueryMeshNearestPoint(Vector3 pos, float halfExtentXZ, float halfExtentY) => Execute(() => _queryMeshNearestPoint!.InvokeFunc(pos, halfExtentXZ, halfExtentY));
-    internal static Vector3? QueryMeshPointOnFloor(Vector3 pos, float halfExtentXZ) => Execute(() => _queryMeshPointOnFloor!.InvokeFunc(pos, halfExtentXZ));
+    internal static Vector3? QueryMeshPointOnFloor(Vector3 pos, bool allowUnlandable, float halfExtentXZ) => Execute(() => _queryMeshPointOnFloor!.InvokeFunc(pos, allowUnlandable, halfExtentXZ));
 
     internal static void PathMoveTo(List<Vector3> waypoints, bool fly) => Execute(_pathMoveTo!.InvokeAction, waypoints, fly);
     internal static void PathStop() => Execute(_pathStop!.InvokeAction);

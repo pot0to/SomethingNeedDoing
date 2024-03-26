@@ -328,6 +328,11 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-03-25",
+        "- Updated TeleportToGCTown to use aetheryte tickets if you have them.()\n" +
+        "- Updated QueryMeshPointOnFloor to latest navmesh IPC\n");
+
+        DisplayChangelog(
         "2024-03-15",
         "- Added GetTargetFateID()\n" +
         "- Added GetFocusTargetFateID()\n" +
@@ -1123,14 +1128,14 @@ internal class HelpWindow : Window
             DisplayOption("- Does not support stopping the macro if any error occurs.");
 
             var stopMacroNotFound = Service.Configuration.StopMacroIfItemNotFound;
-            if (ImGui.Checkbox("Stop macro if the item to use is not found (only applies to SND's /useitem system)", ref stopMacroNotFound))
+            if (ImGui.Checkbox("Stop macro if the item to use is not found (only applies to SND's /item system)", ref stopMacroNotFound))
             {
                 Service.Configuration.StopMacroIfItemNotFound = stopMacroNotFound;
                 Service.Configuration.Save();
             }
 
             var stopMacro = Service.Configuration.StopMacroIfCantUseItem;
-            if (ImGui.Checkbox("Stop macro if you cannot use an item (only applies to SND's /useitem system)", ref stopMacro))
+            if (ImGui.Checkbox("Stop macro if you cannot use an item (only applies to SND's /item system)", ref stopMacro))
             {
                 Service.Configuration.StopMacroIfCantUseItem = stopMacro;
                 Service.Configuration.Save();
