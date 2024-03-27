@@ -71,6 +71,7 @@ function Final_GC_Cleaning()
 	--yield("/automove on")
 	--yield("/wait 1")
 
+	visland_stop_moving() --just in case we want to auto equip rq before dumping gear
 	--deliveroo i choose you
 	yield("/deliveroo enable")
 	yield("/wait 1")
