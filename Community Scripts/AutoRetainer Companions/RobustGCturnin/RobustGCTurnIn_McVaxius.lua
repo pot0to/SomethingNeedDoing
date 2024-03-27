@@ -33,6 +33,7 @@ local process_fc_buffs = 1
 local process_players = 1
 
 
+yield("/ays multi d")
 --some ideas for next version
 --deliveroo config suggestion: add some seals. and we can have a seal 0 or 1 option in settings
 --add instructions for how to use this script
@@ -177,5 +178,5 @@ if process_players == 1 then
 	end
 end
 --last one out turn off the lights
-yield("/ays multi")
+yield("/ays multi e")
 yield("/pcraft stop")
