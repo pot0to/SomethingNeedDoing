@@ -291,8 +291,8 @@ while true do
 			 fishing()
 			 --drop a log file entry on the charname + Level
 			 -- Define the folder path
-			feesh_c = feesh_c - 1
-			vich_one()
+			--feesh_c = feesh_c - 1
+			--vich_one()
 			-- Open a file in write mode within the specified folder
 			local file = io.open(folderPath .. "FeeshLevels.txt", "a")
 
@@ -312,7 +312,7 @@ while true do
 				yield("/echo Error: Unable to open file for writing")
 				--file:write("Error: Unable to open file for writing\n")
 			end
-			feesh_c = feesh_c + 1
+			--feesh_c = feesh_c + 1
 			vich_one()
  			--yield("/ays multi")
  			yield("/ays multi e")
