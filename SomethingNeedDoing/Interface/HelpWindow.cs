@@ -328,6 +328,10 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-03-28",
+        "- Added /interact\n");
+
+        DisplayChangelog(
         "2024-03-26",
         "- Added DoesObjectExist()\n" +
         "- Fixed window position resetting after each update.\n");
