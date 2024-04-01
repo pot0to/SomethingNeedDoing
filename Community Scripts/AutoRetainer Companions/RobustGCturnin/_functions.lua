@@ -63,5 +63,6 @@ function visland_stop_moving()
  end
  yield("/echo movement stopped - time for GC turn ins or whatever")
  yield("/visland stop")
+ yield("/vnavmesh stop")
  yield("/wait 3")
 end
