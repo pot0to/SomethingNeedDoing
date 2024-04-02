@@ -27,7 +27,7 @@ yield("Friend is party slot -> "..partycardinality)
 while weirdvar == 1 do
 	if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
 		if GetCharacterCondition(34) == false then  --not in duty 
-			--check if chocobro is up or not!
+			--check if chocobro is up or not! we can't do it yet
 			if GetCharacterCondition(26) == false then --not in combat
 				if GetCharacterCondition(4) == false then --not mounted
 					--yield("/target <cross>")
@@ -40,9 +40,9 @@ while weirdvar == 1 do
 					--[[yield("/ridepillion <"..mker.."> 1")
 					yield("/ridepillion <"..mker.."> 2")
 					yield("/ridepillion <"..mker.."> 3")]]
-					yield("/ridepillion <2> 1")
-					yield("/ridepillion <2> 2")
-					yield("/ridepillion <2> 3")				
+					for i=1,7 do
+						yield("/ridepillion <"..partycardinality.."> "..i)
+					end
 				end
 			end
 		end
