@@ -149,7 +149,7 @@ function fishing()
 
 	yield("/ac sprint")
 
-	--repair catte if we are at 50% durability or lower and have at least 5000 gil
+	--repair catte if we are at 99% durability or lower and have at least 5000 gil
 	while NeedsRepair(99) and  GetItemCount(1) > 4999 do
 		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
 		visland_stop_moving()
