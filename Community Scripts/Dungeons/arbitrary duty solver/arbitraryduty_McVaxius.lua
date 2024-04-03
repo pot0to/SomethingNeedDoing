@@ -482,7 +482,7 @@ local function searchNearestWP()
 			local tempsearchdist = 9000
 			local tempstoredist = 0
 			for i=2, #doodies do
-				tempstoredist = distance(GetPlayerRawXPos,GetObjectRawYPos,GetObjectRawZPos,doodies[i][2],doodies[i][3],doodies[i][4])
+				tempstoredist = distance(GetPlayerRawXPos(),GetObjectRawYPos(),GetObjectRawZPos(),doodies[i][2],doodies[i][3],doodies[i][4])
 				if  tempstoredist < tempsearchdist then
 					tempsearchdist = tempstoredist
 					whereismydoodie = i
