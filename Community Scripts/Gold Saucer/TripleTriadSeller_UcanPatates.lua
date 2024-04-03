@@ -10,9 +10,11 @@
       *************************
 
       **********************
-      * Version  |  0.0.4  *
+      * Version  |  0.0.6  *
       **********************
 
+      -> 0.0.6  : Changed the wait time in TripleTriadSeller so it won't crash randomly
+      -> 0.0.5  : Changed TargetedInteract target loop 
       -> 0.0.4  : Added max and min distance settings
       -> 0.0.3  : Improved the while loop at function TripleSeller() Thanks LeafFriend
       -> 0.0.2  : +Added Teleport and auto walk to Triple Triad Seller
@@ -75,7 +77,7 @@ function TargetedInteract(target)
     yield("/target "..target.."")
     repeat
         yield("/wait 0.1")
-    until not IsAddonVisible("_TargetInfoMainTarget")
+    until GetDistanceToTarget() < 7
     yield("/interact")
     repeat
     yield("/wait 0.1")
@@ -98,7 +100,7 @@ while not IsNodeVisible("TripleTriadCoinExchange",2) do
        yield("/wait 0.1")
     until IsAddonReady("ShopCardDialog")
     yield(string.format("/pcall ShopCardDialog true 0 %d", a))
-    yield("/wait 0.6")
+    yield("/wait 1")
 end
 yield("/pcall TripleTriadCoinExchange true -1")
 end
