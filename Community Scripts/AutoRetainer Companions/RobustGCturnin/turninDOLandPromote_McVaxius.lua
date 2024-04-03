@@ -1,37 +1,19 @@
- yield("/tp Limsa Lominsa <wait.8>")
- yield("/waitaddon NamePlate <wait.1>")
- yield("/target Aetheryte <wait.1>")
- yield("/lockon")
- yield("/automove")
- yield("<wait.2>")
+--so this will go to your GC desk try a single DOL turn in, then try to run a promotion. then teleport back to FC Estate.
+--this is meant to be used from where ever you are after you acquire the daily DOL item
 
- yield("/pinteract <wait.1>")
- yield("/pcall SelectString true 0")
- yield("/pcall TelepotTown false 11 1u")
- yield("/pcall TelepotTown false 11 1u")
+--borrowed some code and ideas from the wonderful:  (make sure the _functions is in the snd folder)
+--https://github.com/elijabesu/ffxiv-scripts/blob/main/snd/_functions.lua
+loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
+functionsToLoad = loadfile(loadfiyel)
+functionsToLoad()
+DidWeLoadcorrectly()
 
- yield("<wait.5>")
- yield("/ac Sprint")
- yield("/ac Sprint")
- yield("/ac Sprint")
- yield("/visland execonce GClimsa")
- yield("/wait 1") --simple tweaks
- --/tweaks
- --auto equip -> alias /equipguud
- yield("/equipguud")
- muuv = 1
- muuvX = GetPlayerRawXPos()
- muuvY = GetPlayerRawYPos()
- muuvZ = GetPlayerRawZPos()
- while muuv == 1 do
-yield("/wait 1")
-if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
-muuv = 0
-end
-muuvX = GetPlayerRawXPos()
-muuvY = GetPlayerRawYPos()
-muuvZ = GetPlayerRawZPos()
- end
+yield("/wait 2")
+CharacterSafeWait()
+yield("/echo Attempting to turn in DOL turnin item")
+TeleportToGCTown()
+ZoneTransition()
+WalkToGC()
 
  yield("/echo movement stopped - time for GC turn ins")
 --yield("<wait.15>")
@@ -81,7 +63,6 @@ end
 
 yield("/send Right")
 yield("/send Right")
-
 
 yield("/target Entrance <wait.1>")
 yield("/lockon on")
