@@ -921,6 +921,9 @@ while repeated_trial < (repeat_trial + 1) do
 			--yield("/wait 2")
 			yield("/pcall DawnStory true 14") --START THE DUTY
 		end
+		if repeat_type == 2 then --just you using GC Squad guy
+			--*?
+		end
 	
 		yield("/echo Total Trials triggered for "..char_snake..": "..repeated_trial)
 		yield("/wait 10")
