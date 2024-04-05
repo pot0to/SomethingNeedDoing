@@ -2,7 +2,9 @@ function WalkTo(x, y, z)
     PathfindAndMoveTo(x, y, z, false)
     while (PathIsRunning() or PathfindInProgress()) do
         yield("/wait 0.5")
-        yield("/gaction jump")
+		if GetZoneID() == 130 then
+			yield("/gaction jump")
+		end
     end
 end
 
@@ -63,5 +65,6 @@ function visland_stop_moving()
  end
  yield("/echo movement stopped - time for GC turn ins or whatever")
  yield("/visland stop")
+ yield("/vnavmesh stop")
  yield("/wait 3")
 end

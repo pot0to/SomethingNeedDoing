@@ -148,21 +148,33 @@ function fishing()
 	yield("/wait 10")
 
 	yield("/ac sprint")
-	--TODO better / faster way to get to dryskthoa
-	PathfindAndMoveTo(-409.42459106445,3.9999997615814,74.483444213867,false) 
-	 muuv = 1
-	 muuvX = GetPlayerRawXPos()
-	 muuvY = GetPlayerRawYPos()
-	 muuvZ = GetPlayerRawZPos()
-	 while muuv == 1 do
+
+	--repair catte if we are at 99% durability or lower and have at least 5000 gil
+	while NeedsRepair(99) and  GetItemCount(1) > 4999 do
+		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
+		visland_stop_moving()
+		yield("/target Merchant & Mender")
 		yield("/wait 1")
-		if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
-			muuv = 0
-		end
-		muuvX = GetPlayerRawXPos()
-		muuvY = GetPlayerRawYPos()
-		muuvZ = GetPlayerRawZPos()
-	 end
+		yield("/lockon on")
+		yield("/wait 1")
+		yield("/pinteract")
+		yield("/wait 1")
+		yield("/pcall SelectIconString true 1")
+		yield("/wait 1")
+		yield("/pcall Repair true 0")
+		yield("/wait 1")
+		yield("/pcall Repair true 1")
+		yield("/wait 1")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1>")
+		yield("/wait 3")
+	end
+
+	--dryskthota
+	PathfindAndMoveTo(-409.42459106445,3.9999997615814,74.483444213867,false) 
+	visland_stop_moving()
 	yield("/wait 1")
 	fishqtest = false
 	toolong = 0
@@ -291,8 +303,8 @@ while true do
 			 fishing()
 			 --drop a log file entry on the charname + Level
 			 -- Define the folder path
-			feesh_c = feesh_c - 1
-			vich_one()
+			--feesh_c = feesh_c - 1
+			--vich_one()
 			-- Open a file in write mode within the specified folder
 			local file = io.open(folderPath .. "FeeshLevels.txt", "a")
 
@@ -312,7 +324,7 @@ while true do
 				yield("/echo Error: Unable to open file for writing")
 				--file:write("Error: Unable to open file for writing\n")
 			end
-			feesh_c = feesh_c + 1
+			--feesh_c = feesh_c + 1
 			vich_one()
  			--yield("/ays multi")
  			yield("/ays multi e")

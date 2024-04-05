@@ -482,7 +482,7 @@ local function searchNearestWP()
 			local tempsearchdist = 9000
 			local tempstoredist = 0
 			for i=2, #doodies do
-				tempstoredist = distance(GetPlayerRawXPos,GetObjectRawYPos,GetObjectRawZPos,doodies[i][2],doodies[i][3],doodies[i][4])
+				tempstoredist = distance(GetPlayerRawXPos(),GetObjectRawYPos(),GetObjectRawZPos(),doodies[i][2],doodies[i][3],doodies[i][4])
 				if  tempstoredist < tempsearchdist then
 					tempsearchdist = tempstoredist
 					whereismydoodie = i
@@ -920,6 +920,13 @@ while repeated_trial < (repeat_trial + 1) do
 			--yield("/pcall DawnStory true 12 35")--select port decumana
 			--yield("/wait 2")
 			yield("/pcall DawnStory true 14") --START THE DUTY
+		end
+		if repeat_type == 2 then --just you using GC Squad guy
+			yield("/target Sergeant")
+			yield("/wait 1")
+			yield("/interact")
+			yield("/pcall SelectString true 1 <wait.1>")
+			--*TBD once i get char up to test strings with
 		end
 	
 		yield("/echo Total Trials triggered for "..char_snake..": "..repeated_trial)
