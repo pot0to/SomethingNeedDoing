@@ -328,6 +328,16 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-04-05",
+        "- Added GetBuddyTimeRemaining()\n" +
+        "- Added IsTargetMounted()\n" +
+        "- Added IsPartyMemberMounted()\n" +
+        "- Added IsObjectMounted()\n" +
+        "- Added IsTargetInCombat()\n" +
+        "- Added IsObjectInCombat()\n" +
+        "- Added IsPartyMemberInCombat()\n");
+
+        DisplayChangelog(
         "2024-03-28",
         "- Added /interact\n");
 
