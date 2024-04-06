@@ -61,7 +61,7 @@ yield("target zone -> "..GetFlagZone())
 if GetZoneID() ~= GetFlagZone() then
 	--we need to get there!
     yield("/p <flag>")
-	ZoneTransition()
+	--ZoneTransition()  --dont want auto teleport. sometimes it picks an aetheryte i dont agree with 
 end
 
 --either we TPed there or we were there already.
