@@ -5,7 +5,8 @@ well this script (will eventually) rotate through your alts, and visit a server 
 requires plugins
 Lifestream
 Teleporter
-Pandora
+Pandora -> autofill max until kawaii implements the thing for dropbox
+Dropbox -> autoconfirm
 Visland
 Vnavmesh
 Simpletweaks -> enable targeting fix
@@ -21,7 +22,7 @@ tonys_turf = "Maduin" --what server is tony on
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
 tony_type = 1 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
-bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
+bagmans_take = 2000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
 
 --if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
 tony_x = 42069420
@@ -83,6 +84,16 @@ local function shake_hands()
 		yield("/wait 1")
 		--*/dropbox trade gil thebag
 		--*some kind of loop to check gil amount until it reaches the desired remainder
+		--hack way to transfer gil for now
+		while GetGil() > bagmans_take do
+			yield("/echo here you go "..fat_tony..", another full bag, with respect")
+			yield("/trade")
+			yield("/wait 0.5")
+			yield("/pcall Trade true 2")
+			yield("/wait 0.5")
+			yield("/pcall Trade true 0")
+			yield("/wait 5")
+		end
 	end
 end
 
