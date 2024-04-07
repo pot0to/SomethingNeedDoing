@@ -91,6 +91,7 @@ local function shake_hands()
 			yield("/wait 0.5")
 			yield("/pcall Trade true 2")
 			yield("/wait 0.5")
+			--yield("/pcall InputNumeric true 100000 <wait.1>") --this is just in case we want to specify/calculate the amount
 			yield("/pcall Trade true 0")
 			yield("/wait 5")
 		end
