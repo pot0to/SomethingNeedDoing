@@ -12,27 +12,11 @@ Boss Mod -> :D
 Lazyloot -> optional for "/fulf pass" or whatever you want to do with it
 YesAlready -> the first time you decipher a map just add it to your yesalready
 
-pseudocode
--> start
-pop map
-are we in same area already? if not tp to flag
-flyto <flag>
-pop dig
-path to chest and pop it
 
-functions:
-public unsafe float GetFlagXCoord() => AgentMap.Instance()->FlagMapMarker.XFloat;
-public unsafe float GetFlagYCoord() => AgentMap.Instance()->FlagMapMarker.YFloat;
-public unsafe float GetFlagZone() => AgentMap.Instance()->FlagMapMarker.TerritoryId;
+How it works.
+it will just open any map you might have
+grab the flag and get TO the flag
 ]]
-
---[[
-maptypes
-Level 80 Ostensibly Special Timeworn Map		33328
-Level 90 Ostensibly Special Timeworn Map		??
-]]
-
-maptype = 33328
 
 function distance(x1, y1, x2, y2)
     local dx = x2 - x1
@@ -66,8 +50,7 @@ function ZoneTransition()
 end
 
 --begin!
---yield("/item "..maptype)
---yield("/item Ostensibly Special Timeworn Map") --this doesnt actually work for some reason. it doesnt give an error though
+--Generic map opener. it will just open whatever appears at top of this list
 yield("/gaction decipher")
 yield("/wait 1")
 yield("/pcall SelectIconString true 0")
@@ -78,7 +61,7 @@ yield("target zone -> "..GetFlagZone())
 if GetZoneID() ~= GetFlagZone() then
 	--we need to get there!
     yield("/p <flag>")
-	ZoneTransition()
+	--ZoneTransition()  --dont want auto teleport. sometimes it picks an aetheryte i dont agree with 
 end
 
 --either we TPed there or we were there already.
