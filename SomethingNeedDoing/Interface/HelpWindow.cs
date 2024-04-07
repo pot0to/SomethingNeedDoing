@@ -328,6 +328,10 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-04-07",
+        "- Added party index support to /target (i.e. /target <2>)\n");
+
+        DisplayChangelog(
         "2024-04-05",
         "- Added GetBuddyTimeRemaining()\n" +
         "- Added IsTargetMounted()\n" +
