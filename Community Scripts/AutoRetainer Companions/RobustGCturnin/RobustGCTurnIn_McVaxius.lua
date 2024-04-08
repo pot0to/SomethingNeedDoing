@@ -93,7 +93,7 @@ function Final_GC_Cleaning()
 		end
 	end
 
-	--added 5 second wait here because sometimes they get stuck. altho its been biological life form so far....
+	--added 5 second wait here because sometimes they get stuck.
 	yield("/wait 5")
 	yield("/tp Estate Hall")
 	yield("/wait 1")

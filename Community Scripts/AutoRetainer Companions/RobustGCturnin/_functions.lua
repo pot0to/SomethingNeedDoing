@@ -44,7 +44,6 @@ function CharacterSafeWait()
      yield("/echo 15 second wait for char swap")
 	 yield("/wait 15")
 	 yield("/waitaddon NamePlate <maxwait.600> <wait.5>")
-
 end
 
 function visland_stop_moving()

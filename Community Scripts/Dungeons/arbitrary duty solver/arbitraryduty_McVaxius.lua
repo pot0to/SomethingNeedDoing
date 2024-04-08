@@ -460,7 +460,7 @@ local function searchNearestWP()
 	local searchPCT = 5
 	if dutyloaded == 1 and GetCharacterCondition(26) == false and GetCharacterCondition(34) == true then
 		--everything is normal reset the counter
-		if (math.abs(((WPsearchX - GetPlayerRawXPos())/WPsearchX)) * 100) > searchPCT or (math.abs(((WPsearchY - GetPlayerRawXPos())/WPsearchY)) * 100) > searchPCT or (math.abs(((WPsearchZ - GetPlayerRawXPos())/WPsearchZ)) * 100) > searchPCT then
+		if ((math.abs(((WPsearchX - GetPlayerRawXPos())/WPsearchX)) * 100) > searchPCT or (math.abs(((WPsearchY - GetPlayerRawXPos())/WPsearchY)) * 100) > searchPCT or (math.abs(((WPsearchZ - GetPlayerRawXPos())/WPsearchZ)) * 100) > searchPCT) and WPsearchcounter > 0 then
 			WPsearchcounter = 0
 			WPsearchX = GetPlayerRawXPos()
 			WPsearchY = GetPlayerRawYPos()
