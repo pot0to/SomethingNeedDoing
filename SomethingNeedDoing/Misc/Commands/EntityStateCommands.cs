@@ -122,6 +122,7 @@ internal class EntityStateCommands
             return false;
         return true;
     }
+    public uint GetObjectDataID(string name) => GetGameObjectFromName(name)?.DataId ?? 0;
     public unsafe bool IsObjectInCombat(string name) => ((Character*)GetGameObjectFromName(name)?.Address!)->InCombat;
     #endregion
 

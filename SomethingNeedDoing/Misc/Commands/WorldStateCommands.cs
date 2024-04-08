@@ -98,6 +98,12 @@ public class WorldStateCommands
     public float GetAccursedHoardRawX() => Svc.Objects.FirstOrDefault(x => x.DataId == DeepDungeonDataIDs.AccursedHoard)?.Position.X ?? 0;
     public float GetAccursedHoardRawY() => Svc.Objects.FirstOrDefault(x => x.DataId == DeepDungeonDataIDs.AccursedHoard)?.Position.Y ?? 0;
     public float GetAccursedHoardRawZ() => Svc.Objects.FirstOrDefault(x => x.DataId == DeepDungeonDataIDs.AccursedHoard)?.Position.Z ?? 0;
+    public List<(float, float, float)> GetBronzeChestLocations() => Svc.Objects.OrderBy(DistanceToObject).Where(x => DeepDungeonDataIDs.BronzeChestIDs.Contains(x.DataId)).Select(x => (x.Position.X, x.Position.Y, x.Position.Z)).ToList();
+    public List<(float, float, float)> GetSilverChestLocations() => Svc.Objects.OrderBy(DistanceToObject).Where(x => x.DataId == DeepDungeonDataIDs.SilverChest).Select(x => (x.Position.X, x.Position.Y, x.Position.Z)).ToList();
+    public List<(float, float, float)> GetGoldChestLocations() => Svc.Objects.OrderBy(DistanceToObject).Where(x => x.DataId == DeepDungeonDataIDs.GoldChest).Select(x => (x.Position.X, x.Position.Y, x.Position.Z)).ToList();
+    public List<(float, float, float)> GetMimicChestLocations() => Svc.Objects.OrderBy(DistanceToObject).Where(x => x.DataId == DeepDungeonDataIDs.MimicChest || DeepDungeonDataIDs.MimicIDs.Contains(x.DataId)).Select(x => (x.Position.X, x.Position.Y, x.Position.Z)).ToList();
+    public List<(float, float, float)> GetPassageLocation() => Svc.Objects.OrderBy(DistanceToObject).Where(x => DeepDungeonDataIDs.PassageIDs.Contains(x.DataId)).Select(x => (x.Position.X, x.Position.Y, x.Position.Z)).ToList();
+    public List<(float, float, float)> GetTrapLocations() => Svc.Objects.OrderBy(DistanceToObject).Where(x => DeepDungeonDataIDs.TrapIDs.ContainsKey(x.DataId)).Select(x => (x.Position.X, x.Position.Y, x.Position.Z)).ToList();
     #endregion
 
     public List<string> GetNearbyObjectNames(float distance = 0, byte objectKind = 0) =>
@@ -106,4 +112,6 @@ public class WorldStateCommands
             .Where(o => o.IsTargetable && (distance == 0 || Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position) <= distance) && (objectKind == 0 || (byte)o.ObjectKind == objectKind))
             .Select(o => o.Name.TextValue)
             .ToList();
+
+    private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.GameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position);
 }
