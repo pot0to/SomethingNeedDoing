@@ -336,7 +336,8 @@ internal class HelpWindow : Window
         "- Added GetGoldChestLocations()\n" +
         "- Added GetMimicChestLocations()\n" +
         "- Added GetPassageLocation()\n" +
-        "- Added GetTrapLocations()\n");
+        "- Added GetTrapLocations()\n" +
+        "- Added GetDDPassageProgress()\n");
 
         DisplayChangelog(
         "2024-04-07",
