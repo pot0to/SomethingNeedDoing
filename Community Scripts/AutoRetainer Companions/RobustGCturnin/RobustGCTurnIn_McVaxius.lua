@@ -143,9 +143,9 @@ end
 
 --first turn on FC buffs
 if process_fc_buffs == 1 then
-	for _, char in ipairs(chars_FCBUFF) do
-		yield("/echo "..char)
-		yield("/ays relog " ..char)
+	for i=1, #chars_FCBUFF do
+		yield("/echo "..chars_FCBUFF[i][1])
+		yield("/ays relog " ..chars_FCBUFF[i][1])
    	    yield("/echo 15 second wait")
 	    yield("/wait 15")
 		yield("/waitaddon NamePlate <maxwait.600><wait.10>")
