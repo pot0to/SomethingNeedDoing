@@ -334,7 +334,8 @@ internal class HelpWindow : Window
         "- Changed TeleportToGCTown() to use tickets optionally\n" +
         "- Added the cfg argument to the main plugin command\n" +
         "- Added SetSNDProperty()\n" +
-        "- Added GetSNDProperty()\n");
+        "- Added GetSNDProperty()\n" +
+        "- Fixed the log functions to take in any object as opposed to only strings.\n");
 
         DisplayChangelog(
         "2024-04-08",

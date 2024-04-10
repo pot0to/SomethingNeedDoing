@@ -30,7 +30,7 @@ public class SystemCommands
 
     public unsafe void CrashTheGame() => Framework.Instance()->UIModule = (UIModule*)0;
 
-    public void LogInfo(string text) => Svc.Log.Info(text);
-    public void LogDebug(string text) => Svc.Log.Debug(text);
-    public void LogVerbose(string text) => Svc.Log.Verbose(text);
+    public void LogInfo(object text) => Svc.Log.Info($"{text}");
+    public void LogDebug(object text) => Svc.Log.Debug($"{text}");
+    public void LogVerbose(object text) => Svc.Log.Verbose($"{text}");
 }
