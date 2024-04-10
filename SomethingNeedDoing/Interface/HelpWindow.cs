@@ -329,6 +329,14 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-04-10",
+        "- Fixed GetPassageLocation() return type\n" +
+        "- Changed TeleportToGCTown() to use tickets optionally\n" +
+        "- Added the cfg argument to the main plugin command\n" +
+        "- Added SetSNDProperty()\n" +
+        "- Added GetSNDProperty()\n");
+
+        DisplayChangelog(
         "2024-04-08",
         "- Added GetObjectDataID()\n" +
         "- Added GetBronzeChestLocations()\n" +
