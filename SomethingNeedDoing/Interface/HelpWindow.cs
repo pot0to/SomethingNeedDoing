@@ -329,6 +329,10 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-04-11",
+        "- Fixed a couple pandora IPC functions\n");
+
+        DisplayChangelog(
         "2024-04-10",
         "- Fixed GetPassageLocation() return type\n" +
         "- Changed TeleportToGCTown() to use tickets optionally\n" +
