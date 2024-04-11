@@ -33,6 +33,7 @@ local process_fc_buffs = 1
 local process_players = 1
 
 
+yield("/ays multi d")
 --some ideas for next version
 --deliveroo config suggestion: add some seals. and we can have a seal 0 or 1 option in settings
 --add instructions for how to use this script
@@ -70,6 +71,7 @@ function Final_GC_Cleaning()
 	--yield("/automove on")
 	--yield("/wait 1")
 
+	visland_stop_moving() --just in case we want to auto equip rq before dumping gear
 	--deliveroo i choose you
 	yield("/deliveroo enable")
 	yield("/wait 1")
@@ -91,7 +93,7 @@ function Final_GC_Cleaning()
 		end
 	end
 
-	--added 5 second wait here because sometimes they get stuck. altho its been biological life form so far....
+	--added 5 second wait here because sometimes they get stuck.
 	yield("/wait 5")
 	yield("/tp Estate Hall")
 	yield("/wait 1")
@@ -141,9 +143,9 @@ end
 
 --first turn on FC buffs
 if process_fc_buffs == 1 then
-	for _, char in ipairs(chars_FCBUFF) do
-		yield("/echo "..char)
-		yield("/ays relog " ..char)
+	for i=1, #chars_FCBUFF do
+		yield("/echo "..chars_FCBUFF[i][1])
+		yield("/ays relog " ..chars_FCBUFF[i][1])
    	    yield("/echo 15 second wait")
 	    yield("/wait 15")
 		yield("/waitaddon NamePlate <maxwait.600><wait.10>")
@@ -177,5 +179,5 @@ if process_players == 1 then
 	end
 end
 --last one out turn off the lights
-yield("/ays multi")
+yield("/ays multi e")
 yield("/pcraft stop")

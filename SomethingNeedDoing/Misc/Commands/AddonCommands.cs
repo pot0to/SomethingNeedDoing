@@ -44,6 +44,18 @@ public class AddonCommands
 
     public unsafe int GetDiademAetherGaugeBarCount() => GenericHelpers.TryGetAddonByName<AtkUnitBase>("HWDAetherGauge", out var addon) ? addon->AtkValues[1].Int / 200 : 0;
 
+    public unsafe int GetDDPassageProgress()
+    {
+        if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("DeepDungeonMap", out var addon))
+        {
+            var key = addon->GetNodeById(7)->ChildNode->PrevSiblingNode;
+            var image = key->GetAsAtkComponentNode()->Component->UldManager.NodeList[1]->GetAsAtkImageNode();
+            return image->PartId * 10;
+        }
+
+        return 0;
+    }
+
     public unsafe bool IsAddonVisible(string addonName)
     {
         var ptr = Service.GameGui.GetAddonByName(addonName, 1);

@@ -5,14 +5,17 @@
       *  Sells your acumulated Triple Triad cards   *
       ***********************************************
 
-	  *************************
+      *************************
       *  Author: UcanPatates  *
       *************************
 
       **********************
-      * Version  |  0.0.3  *
+      * Version  |  0.0.6  *
       **********************
 
+      -> 0.0.6  : Changed the wait time in TripleTriadSeller so it won't crash randomly
+      -> 0.0.5  : Changed TargetedInteract target loop 
+      -> 0.0.4  : Added max and min distance settings
       -> 0.0.3  : Improved the while loop at function TripleSeller() Thanks LeafFriend
       -> 0.0.2  : +Added Teleport and auto walk to Triple Triad Seller
       -> 0.0.1  : Just the seller
@@ -30,10 +33,20 @@
 
 
       Plugins that are used are:
+      -> Teleporter
       -> vnavmesh : https://puni.sh/api/repository/veyn
       -> Something Need Doing [Expanded Edition] : https://puni.sh/api/repository/croizat
            
 ]]
+--[[ 
+
+    **************
+    *  Settings  *
+    **************
+
+    ]]
+
+    Max_Distance = 100 -- this is max distance to Triple Triad Seller
 
 --[[
 
@@ -43,6 +56,14 @@
   ************
 
 ]]
+
+
+function DistanceToSeller()
+    if IsInZone(144) then -- The Gold Saucer
+      Distance_Test = GetDistanceToPoint(-55,1,16)
+    end
+end
+  
 function ZoneTransition()
     repeat 
         yield("/wait 0.5")
@@ -53,8 +74,14 @@ function ZoneTransition()
 end
 
 function TargetedInteract(target)
-    yield("/target "..target.." <wait.0.5>")
-    yield("/pinteract <wait.1>")
+    yield("/target "..target.."")
+    repeat
+        yield("/wait 0.1")
+    until GetDistanceToTarget() < 7
+    yield("/interact")
+    repeat
+    yield("/wait 0.1")
+    until IsAddonReady("SelectIconString")
 end
 
 function TripleSeller()
@@ -64,12 +91,16 @@ repeat
 until IsAddonReady("TripleTriadCoinExchange")
 while not IsNodeVisible("TripleTriadCoinExchange",2) do
     nodenumber = GetNodeText("TripleTriadCoinExchange",3 ,1 ,5)
-	a = tonumber(nodenumber)
-	yield("/wait 0.4")
+    a = tonumber(nodenumber)
+    repeat
+    yield("/wait 0.1")
+    until IsNodeVisible("TripleTriadCoinExchange",3,1)
     yield("/pcall TripleTriadCoinExchange true 0")
-    yield("/wait 0.3")
+    repeat
+       yield("/wait 0.1")
+    until IsAddonReady("ShopCardDialog")
     yield(string.format("/pcall ShopCardDialog true 0 %d", a))
-    yield("/wait 0.2")
+    yield("/wait 1")
 end
 yield("/pcall TripleTriadCoinExchange true -1")
 end
@@ -81,8 +112,23 @@ function WalkTo(x, y, z)
     end
 end
 
-yield("/tp The Gold Saucer")
-ZoneTransition()
-WalkTo(-55,1,16)
-TargetedInteract("Triple Triad Trader")
-TripleSeller()
+if IsInZone(144) then
+    DistanceToSeller()
+    if Distance_Test > 0 and Distance_Test < Max_Distance then 
+        WalkTo(-55,1,16)
+        TargetedInteract("Triple Triad Trader")
+        TripleSeller()
+        else
+            yield("/tp The Gold Saucer")
+            ZoneTransition()
+            WalkTo(-55,1,16)
+            TargetedInteract("Triple Triad Trader")
+            TripleSeller()
+    end
+    else
+        yield("/tp The Gold Saucer")
+        ZoneTransition()
+        WalkTo(-55,1,16)
+        TargetedInteract("Triple Triad Trader")
+        TripleSeller()
+end

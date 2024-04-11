@@ -460,7 +460,7 @@ local function searchNearestWP()
 	local searchPCT = 5
 	if dutyloaded == 1 and GetCharacterCondition(26) == false and GetCharacterCondition(34) == true then
 		--everything is normal reset the counter
-		if (math.abs(((WPsearchX - GetPlayerRawXPos())/WPsearchX)) * 100) > searchPCT or (math.abs(((WPsearchY - GetPlayerRawXPos())/WPsearchY)) * 100) > searchPCT or (math.abs(((WPsearchZ - GetPlayerRawXPos())/WPsearchZ)) * 100) > searchPCT then
+		if ((math.abs(((WPsearchX - GetPlayerRawXPos())/WPsearchX)) * 100) > searchPCT or (math.abs(((WPsearchY - GetPlayerRawXPos())/WPsearchY)) * 100) > searchPCT or (math.abs(((WPsearchZ - GetPlayerRawXPos())/WPsearchZ)) * 100) > searchPCT) and WPsearchcounter > 0 then
 			WPsearchcounter = 0
 			WPsearchX = GetPlayerRawXPos()
 			WPsearchY = GetPlayerRawYPos()
@@ -482,7 +482,7 @@ local function searchNearestWP()
 			local tempsearchdist = 9000
 			local tempstoredist = 0
 			for i=2, #doodies do
-				tempstoredist = distance(GetPlayerRawXPos,GetObjectRawYPos,GetObjectRawZPos,doodies[i][2],doodies[i][3],doodies[i][4])
+				tempstoredist = distance(GetPlayerRawXPos(),GetObjectRawYPos(),GetObjectRawZPos(),doodies[i][2],doodies[i][3],doodies[i][4])
 				if  tempstoredist < tempsearchdist then
 					tempsearchdist = tempstoredist
 					whereismydoodie = i
@@ -920,6 +920,13 @@ while repeated_trial < (repeat_trial + 1) do
 			--yield("/pcall DawnStory true 12 35")--select port decumana
 			--yield("/wait 2")
 			yield("/pcall DawnStory true 14") --START THE DUTY
+		end
+		if repeat_type == 2 then --just you using GC Squad guy
+			yield("/target Sergeant")
+			yield("/wait 1")
+			yield("/interact")
+			yield("/pcall SelectString true 1 <wait.1>")
+			--*TBD once i get char up to test strings with
 		end
 	
 		yield("/echo Total Trials triggered for "..char_snake..": "..repeated_trial)

@@ -31,7 +31,7 @@ internal class ActionCommands
 
     public void LeaveDuty() => this.abandonDuty(false);
 
-    public unsafe void TeleportToGCTown()
+    public unsafe void TeleportToGCTown(bool useTickets = false)
     {
         var gc = UIState.Instance()->PlayerState.GrandCompany;
         var aetheryte = gc switch
@@ -42,16 +42,19 @@ internal class ActionCommands
             3 => 9u,
             _ => 0u
         };
-        var ticket = gc switch
+        if (useTickets)
         {
-            0 => 0u,
-            1 => 21069u,
-            2 => 21070u,
-            3 => 21071u,
-            _ => 0u
-        };
-        if (InventoryManager.Instance()->GetInventoryItemCount(ticket) > 0)
-            AgentInventoryContext.Instance()->UseItem(ticket);
+            var ticket = gc switch
+            {
+                0 => 0u,
+                1 => 21069u,
+                2 => 21070u,
+                3 => 21071u,
+                _ => 0u
+            };
+            if (InventoryManager.Instance()->GetInventoryItemCount(ticket) > 0)
+                AgentInventoryContext.Instance()->UseItem(ticket);
+        }
         else
             Telepo.Instance()->Teleport(aetheryte, 0);
     }

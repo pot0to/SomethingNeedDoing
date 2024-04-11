@@ -3,11 +3,15 @@ using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using ECommons;
+using ECommons.DalamudServices;
 using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.Managers;
 using SomethingNeedDoing.Misc.Commands;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace SomethingNeedDoing;
 
@@ -221,6 +225,12 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
         else if (arguments == "help")
         {
             this.OpenHelpWindow();
+            return;
+        }
+        else if (arguments.StartsWith("cfg"))
+        {
+            var args = arguments[4..].Trim().Split(" ");
+            Service.Configuration.SetProperty(args[0], args[1]);
             return;
         }
     }

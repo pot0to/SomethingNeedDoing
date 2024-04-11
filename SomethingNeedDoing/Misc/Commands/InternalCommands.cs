@@ -19,4 +19,7 @@ public class InternalCommands
             .Select(line => $"  {line}")
             .Join('\n');
     }
+
+    public void SetSNDProperty(string key, string value) => Service.Configuration.SetProperty(key, value);
+    public object GetSNDProperty(string key) => Service.Configuration.GetProperty(key);
 }

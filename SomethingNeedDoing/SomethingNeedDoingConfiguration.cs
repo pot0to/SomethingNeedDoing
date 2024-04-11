@@ -1,5 +1,6 @@
 using Dalamud.Configuration;
 using Dalamud.Game.Text;
+using ECommons.DalamudServices;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -201,5 +202,30 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
 
         parent = null;
         return false;
+    }
+
+    internal void SetProperty(string key, string value)
+    {
+        var property = typeof(SomethingNeedDoingConfiguration).GetProperty(key);
+        if (property != null && property.Name != "Version" && property.CanWrite && (property.PropertyType == typeof(int) || property.PropertyType == typeof(bool)))
+        {
+            if (property.PropertyType == typeof(int) && int.TryParse(value, out int intValue))
+                property.SetValue(this, intValue);
+            else if (property.PropertyType == typeof(bool) && bool.TryParse(value, out bool boolValue))
+                property.SetValue(this, boolValue);
+            else
+                Svc.Log.Error($"Value type does not match property type for {key}: {value.GetType()} != {property.PropertyType}");
+        }
+        else
+            Svc.Log.Error($"Invalid configuration key or type");
+    }
+
+    internal object GetProperty(string key)
+    {
+        var property = typeof(SomethingNeedDoingConfiguration).GetProperty(key);
+        if (property != null && property.Name != "Version" && property.CanWrite)
+            return property.GetValue(this)!;
+        else
+            return null;
     }
 }

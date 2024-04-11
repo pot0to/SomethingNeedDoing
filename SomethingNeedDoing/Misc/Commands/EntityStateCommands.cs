@@ -1,6 +1,8 @@
-﻿using ECommons.DalamudServices;
+﻿using Dalamud.Game.ClientState.Objects.Enums;
+using ECommons.DalamudServices;
 using ECommons.GameFunctions;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,6 +50,25 @@ internal class EntityStateCommands
     public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer!.Position);
     public unsafe bool TargetHasStatus(uint statusID) => ((Character*)Svc.Targets.Target?.Address!)->GetStatusManager()->HasStatus(statusID);
     public unsafe uint GetTargetFateID() => Svc.Targets.Target != null ? Svc.Targets.Target.Struct()->FateId : 0;
+    public unsafe bool IsTargetMounted()
+    {
+        var target = Service.TargetManager.Target;
+        if (target == null)
+            return false;
+
+        if (target.ObjectKind != ObjectKind.Player)
+            return false;
+
+        var targetGameObject = target.Struct();
+        if (targetGameObject->ObjectIndex + 1 > Service.ObjectTable.Length)
+            return false;
+
+        var mountObject = Service.ObjectTable[targetGameObject->ObjectIndex + 1];
+        if (mountObject == null || mountObject.ObjectKind != ObjectKind.MountType)
+            return false;
+        return true;
+    }
+    public unsafe bool IsTargetInCombat() => ((Character*)Svc.Targets.Target?.Address!)->InCombat;
     #endregion
 
     #region Focus Target
@@ -83,6 +104,26 @@ internal class EntityStateCommands
     public unsafe bool ObjectHasStatus(string name, uint statusID) => ((Character*)GetGameObjectFromName(name)?.Address!)->GetStatusManager()->HasStatus(statusID);
     public unsafe uint GetObjectFateID(string name) => GetGameObjectFromName(name) != null ? GetGameObjectFromName(name).Struct()->FateId : 0;
     public bool DoesObjectExist(string name) => GetGameObjectFromName(name) != null;
+    public unsafe bool IsObjectMounted(string name)
+    {
+        var target = GetGameObjectFromName(name);
+        if (target == null)
+            return false;
+
+        if (target.ObjectKind != ObjectKind.Player)
+            return false;
+
+        var targetGameObject = target.Struct();
+        if (targetGameObject->ObjectIndex + 1 > Service.ObjectTable.Length)
+            return false;
+
+        var mountObject = Service.ObjectTable[targetGameObject->ObjectIndex + 1];
+        if (mountObject == null || mountObject.ObjectKind != ObjectKind.MountType)
+            return false;
+        return true;
+    }
+    public uint GetObjectDataID(string name) => GetGameObjectFromName(name)?.DataId ?? 0;
+    public unsafe bool IsObjectInCombat(string name) => ((Character*)GetGameObjectFromName(name)?.Address!)->InCombat;
     #endregion
 
     #region Party Members
@@ -99,6 +140,29 @@ internal class EntityStateCommands
     public float GetPartyMemberHPP(int index) => GetPartyMemberHP(index) / GetPartyMemberMaxHP(index) * 100;
     public float GetPartyMemberRotation(int index) => (float)(Svc.Party[index]?.GameObject?.Rotation * (180 / Math.PI) ?? 0);
     public unsafe bool PartyMemberHasStatus(int index, uint statusID) => Svc.Party[index]?.Statuses.Any(s => s.StatusId == statusID) ?? false;
+    public unsafe bool IsPartyMemberMounted(int index)
+    {
+        var target = Svc.Party[index]?.GameObject;
+        if (target == null)
+            return false;
+
+        if (target.ObjectKind != ObjectKind.Player)
+            return false;
+
+        var targetGameObject = target.Struct();
+        if (targetGameObject->ObjectIndex + 1 > Service.ObjectTable.Length)
+            return false;
+
+        var mountObject = Service.ObjectTable[targetGameObject->ObjectIndex + 1];
+        if (mountObject == null || mountObject.ObjectKind != ObjectKind.MountType)
+            return false;
+        return true;
+    }
+    public unsafe bool IsPartyMemberInCombat(int index) => ((Character*)Svc.Party[index]?.Address!)->InCombat;
+    #endregion
+
+    #region Chocobo
+    public unsafe float GetBuddyTimeRemaining() => UIState.Instance()->Buddy.CompanionInfo.TimeLeft;
     #endregion
 
     private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.GameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position);

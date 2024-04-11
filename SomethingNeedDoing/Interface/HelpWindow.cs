@@ -290,6 +290,7 @@ internal class HelpWindow : Window
                 ("Sends", this.DrawVirtualKeys),
                 ("Conditions", this.DrawAllConditions),
                 ("Game Data", this.DrawGameData),
+                ("Debug", this.DrawDebug),
             };
 
             foreach (var (title, dele) in tabs)
@@ -326,6 +327,44 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+        "2024-04-11",
+        "- Fixed a couple pandora IPC functions\n");
+
+        DisplayChangelog(
+        "2024-04-10",
+        "- Fixed GetPassageLocation() return type\n" +
+        "- Changed TeleportToGCTown() to use tickets optionally\n" +
+        "- Added the cfg argument to the main plugin command\n" +
+        "- Added SetSNDProperty()\n" +
+        "- Added GetSNDProperty()\n" +
+        "- Fixed the log functions to take in any object as opposed to only strings.\n");
+
+        DisplayChangelog(
+        "2024-04-08",
+        "- Added GetObjectDataID()\n" +
+        "- Added GetBronzeChestLocations()\n" +
+        "- Added GetSilverChestLocations()\n" +
+        "- Added GetGoldChestLocations()\n" +
+        "- Added GetMimicChestLocations()\n" +
+        "- Added GetPassageLocation()\n" +
+        "- Added GetTrapLocations()\n" +
+        "- Added GetDDPassageProgress()\n");
+
+        DisplayChangelog(
+        "2024-04-07",
+        "- Added party index support to /target (i.e. /target <2>)\n");
+
+        DisplayChangelog(
+        "2024-04-05",
+        "- Added GetBuddyTimeRemaining()\n" +
+        "- Added IsTargetMounted()\n" +
+        "- Added IsPartyMemberMounted()\n" +
+        "- Added IsObjectMounted()\n" +
+        "- Added IsTargetInCombat()\n" +
+        "- Added IsObjectInCombat()\n" +
+        "- Added IsPartyMemberInCombat()\n");
 
         DisplayChangelog(
         "2024-03-28",
@@ -1426,6 +1465,19 @@ yield(""/echo done!"")
         }
 
         ImGui.EndChild();
+    }
+
+    private void DrawDebug()
+    {
+        var bronzes = WorldStateCommands.Instance.GetBronzeChestLocations();
+        foreach (var l in bronzes)
+            ImGui.TextUnformatted($"bronze @ {new Vector3(l.Item1, l.Item2, l.Item3)}");
+        var silvers = WorldStateCommands.Instance.GetSilverChestLocations();
+        foreach (var l in silvers)
+            ImGui.TextUnformatted($"silver @ {new Vector3(l.Item1, l.Item2, l.Item3)}");
+        var golds = WorldStateCommands.Instance.GetGoldChestLocations();
+        foreach (var l in golds)
+            ImGui.TextUnformatted($"gold @ {new Vector3(l.Item1, l.Item2, l.Item3)}");
     }
 
     private void DrawObjectKinds()
