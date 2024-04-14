@@ -329,6 +329,11 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-04-14",
+        "- Added GetTargetHuntRank()\n" +
+        "- Added GetObjectHuntRank()\n");
+
+        DisplayChangelog(
         "2024-04-11",
         "- Fixed a couple pandora IPC functions\n");
 
