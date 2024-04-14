@@ -26,6 +26,5 @@ Stuff that would be nice but technically annoying to do since we need more stuff
 *visit the personal island once a week and somehow do the island stuff and then leave
 *play mini cactpot daily on a list of chars at y time
 *play jumbo cactpot weekly on a list of chars at y time
-*play verminion weekly on a list of chars at y time
-
+*play (lose on purpose) verminion x5  weekly on a list of chars at y time
 ]]
