@@ -1,8 +1,10 @@
 ﻿using Dalamud.Game.ClientState.Objects.Enums;
 using ECommons.DalamudServices;
 using ECommons.GameFunctions;
+using ECommons.Reflection;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,6 +71,7 @@ internal class EntityStateCommands
         return true;
     }
     public unsafe bool IsTargetInCombat() => ((Character*)Svc.Targets.Target?.Address!)->InCombat;
+    public byte GetTargetHuntRank() => (byte)(Svc.Targets.Target != null ? Svc.Data.GetExcelSheet<NotoriousMonster>()?.FirstOrDefault(x => x.BNpcBase.Value!.RowId == Svc.Targets.Target.DataId)?.Rank ?? 0 : 0);
     #endregion
 
     #region Focus Target
@@ -124,6 +127,7 @@ internal class EntityStateCommands
     }
     public uint GetObjectDataID(string name) => GetGameObjectFromName(name)?.DataId ?? 0;
     public unsafe bool IsObjectInCombat(string name) => ((Character*)GetGameObjectFromName(name)?.Address!)->InCombat;
+    public byte GetObjectHuntRank(string name) => Svc.Data.GetExcelSheet<NotoriousMonster>()?.FirstOrDefault(x => x.BNpcBase.Value!.RowId == GetObjectDataID(name))?.Rank ?? 0;
     #endregion
 
     #region Party Members
