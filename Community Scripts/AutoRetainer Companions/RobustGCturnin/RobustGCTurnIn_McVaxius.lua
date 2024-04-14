@@ -117,7 +117,8 @@ function Final_GC_Cleaning()
 	if chars_fn[rcuck_count][2] == 1 then
 		yield("/target \"Summoning Bell\"")
 		yield("/wait 2")
-		PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
+		--PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
+		WalkTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"))
 		visland_stop_moving() --added so we don't accidentally end before we get to the bell
 	end
 	
