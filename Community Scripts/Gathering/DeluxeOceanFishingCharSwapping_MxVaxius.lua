@@ -135,6 +135,7 @@ function fishing()
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 
+	yield("/equipjob fsh")
 	yield("/lockon on")
 	yield("/automove on")
 	yield("/send D")
@@ -148,7 +149,8 @@ function fishing()
 	yield("/wait 10")
 
 	yield("/ac sprint")
-
+	yield("/equipjob fsh")
+		
 	--repair catte if we are at 99% durability or lower and have at least 5000 gil
 	while NeedsRepair(99) and  GetItemCount(1) > 4999 do
 		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
