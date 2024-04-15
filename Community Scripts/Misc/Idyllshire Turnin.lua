@@ -1,58 +1,55 @@
 --[[
 
-  ***********************
-  *  Idyllshire Turnin  *
-  *   Alex 1-4 Edition  *
-  ***********************
+    ***********************
+    *  Idyllshire Turnin  *
+    *   Alex 1-4 Edition  *
+    ***********************
 
-  **************
-  *   VERSION  *
-  *  3.3.1.12  *
-  **************
+    READ THIS PLEASE: There seems to be some sort of bug that's causing the script to not... copy properly? If you're using the github copy button? It's like 1AM as i'm typing this so. Dont' know the bug/reason.
+    Just make sure to select the whole script with your mouse (or even by opening the raw version) and then proceeding to paste it in SND. 
 
-  Update notes:
-    3.3.1.12 
-    3.3.1.11 -> Removed Old GC Ticket teleport system, since that's just baked into the GCTeleport itself. Took that time to also re-write that whole section and clean it up a bit.
-    3.3.1.10 -> Made some tiny optimizations that's been bugging me, nothing to major. mounting in Idyllshire for instance...
-    3.3.1.0 -> Small fix to if you're buying in gridania, added a waypoint so you wouldn't get stuck on the step trying to turn it in
-    3.3.0.0 -> Rewrote the buying process to go from bolts -> pedal -> spring -> crank -> shaft
-               This functionally does nothing for normal buyer peeps 
-               Also made it to where you could max buy on the first page, so it'll get in/out of Idyllshire quicker
-                 -> This setting is "MaxSingleItem", you'll find the toglle under Settings, off by default as always
-    3.2.0.0 -> Inventory Buying Fix
+    **************
+    *   VERSION  *
+    *   3.3.2.0  *
+    **************
 
-  Author: Leontopodium Nivale
+    Update notes:
+        3.3.2.0   -> ALRIGHT. Fixed the Teleporting to the GC (Like... 99% on this) also, fixed it interacting w/ Sabina. There's probably something else for me to tweak but... :/
+				  -> ACTUALLY made it turn on the pandora settings that you need.
+        3.3.1.11  -> Removed Old GC Ticket teleport system, since that's just baked into the GCTeleport itself. Took that time to also re-write that whole section and clean it up a bit.
+        3.3.1.10  -> Made some tiny optimizations that's been bugging me, nothing to major. mounting in Idyllshire for instance...
+        3.3.1.0   -> Small fix to if you're buying in gridania, added a waypoint so you wouldn't get stuck on the step trying to turn it in
+        3.3.0.0   -> Rewrote the buying process to go from bolts -> pedal -> spring -> crank -> shaft
+                     This functionally does nothing for normal buyer peeps 
+                     Also made it to where you could max buy on the first page, so it'll get in/out of Idyllshire quicker
+                  -> This setting is "MaxSingleItem", you'll find the toglle under Settings, off by default as always
+        3.2.0.0   -> Inventory Buying Fix
 
-  ***************
-  * Description *
-  ***************
+    Author: Leontopodium Nivale
 
-  Teleports you to Idyllshire (or if you're standing in front of an aetheryte) and takes you to the Alex Vendor to trade your raid pieces -> gear,
-  which then takes you to your personal Grand Company and turns them into what you have selected from Deliveroo.
+    ***************
+    * Description *
+    ***************
 
-  If you have OTP on, and you have your company aetheryte tickets, you can do this loop for free wihtout costing you any gil.
+    Teleports you to Idyllshire (or if you're standing in front of an aetheryte) and takes you to the Alex Vendor to trade your raid pieces -> gear,
+    which then takes you to your personal Grand Company and turns them into what you have selected from Deliveroo.
 
-  *********************
-  *  Required Plugins *
-  *********************
+    If you have OTP on, and you have your company aetheryte tickets, you can do this loop for free wihtout costing you any gil.
 
-  -> Teleporter | 1st Party Plugin
-  -> Pandora (Enable "Auto-select Turn-ins & Automatically Confirm") | 
-  -> Lifestream 
-  -> Deliveroo [If you need the link, here --> https://plugins.carvel.li/]
-  -> vnavmesh (replaced visland)
+    *********************
+    *  Required Plugins *
+    *********************
 
-  -> YesAlready
+    -> Teleporter | 1st Party Plugin
+    -> Pandora (Enable "Auto-select Turn-ins & Automatically Confirm") | NOTE. THESE WILL ACTIVATE NOW IN THE SCRIPT.
+    -> Lifestream 
+    -> Deliveroo [If you need the link, here --> https://plugins.carvel.li/]
+    -> vnavmesh (replaced visland)
+    -> YesAlready
+        -> YesAlready -> Yes/No -> Add this:  You cannot currently equip this item. Proceed with the transaction?
+           Yes, you can zone lock this to strictly Idyllshire if you would like (I did)
+        -> YesAlready -> Bothers -> Scroll near the VERY bottom and make sure "ShopExchangeItemDialog" is checkmarked
 
-  **************
-  *  IMPORTANT *
-  *   SETTING  *
-  **************
-
-  -> YesAlready -> Yes/No -> Add this:  You cannot currently equip this item. Proceed with the transaction?
-  Yes, you can zone lock this to strictly Idyllshire if you would like (I did)
-
-  -> YesAlready -> Bothers -> Scroll near the VERY bottom and make sure "ShopExchangeItemDialog" is checkmarked
 ]]
 
 --[[
@@ -62,6 +59,9 @@
   **************
 
 ]]
+
+
+-- !!HEADS UP!! If you're running at lower than 60 FPS. INCREASE THIS VALUE. 
 -- If you're shop is skipping buying items, increase this value. 
 -- Default is 1 cause that's worked for me, but 5 has helped others as well
 Alex_Shop_Timer = 1
@@ -116,6 +116,20 @@ MaxSingleItem = false
         end
     end
 
+    function PathFinding()
+        yield("/wait 0.2")
+        while PathfindInProgress() do
+            yield("/wait 0.5")
+        end
+    end
+
+    function DeliverooEnable()
+        if DeliverooIsTurnInRunning() == false then
+            yield("/wait 1")
+            yield("/deliveroo enable")
+        end
+    end
+
 --tarnished gordian item ids, hardcoded.
   LensID = 12674
   ShaftID = 12675
@@ -137,12 +151,17 @@ MaxSingleItem = false
   LimsaGCTicket = GetItemCount(LimsaTicketID)
   GridaniaGCTicket = GetItemCount(GridaniaTicketID)
   UldahGCTicket = GetItemCount(UldahTicketID)
+  
+	-- FUCKING TURNING THESE ON. Because I don't trust people
+	PandoraSetFeatureState("Auto-select Turn-ins", true) 
+	PandoraSetFeatureConfigState("Auto-select Turn-ins", "AutoConfirm", true)
+	yield("/e HEY. LISTEN. I just turned on those 2 VERY important things that I said that was necessary. (Unless your running textadvanced, that's fine as well)")
 
 ::IdyllshireTurnin::
 
     while IsInZone(478) == false and GetCharacterCondition(27) == false do
         yield("/tp Idyllshire")
-        yield("/wait 0.1")
+        yield("/wait 1")
     end
 
     TeleportTest()
@@ -162,7 +181,7 @@ MaxSingleItem = false
                 while IsPlayerCasting() do  
                     yield("/wait 0.1")
                 end
-                yield("/wait 0.2")
+                yield("/wait 2")
             end
             yield("/wait 0.5")
             yield("/vnavmesh moveto -19.277 211 -36.076")
@@ -181,15 +200,13 @@ MaxSingleItem = false
     if GetCharacterCondition(4, true) then 
         yield("/ac dismount")
         repeat
-            yield("/wait 0.1")
+            yield("/wait 0.5")
         until GetCharacterCondition(4, false)
     end 
     yield("/wait 1")
-    while GetTargetName() == "" do 
-        yield("/target Sabina")
-    end 
-    yield("/wait 0.35")
-    yield("/interact Sabina")
+    yield("/target Sabina")
+    yield("/wait 0.5")
+    yield("/interact")
     yield("/wait 1.0")
     yield("/pcall SelectIconString True 0")
     yield("/wait 1.0")
@@ -265,7 +282,7 @@ MaxSingleItem = false
             --yield("/echo Shop Menu: "..Alex_Shop)
             yield("/wait "..Alex_Shop_Timer)
             i_count = GetInventoryFreeSlotCount()
-            if (MaxSingleItem == true and Alex_Shop == ShopArray[4] and (BoltCount == 0)) or (Shop_Menu == 3 and MaxInventory == true and Alex_Shop == ShopArray[4] and (BoltCount == 0)) then
+            if (MaxSingleItem == true and Alex_Shop == ShopArray[4]) or (Shop_Menu == 3 and MaxInventory == true and Alex_Shop == ShopArray[4]) then
                 PedalCount = GetItemCount(PedalID)
 	            if i_count > (PedalCount//2) then
                     i_count = (PedalCount//2)
@@ -288,7 +305,7 @@ MaxSingleItem = false
             --yield("/echo Shop Menu: "..Alex_Shop)
             yield("/wait "..Alex_Shop_Timer)
             i_count = GetInventoryFreeSlotCount()
-            if (MaxSingleItem == true and Alex_Shop == ShopArray[6] and (BoltCount == 0 and PedalCount <= 1)) or (Shop_Menu == 3 and MaxInventory == true and Alex_Shop == ShopArray[6] and (BoltCount == 0 and PedalCount <= 1)) then
+            if (MaxSingleItem == true and Alex_Shop == ShopArray[6]) or (Shop_Menu == 3 and MaxInventory == true and Alex_Shop == ShopArray[6]) then
                 SpringCount = GetItemCount(SpringID)
                 if i_count > (SpringCount//4) then
                     i_count = (SpringCount//4)
@@ -311,7 +328,7 @@ MaxSingleItem = false
             --yield("/echo Shop Menu: "..Alex_Shop)
             yield("/wait "..Alex_Shop_Timer)
             i_count = GetInventoryFreeSlotCount()
-            if (MaxSingleItem == true and Alex_Shop == ShopArray[8] and (BoltCount == 0 and PedalCount <= 1 and SpringCount <= 3)) or (Shop_Menu == 3 and MaxInventory == true and Alex_Shop == ShopArray[8] and (BoltCount == 0 and PedalCount <= 1 and SpringCount <= 3)) then
+            if (MaxSingleItem == true and Alex_Shop == ShopArray[8]) or (Shop_Menu == 3 and MaxInventory == true and Alex_Shop == ShopArray[8]) then
                 CrankCount = GetItemCount(CrankID)
 		        if i_count > (CrankCount//2) then
                   i_count = (CrankCount//2)
@@ -335,7 +352,7 @@ MaxSingleItem = false
             --yield("/echo Shop Menu: "..Alex_Shop) -- Just Debugging Stuff
             yield("/wait "..Alex_Shop_Timer)
             i_count = GetInventoryFreeSlotCount()
-            if (MaxSingleItem == true and Alex_Shop == ShopArray[10] and (BoltCount == 0 and PedalCount <= 1 and SpringCount <= 3 and CrankCount <= 1)) or (Shop_Menu == 3 and MaxInventory == true and Alex_Shop == ShopArray[10] and (BoltCount == 0 and PedalCount <= 1 and SpringCount <= 3 and CrankCount <= 1)) then
+            if (MaxSingleItem == true and Alex_Shop == ShopArray[10]) or (Shop_Menu == 3 and MaxInventory == true and Alex_Shop == ShopArray[10]) then
                 ShaftCount = GetItemCount(ShaftID)
 		        if i_count > (ShaftCount//4) then
                     i_count = (ShaftCount//4)
@@ -381,7 +398,7 @@ MaxSingleItem = false
 
       goto ShopInitialize
 
-    elseif (Alex_Shop == ShopArray[11]) and (Shop_Menu == 3) then
+    elseif (Alex_Shop == ShopArray[11]) and (Shop_Menu >= 3) then
       --yield("/echo DOM Menu is completed")
 
       Gordian_Part = Gordian_Part + 1
@@ -402,19 +419,8 @@ MaxSingleItem = false
 
 ::GrandCompanyTurnin::
 
-    if (LimsaGCTicket >= 1) then 
-        yield("/item Maelstrom aetheryte ticket")
-        yield("/wait 1.0")
-    elseif (GridaniaGCTicket >= 1) then
-        yield("/item Twin Adder aetheryte ticket")
-        yield("/wait 1.0")
-    elseif (UldahGCTicket >= 1) then
-        yield("/item Immortal Flames aetheryte ticket")
-        yield("/wait 1.0")
-    elseif (LimsaGCTicket == 0) or (GridaniaGCTicket == 0) or (UldahGCTicket == 0) then
-        TeleportToGCTown()
-        yield("/wait 1.0")
-    end
+    TeleportToGCTown()
+    yield("/wait 5.0")
 
     TeleportTest()
 
@@ -426,59 +432,60 @@ MaxSingleItem = false
 
 ::GrandCompanyCheck::
     while DeliverooIsTurnInRunning() == false do
-        if IsInZone(129) then -- Limsa Upper
+        if IsInZone(129) then -- Limsa Lower
+            LogInfo("[IdyllshireTurnin] Currently in Limsa Lower!")
             yield("/wait 3")
             yield("/target Aetheryte")
             AetheryteX = GetTargetRawXPos()
             AetheryteY = GetTargetRawYPos()
             AetheryteZ = GetTargetRawZPos()
             PathfindAndMoveTo(AetheryteX, AetheryteY, AetheryteZ, false)
+            PathFinding()
             while GetDistanceToPoint(AetheryteX, AetheryteY, AetheryteZ) > 7 do 
                 yield("/wait 0.1")
             end 
             PathStop()
             yield("/li The Aftcastle")
+            LogInfo("[IdyllshireTurnin] Heading to the Aftcastle")
             while GetCharacterCondition(32) do
                 yield("/wait 1")
             end
-            while GetCharacterCondition(45) or GetCharacterCondition(51) do
-                yield("/wait 1") 
+            while IsInZone(128) == false do 
+                yield("/wait 2")
             end
         elseif IsInZone(128) then -- Limsa Upper
             yield("/wait 3")
             PathfindAndMoveTo(93.9,40.175,75.409, false)
+            LogInfo("[IdyllshireTurnin] Heading to the Limsa Upper GC")
+            PathFinding()
             yield("/wait 0.5")
             while GetDistanceToPoint(93.9,40.175,75.409) > 1 do 
                 yield("/wait 0.1")
             end 
-            yield("/deliveroo enable")
-            yield("/wait 0.5")
+            LogInfo("[IdyllshireTurnin] Limsa Upper GC has been reached!")
+            DeliverooEnable()
         elseif IsInZone(130) then -- Ul'dah's GC
             yield("/wait 3")
             PathfindAndMoveTo(-142.361,4.1,-106.919, false)
-            while GetDistanceToPoint(93.9,40.175,75.409) > 1 do 
+            LogInfo("[IdyllshireTurnin] Heading to Ul'Dah's GC")
+            PathFinding()
+            while GetDistanceToPoint(-142.361,4.1,-106.919) > 1 do 
                 yield("/wait 0.1")
             end 
-            yield("/deliveroo enable")
-            yield("/wait 0.5")
+            LogInfo("[IdyllshireTurnin] Ul'Dah's GC has been reached!")
+            DeliverooEnable()
         elseif IsInZone(132) then -- Grdiania's GC
             yield("/wait 3")
-            PathfindAndMoveTo(-59.564868927002, -1.7171915769577, 11.678337097168, false)
-            while GetDistanceToPoint(-59.564868927002, -1.7171915769577, 11.678337097168) > 4 do 
-                if PathIsRunning() == false then 
-                    PathfindAndMoveTo(-59.564868927002, -1.7171915769577, 11.678337097168, false)
-                end
-                yield("/wait 0.1")
-            end 
             PathfindAndMoveTo(-67.757,-0.501,-8.393, false)
+            PathFinding()
             while GetDistanceToPoint(-67.757,-0.501,-8.393) > 1 do 
                 yield("/wait 0.1")
                 if PathIsRunning() == false then 
                     PathfindAndMoveTo(-67.757,-0.501,-8.393, false)
                 end 
             end 
-            yield("/deliveroo enable")
-            yield("/wait 0.5")
+            LogInfo("[IdyllshireTurnin] Gridania's GC has been reached!")
+            DeliverooEnable()
         end
     end
 
