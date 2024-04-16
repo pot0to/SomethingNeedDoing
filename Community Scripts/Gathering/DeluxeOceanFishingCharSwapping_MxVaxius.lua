@@ -36,9 +36,9 @@ TextAdvance
 Yesalready configs
 "YesNo"
 	/Repair all displayed items for.*/
+	/Embark to the.*/
 "Lists"
 	Register to board.
-	Embark to the Ruby Price.
 "Bothers"
 	auto confirm queueing
 
