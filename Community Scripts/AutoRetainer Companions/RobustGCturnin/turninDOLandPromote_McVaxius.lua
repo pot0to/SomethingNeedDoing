@@ -38,7 +38,7 @@ yield("/send ESCAPE <wait.1.5>")
 yield("/send ESCAPE <wait.1.5>")
 yield("/wait 3")
 
-if GetMaelstromGCRank() < 5 then
+if GetMaelstromGCRank() < 6 then
 	--try to promote
 	yield("/wait 1")
 	yield("/target Personnel Officer")
@@ -61,7 +61,7 @@ if GetMaelstromGCRank() < 5 then
 	yield("/wait 2")
 end
 
-if GetMaelstromGCRank() < 5 then
+if GetMaelstromGCRank() < 6 then
 	--try to promote
 	yield("/wait 1")
 	yield("/target Personnel Officer")
