@@ -1,4 +1,4 @@
---log path
+--log path - change this to a valid path. foreward slashes are actually backslashes, don't use backslashes unless you know how to escape them properly.
 local folderPath = "F:/FF14/!gil/"
 -- first char cardinality and variable declaration
 local feesh_c = 2
@@ -23,12 +23,22 @@ firstname last name@server (obvious), ?
 1 means teleport to fc estate and use a nearby retainer bell (navmesh)
 
 
-you need navmesh and visland, you need to NOT use "wait in lobby" in autoretainer
-you need the version of snd related to the repo where you found this
-you need to have each char on the fisher job.  lalter version will fix this.
-having liza's discard helper will help with discarding garbage fish
+Required plogons
+vnavmesh
+visland
+autoretainer -> you need to NOT use "wait in lobby" in autoretainer, also turn multi on before starting the script or it wont get turned on until after the first ocean fishign happens.
+liza's discard helper (make your own fish list)
+something need doing (to run this script)
+simpletweaks with equipjob command default setting is fine here. just turn it on
+YesAlready
+TextAdvance
 
-
+Yesalready configs
+"YesNo"
+	/Repair all displayed items for.*/
+"Lists"
+	Register to board.
+	Embark to the Ruby Price.
 
 ---------
 ---TODO
@@ -40,11 +50,7 @@ if IsAddonVisible("IKDResult") then
 end
 --to exit summary
 
---add this somewhere to verify right char
-GetCharacterName(true) gives full name and server
-
---check pinned mesages with @em for some stuff like changing jobs automatically whicih requires gearsets for instructions
---add in config file that checks levels of chars. if they are under 90 they will be considered. and lowest level one will be selected
+--add in config file that checks levels of chars. if they are under 90 (for now, 100 in DT) they will be considered. and lowest level one will be selected
 
 ------------------------------------------------
 ------------------------------------------------
