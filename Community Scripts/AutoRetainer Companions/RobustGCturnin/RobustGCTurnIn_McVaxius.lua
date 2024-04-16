@@ -13,7 +13,7 @@ local chars_FCBUFF = {
  "First Last@Server"
 }
 
---characters with servername, fc house or bell (0, 1)
+--characters with servername, fc house or bell (0, 1) or 2 for gridania inn
 local chars_fn = {
  {"First Last@Server", 0},
  {"First Last@Server", 0},
@@ -34,6 +34,9 @@ local process_players = 1
 
 
 yield("/ays multi d")
+
+--setup yesalready for the inn if you need it. use the list option to pick appropriate entry.
+
 --some ideas for next version
 --deliveroo config suggestion: add some seals. and we can have a seal 0 or 1 option in settings
 --add instructions for how to use this script
@@ -95,11 +98,29 @@ function Final_GC_Cleaning()
 
 	--added 5 second wait here because sometimes they get stuck.
 	yield("/wait 5")
-	yield("/tp Estate Hall")
-	yield("/wait 1")
-	--yield("/waitaddon Nowloading <maxwait.15>")
-	yield("/wait 15")
-	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+	
+	--if we are tp to inn. we will go to gridania yo
+	if chars_fn[rcuck_count][2] == 3 then
+		yield("/tp New Gridania")
+		ZoneTransition()
+		yield("/wait 2")
+		PathfindAndMoveTo(48.969123840332, -1.5844612121582, 57.311756134033, false)
+		visland_stop_moving() --added so we don't accidentally end before we get to the inn person
+		yield("/visland exectemponce H4sIAAAAAAAACu3WS4/TMBAA4L9S+RxGfo0fuaEFpBUqLLtIXUAcDPVSS01cEgeEqv53nDSlWxAHUI65eWxnNPlkjb0nr1zlSUm+NGHt6uAWO9ek4LaLFBehrklBVu7HLoY6taT8sCc3sQ0pxJqUe3JPSmnAKsu4LMg7Uj5hgEZKxXhB3pMSNQjGNKpDDmPtr5+Rkom8duvWocv5GNCCLOM3X/k6kTIHNy5tHkK9JmVqOl+Q6zr5xn1Oq5A2r/vv6eXcWH0us93E76eVXF/O/uC27aMUQ9GsIM+rmPwpVfLVOHw67BiDN51v0+Pxnf86BMv4aZy+S3F3Fev1qJFnXobt9ip245/cxi75y/JWLqRzXX30IjaXOfrJt6Hyy7yPHoo/vFGBEGj1kZuCNohIe/7srQwgo8hm7qm4FQObDzQ/cUtpKcU+ztwawQqrZ+3JtCVIjsIctTkwTRH1YG0E5GNOJc7ak2nz3D14Bj9yK1BaS4sDt0VApZWdtSdr3AwYNxbHVmKASmWVPnIzKkFwTs3fvMV8Uf6jt8TcrM3wEjl7SzNyCxDa6rmZTHa8uQWRH4LmzP3rYDPUcr4kp5PWoASXVv0uzYAzIebH339Kfzz8BLifXG8MDQAA")
+		visland_stop_moving() --added so we don't accidentally end before we get to the inn person
+		yield("/target Antoinaut")
+		yield("/wait 0.5")
+		yield("/interact")
+	end
+	
+	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
+	if chars_fn[rcuck_count][2] == 0 or if chars_fn[rcuck_count][2] == 1 then
+		yield("/tp Estate Hall")
+		yield("/wait 1")
+		--yield("/waitaddon Nowloading <maxwait.15>")
+		yield("/wait 15")
+		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+	end
 
 	--normal small house shenanigans
 	if chars_fn[rcuck_count][2] == 0 then
