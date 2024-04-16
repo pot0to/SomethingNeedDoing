@@ -114,7 +114,7 @@ function Final_GC_Cleaning()
 	end
 	
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
-	if chars_fn[rcuck_count][2] == 0 or if chars_fn[rcuck_count][2] == 1 then
+	if chars_fn[rcuck_count][2] == 0 or chars_fn[rcuck_count][2] == 1 then
 		yield("/tp Estate Hall")
 		yield("/wait 1")
 		--yield("/waitaddon Nowloading <maxwait.15>")
