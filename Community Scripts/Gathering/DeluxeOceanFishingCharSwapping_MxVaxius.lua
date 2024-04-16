@@ -39,6 +39,8 @@ Yesalready configs
 "Lists"
 	Register to board.
 	Embark to the Ruby Price.
+"Bothers"
+	auto confirm queueing
 
 ---------
 ---TODO
