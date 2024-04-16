@@ -21,7 +21,7 @@ firstname last name@server (obvious), ?
 ? = 0 or 1,
 0 means teleport to fc estate and try to get into FC entrance. 
 1 means teleport to fc estate and use a nearby retainer bell (navmesh)
-
+3 means teleport to gridania and go to the inn. make sure you have yesalerady setup for the list item you need for that.
 
 Required plogons
 vnavmesh
@@ -253,10 +253,28 @@ function fishing()
 	end
 
 	yield("/wait 30")
-	-- Teleport back to FC House
-	yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
-	yield("/tp Estate Hall <wait.10>")
-	yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
+	--if we are tp to inn. we will go to gridania yo
+	if which_one[feesh_c][2] == 3 then
+		yield("/tp New Gridania")
+		ZoneTransition()
+		yield("/wait 2")
+		PathfindAndMoveTo(48.969123840332, -1.5844612121582, 57.311756134033, false)
+		visland_stop_moving() --added so we don't accidentally end before we get to the inn person
+		yield("/visland exectemponce H4sIAAAAAAAACu3WS4/TMBAA4L9S+RxGfo0fuaEFpBUqLLtIXUAcDPVSS01cEgeEqv53nDSlWxAHUI65eWxnNPlkjb0nr1zlSUm+NGHt6uAWO9ek4LaLFBehrklBVu7HLoY6taT8sCc3sQ0pxJqUe3JPSmnAKsu4LMg7Uj5hgEZKxXhB3pMSNQjGNKpDDmPtr5+Rkom8duvWocv5GNCCLOM3X/k6kTIHNy5tHkK9JmVqOl+Q6zr5xn1Oq5A2r/vv6eXcWH0us93E76eVXF/O/uC27aMUQ9GsIM+rmPwpVfLVOHw67BiDN51v0+Pxnf86BMv4aZy+S3F3Fev1qJFnXobt9ip245/cxi75y/JWLqRzXX30IjaXOfrJt6Hyy7yPHoo/vFGBEGj1kZuCNohIe/7srQwgo8hm7qm4FQObDzQ/cUtpKcU+ztwawQqrZ+3JtCVIjsIctTkwTRH1YG0E5GNOJc7ak2nz3D14Bj9yK1BaS4sDt0VApZWdtSdr3AwYNxbHVmKASmWVPnIzKkFwTs3fvMV8Uf6jt8TcrM3wEjl7SzNyCxDa6rmZTHa8uQWRH4LmzP3rYDPUcr4kp5PWoASXVv0uzYAzIebH339Kfzz8BLifXG8MDQAA")
+		visland_stop_moving() --added so we don't accidentally end before we get to the inn person
+		yield("/target Antoinaut")
+		yield("/wait 0.5")
+		yield("/interact")
+	end
+	
+	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
+	if which_one[feesh_c][2] == 0 or if which_one[feesh_c][2] == 1 then
+		yield("/tp Estate Hall")
+		yield("/wait 1")
+		--yield("/waitaddon Nowloading <maxwait.15>")
+		yield("/wait 15")
+		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+	end
 
 	--normal small house shenanigans
 	if which_one[feesh_c][2] == 0 then
