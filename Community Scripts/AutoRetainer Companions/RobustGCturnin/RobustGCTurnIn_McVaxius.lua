@@ -65,7 +65,6 @@ YesAlready -> YesNo -> /Purchase the action .*/
 (if you add above. remove the wait 2 and the line for yesno pcall for buying buffs)
 
 --some ideas for next version
---update gear set so old stuff can be junked @ GC
 --https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
 
 make sure _functions.lua exist in the snd folder. get it from same place as this script came from

@@ -49,6 +49,11 @@ end
 
 function visland_stop_moving()
  yield("/equipguud")
+ yield("/character")
+ yield("/pcall Character true 15")
+ yield("/wait 0.5")
+ yield("/character")
+ yield("/pcall Character true 15")
  yield("/wait 3")
  muuv = 1
  muuvX = GetPlayerRawXPos()
