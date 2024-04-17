@@ -139,7 +139,7 @@ function Final_GC_Cleaning()
 	--retainer bell nearby shenanigans
 	if chars_fn[rcuck_count][2] == 1 then
 		return_fc_near_bell()
-	end
+	end	
 	
 --[[ dumping out this part. opening venture coffers is kind of annoying waste of time. maybe we make it optional later -->TODO<--
 	--Code for opening venture coffers
