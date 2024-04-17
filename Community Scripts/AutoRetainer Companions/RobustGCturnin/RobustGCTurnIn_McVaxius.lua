@@ -2,11 +2,18 @@
   Description: Updated Deliver and clean up script for using deliveroo and visland.
   Author: McVaxius
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1190858719546835065
+
+Enter in names of characters that will be responsible for triggering FC Buffs
+make sure the chars home GC is the same as the FC's GC.
+last var is 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn
+
+make sure all login notifications are off. like help, achievements etc. this is unfortunately super annoying. you may need to login/out a few times to ensure no weird popups are appearing.
+i recommend using character data sync also
+
+add this to YesAlready
+/Execute.*/
 ]]
 
---enter in names of characters that will be responsible for triggering FC Buffs
---make sure the chars home GC is the same as the FC's GC.
---last var is 0 don't return home, 1 return home to fc entrance, 2 return home to a bell, 3 is gridania inn
 local chars_FCBUFF = {
   {"First Last@Server", 0},
   {"First Last@Server", 0},
@@ -161,18 +168,22 @@ if process_fc_buffs == 1 then
 			WalkToGC()
 			 --now we buy the buff
 			yield("<wait.5>")
-			yield("/target Quartermaster")
+			yield("/target \"OIC Quartermaster\"")
 			yield("/lockon")
+			yield("/wait 0.5")
 			yield("/automove")
-			yield("<wait.5>")
-			yield("/send NUMPAD0")
+			yield("<wait.2>")
+			--yield("/send NUMPAD0")
+			yield("/interact")
 			yield("/pcall SelectString true 0 <wait.1>")
 			yield("/pcall SelectString true 0 <wait.1>")
 
 			buycount = 0
 			while (buycount < 15) do
 				yield("/pcall FreeCompanyExchange false 2 22u")
-				yield("<wait.2>")
+				yield("<wait.1>")
+				yield("/pcall SelectYesno true 0")
+				yield("<wait.1>")
 				buycount = buycount + 1
 			end
 				yield("/send ESCAPE <wait.1.5>")
@@ -188,23 +199,23 @@ if process_fc_buffs == 1 then
 		yield("/pcall ContextMenu true 0 0 1u 0 0 <wait.1>")
 		yield("/pcall SelectYesno true 0 <wait.1>")
 			--if we are tp to inn. we will go to gridania yo
-		if chars_FCBUFF[i][2] == 3 then
-			return_to_inn()
+		if chars_FCBUFF[i][2] ~= 2 then
+			if chars_FCBUFF[i][2] == 3 then
+				return_to_inn()
+			end
+			--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
+			if chars_FCBUFF[i][2] == 0 or chars_fn[rcuck_count][2] == 1 then
+				return_to_fc()
+			end
+			--normal small house shenanigans
+			if chars_FCBUFF[i][2] == 0 then
+				return_fc_entrance()
+			end
+			--retainer bell nearby shenanigans
+			if chars_FCBUFF[i][2] == 1 then
+				return_fc_near_bell()
+			end
 		end
-		--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
-		if chars_FCBUFF[i][2] == 0 or chars_fn[rcuck_count][2] == 1 then
-			return_to_fc()
-		end
-		--normal small house shenanigans
-		if chars_FCBUFF[i][2] == 0 then
-			return_fc_entrance()
-		end
-		--retainer bell nearby shenanigans
-		if chars_FCBUFF[i][2] == 1 then
-			return_fc_near_bell()
-		end
-
-	--Then you need to /pyes the "Execute"
 	 end
 	yield("/wait 3")
 end
