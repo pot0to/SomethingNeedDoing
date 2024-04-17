@@ -6,16 +6,6 @@
 Enter in names of characters that will be responsible for triggering FC Buffs
 make sure the chars home GC is the same as the FC's GC.
 last var is 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn
-
-make sure all login notifications are off. like help, achievements etc. this is unfortunately super annoying. you may need to login/out a few times to ensure no weird popups are appearing.
-i recommend using character data sync also
-
-add this to YesAlready
-/Execute.*/
-
-optional:
-/Purchase the action .*/
-(if you add above. remove the wait 2 and the line for yesno pcall for buying buffs)
 ]]
 
 local chars_FCBUFF = {
@@ -50,19 +40,36 @@ local process_players = 1
 
 yield("/ays multi d")
 
---setup yesalready for the inn if you need it. use the list option to pick appropriate entry.
+--[[
+Instructions:
+Required Plogons:
+Autoretainer
+YesAlready
+TextAdvance
+Deliveroo
+Visland
+Vnavmesh
+Simpletweaks
+Something Need Doing (Croizat version)
+
+Configs:
+FFXIV itself -> make sure all login notifications are off. like help, achievements etc. this is unfortunately super annoying. you may need to login/out a few times to ensure no weird popups are appearing.
+Simpletweaks -> Setup autoequip command, "/equipguud"
+Simpletweaks -> targeting fix on
+SND -> Turn off SND targeting
+YesAlready -> Lists -> Retire to an inn room.
+YesAlready -> YesNo -> /Execute.*/
+
+Optional:
+YesAlready -> YesNo -> /Purchase the action .*/ 
+(if you add above. remove the wait 2 and the line for yesno pcall for buying buffs)
 
 --some ideas for next version
---deliveroo config suggestion: add some seals. and we can have a seal 0 or 1 option in settings
---add instructions for how to use this script
---separate config into a file
---check direction of where we spawned in gridania and uldah to adjust, and include new vislands
---change any vislands to use base64 var passed to visland
---use snd useitem
 --https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
 
---borrowed some code and ideas from the wonderful:  (make sure the _functions is in the snd folder)
---https://github.com/elijabesu/ffxiv-scripts/blob/main/snd/_functions.lua
+borrowed some code and ideas from the wonderful:  (make sure the _functions is in the snd folder)
+https://github.com/elijabesu/ffxiv-scripts/blob/main/snd/_functions.lua
+]]
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
