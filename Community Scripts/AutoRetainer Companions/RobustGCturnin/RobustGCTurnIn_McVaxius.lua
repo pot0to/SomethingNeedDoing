@@ -12,6 +12,10 @@ i recommend using character data sync also
 
 add this to YesAlready
 /Execute.*/
+
+optional:
+/Purchase the action .*/
+(if you add above. remove the wait 2 and the line for yesno pcall for buying buffs)
 ]]
 
 local chars_FCBUFF = {
