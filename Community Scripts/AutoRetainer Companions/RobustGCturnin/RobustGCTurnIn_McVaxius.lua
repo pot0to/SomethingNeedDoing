@@ -123,6 +123,7 @@ function Final_GC_Cleaning()
 	--if we are tp to inn. we will go to gridania yo
 	if chars_fn[rcuck_count][2] == 3 then
 		return_to_inn()
+		yield("/wait 8")
 	end
 	
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
@@ -246,7 +247,6 @@ if process_players == 1 then
 	rcuck_count = i
 	yield("/wait 2")
 	Final_GC_Cleaning()
-	yield("/wait 8")
 	end
 end
 --last one out turn off the lights
