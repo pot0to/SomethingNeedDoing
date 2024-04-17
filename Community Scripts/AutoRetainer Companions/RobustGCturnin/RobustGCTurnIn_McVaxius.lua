@@ -16,7 +16,7 @@ local chars_FCBUFF = {
   {"First Last@Server", 0}
 }
 
---characters with servername, fc house or bell (0, 1) or 2 for gridania inn
+--characters with servername, fc house or bell (0, 1) or 3 for gridania inn
 local chars_fn = {
  {"First Last@Server", 0},
  {"First Last@Server", 0},
@@ -65,7 +65,6 @@ YesAlready -> YesNo -> /Purchase the action .*/
 (if you add above. remove the wait 2 and the line for yesno pcall for buying buffs)
 
 --some ideas for next version
---update gear set so old stuff can be junked @ GC
 --https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
 
 make sure _functions.lua exist in the snd folder. get it from same place as this script came from
@@ -124,6 +123,7 @@ function Final_GC_Cleaning()
 	--if we are tp to inn. we will go to gridania yo
 	if chars_fn[rcuck_count][2] == 3 then
 		return_to_inn()
+		yield("/wait 8")
 	end
 	
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
