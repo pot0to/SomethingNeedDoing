@@ -161,7 +161,7 @@ if process_fc_buffs == 1 then
 			WalkToGC()
 			 --now we buy the buff
 			yield("<wait.5>")
-			yield("/target OIC Quartermaster")
+			yield("/target Quartermaster")
 			yield("/lockon")
 			yield("/automove")
 			yield("<wait.5>")
