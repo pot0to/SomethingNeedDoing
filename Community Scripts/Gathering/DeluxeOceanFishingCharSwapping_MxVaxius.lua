@@ -268,7 +268,7 @@ function fishing()
 	end
 	
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
-	if which_one[feesh_c][2] == 0 or if which_one[feesh_c][2] == 1 then
+	if which_one[feesh_c][2] == 0 or which_one[feesh_c][2] == 1 then
 		yield("/tp Estate Hall")
 		yield("/wait 1")
 		--yield("/waitaddon Nowloading <maxwait.15>")
