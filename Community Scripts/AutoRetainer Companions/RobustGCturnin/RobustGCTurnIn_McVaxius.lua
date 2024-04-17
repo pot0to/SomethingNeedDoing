@@ -156,9 +156,30 @@ if process_fc_buffs == 1 then
 			yield("/wait 2")
 			CharacterSafeWait()
 			yield("/echo Processing FC Buff Manager "..i.."/"..#chars_FCBUFF)
-			--TeleportToGCTown()
+			TeleportToGCTown()
 			ZoneTransition()
 			WalkToGC()
+			 --now we buy the buff
+			yield("<wait.5>")
+			yield("/target OIC Quartermaster")
+			yield("/lockon")
+			yield("/automove")
+			yield("<wait.5>")
+			yield("/send NUMPAD0")
+			yield("/pcall SelectString true 0 <wait.1>")
+			yield("/pcall SelectString true 0 <wait.1>")
+
+			buycount = 0
+			while (buycount < 15) do
+				yield("/pcall FreeCompanyExchange false 2 22u")
+				yield("<wait.2>")
+				buycount = buycount + 1
+			end
+				yield("/send ESCAPE <wait.1.5>")
+				yield("/send ESCAPE <wait.1.5>")
+				yield("/send ESCAPE <wait.1.5>")
+				yield("<wait.5>")
+
 		end
 		yield("/echo FC Seal Buff II")
 		yield("/freecompanycmd <wait.1>")
