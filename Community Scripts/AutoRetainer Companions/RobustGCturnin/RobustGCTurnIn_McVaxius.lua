@@ -16,7 +16,7 @@ local chars_FCBUFF = {
   {"First Last@Server", 0}
 }
 
---characters with servername, fc house or bell (0, 1) or 2 for gridania inn
+--characters with servername, fc house or bell (0, 1) or 3 for gridania inn
 local chars_fn = {
  {"First Last@Server", 0},
  {"First Last@Server", 0},
@@ -246,6 +246,7 @@ if process_players == 1 then
 	rcuck_count = i
 	yield("/wait 2")
 	Final_GC_Cleaning()
+	yield("/wait 8")
 	end
 end
 --last one out turn off the lights
