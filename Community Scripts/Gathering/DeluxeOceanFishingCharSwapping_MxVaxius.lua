@@ -1,4 +1,4 @@
---log path
+--log path - change this to a valid path. foreward slashes are actually backslashes, don't use backslashes unless you know how to escape them properly.
 local folderPath = "F:/FF14/!gil/"
 -- first char cardinality and variable declaration
 local feesh_c = 2
@@ -21,14 +21,26 @@ firstname last name@server (obvious), ?
 ? = 0 or 1,
 0 means teleport to fc estate and try to get into FC entrance. 
 1 means teleport to fc estate and use a nearby retainer bell (navmesh)
+3 means teleport to gridania and go to the inn. make sure you have yesalerady setup for the list item you need for that.
 
+Required plogons
+vnavmesh
+visland
+autoretainer -> you need to NOT use "wait in lobby" in autoretainer, also turn multi on before starting the script or it wont get turned on until after the first ocean fishign happens.
+liza's discard helper (make your own fish list)
+something need doing (to run this script)
+simpletweaks with equipjob command default setting is fine here. just turn it on
+YesAlready
+TextAdvance
 
-you need navmesh and visland, you need to NOT use "wait in lobby" in autoretainer
-you need the version of snd related to the repo where you found this
-you need to have each char on the fisher job.  lalter version will fix this.
-having liza's discard helper will help with discarding garbage fish
-
-
+Yesalready configs
+"YesNo"
+	/Repair all displayed items for.*/
+	/Embark to the.*/
+"Lists"
+	Register to board.
+"Bothers"
+	auto confirm queueing
 
 ---------
 ---TODO
@@ -40,11 +52,7 @@ if IsAddonVisible("IKDResult") then
 end
 --to exit summary
 
---add this somewhere to verify right char
-GetCharacterName(true) gives full name and server
-
---check pinned mesages with @em for some stuff like changing jobs automatically whicih requires gearsets for instructions
---add in config file that checks levels of chars. if they are under 90 they will be considered. and lowest level one will be selected
+--add in config file that checks levels of chars. if they are under 90 (for now, 100 in DT) they will be considered. and lowest level one will be selected
 
 ------------------------------------------------
 ------------------------------------------------
@@ -135,6 +143,7 @@ function fishing()
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 
+	yield("/equipjob fsh")
 	yield("/lockon on")
 	yield("/automove on")
 	yield("/send D")
@@ -148,7 +157,8 @@ function fishing()
 	yield("/wait 10")
 
 	yield("/ac sprint")
-
+	yield("/equipjob fsh")
+		
 	--repair catte if we are at 99% durability or lower and have at least 5000 gil
 	while NeedsRepair(99) and  GetItemCount(1) > 4999 do
 		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
@@ -243,10 +253,28 @@ function fishing()
 	end
 
 	yield("/wait 30")
-	-- Teleport back to FC House
-	yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
-	yield("/tp Estate Hall <wait.10>")
-	yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
+	--if we are tp to inn. we will go to gridania yo
+	if which_one[feesh_c][2] == 3 then
+		yield("/tp New Gridania")
+		ZoneTransition()
+		yield("/wait 2")
+		PathfindAndMoveTo(48.969123840332, -1.5844612121582, 57.311756134033, false)
+		visland_stop_moving() --added so we don't accidentally end before we get to the inn person
+		yield("/visland exectemponce H4sIAAAAAAAACu3WS4/TMBAA4L9S+RxGfo0fuaEFpBUqLLtIXUAcDPVSS01cEgeEqv53nDSlWxAHUI65eWxnNPlkjb0nr1zlSUm+NGHt6uAWO9ek4LaLFBehrklBVu7HLoY6taT8sCc3sQ0pxJqUe3JPSmnAKsu4LMg7Uj5hgEZKxXhB3pMSNQjGNKpDDmPtr5+Rkom8duvWocv5GNCCLOM3X/k6kTIHNy5tHkK9JmVqOl+Q6zr5xn1Oq5A2r/vv6eXcWH0us93E76eVXF/O/uC27aMUQ9GsIM+rmPwpVfLVOHw67BiDN51v0+Pxnf86BMv4aZy+S3F3Fev1qJFnXobt9ip245/cxi75y/JWLqRzXX30IjaXOfrJt6Hyy7yPHoo/vFGBEGj1kZuCNohIe/7srQwgo8hm7qm4FQObDzQ/cUtpKcU+ztwawQqrZ+3JtCVIjsIctTkwTRH1YG0E5GNOJc7ak2nz3D14Bj9yK1BaS4sDt0VApZWdtSdr3AwYNxbHVmKASmWVPnIzKkFwTs3fvMV8Uf6jt8TcrM3wEjl7SzNyCxDa6rmZTHa8uQWRH4LmzP3rYDPUcr4kp5PWoASXVv0uzYAzIebH339Kfzz8BLifXG8MDQAA")
+		visland_stop_moving() --added so we don't accidentally end before we get to the inn person
+		yield("/target Antoinaut")
+		yield("/wait 0.5")
+		yield("/interact")
+	end
+	
+	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
+	if which_one[feesh_c][2] == 0 or which_one[feesh_c][2] == 1 then
+		yield("/tp Estate Hall")
+		yield("/wait 1")
+		--yield("/waitaddon Nowloading <maxwait.15>")
+		yield("/wait 15")
+		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+	end
 
 	--normal small house shenanigans
 	if which_one[feesh_c][2] == 0 then

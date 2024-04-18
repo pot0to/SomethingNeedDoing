@@ -2,18 +2,21 @@
   Description: Updated Deliver and clean up script for using deliveroo and visland.
   Author: McVaxius
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1190858719546835065
+
+Enter in names of characters that will be responsible for triggering FC Buffs
+make sure the chars home GC is the same as the FC's GC.
+last var is 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn
 ]]
 
---enter in names of characters that will be responsible for triggering FC Buffs
 local chars_FCBUFF = {
- "First Last@Server",
- "First Last@Server",
- "First Last@Server",
- "First Last@Server",
- "First Last@Server"
+  {"First Last@Server", 0},
+  {"First Last@Server", 0},
+  {"First Last@Server", 0},
+  {"First Last@Server", 0},
+  {"First Last@Server", 0}
 }
 
---characters with servername, fc house or bell (0, 1)
+--characters with servername, fc house or bell (0, 1) or 3 for gridania inn
 local chars_fn = {
  {"First Last@Server", 0},
  {"First Last@Server", 0},
@@ -29,22 +32,43 @@ local chars_fn = {
 local rcuck_count = 1
 --do we bother with fc buffs? 0 = no 1 = yes
 local process_fc_buffs = 1
+--do we refresh the buffs on this run?
+local buy_fc_buffs = 1
 --do we run each city?
 local process_players = 1
 
 
 yield("/ays multi d")
+
+--[[
+Instructions:
+Required Plogons:
+Autoretainer
+YesAlready
+TextAdvance
+Deliveroo
+Visland
+Vnavmesh
+Simpletweaks
+Something Need Doing (Croizat version)
+
+Configs:
+FFXIV itself -> make sure all login notifications are off. like help, achievements etc. this is unfortunately super annoying. you may need to login/out a few times to ensure no weird popups are appearing.
+Simpletweaks -> Setup autoequip command, "/equipguud"
+Simpletweaks -> targeting fix on
+SND -> Turn off SND targeting
+YesAlready -> Lists -> Retire to an inn room.
+YesAlready -> YesNo -> /Execute.*/
+
+Optional:
+YesAlready -> YesNo -> /Purchase the action .*/ 
+(if you add above. remove the wait 2 and the line for yesno pcall for buying buffs)
+
 --some ideas for next version
---deliveroo config suggestion: add some seals. and we can have a seal 0 or 1 option in settings
---add instructions for how to use this script
---separate config into a file
---check direction of where we spawned in gridania and uldah to adjust, and include new vislands
---change any vislands to use base64 var passed to visland
---use snd useitem
 --https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
 
---borrowed some code and ideas from the wonderful:  (make sure the _functions is in the snd folder)
---https://github.com/elijabesu/ffxiv-scripts/blob/main/snd/_functions.lua
+make sure _functions.lua exist in the snd folder. get it from same place as this script came from
+]]
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
@@ -95,31 +119,26 @@ function Final_GC_Cleaning()
 
 	--added 5 second wait here because sometimes they get stuck.
 	yield("/wait 5")
-	yield("/tp Estate Hall")
-	yield("/wait 1")
-	--yield("/waitaddon Nowloading <maxwait.15>")
-	yield("/wait 15")
-	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+	
+	--if we are tp to inn. we will go to gridania yo
+	if chars_fn[rcuck_count][2] == 3 then
+		return_to_inn()
+		yield("/wait 8")
+	end
+	
+	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
+	if chars_fn[rcuck_count][2] == 0 or chars_fn[rcuck_count][2] == 1 then
+		return_to_fc()
+	end
 
 	--normal small house shenanigans
 	if chars_fn[rcuck_count][2] == 0 then
-		yield("/hold W <wait.1.0>")
-		yield("/release W")
-		yield("/target Entrance <wait.1>")
-		yield("/lockon on")
-		yield("/automove on <wait.2.5>")
-		yield("/automove off <wait.1.5>")
-		yield("/hold Q <wait.2.0>")
-		yield("/release Q")
+		return_fc_entrance()
 	end
 
 	--retainer bell nearby shenanigans
 	if chars_fn[rcuck_count][2] == 1 then
-		yield("/target \"Summoning Bell\"")
-		yield("/wait 2")
-		--PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
-		WalkTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"))
-		visland_stop_moving() --added so we don't accidentally end before we get to the bell
+		return_fc_near_bell()
 	end
 	
 --[[ dumping out this part. opening venture coffers is kind of annoying waste of time. maybe we make it optional later -->TODO<--
@@ -150,13 +169,64 @@ if process_fc_buffs == 1 then
    	    yield("/echo 15 second wait")
 	    yield("/wait 15")
 		yield("/waitaddon NamePlate <maxwait.600><wait.10>")
+		--check if we are doing buy_fc_buffs or not
+		if buy_fc_buffs == 1 then
+			yield("/wait 2")
+			CharacterSafeWait()
+			yield("/echo Processing FC Buff Manager "..i.."/"..#chars_FCBUFF)
+			TeleportToGCTown()
+			ZoneTransition()
+			WalkToGC()
+			 --now we buy the buff
+			yield("<wait.5>")
+			yield("/target \"OIC Quartermaster\"")
+			yield("/lockon")
+			yield("/wait 0.5")
+			yield("/automove")
+			yield("<wait.2>")
+			--yield("/send NUMPAD0")
+			yield("/interact")
+			yield("/pcall SelectString true 0 <wait.1>")
+			yield("/pcall SelectString true 0 <wait.1>")
+
+			buycount = 0
+			while (buycount < 15) do
+				yield("/pcall FreeCompanyExchange false 2 22u")
+				yield("<wait.1>")
+				yield("/pcall SelectYesno true 0")
+				yield("<wait.1>")
+				buycount = buycount + 1
+			end
+				yield("/send ESCAPE <wait.1.5>")
+				yield("/send ESCAPE <wait.1.5>")
+				yield("/send ESCAPE <wait.1.5>")
+				yield("<wait.5>")
+
+		end
 		yield("/echo FC Seal Buff II")
 		yield("/freecompanycmd <wait.1>")
 		yield("/pcall FreeCompany false 0 4u <wait.1>")
 		yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
 		yield("/pcall ContextMenu true 0 0 1u 0 0 <wait.1>")
 		yield("/pcall SelectYesno true 0 <wait.1>")
-	--Then you need to /pyes the "Execute"
+			--if we are tp to inn. we will go to gridania yo
+		if chars_FCBUFF[i][2] ~= 2 then
+			if chars_FCBUFF[i][2] == 3 then
+				return_to_inn()
+			end
+			--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
+			if chars_FCBUFF[i][2] == 0 or chars_fn[rcuck_count][2] == 1 then
+				return_to_fc()
+			end
+			--normal small house shenanigans
+			if chars_FCBUFF[i][2] == 0 then
+				return_fc_entrance()
+			end
+			--retainer bell nearby shenanigans
+			if chars_FCBUFF[i][2] == 1 then
+				return_fc_near_bell()
+			end
+		end
 	 end
 	yield("/wait 3")
 end

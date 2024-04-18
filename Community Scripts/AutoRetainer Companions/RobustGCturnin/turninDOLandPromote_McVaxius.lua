@@ -8,8 +8,8 @@ functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
 DidWeLoadcorrectly()
 
-yield("/wait 2")
-CharacterSafeWait()
+yield("/wait 0.5")
+--CharacterSafeWait()
 yield("/echo Attempting to turn in DOL turnin item")
 TeleportToGCTown()
 ZoneTransition()
@@ -38,21 +38,51 @@ yield("/send ESCAPE <wait.1.5>")
 yield("/send ESCAPE <wait.1.5>")
 yield("/wait 3")
 
---try to promote
-yield("/wait 1")
-yield("/target Personnel Officer")
-yield("/wait 1")
-yield("/send NUMPAD0")
-yield("/wait 1")
-yield("/send NUMPAD2")
-yield("/wait 0.5")
-yield("/send NUMPAD0")
-yield("/wait 0.5")
-yield("/send NUMPAD0")
-yield("/send ESCAPE <wait.1.5>")
-yield("/send ESCAPE <wait.1.5>")
-yield("/wait 3")
+if GetMaelstromGCRank() < 6 then
+	--try to promote
+	yield("/wait 1")
+	yield("/target Personnel Officer")
+	yield("/wait 1")
+	yield("/send NUMPAD0")
+	yield("/wait 1")
+	yield("/send NUMPAD2")
+	yield("/wait 0.5")
+	yield("/send NUMPAD0")
+	yield("/wait 0.5")
+	yield("/send NUMPAD0")
+	yield("/send ESCAPE <wait.1.5>")
+	yield("/send ESCAPE <wait.1.5>")
+	yield("/wait 3")
 
+	--wait for char condition 1
+	while GetCharacterCondition(32) == true and GetCharacterCondition(35) == true do
+		yield("/wait 1")
+	end
+	yield("/wait 2")
+end
+
+if GetMaelstromGCRank() < 6 then
+	--try to promote
+	yield("/wait 1")
+	yield("/target Personnel Officer")
+	yield("/wait 1")
+	yield("/send NUMPAD0")
+	yield("/wait 1")
+	yield("/send NUMPAD2")
+	yield("/wait 0.5")
+	yield("/send NUMPAD0")
+	yield("/wait 0.5")
+	yield("/send NUMPAD0")
+	yield("/send ESCAPE <wait.1.5>")
+	yield("/send ESCAPE <wait.1.5>")
+	yield("/wait 3")
+
+	--wait for char condition 1
+	while GetCharacterCondition(32) == true and GetCharacterCondition(35) == true do
+		yield("/wait 1")
+	end
+	yield("/wait 2")
+end
 
 -- Teleport back to FC House
 yield("/tp Estate Hall <wait.10>")

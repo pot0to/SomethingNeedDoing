@@ -73,7 +73,7 @@ end
 
 local function shake_hands()
 	if GetGil() == 0 then
-		yield("what are you stupid? you better run before "..fat_tony.." realizes you tricked them")
+		yield("/echo What are you stupid? you better run before "..fat_tony.." realizes you tricked them")
 	end
 	if GetGil() > 0 then
 		thebag = GetGil() - bagmans_take
