@@ -329,6 +329,10 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+       "2024-04-18",
+       "- Fixed some instances where certain entity functions return null\n");
+
+        DisplayChangelog(
         "2024-04-15",
         "- Added GetTargetHitboxRadius()\n" +
         "- Added GetObjectHitboxRadius()\n");
