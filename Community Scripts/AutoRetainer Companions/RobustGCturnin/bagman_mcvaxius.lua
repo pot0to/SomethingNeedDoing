@@ -72,10 +72,7 @@ local function approach_entrance()
 end
 
 local function shake_hands()
-	if GetGil() == 0 then
-		yield("/echo What are you stupid? you better run before "..fat_tony.." realizes you tricked them")
-	end
-	if GetGil() > 0 then
+	if GetGil() > bagmans_take then
 		thebag = GetGil() - bagmans_take
 		if thebag < 0 then
 			thebag = GetGil()
@@ -106,80 +103,92 @@ for i=1,#franchise_owners do
 	CharacterSafeWait()
     yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
 	
-	--now we must head to fat_tony 
-	--first we have to find his neighbourhood, this uber drive better not complain
-	--are we on the right server already?
-	yield("/li "..tonys_turf)
-	yield("/wait 15")
-	CharacterSafeWait()
-    yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
-	
-	--now we have to walk or teleport?!!?!? to fat tony, where is he waiting this time?
-	if tony_type == 0 then
-		yield("/echo "..fat_tony.." is meeting us in the alleyways.. watch your back")
-		yield("/tp \"tonys_spot\"")
-		ZoneTransition()
-	end
-	if tony_type > 0 then
-		yield("/echo "..fat_tony.." is meeting us at the estate, we will approach with respect")
-		yield("/estatelist "..fat_tony)
-		yield("/wait 0.5")
-		--very interesting discovery
-		--1= personal, 0 = fc, 2 = apartment
-		yield("/pcall TeleportHousingFriend true "..tonys_house)
-		ZoneTransition()
+	--AGP. always get paid.
+	--don't deliver if we can't pay ourselves. Tony is too lazy and stupid to come check our franchise anyways.
+	--tell him our grandmother was sick
+	if GetGil() < bagmans_take then
+		yield("/echo Maybe "..fat_tony.." won't notice we didn't pay this month?")
+		yield("/echo also yo, you out there watching this. why did you include this char in the list are you lazy?")
+		yield("/wait 5")
 	end
 	
-	--ok tony is nearby. let's approach this guy, weapons sheathed, we are just doing business
-	if tony_type == 0 then
-		approach_tony()
-		visland_stop_moving()
-	end
-	if tony_type == 1 then
-		approach_entrance()
-		visland_stop_moving()
-		if tony_type == 2 then
-			yield("/interact")
-			yield("/pcall SelectYesNo true 0")  --this doesnt work. just use yesalready. putting it here for later in case someone else sorts it out i can update.
-			yield("/wait 5")
-		end
-		approach_tony()
-		visland_stop_moving()
-	end
-	shake_hands() -- its a business doing pleasure with you tony as always
-	--time to go home.. maybe?
-	if franchise_owners[i][2] == 0 then
-		yield("/echo wait why can't i leave "..fat_tony.."?")
-	end
-	if franchise_owners[i][2] == 1 then
-		yield("/li")
-		yield("/echo See ya "..fat_tony..", a pleasure.")
-		yield("/wait 5")
-		CharacterSafeWait()
-		--added 5 second wait here because sometimes they get stuck.
-		yield("/wait 5")
-		yield("/tp Estate Hall")
-		yield("/wait 1")
-		--yield("/waitaddon Nowloading <maxwait.15>")
+	--allright time for a road trip. let get that bag to Tony
+	if GetGil() > bagmans_take then
+		--now we must head to fat_tony 
+		--first we have to find his neighbourhood, this uber drive better not complain
+		--are we on the right server already?
+		yield("/li "..tonys_turf)
 		yield("/wait 15")
-		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
-		--normal small house shenanigans
-		if franchise_owners[i][3] == 0 then
-			yield("/hold W <wait.1.0>")
-			yield("/release W")
-			yield("/target Entrance <wait.1>")
-			yield("/lockon on")
-			yield("/automove on <wait.2.5>")
-			yield("/automove off <wait.1.5>")
-			yield("/hold Q <wait.2.0>")
-			yield("/release Q")
+		CharacterSafeWait()
+		yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
+		
+		--now we have to walk or teleport?!!?!? to fat tony, where is he waiting this time?
+		if tony_type == 0 then
+			yield("/echo "..fat_tony.." is meeting us in the alleyways.. watch your back")
+			yield("/tp \"tonys_spot\"")
+			ZoneTransition()
 		end
-		--retainer bell nearby shenanigans
-		if franchise_owners[i][3] == 1 then
-			yield("/target \"Summoning Bell\"")
-			yield("/wait 2")
-			PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
-			visland_stop_moving() --added so we don't accidentally end before we get to the bell
+		if tony_type > 0 then
+			yield("/echo "..fat_tony.." is meeting us at the estate, we will approach with respect")
+			yield("/estatelist "..fat_tony)
+			yield("/wait 0.5")
+			--very interesting discovery
+			--1= personal, 0 = fc, 2 = apartment
+			yield("/pcall TeleportHousingFriend true "..tonys_house)
+			ZoneTransition()
+		end
+		
+		--ok tony is nearby. let's approach this guy, weapons sheathed, we are just doing business
+		if tony_type == 0 then
+			approach_tony()
+			visland_stop_moving()
+		end
+		if tony_type == 1 then
+			approach_entrance()
+			visland_stop_moving()
+			if tony_type == 2 then
+				yield("/interact")
+				yield("/pcall SelectYesNo true 0")  --this doesnt work. just use yesalready. putting it here for later in case someone else sorts it out i can update.
+				yield("/wait 5")
+			end
+			approach_tony()
+			visland_stop_moving()
+		end
+		shake_hands() -- its a business doing pleasure with you tony as always
+		--time to go home.. maybe?
+		if franchise_owners[i][2] == 0 then
+			yield("/echo wait why can't i leave "..fat_tony.."?")
+		end
+		if franchise_owners[i][2] == 1 then
+			yield("/li")
+			yield("/echo See ya "..fat_tony..", a pleasure.")
+			yield("/wait 5")
+			CharacterSafeWait()
+			--added 5 second wait here because sometimes they get stuck.
+			yield("/wait 5")
+			yield("/tp Estate Hall")
+			yield("/wait 1")
+			--yield("/waitaddon Nowloading <maxwait.15>")
+			yield("/wait 15")
+			yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+			--normal small house shenanigans
+			if franchise_owners[i][3] == 0 then
+				yield("/hold W <wait.1.0>")
+				yield("/release W")
+				yield("/target Entrance <wait.1>")
+				yield("/lockon on")
+				yield("/automove on <wait.2.5>")
+				yield("/automove off <wait.1.5>")
+				yield("/hold Q <wait.2.0>")
+				yield("/release Q")
+			end
+			--retainer bell nearby shenanigans
+			if franchise_owners[i][3] == 1 then
+				yield("/target \"Summoning Bell\"")
+				yield("/wait 2")
+				PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
+				visland_stop_moving() --added so we don't accidentally end before we get to the bell
+			end
 		end
 	end
 end

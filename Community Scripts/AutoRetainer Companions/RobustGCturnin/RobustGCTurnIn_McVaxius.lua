@@ -8,6 +8,17 @@ make sure the chars home GC is the same as the FC's GC.
 last var is 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn
 ]]
 
+--enter in names of chars that can edit emblems are in same GC as the FC
+--warning it will attempt to change the free company allegiance just in case. make sure the char has 15k gil
+local chars_EMBLEM = {
+  {"First Last@Server", 0},
+  {"First Last@Server", 0},
+  {"First Last@Server", 0},
+  {"First Last@Server", 0},
+  {"First Last@Server", 0}
+}
+
+--enter in names of characters that will be responsible for triggering FC Buffs
 local chars_FCBUFF = {
   {"First Last@Server", 0},
   {"First Last@Server", 0},
@@ -28,20 +39,20 @@ local chars_fn = {
  {"First Last@Server", 0}
 }
 
---starting the counter at 1
-local rcuck_count = 1
---do we bother with fc buffs? 0 = no 1 = yes
-local process_fc_buffs = 1
---do we refresh the buffs on this run?
-local buy_fc_buffs = 1
---do we run each city?
-local process_players = 1
-
-
-yield("/ays multi d")
+-------------------------
+--SCRIPT CONFIGURATION --
+-------------------------
+--Please read these, you could use this script to go randomize fc emblems for example instead of doing the full script
+local rcuck_count = 1		--0..n starting the counter at 1, this is in case your manually resuming or want to start at later index value instead of just commenting out parts of it
+local process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
+local buy_fc_buffs = 1 		--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs
+local process_players = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
+local process_emblem = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems
 
 --[[
-Instructions:
+------------------------
+--SCRIPT REQUIREMENTS --
+------------------------
 Required Plogons:
 Autoretainer
 YesAlready
@@ -51,14 +62,25 @@ Visland
 Vnavmesh
 Simpletweaks
 Something Need Doing (Croizat version)
+-----------------
+-SUPER IMPORTANT-
+-----------------
+Make sure _functions.lua exist in the snd folder. which should look something like this path %AppData%\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\
+get _functions.lua from same place as this script came from
 
-Configs:
+-------------------------
+--PLUGIN CONFIGURATIONS--
+-------------------------
 FFXIV itself -> make sure all login notifications are off. like help, achievements etc. this is unfortunately super annoying. you may need to login/out a few times to ensure no weird popups are appearing.
 Simpletweaks -> Setup autoequip command, "/equipguud"
 Simpletweaks -> targeting fix on
 SND -> Turn off SND targeting
+YesAlready -> Lists -> Edit company crest design.
 YesAlready -> Lists -> Retire to an inn room.
+YesAlready -> Lists -> Change free company allegiance.
+YesAlready -> YesNo -> /Pay the 15,000-gil fee to switch your company's allegiance to the.*/
 YesAlready -> YesNo -> /Execute.*/
+YesAlready -> YesNo -> Save changes to crest design?
 
 Optional:
 YesAlready -> YesNo -> /Purchase the action .*/ 
@@ -66,9 +88,12 @@ YesAlready -> YesNo -> /Purchase the action .*/
 
 --some ideas for next version
 --https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
-
-make sure _functions.lua exist in the snd folder. get it from same place as this script came from
+--stop repeating code for returning home.. introduces danger of errors popping up
 ]]
+
+
+yield("/ays multi d")
+
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
@@ -139,7 +164,7 @@ function Final_GC_Cleaning()
 	--retainer bell nearby shenanigans
 	if chars_fn[rcuck_count][2] == 1 then
 		return_fc_near_bell()
-	end
+	end	
 	
 --[[ dumping out this part. opening venture coffers is kind of annoying waste of time. maybe we make it optional later -->TODO<--
 	--Code for opening venture coffers
@@ -158,6 +183,80 @@ function Final_GC_Cleaning()
 	--yield("/autorun off")
 	--Code for opening FC menu so allagan tools can pull the FC points
 	yield("/freecompanycmd")
+	yield("/wait 3")
+end
+
+--0th randomize the emblems if need be
+--[[
+[[notes for later
+GetPlayerGC(), 1 = Maelstrom, 2 = Adder?, 3 = ImmortalFlames
+GetFCGrandCompany(), text instead of enum of above
+]]
+if process_emblem == 1 then
+	for i=1, #chars_EMBLEM do
+		yield("/echo "..chars_EMBLEM[i][1])
+		yield("/ays relog " ..chars_EMBLEM[i][1])
+   	    yield("/echo 15 second wait")
+	    yield("/wait 15")
+		yield("/waitaddon NamePlate <maxwait.600><wait.10>")
+		--check if we are doing buy_fc_buffs or not
+		yield("/wait 2")
+		CharacterSafeWait()
+		yield("/echo Processing Emblem randomizer -> "..i.."/"..#chars_EMBLEM)
+		TeleportToGCTown()
+		ZoneTransition()
+		WalkToGC()
+
+		--quickly change the GC for the FC
+		yield("<wait.5>")
+		yield("/target \"OIC Administrator\"")
+		yield("/wait 0.5")
+		yield("/lockon")
+		yield("/wait 0.5")
+		yield("/automove")
+		yield("<wait.2>")
+		yield("/interact")
+		yield("<wait.4>")
+		--all set
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		--quick escape in case we got stuck in menu
+
+		 --now we get to the emblematizer
+		yield("<wait.5>")
+		yield("/target \"OIC Officer of Arms\"")
+		yield("/wait 0.5")
+		yield("/lockon")
+		yield("/wait 0.5")
+		yield("/automove")
+		yield("<wait.2>")
+		yield("/interact")
+		yield("<wait.3>")
+		yield("/pcall FreeCompanyCrestEditor true 5 0 0")
+		yield("<wait.2>")
+		yield("/pcall FreeCompanyCrestEditor false 0")
+		yield("<wait.2>")
+
+		--if we are tp to inn. we will go to gridania yo
+		if chars_EMBLEM[i][2] ~= 2 then
+			if chars_EMBLEM[i][2] == 3 then
+				return_to_inn()
+				yield("/wait 8")
+			end
+			--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
+			if chars_EMBLEM[i][2] == 0 or chars_fn[rcuck_count][2] == 1 then
+				return_to_fc()
+			end
+			--normal small house shenanigans
+			if chars_EMBLEM[i][2] == 0 then
+				return_fc_entrance()
+			end
+			--retainer bell nearby shenanigans
+			if chars_EMBLEM[i][2] == 1 then
+				return_fc_near_bell()
+			end
+		end
+	 end
 	yield("/wait 3")
 end
 
@@ -180,6 +279,7 @@ if process_fc_buffs == 1 then
 			 --now we buy the buff
 			yield("<wait.5>")
 			yield("/target \"OIC Quartermaster\"")
+			yield("/wait 0.5")
 			yield("/lockon")
 			yield("/wait 0.5")
 			yield("/automove")
@@ -213,6 +313,7 @@ if process_fc_buffs == 1 then
 		if chars_FCBUFF[i][2] ~= 2 then
 			if chars_FCBUFF[i][2] == 3 then
 				return_to_inn()
+				yield("/wait 8")
 			end
 			--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
 			if chars_FCBUFF[i][2] == 0 or chars_fn[rcuck_count][2] == 1 then
