@@ -218,6 +218,9 @@ if process_emblem == 1 then
 		yield("/interact")
 		yield("<wait.4>")
 		--all set
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		--quick escape in case we got stuck in menu
 
 		 --now we get to the emblematizer
 		yield("<wait.5>")
