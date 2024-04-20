@@ -42,7 +42,14 @@ local chars_fn = {
 --SCRIPT CONFIGURATION --
 -------------------------
 --Please read these, you could use this script to go randomize fc emblems for example instead of doing the full script
+----------------------
+--Behaviour Configs --
+----------------------
 local rcuck_count = 1		--0..n starting the counter at 1, this is in case your manually resuming or want to start at later index value instead of just commenting out parts of it
+local gachi_jumpy = 0 		--0=no jump, 1=yes jump.  jump or not. sometimes navmesh goes through the shortcut in uldah and sometimes gets stuck getting to bells in housing districts
+--------------------
+--Process Configs --
+--------------------
 local process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
 local buy_fc_buffs = 1 		--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs
 local process_players = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup

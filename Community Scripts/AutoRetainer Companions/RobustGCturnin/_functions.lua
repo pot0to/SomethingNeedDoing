@@ -2,7 +2,8 @@ function WalkTo(x, y, z)
     PathfindAndMoveTo(x, y, z, false)
     while (PathIsRunning() or PathfindInProgress()) do
         yield("/wait 0.5")
-		if GetZoneID() == 130 or GetZoneID() == 341 then --130 is uldah. dont need to jump anymore it paths properly. we will test anyways.
+		--if GetZoneID() == 130 or GetZoneID() == 341 then --130 is uldah. dont need to jump anymore it paths properly. we will test anyways.
+		if gachi_jumpy == 1 then --we only doing jumps if we configured for it
 		--if GetZoneID() == 341 then --only need to jump in goblet for now
 			yield("/gaction jump")
 		end
