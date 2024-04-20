@@ -3,12 +3,11 @@
   Author: McVaxius
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1190858719546835065
 
-Enter in names of characters that will be responsible for triggering FC Buffs
-make sure the chars home GC is the same as the FC's GC.
-last var is 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn
+for the below table templates,.. the 2nd (last var)
+0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn
 ]]
 
---enter in names of chars that can edit emblems are in same GC as the FC
+--enter in names of chars that can edit emblems are in same GC as the FC otherwise it will update the GC for 15k gil
 --warning it will attempt to change the free company allegiance just in case. make sure the char has 15k gil
 local chars_EMBLEM = {
   {"First Last@Server", 0},
@@ -27,7 +26,7 @@ local chars_FCBUFF = {
   {"First Last@Server", 0}
 }
 
---characters with servername, fc house or bell (0, 1) or 3 for gridania inn
+--names of chars to do turnins
 local chars_fn = {
  {"First Last@Server", 0},
  {"First Last@Server", 0},
