@@ -47,13 +47,14 @@ local chars_fn = {
 ----------------------
 local rcuck_count = 1		--0..n starting the counter at 1, this is in case your manually resuming or want to start at later index value instead of just commenting out parts of it
 local gachi_jumpy = 0 		--0=no jump, 1=yes jump.  jump or not. sometimes navmesh goes through the shortcut in uldah and sometimes gets stuck getting to bells in housing districts
+local auto_eqweep = 0		--0=no, 1=yes + job change.  Basically this will check to see if your on a DOH or DOL, if you are then it will scan your DOW/DOM and switch you to the highest level one you have, auto equip and save gearset. niche feature i like for myself . off by default
 --------------------
 --Process Configs --
 --------------------
 local process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
-local buy_fc_buffs = 1 		--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs
+local buy_fc_buffs = 1 		--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
 local process_players = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
-local process_emblem = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems
+local process_emblem = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks.
 
 --[[
 ------------------------
@@ -95,6 +96,7 @@ YesAlready -> YesNo -> /Purchase the action .*/
 --some ideas for next version
 --https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
 --stop repeating code for returning home.. introduces danger of errors popping up
+--add in a check to see which job that isnt DOL or DOH is highest and switch to it for the auto equip shenanigans. but only if they are on a doh or dol job. make it a configuration option
 ]]
 
 
@@ -348,6 +350,14 @@ if process_players == 1 then
 	yield("/wait 2")
 	CharacterSafeWait()
 	 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
+	--before we dump gear lets check to see if we are on the right job or if we care about it.
+	if auto_eqweep == 1 then
+		if are_we_dol() then
+			yield("/equipjob "..job_short(which_cj()))
+			yield("/echo Switching to "..job_short(which_cj()))
+			yield("/wait 3")
+		end
+	end
 	TeleportToGCTown()
 	ZoneTransition()
 	WalkToGC()

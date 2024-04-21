@@ -114,3 +114,90 @@ function return_fc_near_bell()
 	WalkTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"))
 	visland_stop_moving() --added so we don't accidentally end before we get to the bell
 end
+
+function are_we_dol()
+	is_it_dol = false
+	yield("Our job is "..GetClassJobId())
+	if type(GetClassJobId()) == "number" and GetClassJobId() > 7 and GetClassJobId() < 19 then
+		is_it_dol = true
+		yield("/echo We are a Disciple of the (H/L)and")
+	end
+	return is_it_dol
+end
+
+function which_cj()
+	highest_cj = 0
+	highest_cj_level = 0
+	yield("Time to figure out which job ID to switch to !")
+	for i=0,7 do
+		if tonumber(GetLevel(i)) > highest_cj_level then
+			highest_cj_level = GetLevel(i)
+			highest_cj = i
+			yield("/echo Oh my maybe job->"..i.." lv->"..highest_cj_level.." is the highest one?")
+		end
+	end
+	for i=19,29 do
+		if tonumber(GetLevel(i)) > highest_cj_level then
+			highest_cj_level = GetLevel(i)
+			highest_cj = i
+			yield("/echo Oh my maybe job->"..i.." lv->"..highest_cj_level.." is the highest one?")
+		end
+	end
+	return tonumber(highest_cj)
+end
+
+function job_short(which_cj)
+	yield("Time to figure out which job shortname to switch to !")
+	if which_cj == -1 then shortjob = "adv" end
+	if which_cj == 1 then shortjob = "gld" 
+		if GetItemCount(4542) > 0 then
+			shortjob = "pld"
+		end
+	end
+	if which_cj == 0 then shortjob = "pgl" 
+		if GetItemCount(4543) > 0 then
+			shortjob = "mnk"
+		end
+	end
+	if which_cj == 2 then shortjob = "mrd" 
+		if GetItemCount(4544) > 0 then
+			shortjob = "war"
+		end
+	end
+	if which_cj == 4 then shortjob = "lnc" 
+		if GetItemCount(4545) > 0 then
+			shortjob = "drg"
+		end
+	end
+	if which_cj == 3 then shortjob = "arc" 
+		if GetItemCount(4546) > 0 then
+			shortjob = "brd"
+		end
+	end
+	if which_cj == 6 then shortjob = "cnj" 
+		if GetItemCount(4547) > 0 then
+			shortjob = "whm"
+		end
+	end
+	if which_cj == 5 then shortjob = "thm" 
+		if GetItemCount(4548) > 0 then
+			shortjob = "blm"
+		end
+	end
+	if which_cj == 19 then shortjob = "rog" 
+		if GetItemCount(7886) > 0 then
+			shortjob = "nin"
+		end
+	end
+	if which_cj == 20 then shortjob = "mch" end
+	if which_cj == 21 then shortjob = "drk" end
+	if which_cj == 22 then shortjob = "ast" end
+	if which_cj == 23 then shortjob = "sam" end
+	if which_cj == 24 then shortjob = "rdm" end
+	if which_cj == 25 then shortjob = "blu" end
+	if which_cj == 26 then shortjob = "gnb" end
+	if which_cj == 27 then shortjob = "dnc" end
+	if which_cj == 28 then shortjob = "rpr" end
+	if which_cj == 29 then shortjob = "sge" end
+	return shortjob
+end
