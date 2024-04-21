@@ -1,7 +1,7 @@
 --log path - change this to a valid path. foreward slashes are actually backslashes, don't use backslashes unless you know how to escape them properly.
 local folderPath = "F:/FF14/!gil/"
 -- first char cardinality and variable declaration
-local feesh_c = 2
+local feesh_c = 1
 
 --define the fisherpeople here
 local which_one = {
@@ -118,9 +118,9 @@ function fishing()
 
 	--set the variable for the char to load
 	vich_one()
-	feesh_c = feesh_c + 1
+	--feesh_c = feesh_c + 1
 
-	yield("/echo "..feesh_char)
+	yield("/echo Load -> "..feesh_char)
 	
 	--now we have to keep trying until we are on the right character.... just in case we are not.
 	while feesh_char ~= GetCharacterName(true) do
@@ -128,7 +128,7 @@ function fishing()
 		yield("/wait 3")
 
 		-- set the echo variable again so we can say what is next
-		vich_one()
+		--vich_one()
 
 		yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
 	end
@@ -295,7 +295,7 @@ function fishing()
 		PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
 		visland_stop_moving() --added so we don't accidentally end before we get to the bell
 	end
-
+	feesh_c = feesh_c + 1
 end --of fishing()
 
 while true do 
@@ -362,8 +362,14 @@ while true do
 
   yield("/wait 0.3")  -- Wait for 0.3 second before checking again
   smol_increment = smol_increment + 1
+  tempfeesh = "asdf"
   if smol_increment > 180 then
 	smol_increment = 0
-	yield("/echo Next Feeshing, Char = "..feesh_char..", Cardinality - "..feesh_c)
+	feesh_c = feesh_c + 1
+	vich_one()
+	tempfeesh = feesh_char
+	feesh_c = feesh_c - 1
+	vich_one()
+	yield("/echo Next = "..tempfeesh..", "..feesh_c.."/"..#which_one.." Last -> "..feesh_char)
   end
 end -- while loop
