@@ -78,6 +78,10 @@ public class CharacterStateCommands
     public unsafe uint GetGil() => InventoryManager.Instance()->GetGil();
 
     public uint GetClassJobId() => Svc.ClientState.LocalPlayer!.ClassJob.Id;
+    public uint GetHP() => Svc.ClientState.LocalPlayer?.CurrentHp ?? 0;
+    public uint GetMaxHP() => Svc.ClientState.LocalPlayer?.MaxHp ?? 0;
+    public uint GetMP() => Svc.ClientState.LocalPlayer?.CurrentMp ?? 0;
+    public uint GetMaxMP() => Svc.ClientState.LocalPlayer?.MaxMp ?? 0;
 
     public float GetPlayerRawXPos(string character = "")
     {

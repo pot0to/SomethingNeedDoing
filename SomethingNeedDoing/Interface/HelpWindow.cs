@@ -329,8 +329,16 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-       "2024-04-18",
-       "- Fixed some instances where certain entity functions return null\n");
+        "2024-04-22",
+        "- IsNodeVisible() supports checking arbitrarily nested nodes.\n" +
+        "- Added GetHP()\n" +
+        "- Added GetMaxHP()\n" +
+        "- Added GetMP()\n" +
+        "- Added GetMaxMP()\n");
+
+        DisplayChangelog(
+        "2024-04-18",
+        "- Fixed some instances where certain entity functions return null\n");
 
         DisplayChangelog(
         "2024-04-15",
