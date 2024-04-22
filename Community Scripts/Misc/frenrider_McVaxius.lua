@@ -5,6 +5,8 @@
 *requirements:
 croizats SND - disable SND targeting in config
 simpletweaks with targeting fix enabled
+vnavmesh
+visland
 
 *optional:
 bring some gysahl greens
