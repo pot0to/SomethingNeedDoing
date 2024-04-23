@@ -236,9 +236,7 @@ if process_emblem == 1 then
 		yield("/interact")
 		yield("<wait.4>")
 		--all set
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		--quick escape in case we got stuck in menu
+		ungabunga()	--quick escape in case we got stuck in menu
 
 		 --now we get to the emblematizer
 		yield("<wait.5>")
@@ -315,10 +313,7 @@ if process_fc_buffs == 1 then
 				yield("<wait.1>")
 				buycount = buycount + 1
 			end
-				yield("/send ESCAPE <wait.1.5>")
-				yield("/send ESCAPE <wait.1.5>")
-				yield("/send ESCAPE <wait.1.5>")
-				yield("<wait.5>")
+				ungabunga()	--quick escape in case we got stuck in menu
 
 		end
 		yield("/echo FC Seal Buff II")
@@ -390,7 +385,7 @@ if process_players == 1 then
 	rcuck_count = i
 	yield("/wait 2")
 	Final_GC_Cleaning()
-	if restock_fuel > 0 and GetItemCount() > 0 then
+	if restock_fuel > 0 and GetItemCount(10373) > 0 then
 		try_to_buy_fuel(restock_amt)
 	end
 	end

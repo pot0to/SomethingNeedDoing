@@ -1,3 +1,11 @@
+function ungabunga()
+yield("/send ESCAPE <wait.1.5>")
+	yield("/send ESCAPE <wait.1.5>")
+	yield("/send ESCAPE <wait.1.5>")
+	yield("/send ESCAPE <wait.1>")
+	yield("/wait 3")
+end
+
 function WalkTo(x, y, z)
     PathfindAndMoveTo(x, y, z, false)
     while (PathIsRunning() or PathfindInProgress()) do
@@ -265,4 +273,5 @@ function try_to_buy_fuel(restock_amt)
 			yield("/echo we ran out of FC points before finsihing our purchases :(")
 		end
 	end
+	ungabunga()
 end
