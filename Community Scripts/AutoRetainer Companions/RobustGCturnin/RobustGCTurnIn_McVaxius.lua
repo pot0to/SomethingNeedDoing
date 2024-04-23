@@ -79,7 +79,8 @@ get _functions.lua from same place as this script came from
 --PLUGIN CONFIGURATIONS--
 -------------------------
 FFXIV itself -> make sure all login notifications are off. like help, achievements etc. this is unfortunately super annoying. you may need to login/out a few times to ensure no weird popups are appearing.
-Simpletweaks -> Setup autoequip command, "/equipguud"
+Simpletweaks -> Setup autoequip command, "/equipguud" or just use the default "/equiprecommended"
+Simpletweaks -> Setup equipjob command, "/equipjob"
 Simpletweaks -> targeting fix on
 SND -> Turn off SND targeting
 YesAlready -> Lists -> Edit company crest design.
