@@ -11,14 +11,27 @@ function WalkTo(x, y, z)
 end
 
 function ZoneTransition()
+	iswehehe = IsPlayerAvailable() 
+	iswoah = 0
     repeat 
         yield("/wait 0.5")
         yield("/echo Are we ready?")
-    until not IsPlayerAvailable()
+		iswehehe = IsPlayerAvailable() 
+		iswoah = iswoah + 1
+		if 	iswoah == 100 then
+			iswehehe = false
+		end
+    until not iswehehe
+	iswoah = 0
     repeat 
         yield("/wait 0.5")
         yield("/echo Are we ready? (backup check)")
-    until IsPlayerAvailable()
+		iswehehe = IsPlayerAvailable() 
+		iswoah = iswoah + 1
+		if 	iswoah == 100 then
+			iswehehe = true
+		end
+    until iswehehe
 end
 
 function WalkToGC()
