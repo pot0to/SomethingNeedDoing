@@ -1,5 +1,5 @@
 function ungabunga()
-yield("/send ESCAPE <wait.1.5>")
+	yield("/send ESCAPE <wait.1.5>")
 	yield("/send ESCAPE <wait.1.5>")
 	yield("/send ESCAPE <wait.1.5>")
 	yield("/send ESCAPE <wait.1>")
@@ -266,7 +266,7 @@ function try_to_buy_fuel(restock_amt)
 		oldFuel = CurFuel
 		curFuel = GetItemCount(10155)
 		if oldFuel >= CurFuel then
-			yield("/echo We successfully purchased enough fuel with the FC points we had with "..)
+			yield("/echo We successfully purchased enough fuel with the FC points we had")
 		end
 		if oldFuel == CurFuel then
 			CurFuel = restock_amt

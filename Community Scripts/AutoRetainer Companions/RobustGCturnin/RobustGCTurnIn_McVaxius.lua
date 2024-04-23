@@ -313,7 +313,7 @@ if process_fc_buffs == 1 then
 				yield("<wait.1>")
 				buycount = buycount + 1
 			end
-				ungabunga()	--quick escape in case we got stuck in menu
+			ungabunga()	--quick escape in case we got stuck in menu
 
 		end
 		yield("/echo FC Seal Buff II")
@@ -348,46 +348,46 @@ end
 --gc turn in
 if process_players == 1 then
 	for i=1, #chars_fn do
-	 yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
-	 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
-	 yield("/ays relog " ..chars_fn[i][1])
-	 --yield("/echo 15 second wait")
-	yield("/wait 2")
-	CharacterSafeWait()
-	 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
-	--before we dump gear lets check to see if we are on the right job or if we care about it.
-	if config_sell == 1 then
-		yield("/maincommand Item Settings")
-		yield("/wait 0.5")
-		yield("/pcall ConfigCharaItem true 18 288 0 u0")
-		yield("/pcall ConfigCharaItem true 0")
-		yield("/wait 0.5")
-		yield("/pcall ConfigCharacter true 1")
-	end
-	if config_sell == 2 then
-		yield("/maincommand Item Settings")
-		yield("/wait 0.5")
-		yield("/pcall ConfigCharaItem true 18 288 1 u0")
-		yield("/pcall ConfigCharaItem true 0")
-		yield("/wait 0.5")
-		yield("/pcall ConfigCharacter true 1")
-	end
-	if auto_eqweep == 1 then
-		if are_we_dol() then
-			yield("/equipjob "..job_short(which_cj()))
-			yield("/echo Switching to "..job_short(which_cj()))
-			yield("/wait 3")
+		yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
+		yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
+		yield("/ays relog " ..chars_fn[i][1])
+		--yield("/echo 15 second wait")
+		yield("/wait 2")
+		CharacterSafeWait()
+		 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
+		--before we dump gear lets check to see if we are on the right job or if we care about it.
+		if config_sell == 1 then
+			yield("/maincommand Item Settings")
+			yield("/wait 0.5")
+			yield("/pcall ConfigCharaItem true 18 288 0 u0")
+			yield("/pcall ConfigCharaItem true 0")
+			yield("/wait 0.5")
+			yield("/pcall ConfigCharacter true 1")
 		end
-	end
-	TeleportToGCTown()
-	ZoneTransition()
-	WalkToGC()
-	rcuck_count = i
-	yield("/wait 2")
-	Final_GC_Cleaning()
-	if restock_fuel > 0 and GetItemCount(10373) > 0 and GetItemCount(10155) <= restock_fuel then
-		try_to_buy_fuel(restock_amt)
-	end
+		if config_sell == 2 then
+			yield("/maincommand Item Settings")
+			yield("/wait 0.5")
+			yield("/pcall ConfigCharaItem true 18 288 1 u0")
+			yield("/pcall ConfigCharaItem true 0")
+			yield("/wait 0.5")
+			yield("/pcall ConfigCharacter true 1")
+		end
+		if auto_eqweep == 1 then
+			if are_we_dol() then
+				yield("/equipjob "..job_short(which_cj()))
+				yield("/echo Switching to "..job_short(which_cj()))
+				yield("/wait 3")
+			end
+		end
+		TeleportToGCTown()
+		ZoneTransition()
+		WalkToGC()
+		rcuck_count = i
+		yield("/wait 2")
+		Final_GC_Cleaning()
+		if restock_fuel > 0 and GetItemCount(10373) > 0 and GetItemCount(10155) <= restock_fuel then
+			try_to_buy_fuel(restock_amt)
+		end
 	end
 end
 --last one out turn off the lights
