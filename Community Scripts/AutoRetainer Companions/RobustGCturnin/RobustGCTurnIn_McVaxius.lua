@@ -385,7 +385,7 @@ if process_players == 1 then
 	rcuck_count = i
 	yield("/wait 2")
 	Final_GC_Cleaning()
-	if restock_fuel > 0 and GetItemCount(10373) > 0 then
+	if restock_fuel > 0 and GetItemCount(10373) > 0 and GetItemCount(10155) <= restock_fuel then
 		try_to_buy_fuel(restock_amt)
 	end
 	end
