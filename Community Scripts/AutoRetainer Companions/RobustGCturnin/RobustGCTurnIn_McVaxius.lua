@@ -48,6 +48,7 @@ local chars_fn = {
 local rcuck_count = 1		--0..n starting the counter at 1, this is in case your manually resuming or want to start at later index value instead of just commenting out parts of it
 local gachi_jumpy = 0 		--0=no jump, 1=yes jump.  jump or not. sometimes navmesh goes through the shortcut in uldah and sometimes gets stuck getting to bells in housing districts
 local auto_eqweep = 0		--0=no, 1=yes + job change.  Basically this will check to see if your on a DOH or DOL, if you are then it will scan your DOW/DOM and switch you to the highest level one you have, auto equip and save gearset. niche feature i like for myself . off by default
+local config_sell = 0		--0=dont do anything,1=change char setting to not give dailog for non tradeables etc selling to npc, 2=reset setting back to yes check for non tradeables etc selling to npc. usecase for 1 and 2 are one time things for a cleaning run so that they can subsequently handle selling or not selling. this feature will be stripped out once limiana updaptes AR
 --------------------
 --Process Configs --
 --------------------
@@ -352,6 +353,22 @@ if process_players == 1 then
 	CharacterSafeWait()
 	 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
 	--before we dump gear lets check to see if we are on the right job or if we care about it.
+	if config_sell == 1 then
+		yield("/maincommand Item Settings")
+		yield("/wait 0.5")
+		yield("/pcall ConfigCharaItem true 18 288 0 u0")
+		yield("/pcall ConfigCharaItem true 0")
+		yield("/wait 0.5")
+		yield("/pcall ConfigCharacter true 1")
+	end
+	if config_sell == 2 then
+		yield("/maincommand Item Settings")
+		yield("/wait 0.5")
+		yield("/pcall ConfigCharaItem true 18 288 1 u0")
+		yield("/pcall ConfigCharaItem true 0")
+		yield("/wait 0.5")
+		yield("/pcall ConfigCharacter true 1")
+	end
 	if auto_eqweep == 1 then
 		if are_we_dol() then
 			yield("/equipjob "..job_short(which_cj()))
