@@ -45,17 +45,22 @@ local chars_fn = {
 ----------------------
 --Behaviour Configs --
 ----------------------
-local rcuck_count = 1		--0..n starting the counter at 1, this is in case your manually resuming or want to start at later index value instead of just commenting out parts of it
-local gachi_jumpy = 0 		--0=no jump, 1=yes jump.  jump or not. sometimes navmesh goes through the shortcut in uldah and sometimes gets stuck getting to bells in housing districts
-local auto_eqweep = 0		--0=no, 1=yes + job change.  Basically this will check to see if your on a DOH or DOL, if you are then it will scan your DOW/DOM and switch you to the highest level one you have, auto equip and save gearset. niche feature i like for myself . off by default
-local config_sell = 0		--0=dont do anything,1=change char setting to not give dailog for non tradeables etc selling to npc, 2=reset setting back to yes check for non tradeables etc selling to npc. usecase for 1 and 2 are one time things for a cleaning run so that they can subsequently handle selling or not selling. this feature will be stripped out once limiana updaptes AR
+local rcuck_count   = 1		--0..n starting the counter at 1, this is in case your manually resuming or want to start at later index value instead of just commenting out parts of it
+local gachi_jumpy   = 0 	--0=no jump, 1=yes jump.  jump or not. sometimes navmesh goes through the shortcut in uldah and sometimes gets stuck getting to bells in housing districts
+local auto_eqweep   = 0		--0=no, 1=yes + job change.  Basically this will check to see if your on a DOH or DOL, if you are then it will scan your DOW/DOM and switch you to the highest level one you have, auto equip and save gearset. niche feature i like for myself . off by default
+local config_sell   = 0		--0=dont do anything,1=change char setting to not give dailog for non tradeables etc selling to npc, 2=reset setting back to yes check for non tradeables etc selling to npc. usecase for 1 and 2 are one time things for a cleaning run so that they can subsequently handle selling or not selling. this feature will be stripped out once limiana updaptes AR
+----------------------
+--Refueling Configs --
+----------------------
+local restock_fuel  = 11111 --0=don't do anything, n>0 -> if we have less ceruleum fuel than this amount on a character that has repair materials, restock up to at least the restock_amt value on next line
+local restock_amt   = 66666 --n>0 minimum amount of total fuel to reach, when restocking
 --------------------
 --Process Configs --
 --------------------
 local process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
-local buy_fc_buffs = 1 		--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
-local process_players = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
-local process_emblem = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks.
+local buy_fc_buffs     = 1 		--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
+local process_players  = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
+local process_emblem   = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks.
 
 --[[
 ------------------------
@@ -86,9 +91,12 @@ Simpletweaks -> targeting fix on
 SND -> Turn off SND targeting
 YesAlready -> Lists -> Edit company crest design.
 YesAlready -> Lists -> Retire to an inn room.
+YesAlready -> Lists -> Move to the company workshop
 YesAlready -> Lists -> Change free company allegiance.
 YesAlready -> YesNo -> /Pay the 15,000-gil fee to switch your company's allegiance to the.*/
 YesAlready -> YesNo -> /Execute.*/
+YesAlready -> YesNo -> /of ceruleum for.*/
+YesAlready -> YesNo -> /Enter the estate.*/
 YesAlready -> YesNo -> Save changes to crest design?
 
 Optional:
@@ -382,6 +390,9 @@ if process_players == 1 then
 	rcuck_count = i
 	yield("/wait 2")
 	Final_GC_Cleaning()
+	if restock_fuel > 0 and GetItemCount() > 0 then
+		try_to_buy_fuel(restock_amt)
+	end
 	end
 end
 --last one out turn off the lights
