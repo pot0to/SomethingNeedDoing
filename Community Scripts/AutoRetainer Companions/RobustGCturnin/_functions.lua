@@ -248,10 +248,11 @@ function try_to_buy_fuel(restock_amt)
 	yield("/automove")
 	visland_stop_moving()
 	--open mammet menu
+	yield("/automove off")
 	yield("/interact")
-	yield("/wait 1")
-	yield("/pcall SelectString true 0")
-	yield("/wait 1")
+	yield("/wait 2")
+	yield("/pcall SelectIconString true 0")
+	yield("/wait 2")
 	--buy exactly restock_amt final value for fuel
 	--grab current fuel total
 	curFuel = GetItemCount(10155)
