@@ -266,13 +266,11 @@ function try_to_buy_fuel(restock_amt)
 		yield("/wait 1")
 		oldFuel = curFuel
 		curFuel = GetItemCount(10155)
-		if oldFuel >= curFuel then
-			yield("/echo We successfully purchased enough fuel with the FC points we had")
-		end
 		if oldFuel == curFuel then
 			curFuel = restock_amt
-			yield("/echo we ran out of FC points before finsihing our purchases :(")
+			yield("/echo we ran out of FC points before finishing our purchases :(")
 		end
 	end
+	yield("/echo We now have "..curFuel.." Ceruelum Fuel Tanks")
 	ungabunga()
 end
