@@ -23,7 +23,7 @@ function ZoneTransition()
 	iswoah = 0
     repeat 
         yield("/wait 0.5")
-        yield("/echo Are we ready?")
+        yield("/echo Are we ready? -> "..iswoah.."/20")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
 		if 	iswoah == 20 then
@@ -33,7 +33,7 @@ function ZoneTransition()
 	iswoah = 0
     repeat 
         yield("/wait 0.5")
-        yield("/echo Are we ready? (backup check)")
+        yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
 		if 	iswoah == 20 then
@@ -44,7 +44,7 @@ end
 
 function WalkToGC()
     if GetPlayerGC() == 1 then
-        yield("/li The Aftcastle")
+        yield("/li \"The Aftcastle\"")
         ZoneTransition()
         WalkTo(94, 40.5, 74.5)
     elseif GetPlayerGC() == 2 then
