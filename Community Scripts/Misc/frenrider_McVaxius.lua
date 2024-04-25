@@ -17,12 +17,12 @@ weirdvar = 1
 --mker = "cross" --in case you want the other shapes. valid shapes are triangle square circle attack1-8 bind1-3 ignore1-2
 
 --init
-yield("/target "..fren)
+yield("/target \""..fren.."\"")
 yield("/wait 0.5")
 --yield("/mk cross <t>")
 local partycardinality = 2
 
-for i=2,8 do
+for i=0,7 do
 	if GetPartyMemberName(i) == fren then
 		partycardinality = i
 	end
@@ -43,10 +43,10 @@ while weirdvar == 1 do
 						yield("/wait 2")
 					end
 					--yield("/target <cross>")
-					yield("/target "..fren)
-					yield("/wait 0.5")
-					PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
-					--yield("/lockon on")
+					yield("/target \""..fren.."\"")
+						yield("/wait 0.5")
+						PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
+						--yield("/lockon on")
 					--yield("/automove on")
 					
 					--[[yield("/ridepillion <"..mker.."> 1")
@@ -56,6 +56,8 @@ while weirdvar == 1 do
 						for i=1,7 do
 							yield("/ridepillion <"..partycardinality.."> "..i)
 						end
+						yield("/echo Attempting to Mount Friend")
+						yield("/wait 0.5")
 					end
 				end
 			end

@@ -1,3 +1,11 @@
+function ungabunga()
+	yield("/send ESCAPE <wait.1.5>")
+	yield("/send ESCAPE <wait.1.5>")
+	yield("/send ESCAPE <wait.1.5>")
+	yield("/send ESCAPE <wait.1>")
+	yield("/wait 3")
+end
+
 function WalkTo(x, y, z)
     PathfindAndMoveTo(x, y, z, false)
     while (PathIsRunning() or PathfindInProgress()) do
@@ -11,19 +19,32 @@ function WalkTo(x, y, z)
 end
 
 function ZoneTransition()
+	iswehehe = IsPlayerAvailable() 
+	iswoah = 0
     repeat 
         yield("/wait 0.5")
-        yield("/echo Are we ready?")
-    until not IsPlayerAvailable()
+        yield("/echo Are we ready? -> "..iswoah.."/20")
+		iswehehe = IsPlayerAvailable() 
+		iswoah = iswoah + 1
+		if 	iswoah == 20 then
+			iswehehe = false
+		end
+    until not iswehehe
+	iswoah = 0
     repeat 
         yield("/wait 0.5")
-        yield("/echo Are we ready? (backup check)")
-    until IsPlayerAvailable()
+        yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
+		iswehehe = IsPlayerAvailable() 
+		iswoah = iswoah + 1
+		if 	iswoah == 20 then
+			iswehehe = true
+		end
+    until iswehehe
 end
 
 function WalkToGC()
     if GetPlayerGC() == 1 then
-        yield("/li The Aftcastle")
+        yield("/li \"The Aftcastle\"")
         ZoneTransition()
         WalkTo(94, 40.5, 74.5)
     elseif GetPlayerGC() == 2 then
@@ -50,11 +71,14 @@ end
 
 function visland_stop_moving()
  yield("/equipguud")
+ yield("/equiprecommended")
  yield("/character")
  yield("/pcall Character true 15")
  yield("/wait 0.5")
+ yield("/pcall SelectYesno true 0")
  yield("/character")
  yield("/pcall Character true 15")
+ yield("/pcall SelectYesno true 0")
  yield("/wait 3")
  muuv = 1
  muuvX = GetPlayerRawXPos()
@@ -200,4 +224,53 @@ function job_short(which_cj)
 	if which_cj == 28 then shortjob = "rpr" end
 	if which_cj == 29 then shortjob = "sge" end
 	return shortjob
+end
+
+function try_to_buy_fuel(restock_amt)
+	--enter house
+	yield("/wait 0.5")
+	yield("/interact")
+	yield("/wait 5")
+	--enter workshop
+	yield("/target \"Entrance to Additional Chambers\"")
+	yield("/wait 0.5")
+	yield("/lockon")
+	yield("/automove")
+	visland_stop_moving()
+	yield("/interact")
+	yield("/wait 1")
+	yield("/pcall SelectString true 0")
+	yield("/wait 5")
+	--target mammet
+	yield("/target mammet")
+	yield("/wait 0.5")
+	yield("/lockon")
+	yield("/automove")
+	visland_stop_moving()
+	--open mammet menu
+	yield("/automove off")
+	yield("/interact")
+	yield("/wait 2")
+	yield("/pcall SelectIconString true 0")
+	yield("/wait 2")
+	--buy exactly restock_amt final value for fuel
+	--grab current fuel total
+	curFuel = GetItemCount(10155)
+	oldFuel = curFuel + 1
+	while curFuel < restock_amt do
+		buyamt = 99 --this can be set to 231u if you want but i wouldn't recommend it as it shows on lodestone
+		if (restock_amt - curFuel) < 99 then
+			buyamt = restock_amt - curFuel
+		end
+		yield("/pcall FreeCompanyCreditShop false 0 0u "..buyamt.."u") 
+		yield("/wait 1")
+		oldFuel = curFuel
+		curFuel = GetItemCount(10155)
+		if oldFuel == curFuel then
+			curFuel = restock_amt
+			yield("/echo we ran out of FC points before finishing our purchases :(")
+		end
+	end
+	yield("/echo We now have "..curFuel.." Ceruelum Fuel Tanks")
+	ungabunga()
 end

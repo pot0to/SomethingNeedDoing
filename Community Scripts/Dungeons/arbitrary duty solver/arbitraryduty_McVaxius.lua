@@ -55,7 +55,7 @@ local filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingN
 loadVariablesFromFile(filename)
 
 -- Now you can use the variables in your Lua script
-yield("/cl")
+--yield("/cl")
 
 yield("/echo ATTEMPTING TO LOAD INI FILE if you dont see -> SUCCESSFULLY LOADED ALL VARS")
 yield("/echo at the end of the next block of text.")
@@ -110,6 +110,7 @@ local mecurrentLocZ = GetPlayerRawZPos()
 --our current area
 local we_are_in = 666
 local we_were_in = 666
+local chesttargeted = false
 
 --declaring distance var
 local dist_between_points = 500
@@ -205,6 +206,24 @@ local function getRandomNumber(min, max)
   return math.random(min,max)
 end
 
+function targetchests()
+	chesttargeted = false
+	if GetTargetName() == "Treasure Coffer" then chesttargeted = true end
+	if string.len(GetTargetName()) == 0 or GetTargetName() == "Exit" or GetTargetName() == "Shortcut" or chesttargeted == true then
+		yield("/target Chest")
+		yield("/target \"Treasure Coffer\"")
+		yield("/wait 0.5")	
+		if chesttargeted == true then
+			yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+			--yield("/autofollow")
+			yield("/echo Chest ! -> "..GetTargetName())
+--			yield("/lockon")
+--			yield("/automove")
+			yield("/rotation Cancel")
+		end
+	end
+end
+
 --Wrapper to get nearest objectKind
 --Returns name of closest objectKind
 --Uses SND's targeting system
@@ -250,7 +269,7 @@ local function limitbreak()
 			--seems like max lb is 1013040 when ultimate weapon buffs you to lb3 but you only have 30k on your bar O_o
 			--anyways it will trigger if lb3 is ready or when lb2 is max and it hits lb2
 			if (GetLimoot == (GetLimitBreakBarCount() * GetLimitBreakBarValue())) or GetLimoot > 29999 then
-				yield("/rotation cancel")		
+				yield("/rotation Cancel")		
 				yield("/echo Attempting "..local_teext)
 				yield("/ac "..local_teext)
 			end
@@ -527,8 +546,10 @@ local function arbitrary_duty()
 		local muuvtype = "wheeeeeeeeeeeeeeeeeeeee"
 		--DEBUG xyz stuff
 		--yield("/echo distance("..GetPlayerRawXPos()..","..GetPlayerRawYPos()..","..GetPlayerRawZPos()..","..doodie[whereismydoodie][2]..","..doodie[whereismydoodie][3]..","..doodie[whereismydoodie][4])
-		local tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
-		if whereismydoodie < (#doodie+1) then
+		local tempdist = 0
+		--if whereismydoodie < (#doodie+1) then
+		if whereismydoodie < (#doodie+1) then --maybe +1 is dangerous
+			tempdist = distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),doodie[whereismydoodie][2],doodie[whereismydoodie][3],doodie[whereismydoodie][4])
 			--if we are in combat stop navmesh/visland
 			if GetCharacterCondition(26) == true and type(GetTargetName()) == "string" and string.len(GetTargetName()) > 1 then
 				--yield("/visland stop")
@@ -549,8 +570,8 @@ local function arbitrary_duty()
 						end
 					end
 				end
-				--check if we are farther than 3 yalms from group member 2 and try to move closer
-				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetPlayerRawXPos(tostring(2)),GetPlayerRawYPos(tostring(2)),GetPlayerRawZPos(tostring(2))) > 3 then
+				--check if we are farther than 3 yalms from group member 2 and try to move closer and that we aren't doing some kind of unsynced stuff (epic echo i guess. however that doesnt work so we will check for 0 hp (0))
+				if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetPlayerRawXPos(tostring(2)),GetPlayerRawYPos(tostring(2)),GetPlayerRawZPos(tostring(2))) > 3 and GetPartyMemberHP(0) ~= 0 then
 					--yield("/"..muuvtype.." moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
 					yield("/vnavmesh moveto "..GetPlayerRawXPos(tostring(2)).." "..GetPlayerRawYPos(tostring(2)).." "..GetPlayerRawZPos(tostring(2))) --move to the target
 					yield("/echo Gathering party up a bit during combat")
@@ -581,7 +602,9 @@ local function arbitrary_duty()
 			end
             
             --Use TargetNearestObjectKind() to look for treasure chests
-            if lootchests == 2 and dutyloaded == 1 then
+            if lootchests == 2 and dutyloaded == 1 and GetCharacterCondition(26) == false then
+				targetchests()
+--[[
                 TargetNearestObjectKind(6)
                 if GetTargetName() then
                     while TargetNearestObjectKind(6) == GetTargetName() do
@@ -590,6 +613,7 @@ local function arbitrary_duty()
                         yield("/wait "..doodie[whereismydoodie][5])
                     end
                 end
+]]
             end
 			--42069420 is the value that indicates distance() failed for some reason
 			if (tempdist < 2 or (tonumber(doodie[whereismydoodie][6]) > 0 and tempdist > tonumber(doodie[whereismydoodie][6])) and skipcheck == 0) and tempdist ~= 42069420 then
@@ -625,6 +649,17 @@ local function arbitrary_duty()
 	if type(GetZoneID()) == "number" and GetZoneID() == 445 then --Alexander 4 Normal
 	--rotation manual because we dont want to change targets
 		yield("/rotation Manual")
+		if string.len(GetTargetName()) == 0 then
+			yield("/target \"Right Foreleg\"")
+			yield("/target \"Left Foreleg\"")
+			yield("/target \"The Manipulator\"")
+			yield("/target \"Panzer Doll\"")
+		end
+		if GetCharacterCondition(26) == true then --try to close distance to target while in combat
+			if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos()) > 2 then
+				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
+			end			
+		end
 	end
 	if type(GetZoneID()) == "number" and GetZoneID() == 584 then --Alexander 9 Savage
 		--we need to start the fight with an auto attack so RS will do its thing
@@ -900,6 +935,7 @@ while repeated_trial < (repeat_trial + 1) do
 	limitbreak() --by the power of hydaelyn i smite thee
 	
 	if GetCharacterCondition(34)==false and char_snake == "party leader" then --if we are not in a duty --try to restart duty
+		yield("/rotation Cancel")
 		yield("/visland stop")
 		yield("/vnavmesh stop")
 		yield("/wait 2")
@@ -938,11 +974,19 @@ while repeated_trial < (repeat_trial + 1) do
 		--we dont need to manually exit. automaton can do that now
 		--we will manually exit anyways becuase we need to walk by treasure chests in some duties and trials
 		--also we will take the exit near the last waypoint and not the one near the entrance.........
-		if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 100 and GetDistanceToObject("Exit") > 0 and getout == 1 and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
-			yield("/target Exit")
+		if chesttargeted == false then
+			yield("/wait 5")
 		end
-		if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("Shortcut") < 80 and GetDistanceToObject("Shortcut") > 0 then
-			yield("/target Shortcut")
+		targetchests()
+		if chesttargeted == false then
+			--if type(GetDistanceToObject("Exit")) == "number" and GetDistanceToObject("Exit") < 100 and GetDistanceToObject("Exit") > 0 and getout == 1 and (dutyloaded == 0 or (dutyloaded == 1 and whereismydoodie == #doodie)) then
+			if getout == 1 and string.len(GetTargetName()) == 0 then
+				yield("/target Exit")
+				yield("/target Shortcut")
+			end
+			--if type(GetDistanceToObject("Shortcut")) == "number" and GetDistanceToObject("Shortcut") < 80 and GetDistanceToObject("Shortcut") > 0 then
+			if getout == 1 and string.len(GetTargetName()) == 0 then
+			end
 		end
 
 		yield("/wait 0.1")
@@ -1079,7 +1123,10 @@ while repeated_trial < (repeat_trial + 1) do
 		--only party leader will do cd 5 because otherwise its spammy
 		if char_snake == "party leader" then
 			if GetCharacterCondition(26) == false and GetCharacterCondition(34) == true and string.len(GetTargetName()) > 0 then
-				yield("/cd 5")
+				targetchests() --just in case we finished the duty
+				if chesttargeted == false then
+					yield("/cd 5")
+				end
 			end
 		end
 		yield("/send KEY_1")  --* huge fucking problem if its bound to anything but some kind of attack. maybe this hsould be default attack on?
