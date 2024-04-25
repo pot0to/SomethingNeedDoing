@@ -153,9 +153,12 @@ function Final_GC_Cleaning()
 		dellycount = dellycount + 1
 		yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..#chars_fn)
 		if dellycount > 100 then
-			--do some stuff like turning off deliveroo and targeting and untargeting an npc
-			--i think we just need to target the quartermaster and open the dialog with him
-			--this will solve getting stuck on deliveroo doing nothing
+			--this will solve getting stuck on deliveroo doing nothing while its enabled
+			yield("/deliveroo disable")
+			yield("/wait 2")
+			ungabunga()
+			yield("/deliveroo enable")
+			yield("/wait 3")
 			dellycount = 0
 		end
 	end
