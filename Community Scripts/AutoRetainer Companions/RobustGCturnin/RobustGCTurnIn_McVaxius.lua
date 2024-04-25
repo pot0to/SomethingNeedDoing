@@ -58,7 +58,7 @@ local restock_amt   = 66666 --n>0 minimum amount of total fuel to reach, when re
 --Process Configs --
 --------------------
 local process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
-local buy_fc_buffs     = 1 		--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
+local buy_fc_buffs     = 1 	--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
 local process_players  = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
 local process_emblem   = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks.
 
@@ -381,6 +381,11 @@ if process_players == 1 then
 		end
 		TeleportToGCTown()
 		ZoneTransition()
+		yield("/wait 2")
+		WalkToGC()
+		yield("/wait 2")
+		WalkToGC()
+		yield("/wait 2")
 		WalkToGC()
 		rcuck_count = i
 		yield("/wait 2")
