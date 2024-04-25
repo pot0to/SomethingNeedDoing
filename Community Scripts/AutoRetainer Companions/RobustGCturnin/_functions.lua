@@ -47,8 +47,10 @@ end
 
 function WalkToGC()
     if GetPlayerGC() == 1 then
-        yield("/li \"The Aftcastle\"")
-        ZoneTransition()
+        if GetZoneID() ~= 128 then
+			yield("/li The Aftcastle") 
+		    ZoneTransition()
+		end
         WalkTo(94, 40.5, 74.5)
     elseif GetPlayerGC() == 2 then
         WalkTo(-68.5, -0.5, -8.5)
