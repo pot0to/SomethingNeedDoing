@@ -26,7 +26,7 @@ function ZoneTransition()
         yield("/echo Are we ready?")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
-		if 	iswoah == 100 then
+		if 	iswoah == 20 then
 			iswehehe = false
 		end
     until not iswehehe
@@ -36,7 +36,7 @@ function ZoneTransition()
         yield("/echo Are we ready? (backup check)")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
-		if 	iswoah == 100 then
+		if 	iswoah == 20 then
 			iswehehe = true
 		end
     until iswehehe
