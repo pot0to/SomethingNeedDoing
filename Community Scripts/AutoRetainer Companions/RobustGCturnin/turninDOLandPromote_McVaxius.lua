@@ -15,6 +15,10 @@ TeleportToGCTown()
 ZoneTransition()
 WalkToGC()
 
+yield("Flames Rank :"..GetFlamesGCRank())
+yield("Maelstrom Rank :"..GetMaelstromGCRank())
+yield("Adders Rank :"..GetAddersGCRank())
+
  yield("/echo movement stopped - time for GC turn ins")
 --yield("<wait.15>")
 --yield("/waitaddon SelectString <maxwait.120>")
@@ -38,7 +42,15 @@ yield("/send ESCAPE <wait.1.5>")
 yield("/send ESCAPE <wait.1.5>")
 yield("/wait 3")
 
-if GetMaelstromGCRank() < 6 then
+GCrenk = GetFlamesGCRank()
+if GetMaelstromGCRank() > GCrenk then
+	GC renk = GetMaelstromGCRank()
+end
+if GetAddersGCRank() > GCrenk then
+	GC renk = GetAddersGCRank()
+end
+
+if GCrenk < 4 then --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D
 	--try to promote
 	yield("/wait 1")
 	yield("/target Personnel Officer")
@@ -61,7 +73,7 @@ if GetMaelstromGCRank() < 6 then
 	yield("/wait 2")
 end
 
-if GetMaelstromGCRank() < 6 then
+if GCrenk < 7 and GCrenk > 4 then --if we are above 4 and below 7 we can go up to 7
 	--try to promote
 	yield("/wait 1")
 	yield("/target Personnel Officer")
