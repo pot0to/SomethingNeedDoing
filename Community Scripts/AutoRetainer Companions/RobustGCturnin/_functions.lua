@@ -276,6 +276,6 @@ function try_to_buy_fuel(restock_amt)
 			yield("/echo we ran out of FC points before finishing our purchases :(")
 		end
 	end
-	yield("/echo We now have "..curFuel.." Ceruelum Fuel Tanks")
+	yield("/echo We now have "..GetItemCount(10155).." Ceruelum Fuel Tanks")
 	ungabunga()
 end
