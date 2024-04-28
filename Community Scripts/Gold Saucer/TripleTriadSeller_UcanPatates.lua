@@ -89,12 +89,12 @@ yield("/pcall SelectIconString false 1")
 repeat
   yield("/wait 0.1")
 until IsAddonReady("TripleTriadCoinExchange")
-while not IsNodeVisible("TripleTriadCoinExchange",2) do
+while not IsNodeVisible("TripleTriadCoinExchange",{1,11}) do
     nodenumber = GetNodeText("TripleTriadCoinExchange",3 ,1 ,5)
     a = tonumber(nodenumber)
     repeat
     yield("/wait 0.1")
-    until IsNodeVisible("TripleTriadCoinExchange",3,1)
+    until IsNodeVisible("TripleTriadCoinExchange",{1,10,5})
     yield("/pcall TripleTriadCoinExchange true 0")
     repeat
        yield("/wait 0.1")
