@@ -73,6 +73,30 @@ pre fishing condition 1
 33 34 while looking at leave menu, 35 is off _> this is what we use
 ]]--
 
+function ZoneTransition()
+	iswehehe = IsPlayerAvailable() 
+	iswoah = 0
+    repeat 
+        yield("/wait 0.5")
+        yield("/echo Are we ready? -> "..iswoah.."/20")
+		iswehehe = IsPlayerAvailable() 
+		iswoah = iswoah + 1
+		if 	iswoah == 20 then
+			iswehehe = false
+		end
+    until not iswehehe
+	iswoah = 0
+    repeat 
+        yield("/wait 0.5")
+        yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
+		iswehehe = IsPlayerAvailable() 
+		iswoah = iswoah + 1
+		if 	iswoah == 20 then
+			iswehehe = true
+		end
+    until iswehehe
+end
+
 function visland_stop_moving()
  yield("/wait 3")
  muuv = 1
