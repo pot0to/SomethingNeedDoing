@@ -35,7 +35,7 @@ while weirdvar == 1 do
 		if GetCharacterCondition(34) == false then  --not in duty 
 			--check if chocobro is up or not! we can't do it yet
 			if GetCharacterCondition(26) == false then --not in combat
-				if GetCharacterCondition(4) == false then --not mounted
+				if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false then --not mounted and notmounted2 (riding friend)
 					if GetBuddyTimeRemaining() < 900 and GetItemCount(4868) > 0 then
 						yield("/visland stop")
 						yield("/vnavmesh stop")
@@ -53,9 +53,12 @@ while weirdvar == 1 do
 					yield("/ridepillion <"..mker.."> 2")
 					yield("/ridepillion <"..mker.."> 3")]]
 					if IsPartyMemberMounted(partycardinality) == true then
-						for i=1,7 do
-							yield("/ridepillion <"..partycardinality.."> "..i)
-						end
+						--for i=1,7 do
+							--yield("/ridepillion <"..partycardinality.."> "..i)
+							yield("/ridepillion <2> "..2)
+							yield("/ridepillion <3> "..2)
+							yield("/ridepillion <4> "..2)
+						--end
 						yield("/echo Attempting to Mount Friend")
 						yield("/wait 0.5")
 					end
