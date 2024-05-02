@@ -10,7 +10,11 @@ jobs:
   dependabot:
     runs-on: ubuntu-latest
     steps:
-    - name: Enable Pull Request Automerge
-      run: gh pr merge --merge --auto "1"
-      env:
-        GH_TOKEN: ${{ secrets.PAT }}
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --merge --auto "1"
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
