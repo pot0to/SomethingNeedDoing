@@ -1,4 +1,5 @@
 ﻿using ECommons;
+using ECommons.Automation;
 using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -30,6 +31,39 @@ public class AddonCommands
 
     public unsafe void OpenRouletteDuty(byte contentRouletteID) => AgentContentsFinder.Instance()->OpenRouletteDuty(contentRouletteID);
     public unsafe void OpenRegularDuty(uint cfcID) => AgentContentsFinder.Instance()->OpenRegularDuty(cfcID);
+    public unsafe void SelectDuty(uint dutyCode)
+    {
+        if (!GenericHelpers.TryGetAddonByName<AtkUnitBase>("ContentsFinder", out var addon) || !GenericHelpers.IsAddonReady(addon))
+            return;
+
+        var componentList = addon->GetNodeById(52)->GetAsAtkComponentList();
+        if (componentList == null) return;
+
+        var numDutiesLoaded = *(uint*)((nint)componentList + 508 + 4);
+        var agent = AgentContentsFinder.Instance();
+
+        if (agent == null) return;
+
+        var baseAddress = *(nint*)((nint)agent + 6960);
+        if (baseAddress == 0) return;
+
+        for (int i = 0; i < numDutiesLoaded; i++)
+        {
+            var dutyId = GetDutyId(baseAddress, i);
+            if (dutyCode == dutyId)
+            {
+                Callback.Fire(addon, true, 3, i + 1);
+                return;
+            }
+        }
+        return;
+    }
+
+    private unsafe int GetDutyId(nint baseAddress, int index)
+    {
+        return *(int*)(baseAddress + 212 + index * 240);
+    }
+
     public void SetDFLanguageJ(bool state) => Svc.GameConfig.UiConfig.Set("ContentsFinderUseLangTypeJA", state);
     public void SetDFLanguageE(bool state) => Svc.GameConfig.UiConfig.Set("ContentsFinderUseLangTypeEN", state);
     public void SetDFLanguageD(bool state) => Svc.GameConfig.UiConfig.Set("ContentsFinderUseLangTypeDE", state);
@@ -66,19 +100,49 @@ public class AddonCommands
         return addon->IsVisible;
     }
 
-    public unsafe bool IsNodeVisible(string addonName, int node, int child1 = -1, int child2 = -1)
+    public unsafe bool IsNodeVisible(string addonName, params int[] ids)
     {
         var ptr = Service.GameGui.GetAddonByName(addonName, 1);
         if (ptr == nint.Zero)
             return false;
 
         var addon = (AtkUnitBase*)ptr;
+        var node = GetNodeByIDChain(addon->GetRootNode(), ids);
+        return node != null && node->IsVisible;
+    }
 
-        return child2 != -1
-            ? addon->UldManager.NodeList[node]->ChildNode[child1].ChildNode[child2].IsVisible
-            : child1 != -1
-                ? addon->UldManager.NodeList[node]->ChildNode[child1].IsVisible
-                : addon->UldManager.NodeList[node]->IsVisible;
+    private unsafe AtkResNode* GetNodeByIDChain(AtkResNode* node, params int[] ids)
+    {
+        if (node == null || ids.Length <= 0)
+            return null;
+
+        if (node->NodeID == ids[0])
+        {
+            if (ids.Length == 1)
+                return node;
+
+            var newList = new List<int>(ids);
+            newList.RemoveAt(0);
+
+            var childNode = node->ChildNode;
+            if (childNode != null)
+                return GetNodeByIDChain(childNode, newList.ToArray());
+
+            if ((int)node->Type >= 1000)
+            {
+                var componentNode = node->GetAsAtkComponentNode();
+                var component = componentNode->Component;
+                var uldManager = component->UldManager;
+                childNode = uldManager.NodeList[0];
+                return childNode == null ? null : GetNodeByIDChain(childNode, newList.ToArray());
+            }
+
+            return null;
+        }
+
+        //check siblings
+        var sibNode = node->PrevSiblingNode;
+        return sibNode != null ? GetNodeByIDChain(sibNode, ids) : null;
     }
 
     public unsafe bool IsAddonReady(string addonName)
@@ -175,6 +239,18 @@ public class AddonCommands
 
         var textNode = (AtkTextNode*)node;
         return textNode->NodeText.ToString();
+    }
+
+    public unsafe void SetNodeText(string addonName, string text, params int[] ids)
+    {
+        var ptr = Service.GameGui.GetAddonByName(addonName, 1);
+        if (ptr == nint.Zero)
+            return;
+
+        var addon = (AtkUnitBase*)ptr;
+        var node = GetNodeByIDChain(addon->GetRootNode(), ids);
+        if (node != null && node->Type == NodeType.Text)
+            node->GetAsAtkTextNode()->NodeText = new FFXIVClientStructs.FFXIV.Client.System.String.Utf8String(text);
     }
 
     public unsafe string GetSelectStringText(int index)

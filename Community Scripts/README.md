@@ -4,10 +4,16 @@ Here are many of the community made scripts to automate many aspects of the game
 
 Many of these were originally posted to [Liza's Discord](https://discord.com/invite/eqw3TpQKyb) or the [Puni.sh Discord](https://discord.gg/Zzrcc8kmvy), and links to the original posts are included in the header comments of each file.
 
-### Other Scripts
+### Other Script Repositories
 
-[plottingCreeper's Repo](https://github.com/plottingCreeper/FFXIV-scripts-and-macros/)
+[plottingCreeper](https://github.com/plottingCreeper/FFXIV-scripts-and-macros/)
 
-[LTS's Repo](https://github.com/LTS-FFXIV/SNDScripts/)
+[LTS](https://github.com/LTS-FFXIV/SNDScripts/)
 
-[Eden's Repo](https://github.com/elijabesu/ffxiv-scripts/)
+[Eden](https://github.com/elijabesu/ffxiv-scripts/)
+
+[UcanPatatess](https://github.com/UcanPatatess/SND-FullAuto/tree/main)
+
+[Ice](https://github.com/LeontopodiumNivale14/SND-Scripts/tree/main)
+
+[Prawellp](https://github.com/Prawellp/FFXIV-SND/)

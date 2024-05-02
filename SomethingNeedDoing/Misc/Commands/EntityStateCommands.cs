@@ -31,7 +31,7 @@ internal class EntityStateCommands
 
 
 
-    public float GetDistanceToPoint(float x, float y, float z) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, new Vector3(x, y, z));
+    public float GetDistanceToPoint(float x, float y, float z) => Vector3.Distance(Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero, new Vector3(x, y, z));
 
     #region Target
     public string GetTargetName() => Svc.Targets.Target?.Name.TextValue ?? "";
@@ -49,7 +49,8 @@ internal class EntityStateCommands
     public byte? GetTargetSubKind() => Svc.Targets.Target?.SubKind;
     public unsafe void TargetClosestEnemy(float distance = 0) => Svc.Targets.Target = Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(o => o.IsTargetable && o.IsHostile() && !o.IsDead && (distance == 0 || DistanceToObject(o) <= distance));
     public void ClearTarget() => Svc.Targets.Target = null;
-    public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer!.Position);
+    public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero);
+
     public unsafe bool TargetHasStatus(uint statusID) => ((Character*)Svc.Targets.Target?.Address!)->GetStatusManager()->HasStatus(statusID);
     public unsafe uint GetTargetFateID() => Svc.Targets.Target != null ? Svc.Targets.Target.Struct()->FateId : 0;
     public unsafe bool IsTargetMounted()
@@ -72,6 +73,7 @@ internal class EntityStateCommands
     }
     public unsafe bool IsTargetInCombat() => ((Character*)Svc.Targets.Target?.Address!)->InCombat;
     public byte GetTargetHuntRank() => (byte)(Svc.Targets.Target != null ? Svc.Data.GetExcelSheet<NotoriousMonster>()?.FirstOrDefault(x => x.BNpcBase.Value!.RowId == Svc.Targets.Target.DataId)?.Rank ?? 0 : 0);
+    public float GetTargetHitboxRadius() => Svc.Targets.Target?.HitboxRadius ?? 0;
     #endregion
 
     #region Focus Target
@@ -87,7 +89,7 @@ internal class EntityStateCommands
     public float GetFocusTargetHPP() => GetFocusTargetHP() / GetFocusTargetMaxHP() * 100;
     public float GetFocusTargetRotation() => (float)(Svc.Targets.FocusTarget?.Rotation * (180 / Math.PI) ?? 0);
     public void ClearFocusTarget() => Svc.Targets.FocusTarget = null;
-    public float GetDistanceToFocusTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Targets.FocusTarget?.Position ?? Svc.ClientState.LocalPlayer!.Position);
+    public float GetDistanceToFocusTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero, Svc.Targets.FocusTarget?.Position ?? Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero);
     public unsafe bool FocusTargetHasStatus(uint statusID) => ((Character*)Svc.Targets.FocusTarget?.Address!)->GetStatusManager()->HasStatus(statusID);
     public unsafe uint GetFocusTargetFateID() => Svc.Targets.FocusTarget != null ? Svc.Targets.FocusTarget.Struct()->FateId : 0;
     #endregion
@@ -96,7 +98,7 @@ internal class EntityStateCommands
     public float GetObjectRawXPos(string name) => GetGameObjectFromName(name)?.Position.X ?? 0;
     public float GetObjectRawYPos(string name) => GetGameObjectFromName(name)?.Position.Y ?? 0;
     public float GetObjectRawZPos(string name) => GetGameObjectFromName(name)?.Position.Z ?? 0;
-    public float GetDistanceToObject(string name) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Position ?? Vector3.Zero);
+    public float GetDistanceToObject(string name) => Vector3.Distance(Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero, Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Position ?? Vector3.Zero);
     public unsafe bool IsObjectCasting(string name) => ((Character*)GetGameObjectFromName(name)?.Address!)->IsCasting;
     public unsafe uint GetObjectActionID(string name) => ((Character*)GetGameObjectFromName(name)?.Address!)->GetCastInfo()->ActionID;
     public unsafe uint GetObjectUsedActionID(string name) => ((Character*)GetGameObjectFromName(name)?.Address!)->GetCastInfo()->UsedActionId;
@@ -128,6 +130,7 @@ internal class EntityStateCommands
     public uint GetObjectDataID(string name) => GetGameObjectFromName(name)?.DataId ?? 0;
     public unsafe bool IsObjectInCombat(string name) => ((Character*)GetGameObjectFromName(name)?.Address!)->InCombat;
     public byte GetObjectHuntRank(string name) => Svc.Data.GetExcelSheet<NotoriousMonster>()?.FirstOrDefault(x => x.BNpcBase.Value!.RowId == GetObjectDataID(name))?.Rank ?? 0;
+    public float GetObjectHitboxRadius(string name) => GetGameObjectFromName(name)?.HitboxRadius ?? 0;
     #endregion
 
     #region Party Members
@@ -135,7 +138,7 @@ internal class EntityStateCommands
     public float GetPartyMemberRawXPos(int index) => Svc.Party[index]?.Position.X ?? 0;
     public float GetPartyMemberRawYPos(int index) => Svc.Party[index]?.Position.Y ?? 0;
     public float GetPartyMemberRawZPos(int index) => Svc.Party[index]?.Position.Z ?? 0;
-    public float GetDistanceToPartyMember(int index) => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, Svc.Party[index]?.Position ?? Vector3.Zero);
+    public float GetDistanceToPartyMember(int index) => Vector3.Distance(Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero, Svc.Party[index]?.Position ?? Vector3.Zero);
     public unsafe bool IsPartyMemberCasting(int index) => ((Character*)Svc.Party[index]?.Address!)->IsCasting;
     public unsafe uint GetPartyMemberActionID(int index) => ((Character*)Svc.Party[index]?.Address!)->GetCastInfo()->ActionID;
     public unsafe uint GetPartyMemberUsedActionID(int index) => ((Character*)Svc.Party[index]?.Address!)->GetCastInfo()->UsedActionId;
@@ -169,6 +172,6 @@ internal class EntityStateCommands
     public unsafe float GetBuddyTimeRemaining() => UIState.Instance()->Buddy.CompanionInfo.TimeLeft;
     #endregion
 
-    private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.GameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position);
+    private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.GameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero);
     private Dalamud.Game.ClientState.Objects.Types.GameObject? GetGameObjectFromName(string name) => Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 }

@@ -5,10 +5,13 @@
     *******************
 
     ***************************
-    *  Version -> 0.0.1.18.2  *
+    *  Version -> 0.0.1.19    *
     ***************************
    
     Version Notes:
+    0.0.1.19 ->    Anti stutter now configurable for gathering loops.
+    0.0.1.18.4 ->  Added a option to not use aether cannon , New option anti stutter added Tweaked some of the killing logic.
+    0.0.1.18.3 ->  Fixed the 4.node of PinkRoute Hopefully fixed the rare accurance of not getting in diadem again
     0.0.1.18.2 ->  Litle fix for jumping before nodes and fixed the automation
     0.0.1.18 ->    Some automation Bug fixes, safeties added in places (missing a node in a loop will reset the instance)
     0.0.1.17 ->    Now it will go to other nodes and continue if the target you were trying to kill got stolen(yea i know we already fixed it once)
@@ -105,7 +108,7 @@
     
     TargetOption = 1
     -- This will let you tell the script which target to use Aethercannon.
-    -- Options : 1 | 2 | 3 (Option: 1 is any target, Option: 2 only sprites Options: 3 is don't include sprites enemys)
+    -- Options : 0 | 1 | 2 | 3 (Option: 0 is don't use cannon, Option: 1 is any target, Option: 2 only sprites, Option: 3 is don't include sprites)
 
     CapGP = true 
     -- Bountiful Yield 2 (Min) | Bountiful Harvest 2 (Btn) [+x (based on gathering) to that hit on the node (only once)]
@@ -128,6 +131,11 @@
     PlayerWaitTime = true 
     -- this is if you want to make it... LESS sus on you just jumping from node to node instantly/firing a cannon off at an enemy and then instantly flying off
     -- default is true, just for safety. If you want to turn this off, do so at your own risk. 
+
+    AntiStutterOpen = false
+    AntiStutter = 2
+    -- default is 2 gathering loops this will execute the script again if you are having stutter issues 
+    -- WARNING your macro name should be DiademV2
 
     debug = false
     -- This is for debugging 
@@ -160,6 +168,11 @@
     -- for 6th var
         -- FlyTarget  = 0
         -- MoveTarget = 1
+        
+    --for 7th var
+        -- FirstNode = 1
+        -- otherNodes = 0
+
     if RouteType == "MinerIslands" then 
         gather_table =
             {
@@ -216,26 +229,26 @@
     elseif RouteType == "RedRoute" then 
         gather_table = 
             {
-                {-161.2715,-3.5233,-378.8041,0,1,1}, -- Start of the route
-                {-169.3415,-7.1092,-518.7053,0,0,1}, -- Around the tree (Rock + Bones?)
-                {-78.5548,-18.1347,-594.6666,1,0,1}, -- Log + Rock (Problematic)
-                {-54.6772,-45.7177,-521.7173,0,0,1}, -- Down the hill 
-                {-22.5868,-26.5050,-534.9953,0,1,1}, -- up the hill (rock + tree)
-                {59.4516,-41.6749,-520.2413,0,1,1}, -- Spaces out nodes on rock (hate this one)
-                {103.5788,-43.3652,-501.3805,0,0,0}, -- Over the gap
-                {-209.1468,-3.9325,-357.9749,1,0,1}, -- Bonus node
+                {-161.2715,-3.5233,-378.8041,0,1,1,0}, -- Start of the route
+                {-169.3415,-7.1092,-518.7053,0,0,1,0}, -- Around the tree (Rock + Bones?)
+                {-78.5548,-18.1347,-594.6666,1,0,1,0}, -- Log + Rock (Problematic)
+                {-54.6772,-45.7177,-521.7173,0,0,1,0}, -- Down the hill 
+                {-22.5868,-26.5050,-534.9953,0,1,1,0}, -- up the hill (rock + tree)
+                {59.4516,-41.6749,-520.2413,0,1,1,0}, -- Spaces out nodes on rock (hate this one)
+                {102.3,-47.3,-500.1,0,0,0,0}, -- Over the gap
+                {-209.1468,-3.9325,-357.9749,1,0,1,1}, -- Bonus node
             }
     elseif RouteType == "PinkRoute" then 
         gather_table = 
             {
-                {-248.6381,-1.5664,-468.8910,0,3,1},
-                {-338.3759,-0.4761,-415.3227,0,3,1},
-                {-366.2651,-1.8514,-350.1429,0,3,1},
-                {-429.5530,29.7115,-252.8121,0,2,1},
-                {-473.4957,31.5405,-244.1215,0,2,1},
-                {-536.5187,33.2307,-253.3514,0,3,1},
-                {-571.2896,35.2772,-236.6808,0,3,1},
-                {-215.1211,-1.3262,-494.8219,0,3,1},
+                {-248.6381,-1.5664,-468.8910,0,3,1,0},
+                {-338.3759,-0.4761,-415.3227,0,3,1,0},
+                {-366.2651,-1.8514,-350.1429,0,3,1,0},
+                {-431.2,27.5,-256.7,0,2,1,0}, --tree node
+                {-473.4957,31.5405,-244.1215,0,2,1,0},
+                {-536.5187,33.2307,-253.3514,0,3,1,0},
+                {-571.2896,35.2772,-236.6808,0,3,1,0},
+                {-215.1211,-1.3262,-494.8219,0,3,1,1},
             }
     end
 
@@ -327,7 +340,7 @@
                 elseif gather_table[i][6] == 1 then 
                     yield("/vnavmesh movetarget")
                 end
-                while GetDistanceToTarget() > 3.5 do 
+                while GetDistanceToTarget() > 3.5 and IsInZone(886) == false do 
                     if gather_table[i][6] == 0 and GetCharacterCondition(4) == false and GetCharacterCondition(77) == false then 
                         MountFly()
                         yield("/wait 0.1")
@@ -367,7 +380,7 @@
             end
                 if GetNodeText("_TextError",1) == "Too far away." then 
                     yield("/vnavmesh movetarget")
-                    while GetDistanceToTarget() > 3.5 do 
+                    while GetDistanceToTarget() > 3.5 and IsInZone(886) == false do 
                         yield("/wait 0.1")
                     end
                     PathStop()
@@ -406,7 +419,7 @@
 
     function KillTarget()
         if IsInZone(939) then
-            if GetDistanceToTarget() == 0.0 and GetCharacterCondition(6, false) and GetCharacterCondition(45, false) and GetDiademAetherGaugeBarCount() >= 1 and GetDistanceToPoint(X, Y, Z) > 10 then 
+            if GetDistanceToTarget() == 0.0 and GetCharacterCondition(6, false) and GetCharacterCondition(45, false) and GetDiademAetherGaugeBarCount() >= 1 and TargetOption ~= 0 then 
                 if KillLoop >= 1 then
                     if (PathIsRunning() or PathfindInProgress()) then
                         yield("/wait 2")
@@ -435,7 +448,7 @@
                         MountFly()
                         yield("/wait 0.1")
                         yield("/vnavmesh flytarget")
-                        while GetDistanceToTarget() > 10 and GetTargetName() ~= "" do
+                        while GetDistanceToTarget() > 10 and GetTargetName() ~= "" and IsInZone(886) == false do
                             yield("/wait 0.1")
                             if GetCharacterCondition(4) == false or GetCharacterCondition(77) == false then 
                                 MountFly()
@@ -444,12 +457,16 @@
                     end
                     PathStop() 
                     yield("/wait 0.1")
-                    while GetTargetHP() > 1.0 and GetTargetName() ~= "" do
+                    while GetTargetHP() > 1.0 and GetTargetName() ~= "" and IsInZone(886) == false do
                         if PathIsRunning() then
                             PathStop()
                         end 
                         Dismount()
-                        if GetDistanceToTarget() > 15 or GetNodeText("_TextError",1) == "Target not in line of sight." or GetNodeText("_TextError",1) == "Target is not in range." then
+                        if GetNodeText("_TextError",1) == "Target not in line of sight." and IsAddonVisible("_TextError") then
+                            ClearTarget()
+                            yield("/wait 1")
+                        end
+                        if GetDistanceToTarget() > 15 then
                             ClearTarget()
                             yield("/wait 0.1")
                         end
@@ -504,7 +521,7 @@
                 if PathIsRunning() == false or IsMoving() == false then 
                     PathfindAndMoveTo(X, Y, Z, true)
                     yield("/wait 0.1")
-                    while PathfindInProgress() do
+                    while PathfindInProgress() and IsInZone(886) == false do
                         yield("/wait 0.1")
                         if GetCharacterCondition(4) == false or GetCharacterCondition(77) == false then 
                             MountFly()
@@ -522,7 +539,7 @@
                 if PathIsRunning() == false or IsMoving() == false then 
                     PathfindAndMoveTo(X, Y, Z, true)
                     yield("/wait 0.1")
-                    while PathfindInProgress() do
+                    while PathfindInProgress() and IsInZone(886) == false do
                         yield("/wait 0.1")
                         if GetCharacterCondition(4) == false or GetCharacterCondition(77) == false then 
                             MountFly()
@@ -573,27 +590,27 @@
                     LogInfo("[Diadem Gathering] [Node Type] This is a Max Integrity Node, time to start buffing/smacking")
                     PlayerWait()
                     yield("/wait 0.1")
-                    while BuffYield2 and GetGp() >= 500 and HasStatusId(219) == false and GetLevel() >= 40 do -- 
+                    while BuffYield2 and GetGp() >= 500 and HasStatusId(219) == false and GetLevel() >= 40 and IsInZone(886) == false do -- 
                         if debug then yield("/e [Debug] Should be applying Kings Yield 2") end
                         UseSkill(Yield2)
                         StatusCheck()
                     end
-                    while BuffGift2 and GetGp() >= 300 and HasStatusId(759) == false and GetLevel() >= 50 do
+                    while BuffGift2 and GetGp() >= 300 and HasStatusId(759) == false and GetLevel() >= 50 and IsInZone(886) == false do
                         if debug then yield("/e [Debug] Should be applying Mountaineer's Gift 2'") end
                         UseSkill(Gift2) -- Mountaineer's Gift 2 (Min)
                         StatusCheck()
                     end
-                    while BuffTidings2 and GetGp() >= 200 and HasStatusId(2667) == false and GetLevel() >= 81 do 
+                    while BuffTidings2 and GetGp() >= 200 and HasStatusId(2667) == false and GetLevel() >= 81 and IsInZone(886) == false do 
                         if debug then yield("/e [Debug] Should be applying Tidings") end
                         UseSkill(Tidings2) -- Nald'thal's Tidings (Min)
                         StatusCheck()
                     end 
-                    while BuffGift1 and GetGp() >= 50 and HasStatusId(2666) == false and GetLevel() >= 15 do
+                    while BuffGift1 and GetGp() >= 50 and HasStatusId(2666) == false and GetLevel() >= 15 and IsInZone(886) == false do
                         if debug then yield("/e [Debug] Should be applying Mountaineer's Gift 1'") end
                         UseSkill(Gift1) -- Mountaineer's Gift 1 (Min)
                         StatusCheck()
                     end
-                    while BuffBYieldHarvest2 and GetGp() >= 100 and HasStatusId(1286) == false and GetLevel() >= 68 do
+                    while BuffBYieldHarvest2 and GetGp() >= 100 and HasStatusId(1286) == false and GetLevel() >= 68 and IsInZone(886) == false do
                         if debug then yield("/e [Debug] Should be applying Bountiful Yield 2") end
                         UseSkill(Bountiful2)
                         StatusCheck()
@@ -672,18 +689,20 @@
         if GetCharacterCondition(4) or GetCharacterCondition(77) and IsInZone(886) == false then
             yield("/ac dismount")
             yield("/wait 0.3")
-        while GetCharacterCondition(77) and a < 2 and IsInZone(886) == false do
+        while GetCharacterCondition(77) and a < 4 and IsInZone(886) == false do
             yield("/wait 0.5")
             a=a+1
         end
-            if a == 2 then
+            if a == 4 then
                 yield("/wait 0.1")
                 yield("/gaction jump")
                 yield("/send SPACE")
                 ClearTarget() 
                 PathStop()
+                LogInfo("Dismount -> BailoutCommanced")
             end
         end
+        LogInfo("Dismount -> Completed")
     end
 
     function UseSkill(SkillName)
@@ -693,6 +712,7 @@
 
 ::SettingNodeValue:: 
     NodeSelection = GatheringSlot - 1
+    Counter = 0
     FoodTimeRemaining = RemainingFoodTimer * 60
     DGatheringLoop = false 
     KillLoop = 0
@@ -815,6 +835,14 @@
                 if gather_table[i][5] ~= 99 then -- 99 is the code imma use if I don't want it gathering anything, and make sure it's not the coords I want to use as a midpoint
                     GatheringTarget(i)
                 end 
+                if gather_table[i][7] == 1 then
+                    Counter = Counter + 1
+                    if AntiStutterOpen and Counter >= AntiStutter then
+                        LogInfo("AntiStutter -> Completed")
+                        yield("/runmacro DiademV2")
+                    end
+                end 
+
                 if GetInventoryFreeSlotCount() == 0 then 
                     LogInfo("It seems like your inventory has reached Max Capacity slot wise. For the safety of you (and to help you not just stand there for hours on end), we're going to stop the script here and leave the instance")
                     yield("/e It seems like your inventory has reached Max Capacity slot wise. For the safety of you (and to help you not just stand there for hours on end), we're going to stop the script here and leave the instance")
