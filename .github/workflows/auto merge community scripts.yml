@@ -17,6 +17,6 @@ jobs:
       - name: Enable Pull Request Automerge
         run: |
           gh pr merge --merge --auto "1"
-          gh pr review --aprove "1"
+          gh pr review --approve "1"
         env:
           GH_TOKEN: ${{ secrets.PAT }}
