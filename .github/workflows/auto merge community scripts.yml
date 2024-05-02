@@ -10,6 +10,7 @@ jobs:
   dependabot:
     runs-on: ubuntu-latest
     steps:
-    - uses: alexwilson/enable-github-automerge-action@main
-      with:
-        github-token: "${{ secrets.GITHUB_TOKEN }}"
+    - name: Enable Pull Request Automerge
+      run: gh pr merge --merge --auto "1"
+      env:
+        GH_TOKEN: ${{ secrets.PAT }}
