@@ -45,15 +45,22 @@ local chars_fn = {
 ----------------------
 --Behaviour Configs --
 ----------------------
-local rcuck_count = 1		--0..n starting the counter at 1, this is in case your manually resuming or want to start at later index value instead of just commenting out parts of it
-local gachi_jumpy = 0 		--0=no jump, 1=yes jump.  jump or not. sometimes navmesh goes through the shortcut in uldah and sometimes gets stuck getting to bells in housing districts
+rcuck_count   = 1	--0..n starting the counter at 1, this is in case your manually resuming or want to start at later index value instead of just commenting out parts of it
+gachi_jumpy   = 0 	--0=no jump, 1=yes jump.  jump or not. sometimes navmesh goes through the shortcut in uldah and sometimes gets stuck getting to bells in housing districts
+auto_eqweep   = 0	--0=no, 1=yes + job change.  Basically this will check to see if your on a DOH or DOL, if you are then it will scan your DOW/DOM and switch you to the highest level one you have, auto equip and save gearset. niche feature i like for myself . off by default
+config_sell   = 0	--0=dont do anything,1=change char setting to not give dailog for non tradeables etc selling to npc, 2=reset setting back to yes check for non tradeables etc selling to npc. usecase for 1 and 2 are one time things for a cleaning run so that they can subsequently handle selling or not selling. this feature will be stripped out once limiana updaptes AR
+----------------------
+--Refueling Configs --
+----------------------
+restock_fuel  = 11111 --0=don't do anything, n>0 -> if we have less ceruleum fuel than this amount on a character that has repair materials, restock up to at least the restock_amt value on next line
+restock_amt   = 66666 --n>0 minimum amount of total fuel to reach, when restocking
 --------------------
 --Process Configs --
 --------------------
-local process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
-local buy_fc_buffs = 1 		--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs
-local process_players = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
-local process_emblem = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems
+process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
+buy_fc_buffs     = 1 	--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
+process_players  = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
+process_emblem   = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks.
 
 --[[
 ------------------------
@@ -78,14 +85,18 @@ get _functions.lua from same place as this script came from
 --PLUGIN CONFIGURATIONS--
 -------------------------
 FFXIV itself -> make sure all login notifications are off. like help, achievements etc. this is unfortunately super annoying. you may need to login/out a few times to ensure no weird popups are appearing.
-Simpletweaks -> Setup autoequip command, "/equipguud"
+Simpletweaks -> Setup autoequip command, "/equipguud" or just use the default "/equiprecommended"
+Simpletweaks -> Setup equipjob command, "/equipjob"
 Simpletweaks -> targeting fix on
 SND -> Turn off SND targeting
 YesAlready -> Lists -> Edit company crest design.
 YesAlready -> Lists -> Retire to an inn room.
+YesAlready -> Lists -> Move to the company workshop
 YesAlready -> Lists -> Change free company allegiance.
 YesAlready -> YesNo -> /Pay the 15,000-gil fee to switch your company's allegiance to the.*/
 YesAlready -> YesNo -> /Execute.*/
+YesAlready -> YesNo -> /of ceruleum for.*/
+YesAlready -> YesNo -> /Enter the estate.*/
 YesAlready -> YesNo -> Save changes to crest design?
 
 Optional:
@@ -95,6 +106,7 @@ YesAlready -> YesNo -> /Purchase the action .*/
 --some ideas for next version
 --https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
 --stop repeating code for returning home.. introduces danger of errors popping up
+--add in a check to see which job that isnt DOL or DOH is highest and switch to it for the auto equip shenanigans. but only if they are on a doh or dol job. make it a configuration option
 ]]
 
 
@@ -141,9 +153,12 @@ function Final_GC_Cleaning()
 		dellycount = dellycount + 1
 		yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..#chars_fn)
 		if dellycount > 100 then
-			--do some stuff like turning off deliveroo and targeting and untargeting an npc
-			--i think we just need to target the quartermaster and open the dialog with him
-			--this will solve getting stuck on deliveroo doing nothing
+			--this will solve getting stuck on deliveroo doing nothing while its enabled
+			yield("/deliveroo disable")
+			yield("/wait 2")
+			ungabunga()
+			yield("/deliveroo enable")
+			yield("/wait 3")
 			dellycount = 0
 		end
 	end
@@ -224,9 +239,7 @@ if process_emblem == 1 then
 		yield("/interact")
 		yield("<wait.4>")
 		--all set
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		--quick escape in case we got stuck in menu
+		ungabunga()	--quick escape in case we got stuck in menu
 
 		 --now we get to the emblematizer
 		yield("<wait.5>")
@@ -303,10 +316,7 @@ if process_fc_buffs == 1 then
 				yield("<wait.1>")
 				buycount = buycount + 1
 			end
-				yield("/send ESCAPE <wait.1.5>")
-				yield("/send ESCAPE <wait.1.5>")
-				yield("/send ESCAPE <wait.1.5>")
-				yield("<wait.5>")
+			ungabunga()	--quick escape in case we got stuck in menu
 
 		end
 		yield("/echo FC Seal Buff II")
@@ -341,19 +351,51 @@ end
 --gc turn in
 if process_players == 1 then
 	for i=1, #chars_fn do
-	 yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
-	 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
-	 yield("/ays relog " ..chars_fn[i][1])
-	 --yield("/echo 15 second wait")
-	yield("/wait 2")
-	CharacterSafeWait()
-	 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
-	TeleportToGCTown()
-	ZoneTransition()
-	WalkToGC()
-	rcuck_count = i
-	yield("/wait 2")
-	Final_GC_Cleaning()
+		yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
+		yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
+		yield("/ays relog " ..chars_fn[i][1])
+		--yield("/echo 15 second wait")
+		yield("/wait 2")
+		CharacterSafeWait()
+		 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
+		--before we dump gear lets check to see if we are on the right job or if we care about it.
+		if config_sell == 1 then
+			yield("/maincommand Item Settings")
+			yield("/wait 0.5")
+			yield("/pcall ConfigCharaItem true 18 288 0 u0")
+			yield("/pcall ConfigCharaItem true 0")
+			yield("/wait 0.5")
+			yield("/pcall ConfigCharacter true 1")
+		end
+		if config_sell == 2 then
+			yield("/maincommand Item Settings")
+			yield("/wait 0.5")
+			yield("/pcall ConfigCharaItem true 18 288 1 u0")
+			yield("/pcall ConfigCharaItem true 0")
+			yield("/wait 0.5")
+			yield("/pcall ConfigCharacter true 1")
+		end
+		if auto_eqweep == 1 then
+			if are_we_dol() then
+				yield("/equipjob "..job_short(which_cj()))
+				yield("/echo Switching to "..job_short(which_cj()))
+				yield("/wait 3")
+			end
+		end
+		TeleportToGCTown()
+		ZoneTransition()
+		yield("/wait 2")
+		WalkToGC()
+		yield("/wait 2")
+		WalkToGC()
+		yield("/wait 2")
+		WalkToGC()
+		rcuck_count = i
+		yield("/wait 2")
+		Final_GC_Cleaning()
+		if restock_fuel > 0 and GetItemCount(10373) > 0 and GetItemCount(10155) <= restock_fuel then
+			try_to_buy_fuel(restock_amt)
+		end
 	end
 end
 --last one out turn off the lights
