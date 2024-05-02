@@ -7,9 +7,10 @@
 
   ***********
   * Version *
-  *  3.3.6  *
+  *  3.3.7  *
   ***********
 
+  -> 3.3.7: Retainer Addition
   -> 3.3.6: Went through and tweaks some of the base settings. Made it kick in on finding the right duty A LOT quicker. (Like. We fast af boyz)
             As well as, generally tweaked some under the hood things.
   -> 3.3.5: Visland is fixed! (Hopefully) and also have support for Navmesh as well, just select which one you would like in the settings. (Default is Visland)
@@ -20,6 +21,7 @@
   -> 3.3.2: Added the ability to Infinite Loop w/o having to set a number
   -> 3.3.1: Added some checks to wait till you're fully loaded out (in case of high ping) [Chest fix is next on the list for high ping]
   -> 3.3.0: Repair Functionality & Potentional duty load check (@leaf update)
+  
   Created by: Leontopodium Nivale, Class Support: Ellipsis | Menu Optimizing/tweaks: Leaf
 
   Creators note: thank you Ellipsis for getting all the classes working, you did an amazing job. You deserve the credit here.
@@ -64,8 +66,7 @@
   -- Select which one you would like, Visland is the one that we've used in this script for a LONG time
   -- VNavmesh however works just as well. You can have both plugins installed, just select which one you want to use for movement 
 
-  NumberofLoops = 5
-  -- number of loops you would like to do 
+  NumberofLoops = 5 -- number of loops you would like to do 
   InfiniteLoops = false -- options: true | false 
   -- If you want it to continually loop w/o a cap, change InfiniteLoops to true 
   -- this will ignore the number of loops and continually go w/o stopping
@@ -87,6 +88,14 @@
   EchoHowMany = true -- Would you like to know where in the script the loop is at? [default is true | off is false]
   TrueLoop = false -- would you like to know how many loops you're currently at actually? (tracks how many bolts/things you have) [default is false | on is true]
 
+  RunRetainers = false -- do you want to run retainers inbetween runs? (Great if you're getting materials still and want to farm that sweet gil)
+  --[[ 
+		**READ THIS** 
+		If you're going to enable this to be true, you need the following to be disabled in autoretainer:
+		-> Settings -> General | DISABLE RetainerSense
+		-> Expert -> Disable "Stay in retainer menu if there are retainers to finish ventures within 5 minutes or less"
+  ]]
+  
   CastingDebug = false -- true | false option
   -- Just something for me to debug test w/
 
@@ -141,6 +150,7 @@
         RepairAmount = 99
         EchoHowMany = true
         TrueLoop = true
+        RunRetainers = true 
     end
 
     LensID = 12674
@@ -183,11 +193,24 @@
 
 ::LoopTest::
 
-    --if AutoRetainerSub == true then 
-        --if ARSubsWaitingToBeProcessed(true) == true then 
-            --yield("/ays multi")
-        --end 
-    --end 
+    -- Run AR then continue with a4n script
+    if RunRetainers == true then 
+        if ARAnyWaitingToBeProcessed() == true then
+            yield("/target Summoning Bell")
+            yield("/wait 0.5")
+            yield("/interact")
+            while ARAnyWaitingToBeProcessed() == true do
+                yield("/e Processing Retainers... Player is occupied")
+                yield("/wait 1")
+            end
+            yield("/waitaddon RetainerList") --If waitaddon does not work, it can be replaced with a wait _ sec
+            yield("/e Finished processing retainers...")
+            yield("/pcall RetainerList true -1")
+            yield("/wait 1")
+        end
+    end
+
+
     if NumberofLoops >= CurrentLoop and InfiniteLoops == false then
         if EchoHowMany == true then
             yield("/echo Loop: "..CurrentLoop.." out of ".. NumberofLoops)
@@ -326,9 +349,15 @@
 	end
     repeat
         yield("/wait "..rate)
-    until IsInZone(445) and IsAddonVisible("_Image")
+    until IsInZone(445)
+
+    CurrentLoop = CurrentLoop + 1
 
 ::BattleInitialize::
+	while IsPlayerAvailable() == false do 
+		yield("/wait 0.5")
+	end
+
     manip_phase = 0
     while not GetCharacterCondition(26) do
         -- Target selection and movement logic
@@ -401,12 +430,12 @@
                 PathfindAndMoveTo(enemy_x, enemy_y, enemy_z)
                 if MovementType == VNavmesh then 
                     while PathfindInProgress() do 
-                        yield("/wait 0.05")
+                        yield("/wait 0.1")
                     end
                     yield("/wait "..rate)
                     yield("/rotation manual")
                     while GetDistanceToTarget() > 3 do 
-                        yield("/wait 0.05")
+                        yield("/wait 0.1")
                     end
                     PathStop()  -- Stop movement after reaching near the target
                 elseif MovementType == Visland then 
@@ -414,7 +443,7 @@
                     yield("/wait "..rate)
                     yield("/rotation manual")
                     while GetDistanceToTarget() > 3 do 
-                        yield("/wait 0.05")
+                        yield("/wait 0.1")
                     end 
                     yield("/visland stop")
                 end 
@@ -431,10 +460,10 @@
         -- Chest #1
         PathfindAndMoveTo(1.93,10.60,-6.31)
         while PathfindInProgress() do
-            yield("/wait 0.05")
+            yield("/wait 0.1")
         end
         while PathIsRunning() do 
-            yield("/wait 0.05")
+            yield("/wait 0.1")
         end 
         yield('/target "Treasure Coffer"')
         yield("/pint")
@@ -442,10 +471,10 @@
         -- Chest #2
         PathfindAndMoveTo(-0.15,10.54,-8.23)
         while PathfindInProgress() do
-            yield("/wait 0.05")
+            yield("/wait 0.1")
         end
         while PathIsRunning() do 
-            yield("/wait 0.05")
+            yield("/wait 0.1")
         end 
         yield('/target "Treasure Coffer"')
         yield("/pint")
@@ -453,10 +482,10 @@
         -- Chest #3
         PathfindAndMoveTo(-2.18,10.57,-6.41)
         while PathfindInProgress() do
-            yield("/wait 0.05")
+            yield("/wait 0.1")
         end
         while PathIsRunning() do 
-            yield("/wait 0.05")
+            yield("/wait 0.1")
         end 
         yield('/target "Treasure Coffer"')
         yield("/pint")
@@ -490,7 +519,6 @@
         yield("/wait "..rate)
     end
 
-    CurrentLoop = CurrentLoop + 1
     yield("/echo Leaving the instance")
     yield("/pdfleave")
 
