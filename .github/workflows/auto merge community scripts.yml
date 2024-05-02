@@ -1,0 +1,7 @@
+name: Auto Merge Community Scripts
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'Community Scripts/**'

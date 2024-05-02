@@ -241,6 +241,18 @@ public class AddonCommands
         return textNode->NodeText.ToString();
     }
 
+    public unsafe void SetNodeText(string addonName, string text, params int[] ids)
+    {
+        var ptr = Service.GameGui.GetAddonByName(addonName, 1);
+        if (ptr == nint.Zero)
+            return;
+
+        var addon = (AtkUnitBase*)ptr;
+        var node = GetNodeByIDChain(addon->GetRootNode(), ids);
+        if (node != null && node->Type == NodeType.Text)
+            node->GetAsAtkTextNode()->NodeText = new FFXIVClientStructs.FFXIV.Client.System.String.Utf8String(text);
+    }
+
     public unsafe string GetSelectStringText(int index)
     {
         var ptr = Service.GameGui.GetAddonByName("SelectString", 1);

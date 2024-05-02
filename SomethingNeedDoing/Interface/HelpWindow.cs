@@ -329,6 +329,10 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-04-18",
+        "- Added SetNodeText()\n");
+
+        DisplayChangelog(
         "2024-04-22",
         "- IsNodeVisible() supports checking arbitrarily nested nodes.\n" +
         "- Added GetHP()\n" +
