@@ -16,7 +16,8 @@ jobs:
           submodules: true
       - name: Enable Pull Request Automerge
         run: |
-          gh pr merge --merge --auto "1"
-          gh pr review --approve "1"
+          gh pr merge --merge --auto "$PR_URL"
+          gh pr review --approve "$PR_URL"
         env:
+          PR_URL: ${{github.event.pull_request.html_url}}
           GH_TOKEN: ${{ secrets.PAT }}
