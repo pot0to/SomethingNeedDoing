@@ -12,6 +12,9 @@ visland
 bring some gysahl greens
 ]]
 
+--1 small problem
+---> sometimes if a char is stranded they will run to who knows where, do we need to put a max dist too say 30 yalms
+
 ---------CONFIGURATION SECTION---------
 fren = "Frend Name" 	--can be partial as long as its unique
 cling = 0.5 			--distance to cling to fren
@@ -25,7 +28,18 @@ yield("/wait 0.5")
 --yield("/mk cross <t>")
 
 local function distance(x1, y1, z1, x2, y2, z2)
-    return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+	if type(x1) ~= "number" then x1 = 0 end
+	if type(y1) ~= "number" then y1 = 0 end
+	if type(z1) ~= "number" then y1 = 0 end
+	if type(x2) ~= "number" then x2 = 0 end
+	if type(y2) ~= "number" then y2	= 0 end
+	if type(z2) ~= "number" then z2 = 0 end
+	zoobz = math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+	if type(zoobz) ~= "number" then
+		zoobz = 0
+	end
+    --return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+    return zoobz
 end
 
 weirdvar = 1
@@ -39,41 +53,44 @@ end
 yield("Friend is party slot -> "..partycardinality)
 
 while weirdvar == 1 do
-	if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
-		if GetCharacterCondition(34) == false then  --not in duty 
-			--check if chocobro is up or not! we can't do it yet
-			if GetCharacterCondition(26) == false then --not in combat
-				if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false then --not mounted and notmounted2 (riding friend)
-					if GetBuddyTimeRemaining() < 900 and GetItemCount(4868) > 0 then
-						yield("/visland stop")
-						yield("/vnavmesh stop")
-						yield("/item Gysahl Greens")
-						yield("/wait 2")
-					end
-					--yield("/target <cross>")
-					if clingy then
-						--check distance to fren, if its more than cling, then
-						if distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren)) >  cling then
-						--yield("/target \""..fren.."\"")
-							PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
+	--catch if character is ready before doing anything
+	if IsPlayerAvailable() then
+		if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
+			if GetCharacterCondition(34) == false then  --not in duty 
+				--check if chocobro is up or not! we can't do it yet
+				if GetCharacterCondition(26) == false then --not in combat
+					if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false then --not mounted and notmounted2 (riding friend)
+						if GetBuddyTimeRemaining() < 900 and GetItemCount(4868) > 0 then
+							yield("/visland stop")
+							yield("/vnavmesh stop")
+							yield("/item Gysahl Greens")
+							yield("/wait 2")
 						end
-						yield("/wait 0.5")
-					end	
-					--yield("/lockon on")
-					--yield("/automove on")
+						--yield("/target <cross>")
+						if clingy then
+							--check distance to fren, if its more than cling, then
+							if distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren)) >  cling then
+							--yield("/target \""..fren.."\"")
+								PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
+							end
+							yield("/wait 0.5")
+						end	
+						--yield("/lockon on")
+						--yield("/automove on")
 
-					--[[yield("/ridepillion <"..mker.."> 1")
-					yield("/ridepillion <"..mker.."> 2")
-					yield("/ridepillion <"..mker.."> 3")]]
-					if IsPartyMemberMounted(partycardinality) == true then
-						--for i=1,7 do
-							--yield("/ridepillion <"..partycardinality.."> "..i)
-							yield("/ridepillion <2> 2")
-							yield("/ridepillion <3> 2")
-							yield("/ridepillion <4> 2")
-						--end
-						yield("/echo Attempting to Mount Friend")
-						yield("/wait 0.5")
+						--[[yield("/ridepillion <"..mker.."> 1")
+						yield("/ridepillion <"..mker.."> 2")
+						yield("/ridepillion <"..mker.."> 3")]]
+						if IsPartyMemberMounted(partycardinality) == true then
+							--for i=1,7 do
+								--yield("/ridepillion <"..partycardinality.."> "..i)
+								yield("/ridepillion <2> 2")
+								yield("/ridepillion <3> 2")
+								yield("/ridepillion <4> 2")
+							--end
+							yield("/echo Attempting to Mount Friend")
+							yield("/wait 0.5")
+						end
 					end
 				end
 			end
