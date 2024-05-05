@@ -64,7 +64,9 @@ while countfartula < 9 do
 	countfartula = countfartula + 1
 end
 
-yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
+--yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
+yield("Friend is party slot -> "..fartycardinality)
+ClearTarget()
 
 while weirdvar == 1 do
 	--catch if character is ready before doing anything
