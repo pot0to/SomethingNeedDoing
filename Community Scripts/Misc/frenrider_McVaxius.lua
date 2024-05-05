@@ -23,7 +23,8 @@ clingy = true			--are we clingy? if not then the fren will have to swoop by to p
 -----------CONFIGURATION END-----------
 
 --init
-yield("/target \""..fren.."\"")
+yield("/echo Starting fren rider")
+--yield("/target \""..fren.."\"")
 yield("/wait 0.5")
 --yield("/mk cross <t>")
 
@@ -49,8 +50,23 @@ for i=0,7 do
 		partycardinality = i
 	end
 end
+--turns out the above is worthless and not what i wanted.
+local fartycardinality = 2
+local countfartula = 2
+while countfartula < 9 do
+	yield("/target <"..countfartula..">")
+	yield("/wait 0.5")
+	yield("/echo is it "..GetTargetName().."?")
+	if GetTargetName() == fren then
+		fartycardinality = countfartula
+		countfartula = 9
+	end
+	countfartula = countfartula + 1
+end
 
-yield("Friend is party slot -> "..partycardinality)
+--yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
+yield("Friend is party slot -> "..fartycardinality)
+ClearTarget()
 
 while weirdvar == 1 do
 	--catch if character is ready before doing anything
@@ -84,9 +100,7 @@ while weirdvar == 1 do
 						if IsPartyMemberMounted(partycardinality) == true then
 							--for i=1,7 do
 								--yield("/ridepillion <"..partycardinality.."> "..i)
-								yield("/ridepillion <2> 2")
-								yield("/ridepillion <3> 2")
-								yield("/ridepillion <4> 2")
+								yield("/ridepillion <"..fartycardinality.."> 2")
 							--end
 							yield("/echo Attempting to Mount Friend")
 							yield("/wait 0.5")
