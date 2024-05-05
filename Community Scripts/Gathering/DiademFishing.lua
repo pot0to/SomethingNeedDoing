@@ -7,9 +7,9 @@
     Author: UcanPatates  
 
     **********************
-    * Version  |  1.0.1  *
+    * Version  |  1.0.3  *
     **********************
-
+    -> 1.0.3  : Now checks if the nvavmesh is ready.
     -> 1.0.1  : Now You don't have to touch the snd settings.
     -> 1.0.0  : Added food usage safety checks and more.
     -> 0.0.2  : Beta version not finished
@@ -22,6 +22,8 @@
 
     This script will fish for you at diadem (Sweetfish) you need to have preset ready for it here it is if you don't have one
 
+    WikiLink:
+    https://github.com/PunishXIV/AutoHook/wiki/The-Diadem
     Preset:
     AH4_H4sIAAAAAAAACuVXS3PTMBD+KxlfuAQmcR5NejNpaZkppYPDcGA4qI4Sa6JYQZZbQif/nV1LcizHrlM4wAynuqvdb799SLt58oJMiRlJVTpbrrzzJ+8yIfecBpx750pmtOvh4Q1L6OFwYY/ew5c/mXa9O8mEZGrnnfdBml7+iHi2oIuDGPX3GuuDEFGMYPmHj185znjS9a6281jSNBYcJP1ez0F+HjrHmJ45Fr1WMrM421gGw35v2ELBWgnOaaRKhv2ymt/uVsgFI7whpX1/PJ5WmAxdJi7R4F48QH2WhKfWwzuWxpc7mpY4jiqQo5EDObb1IWsaxmyp3hKWh4iC1ApCRaI1oAKYqdoxbhl1alDviGI0iWiJz7hqN3aT7VtTyX7SGVG6az6n9GPCd1+YioNIsQcacrJ1GhIoVaH9Sh0HBnoeE87IOn1HHoREdEdgYx10XfknGkG+Qb+PGay7E0Bh6Dgc78Hj5Q8liblmmMu5CB/J9n2iMqaYSK4IS2x6XkND3ZINpMu7FXD3wLrG4kak6hmLO4if1nvxXnsN5xozPz94DLfQ7pLwWSYlTdTJTCt2L+Bb6/GIdS1+rhUkK06hgmKLN4Elq1BRaJN+mZ3WSQN5KqmyAXgpTo1J+EiJWoI78H/DUvVxib6ggb7qeiMT62nQ8ycHZxeMLOimc41t9SjkBqFv4S/h10Ks0cbeny+U5P/rrsNT8I/cbP+haM42VFb68gNLiiPIw/ANtK4xn++2QGLYP8PLah2FSookb1WjVeDlz0y3mUF+PWOa3Ap1fEMrLnuDkssbuqLJgshda4BVBHgULkRm9K2iltiE/XZe/DGmRYO1JqXR0ontdGMIbC7Z1g1MS/48sLORj8nTcC8MzbF9eXDGHO9nsFRUzki2imHN2ODIwTFbvEf2Anyi3zMm6QIeZZXhAMJ9oXorXtTQ7T1Yp3jcVad1ymktUdY6LvOppTu1RqcWA9WRR6XD8vYCCE0R061lmk+DsiWL6dTSglmDRYn5wQh9Fj3yDK9C55hgm3lFq5ZyG8axYjWIi+v5dY2xdt5wWKDWnDdV8ZudSWb//loI9FiCGeXMJ3+KO5OZT1cS5lNn2IHJx1KSEN4J17v7jPEFjMNXncPga24j3IxgRLMIpjVsXuhHKwQbkSWOGqRoNK2ucAN3W52gp0wuSWTGi1krR9NRy+43Ast/5jfIYRl5ZgXBY1ScYaLyHJWXErPw4KcWW7V9t/TrwrzCboknmKxKiZ3CBmn818tas183VflCJGpG4BXnpsAm6v+x+rpi7vK7/7b/BS5IxOjxDwAA
 
@@ -62,7 +64,7 @@ HowManyMinutes = 20
   --Options
     -- AutoHookPreset : you put your preset name here get it from AutoHook.
     -- HowManyMinutes : this setting is to move every x minutes
-    -- (defoult is 20 not recomended to make it more than 45)
+    -- (default is 20 not recomended to make it more than 30)
 
 
 --[[
@@ -78,7 +80,7 @@ HowManyMinutes = 20
 --4th var
 -- 0 means First spot to randomly select
 -- 1 means Second spot to randomly select
--- 99 is bailout and clear the 500cast thingy
+-- 500 is bailout and clear the 500cast thingy
 FishingSpot =
 {
   {520.7,193.7,-518.1,0}, -- First spot
@@ -89,23 +91,23 @@ FishingSpot =
   {536.9,192.2,-503.2, 1},
   {570.3,189.4,-502.7, 1},
 
-  {455.9,255.3,535.1, 99} --bailout
+  {455.9,255.3,535.1, 500} --bailout
 }
 
 
 -- Functions
-function setPropertyIfNotSet(propertyName, value)
+function setPropertyIfNotSet(propertyName)
   if GetSNDProperty(propertyName) == false then
-      SetSNDProperty(propertyName, value)
-      LogInfo("[SetSNDPropertys] " .. propertyName .. " set to " .. tostring(value))
+      SetSNDProperty(propertyName, "true")
+      LogInfo("[SetSNDPropertys] " .. propertyName .. " set to True")
   end
 end
 
 
-function unsetPropertyIfSet(propertyName, value)
+function unsetPropertyIfSet(propertyName )
   if GetSNDProperty(propertyName) then
-      SetSNDProperty(propertyName, value)
-      LogInfo("[SetSNDPropertys] " .. propertyName .. " set to " .. tostring(value))
+      SetSNDProperty(propertyName, "false")
+      LogInfo("[SetSNDPropertys] " .. propertyName .. " set to False")
   end
 end
 
@@ -221,6 +223,7 @@ function Repair()
   end
 end
 function WalkTo(valuex, valuey, valuez)
+  MeshCheck()
   PathfindAndMoveTo(valuex, valuey, valuez, false)
   while PathIsRunning() or PathfindInProgress() do
       yield("/wait 0.1")
@@ -245,8 +248,28 @@ function Dismount()
   end
   LogInfo("[Dismount] Completed")
 end
+function Truncate1Dp(num)
+  return truncate and ("%.1f"):format(num) or num
+end
+
+function MeshCheck()
+  local was_ready = NavIsReady()
+  if not NavIsReady() then
+    while not NavIsReady() do
+      LogInfo("[Debug]Building navmesh, currently at "..Truncate1Dp(NavBuildProgress()*100).."%")
+      yield("/wait 1")
+      local was_ready = NavIsReady()
+      if was_ready then
+        LogInfo("[Debug]Navmesh ready!")
+      end
+    end
+  else
+    LogInfo("[Debug]Navmesh ready!") 
+  end
+end
 
 function MoveToDiadem(RandomSelect)
+  MeshCheck()
   local X, Y, Z
   if IsInZone(939) then
     X, Y, Z = RandomSpot(RandomSelect)
@@ -280,7 +303,7 @@ function MoveToDiadem(RandomSelect)
     elseif RandomSelect==1 then
       local oceanX, oceanY, oceanZ = X +1.2, Y, Z +1.2
       WalkTo(oceanX, oceanY, oceanZ)
-    elseif RandomSelect==99 then
+    elseif RandomSelect==500 then
       local oceanX, oceanY, oceanZ = X +1.2, Y, Z -1.2
       WalkTo(oceanX, oceanY, oceanZ)
     end
@@ -289,7 +312,7 @@ function MoveToDiadem(RandomSelect)
 end
 
 function Bailout500Cast()
-  MoveToDiadem(99)
+  MoveToDiadem(500)
   PlayerTest()
   yield("/ahon")
   yield("/wait 3")
@@ -354,13 +377,13 @@ yield("/ahpreset " .. AutoHookPreset)
 CurrentJob = GetClassJobId()
 
 -- Set properties if they are not already set
-setPropertyIfNotSet("UseItemStructsVersion", "true")
-setPropertyIfNotSet("UseSNDTargeting", "true")
+setPropertyIfNotSet("UseItemStructsVersion")
+setPropertyIfNotSet("UseSNDTargeting")
 
 -- Unset properties if they are set
-unsetPropertyIfSet("StopMacroIfTargetNotFound", "false")
-unsetPropertyIfSet("StopMacroIfCantUseItem", "false")
-unsetPropertyIfSet("StopMacroIfItemNotFound", "false")
+unsetPropertyIfSet("StopMacroIfTargetNotFound")
+unsetPropertyIfSet("StopMacroIfCantUseItem")
+unsetPropertyIfSet("StopMacroIfItemNotFound")
 
 -- Main loop
 while true do
