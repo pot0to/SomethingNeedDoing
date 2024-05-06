@@ -31,6 +31,9 @@ a4n_j     = math.floor(GetItemCount(12680))
 iLevel    = 190
 beegnumber = a4n_hand + a4n_body + a4n_leg + a4n_feet + a4n_j
 beegernumber = beegnumber * 190 * 1.5
+gcbeegnumber = math.floor((beegnumber * 1093) / 600) * 360
+gcbeegnumber10 = math.floor((beegnumber * 1203) / 600) * 360
+gcbeegnumber15 = math.floor((beegnumber * 1257) / 600) * 360
 
 yield("Total a4n_hand -> "..formatNumberWithCommas(a4n_hand))
 yield("Total a4n_body -> "..formatNumberWithCommas(a4n_body))
@@ -40,3 +43,6 @@ yield("Total a4n_jewellery -> "..formatNumberWithCommas(a4n_j))
 yield("Item level -> "..iLevel)
 yield("Total Turnins ->"..formatNumberWithCommas(beegnumber))
 yield("Total Gil (fc points) Value ->"..formatNumberWithCommas(beegernumber))
+yield("Total Gil oilcloth  0% buff Value ->"..formatNumberWithCommas(gcbeegnumber))
+yield("Total Gil oilcloth 10% buff Value ->"..formatNumberWithCommas(gcbeegnumber10))
+yield("Total Gil oilcloth 15% buff Value ->"..formatNumberWithCommas(gcbeegnumber15))
