@@ -46,3 +46,13 @@ yield("Total FC Points ->"..formatNumberWithCommas(beegernumber))
 yield("Total Gil oilcloth  0% buff Value ->"..formatNumberWithCommas(gcbeegnumber))
 yield("Total Gil oilcloth 10% buff Value ->"..formatNumberWithCommas(gcbeegnumber10))
 yield("Total Gil oilcloth 15% buff Value ->"..formatNumberWithCommas(gcbeegnumber15))
+
+a4n_hand_gil = 587
+a4n_body_gil = 978
+a4n_leg_gil = 587
+a4n_feet_gil = 587
+a4n_j_gil = 445
+
+total_vendor_gil = (a4n_hand * a4n_hand_gil) + (a4n_body * a4n_body_gil) + (a4n_leg * a4n_leg_gil) + (a4n_feet * a4n_feet_gil) + (a4n_j * a4n_j_gil)
+
+yield("Total Vendorsell (no GC/FC Ranking) Gil ->"..formatNumberWithCommas(total_vendor_gil))
