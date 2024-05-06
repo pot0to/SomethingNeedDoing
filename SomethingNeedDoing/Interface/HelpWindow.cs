@@ -329,7 +329,8 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-        "2024-04-18",
+        "2024-005-06",
+        "- Added HasPlugin()\n" +
         "- Added SetNodeText()\n");
 
         DisplayChangelog(
@@ -1370,6 +1371,7 @@ yield(""/echo done!"")
             (nameof(CharacterStateCommands), CharacterStateCommands.Instance),
             (nameof(CraftingCommands), CraftingCommands.Instance),
             (nameof(EntityStateCommands), EntityStateCommands.Instance),
+            (nameof(InternalCommands), InternalCommands.Instance),
             (nameof(InventoryCommands), InventoryCommands.Instance),
             (nameof(IpcCommands), IpcCommands.Instance),
             (nameof(QuestCommands), QuestCommands.Instance),

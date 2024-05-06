@@ -1,4 +1,5 @@
 ﻿using ECommons.DalamudServices;
+using ECommons.Reflection;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
@@ -33,4 +34,6 @@ public class SystemCommands
     public void LogInfo(object text) => Svc.Log.Info($"{text}");
     public void LogDebug(object text) => Svc.Log.Debug($"{text}");
     public void LogVerbose(object text) => Svc.Log.Verbose($"{text}");
+
+    public bool HasPlugin(string name) => DalamudReflector.TryGetDalamudPlugin(name, out _, false, true);
 }

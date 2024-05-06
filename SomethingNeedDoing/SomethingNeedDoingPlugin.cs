@@ -41,7 +41,7 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
         Service.Plugin = this;
         Service.Configuration = SomethingNeedDoingConfiguration.Load(pluginInterface.ConfigDirectory);
 
-        ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions);
+        ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions, Module.DalamudReflector);
 
         Service.ChatManager = new ChatManager();
         Service.GameEventManager = new GameEventManager();
