@@ -39,9 +39,10 @@ Yesalready configs
 	/Repair all displayed items for.*/
 	/Embark to the.*/
 "Lists"
-	Register to board.
+	/Register to board.*/
+	/Retire to an inn room.*/
 "Bothers"
-	auto confirm queueing
+	[x] Contents Finder Confirm  (auto confirm queueing)
 
 ---------
 ---TODO
@@ -294,7 +295,7 @@ function fishing()
 	
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
 	if which_one[feesh_c][2] == 0 or which_one[feesh_c][2] == 1 then
-		yield("/tp Estate Hall")
+		yield("/tp Estate Hall (Free Company)")
 		yield("/wait 1")
 		--yield("/waitaddon Nowloading <maxwait.15>")
 		yield("/wait 15")
