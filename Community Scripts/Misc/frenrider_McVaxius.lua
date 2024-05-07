@@ -12,9 +12,6 @@ visland
 bring some gysahl greens
 ]]
 
---1 small problem
----> sometimes if a char is stranded they will run to who knows where, do we need to put a max dist too say 30 yalms
-
 ---------CONFIGURATION SECTION---------
 fren = "Frend Name" 	--can be partial as long as its unique
 cling = 0.5 			--distance to cling to fren
@@ -78,7 +75,8 @@ while weirdvar == 1 do
 				if GetCharacterCondition(26) == true then --in combat
 						if clingy then
 							--check distance to fren, if its more than cling, then
-							if distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren)) >  cling then
+							bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
+							if bistance > cling and bistance < 20 then
 							--yield("/target \""..fren.."\"")
 								PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
 							end
@@ -96,7 +94,8 @@ while weirdvar == 1 do
 						--yield("/target <cross>")
 						if clingy then
 							--check distance to fren, if its more than cling, then
-							if distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren)) >  cling then
+							bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
+							if bistance > cling and bistance < 20 then
 							--yield("/target \""..fren.."\"")
 								PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
 							end
