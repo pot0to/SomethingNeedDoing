@@ -4,7 +4,7 @@
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1190858719546835065
 
 for the below table templates,.. the 2nd (last var)
-0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn
+0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte
 ]]
 
 --enter in names of chars that can edit emblems are in same GC as the FC otherwise it will update the GC for 15k gil
@@ -165,6 +165,12 @@ function Final_GC_Cleaning()
 
 	--added 5 second wait here because sometimes they get stuck.
 	yield("/wait 5")
+	
+	--limsa aetheryte
+	if chars_fn[rcuck_count][2] == 4 then
+		return_to_limsa_bell()
+		yield("/wait 8")
+	end
 	
 	--if we are tp to inn. we will go to gridania yo
 	if chars_fn[rcuck_count][2] == 3 then
