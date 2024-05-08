@@ -993,31 +993,34 @@ while repeated_trial < (repeat_trial + 1) do
 		if GetTargetName()=="Exit" or GetTargetName()=="Shortcut" then --get out ! assuming pandora setup for auto interaction
 			local minicounter = 0
 			--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
-			if NeedsRepair(99) then
-				yield("/wait 10")
-				while not IsAddonVisible("Repair") do
-				  yield("/generalaction repair")
-				  yield("/wait 1")
-				  minicounter = minicounter + 1
-				  if minicounter > 20 then
-					minicounter = 0
-					break
-				  end
-				end
-				yield("/pcall Repair true 0")
-				yield("/wait 0.1")
-				if IsAddonVisible("SelectYesno") then
-				  yield("/pcall SelectYesno true 0")
-				  yield("/wait 1")
-				end
-				while GetCharacterCondition(39) do yield("/wait 1")
-				yield("/wait 1")
-				yield("/pcall Repair true -1")
-				  minicounter = minicounter + 1
-				  if minicounter > 20 then
-					minicounter = 0
-					break
-				  end
+			--check if we even have g8dm, otherwise dont waste time
+			if GetItemCount(33916) > 10 then
+				if NeedsRepair(99) then
+					yield("/wait 10")
+					while not IsAddonVisible("Repair") do
+					  yield("/generalaction repair")
+					  yield("/wait 1")
+					  minicounter = minicounter + 1
+					  if minicounter > 20 then
+						minicounter = 0
+						break
+					  end
+					end
+					yield("/pcall Repair true 0")
+					yield("/wait 0.1")
+					if IsAddonVisible("SelectYesno") then
+					  yield("/pcall SelectYesno true 0")
+					  yield("/wait 1")
+					end
+					while GetCharacterCondition(39) do yield("/wait 1")
+					yield("/wait 1")
+					yield("/pcall Repair true -1")
+					  minicounter = minicounter + 1
+					  if minicounter > 20 then
+						minicounter = 0
+						break
+					  end
+					end
 				end
 			end
 			if whereismydoodie > #doodie then

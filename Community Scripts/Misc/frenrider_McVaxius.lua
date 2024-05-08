@@ -10,12 +10,36 @@ visland
 
 *optional:
 bring some gysahl greens
+
+***Few annoying problems that still exist
+1. sometimes it will wander off after an area change. i think this is a trailing moveto from the previous area.  and only happens if the leader and the follower teleport at same / almost same time to diff places
+solution here is to check for area changes and do a /visland stop  and a /vnavmesh stop  if we notice an area change
+**solution implemented needs testing
+
+2. RS attacks training dummies which is a never ending source of annoyance in housing wards
+NoHostileNames.json is the solution. gonna make this and include it i guess
+
+3. Players stacking up on master looks really bad
+maybe can add a spread coefficient and include it as part of the script startup. a nice way would be to sort the names alphabetically and assign clock spots based on that
+like this -> . so that 1 is the main tank and the party will always kind of make this formation. but only during combat ;~D
+8	1	5
+3		2
+7	4	6
+this would be on/off sort of thing
+
 ]]
 
 ---------CONFIGURATION SECTION---------
 fren = "Frend Name" 	--can be partial as long as its unique
 cling = 0.5 			--distance to cling to fren
 clingy = true			--are we clingy? if not then the fren will have to swoop by to pick them up. recommend ON unless your doing quests or something.
+formation = true		--follow in formation in combat?
+						--[[
+						like this -> . so that 1 is the main tank and the party will always kind of make this formation during combat
+						8	1	5
+						3		2
+						7	4	6
+						]]
 --mker = "cross" --in case you want the other shapes. valid shapes are triangle square circle attack1-8 bind1-3 ignore1-2
 -----------CONFIGURATION END-----------
 
@@ -25,6 +49,7 @@ yield("/echo Starting fren rider")
 yield("/wait 0.5")
 --yield("/mk cross <t>")
 
+--why is this so complicated? well because sometimes we get bad values and we need to sanitize that so snd does not STB (shit the bed)
 local function distance(x1, y1, z1, x2, y2, z2)
 	if type(x1) ~= "number" then x1 = 0 end
 	if type(y1) ~= "number" then y1 = 0 end
@@ -41,7 +66,9 @@ local function distance(x1, y1, z1, x2, y2, z2)
 end
 
 weirdvar = 1
-local partycardinality = 2
+partycardinality = 2
+we_are_in = GetZoneID()
+we_were_in = GetZoneID()
 for i=0,7 do
 	if GetPartyMemberName(i) == fren then
 		partycardinality = i
@@ -71,6 +98,19 @@ while weirdvar == 1 do
 	if IsPlayerAvailable() then
 		if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
 			if GetCharacterCondition(34) == false then  --not in duty 
+				--SAFETY CHECKS DONE, can do whatever you want now with characterconditions etc
+				--check if we chagned areas and stop movement and clear target
+				we_are_in = GetZoneID()
+				if we_are_in ~= we_were_in then
+					yield("/wait 0.5")
+					yield("/visland stop")
+					yield("/vnavmesh stop")
+					yield("/wait 0.5")
+					yield("/visland stop")
+					yield("/vnavmesh stop")
+					ClearTarget()
+					we_were_in = we_are_in
+				end
 				--check if chocobro is up or not! we can't do it yet
 				if GetCharacterCondition(26) == true then --in combat
 						if clingy then
