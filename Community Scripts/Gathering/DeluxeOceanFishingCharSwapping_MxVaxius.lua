@@ -47,14 +47,7 @@ Yesalready configs
 ---------
 ---TODO
 ---------
-for next version use
-if IsAddonVisible("IKDResult") then
-    yield("/wait 15")
-    yield("/pcall IKDResult false 0")
-end
---to exit summary
-
---add in config file that checks levels of chars. if they are under 90 (for now, 100 in DT) they will be considered. and lowest level one will be selected
+--add in a (self generating) tracking file that checks levels of chars. if they are under 90 (for now, 100 in DT) they will be considered. and lowest level one will be selected
 
 ------------------------------------------------
 ------------------------------------------------
@@ -244,6 +237,8 @@ function fishing()
 	yield("<wait.30.0>")
 	--yield("/visland execonce OceanFishing")
 	--yield("/visland moveto 7.451 6.750 -4.043")
+
+--[[ old way
 	local randomNum = getRandomNumber(1,8)
     if randomNum == 1 then yield("/visland moveto 6.641 6.711 -0.335")
 		elseif randomNum == 2 then yield("/visland moveto 7.451 6.750 -4.043")
@@ -253,7 +248,13 @@ function fishing()
 		elseif randomNum == 6 then yield("/visland moveto -7.548 6.750 -6.590")
 		elseif randomNum == 7 then yield("/visland moveto -7.482 6.739 -2.633")
 		elseif randomNum == 8 then yield("/visland moveto -7.419 6.711 -0.113")
-	end	--keep checking for that original area - once it is back. turn /ays multi back on
+	end	
+	]]
+	--new way
+		local randomNum = getRandomNumber(113,4043)
+		randomNum = (randomNum * -1) / 1000
+		yield("/visland moveto 7.451 6.750 "..randomNum)
+	--keep checking for that original area - once it is back. turn /ays multi back on
 	--also spam fishing
 
 	while (zown ~= fzown) do
@@ -265,6 +266,11 @@ function fishing()
 		if GetCharacterCondition(43)==false then
 			yield("/ac cast")
 			yield("/wait 1")
+		end
+		--try to exit the completion window faster
+		if IsAddonVisible("IKDResult") then
+			yield("/wait 15")
+			yield("/pcall IKDResult false 0")
 		end
 		if GetCharacterCondition(33)==true then
 			if GetCharacterCondition(34)==true then
