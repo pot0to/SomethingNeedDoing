@@ -330,12 +330,17 @@ internal class HelpWindow : Window
 
         DisplayChangelog(
         "2024-005-06",
+        "- Added IsAchievementComplete() (requires achievements to be loaded manually)\n" +
+        "- Added HasFlightUnlocked()\n");
+
+        DisplayChangelog(
+        "2024-005-06",
         "- Added HasPlugin()\n" +
         "- Added SetNodeText()\n");
 
         DisplayChangelog(
         "2024-04-22",
-        "- IsNodeVisible() supports checking arbitrarily nested nodes.\n" +
+        "- IsNodeVisible() supports checking arbitrarily nested nodes. (breaking change from requiring node positions to node ids)\n" +
         "- Added GetHP()\n" +
         "- Added GetMaxHP()\n" +
         "- Added GetMP()\n" +
