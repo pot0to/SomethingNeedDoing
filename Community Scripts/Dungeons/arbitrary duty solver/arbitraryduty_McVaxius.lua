@@ -994,7 +994,7 @@ while repeated_trial < (repeat_trial + 1) do
 			local minicounter = 0
 			--repair snippet stolen from https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/Gathering/DiademReentry_Caeoltoiri.lua
 			--check if we even have g8dm, otherwise dont waste time
-			if GetItemCount(33916) > 10 then
+			if GetItemCount(33916) > 0 then
 				if NeedsRepair(99) then
 					yield("/wait 10")
 					while not IsAddonVisible("Repair") do
