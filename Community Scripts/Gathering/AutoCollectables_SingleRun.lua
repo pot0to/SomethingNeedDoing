@@ -2,11 +2,12 @@
     Name: AutoCollectables
     Description: General collectables script for MIN/BTN, based on auto gather collectables for the miner or botanist relic steps from Em
     Author: LeafFriend, Em
-    Version: 0.1.1.2
+    Version: 0.1.2
 ]]
 
 --[[
     <Changelog>
+    0.1.2   - Added ability to gain more gathering attempts if possible when doing final collection at max Collectability
     0.1.1.2 - Fixed condition checking for looping
     0.1.1.1 - Added support for calling script in GatheringHelper
     0.1.1   - Refactored Ageless Words/Solid Reason code block into its own wrapper
@@ -101,7 +102,7 @@ end
 
 --Wrapper for gaining more gathering attempts to Collect
 function gain_more_action()
-    while (GetGp() >= action_one_more_gp) do
+    while (GetGp() >= action_one_more_gp and current_coll() == max_coll) do
         if (actions_left() < max_actions()) then action(action_name_one_more) end
         if (HasStatus("Eureka Moment")) then
             if (actions_left() > max_actions() - 1) then action("Collect") end
@@ -115,6 +116,7 @@ function collect_all()
     while((actions_left() > 0) and IsAddonReady("GatheringMasterpiece")) do
         --Ends function if function called without any scouring
         if (current_coll() == 0) then return end
+        gain_more_action()
 
         Id_Print("Actions left: "..actions_left())
         action("Collect")

@@ -104,6 +104,15 @@ function visland_stop_moving()
  yield("/wait 3")
 end
 
+
+function return_to_limsa_bell()
+	yield("/tp Limsa Lominsa")
+	ZoneTransition()
+	yield("/wait 2")
+	PathfindAndMoveTo(-125.440284729, 18.0, 21.004405975342, false)
+	visland_stop_moving() --added so we don't accidentally end before we get to the inn person
+end
+
 function return_to_inn()
 	yield("/tp New Gridania")
 	ZoneTransition()
