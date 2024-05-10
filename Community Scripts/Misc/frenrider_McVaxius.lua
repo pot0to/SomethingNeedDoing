@@ -35,7 +35,7 @@ implemented. needs testing
 ]]
 
 ---------CONFIGURATION SECTION---------
-fren = "Frend Name" 	--can be partial as long as its unique
+fren = "Fren Name"  	--can be partial as long as its unique
 autotoss = true			--every 100 ticks it will try to auto discard whatever is on auto discard list. useful in treasure maps
 fulftype = "unchanged"	--if you have lazyloot installed can setup how loot is handled. leave on "unchanged" if you dont want it to set your fulf settings. other setings include need, greed, pass
 cling = 0.5 			--distance to cling to fren
@@ -103,6 +103,46 @@ function can_i_lb()
 	return dps
 end
 
+local function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ, leaderRotation)
+    -- Calculate the formation position based on follower index and leader's facing direction
+    local offsetX, offsetY = calculateOffset(followerIndex, leaderRotation)
+    
+    -- Move the follower to the formation position relative to the leader
+    local targetX = leaderX + offsetX
+    local targetY = leaderY + offsetY
+    
+    -- Example: Move follower to the calculated position
+    PathfindAndMoveTo(targetX, targetY, leaderZ, false)
+end
+
+-- Function to calculate the offset based on follower index and leader's facing direction
+local function calculateOffset(followerIndex, leaderRotation)
+    -- Calculate offsetX and offsetY based on follower index and leader's facing direction
+    -- Example: Adjust offsetX and offsetY based on formation layout and leader's facing direction
+    local offsetX, offsetY = 0, 0
+    -- Adjust offsetX and offsetY based on formation layout and leader's facing direction
+    if followerIndex == 1 then
+        -- Example: Adjust offsetX and offsetY for follower 1
+        offsetX, offsetY = -5, 5
+    elseif followerIndex == 2 then
+        -- Example: Adjust offsetX and offsetY for follower 2
+        offsetX, offsetY = 0, 5
+    elseif followerIndex == 3 then
+        -- Example: Adjust offsetX and offsetY for follower 3
+        offsetX, offsetY = 5, 5
+    elseif followerIndex == 4 then
+        -- Example: Adjust offsetX and offsetY for follower 4
+        offsetX, offsetY = -5, 0
+    -- Handle other follower indexes similarly
+    end
+    
+    -- Rotate the offset based on the leader's facing direction
+    local rotatedOffsetX = offsetX * math.cos(leaderRotation) - offsetY * math.sin(leaderRotation)
+    local rotatedOffsetY = offsetX * math.sin(leaderRotation) + offsetY * math.cos(leaderRotation)
+    
+    return rotatedOffsetX, rotatedOffsetY
+end
+
 weirdvar = 1
 partycardinality = 2
 autotosscount = 0
@@ -131,13 +171,32 @@ end
 yield("Friend is party slot -> "..fartycardinality)
 ClearTarget()
 
-
 while weirdvar == 1 do
 	--catch if character is ready before doing anything
 	if IsPlayerAvailable() then
 		if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
 			if GetCharacterCondition(34) == false then  --not in duty 
 				--SAFETY CHECKS DONE, can do whatever you want now with characterconditions etc			
+				--movement with formation - initially we test while in any situation not just combat
+				if formation == true then
+					-- Inside combat and formation enabled
+					local leaderX, leaderY, leaderZ = GetObjectRawXPos(fren), GetObjectRawYPos(fren), GetObjectRawZPos(fren)
+					local leaderRotation = GetObjectRotation(fren)
+					moveToFormationPosition(partycardinality, leaderX, leaderY, leaderZ, leaderRotation)
+					yield("/wait 0.5")
+				end
+				--movement without formation
+				if GetCharacterCondition(26) == true and formation == false then --in combat
+					if clingy then
+						--check distance to fren, if its more than cling, then
+						bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
+						if bistance > cling and bistance < 20 then
+						--yield("/target \""..fren.."\"")
+							PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
+						end
+						yield("/wait 0.5")
+					end	
+				end
 				
 				--we are limitbreaking all over ourselves
 				if can_i_lb == true then
@@ -180,17 +239,9 @@ while weirdvar == 1 do
 					ClearTarget()
 					we_were_in = we_are_in
 				end
-				if GetCharacterCondition(26) == true then --in combat
-						if clingy then
-							--check distance to fren, if its more than cling, then
-							bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
-							if bistance > cling and bistance < 20 then
-							--yield("/target \""..fren.."\"")
-								PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
-							end
-							yield("/wait 0.5")
-						end	
-				end
+				
+				--the code block that got this all started haha
+				--follow and mount fren
 				if GetCharacterCondition(26) == false then --not in combat
 					if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false then --not mounted and notmounted2 (riding friend)
 						--chocobo stuff. first check if we can fly. if not don't try to chocobo
