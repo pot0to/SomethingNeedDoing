@@ -34,6 +34,23 @@ i have some nutty code i wrote for this that even takes object rotation into acc
 implemented. needs testing
 ]]
 
+--*****************************************************************
+--************************* START INIZER **************************
+--*****************************************************************
+filename_prefix = "frenrider_"
+
+function ini_check(varname, varvalue)
+	--*first check if the file exists
+		--*if the file doesnt exist. create it and add the new variable that was called
+		--*if the varname is "version" and its not the same as the one in the file. RECREATE the file
+	--*first check if the variable type already exists in the ini file
+		--*if it doesnt exist, add the new variable type to the file and return the default value
+		--*if it already exists, just pull the value and return it
+end
+--*****************************************************************
+--************************** END INIZER ***************************
+--*****************************************************************
+
 ---------CONFIGURATION SECTION---------
 fren = "Fren Name"  	--can be partial as long as its unique
 autotoss = true			--every 100 ticks it will try to auto discard whatever is on auto discard list. useful in treasure maps
