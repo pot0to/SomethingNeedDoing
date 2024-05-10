@@ -396,11 +396,16 @@ local function porta_decumana()
 		if type(GetZoneID()) == "number" and GetZoneID() == 1048 then
 			customized_targeting = 1
 			yield("/target Ultima")
+			if distance(GetPlayerRawXPos(),GetPlayerRawYPos(),GetPlayerRawZPos(),GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos()) > 2 then
+					yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos()) --move to the target
+			end
 			--check the area number before doing ANYTHING this breaks other areas.
 			--porta decumana ultima weapon orbs in phase 2 near start of phase
 			--very hacky kludge until movement isn't slidy
 			--nested ifs because we don't want to get locked into this
-			mecurrentLocX = GetPlayerRawXPos()
+--[[
+--COMMENTED OUT THIS ENTIRE SECTION SINCE WE HAVE PROPER VBM MODULE NOW		
+		mecurrentLocX = GetPlayerRawXPos()
 			mecurrentLocY = GetPlayerRawYPos()
 			mecurrentLocZ = GetPlayerRawZPos()
 			phase2 = distance(-692.46704, -185.53157, 468.43414, mecurrentLocX, mecurrentLocY, mecurrentLocZ)
@@ -471,6 +476,7 @@ local function porta_decumana()
 					end
 				end	
 			]]
+			-- ]] fake comment ending
 	end
 end
 

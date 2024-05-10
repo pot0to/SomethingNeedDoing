@@ -17,6 +17,7 @@ function WalkTo(x, y, z)
 		--if GetZoneID() == 341 then --only need to jump in goblet for now
 			yield("/gaction jump")
 			countee = 0
+	        yield("/echo we are still pathfinding apparently")
 		end
     end
 end

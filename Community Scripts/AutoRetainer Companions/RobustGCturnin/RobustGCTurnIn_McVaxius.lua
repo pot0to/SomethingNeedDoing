@@ -390,10 +390,13 @@ if process_players == 1 then
 		end
 		TeleportToGCTown()
 		ZoneTransition()
+		yield("/echo Walk to GC attempt 1")
 		yield("/wait 2")
 		WalkToGC()
+		yield("/echo Walk to GC attempt 2")
 		yield("/wait 2")
 		WalkToGC()
+		yield("/echo Walk to GC attempt 3?")
 		yield("/wait 2")
 		WalkToGC()
 		rcuck_count = i
