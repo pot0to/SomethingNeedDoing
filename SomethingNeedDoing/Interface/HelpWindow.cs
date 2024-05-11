@@ -329,12 +329,16 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-        "2024-005-06",
+        "2024-05-11",
+        "- Added HasTarget()\n");
+
+        DisplayChangelog(
+        "2024-05-09",
         "- Added IsAchievementComplete() (requires achievements to be loaded manually)\n" +
         "- Added HasFlightUnlocked()\n");
 
         DisplayChangelog(
-        "2024-005-06",
+        "2024-05-06",
         "- Added HasPlugin()\n" +
         "- Added SetNodeText()\n");
 

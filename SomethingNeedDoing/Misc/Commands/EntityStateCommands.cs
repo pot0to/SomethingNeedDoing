@@ -74,6 +74,7 @@ internal class EntityStateCommands
     public unsafe bool IsTargetInCombat() => ((Character*)Svc.Targets.Target?.Address!)->InCombat;
     public byte GetTargetHuntRank() => (byte)(Svc.Targets.Target != null ? Svc.Data.GetExcelSheet<NotoriousMonster>()?.FirstOrDefault(x => x.BNpcBase.Value!.RowId == Svc.Targets.Target.DataId)?.Rank ?? 0 : 0);
     public float GetTargetHitboxRadius() => Svc.Targets.Target?.HitboxRadius ?? 0;
+    public bool HasTarget() => Svc.Targets.Target != null;
     #endregion
 
     #region Focus Target
