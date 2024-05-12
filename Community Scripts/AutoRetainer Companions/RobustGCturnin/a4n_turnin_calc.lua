@@ -43,9 +43,9 @@ yield("Total a4n_jewellery -> "..formatNumberWithCommas(a4n_j))
 yield("Item level -> "..iLevel)
 yield("Total Turnins ->"..formatNumberWithCommas(beegnumber))
 yield("Total FC Points ->"..formatNumberWithCommas(beegernumber))
-yield("Total Gil oilcloth  0% buff Value ->"..formatNumberWithCommas(gcbeegnumber))
-yield("Total Gil oilcloth 10% buff Value ->"..formatNumberWithCommas(gcbeegnumber10))
-yield("Total Gil oilcloth 15% buff Value ->"..formatNumberWithCommas(gcbeegnumber15))
+yield("Total Gil oilcloth  0% buff Value ->"..formatNumberWithCommas(gcbeegnumber).." from "..formatNumberWithCommas(gcbeegnumber * (5/3)).." GC Seals")
+yield("Total Gil oilcloth 10% buff Value ->"..formatNumberWithCommas(gcbeegnumber10).." from "..formatNumberWithCommas(gcbeegnumber10 * (5/3)).." GC Seals")
+yield("Total Gil oilcloth 15% buff Value ->"..formatNumberWithCommas(gcbeegnumber15).." from "..formatNumberWithCommas(gcbeegnumber15 * (5/3)).." GC Seals")
 
 a4n_hand_gil = 587
 a4n_body_gil = 978
