@@ -1108,6 +1108,7 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/wait 10")
 	end
 	if we_are_in ~= we_were_in then
+		yield("/rotation auto") --we need to turn this on here so rotations work
 		yield("/"..movetype.." stop")
 		yield("/wait 1")
 		yield("/"..movetype.." stop")
@@ -1151,6 +1152,7 @@ while repeated_trial < (repeat_trial + 1) do
 		whereismydoodie = 1
 		customized_targeting = 0
 		customized_behaviour = 0
+		yield("/rotation Cancel")
 	end
 	yield("/wait "..cycleTime) --the entire fuster cluck is looping at this rate
 end
