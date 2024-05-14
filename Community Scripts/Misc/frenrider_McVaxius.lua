@@ -149,19 +149,23 @@ local function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ,
 end
 
 weirdvar = 1
-partycardinality = 2
+shartycardinality = 2 -- leader
+partycardinality = 2 -- me
+local fartycardinality = 2 --leader ui cardinality
 autotosscount = 0
 we_are_in = GetZoneID()
 we_were_in = GetZoneID()
 for i=0,7 do
-	--if GetPartyMemberName(i) == frenfren then
+	if GetPartyMemberName(i) == fren then
+		shartycardinality = i
+	end
 	if GetPartyMemberName(i) == GetCharacterName() then
 		partycardinality = i
 	end
 end
 partycardinality = partycardinality + 1
 --turns out the above is worthless and not what i wanted for pillion. but we keep it anyways in case we need the data for something.
-local fartycardinality = 2
+
 local countfartula = 2
 while countfartula < 9 do
 	yield("/target <"..countfartula..">")
@@ -175,7 +179,7 @@ while countfartula < 9 do
 end
 
 --yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
-yield("Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality)
+yield("Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality.." Fren Join order -> "..shartycardinality)
 ClearTarget()
 
 while weirdvar == 1 do
@@ -277,7 +281,7 @@ while weirdvar == 1 do
 						--[[yield("/ridepillion <"..mker.."> 1")
 						yield("/ridepillion <"..mker.."> 2")
 						yield("/ridepillion <"..mker.."> 3")]]
-						if IsPartyMemberMounted(partycardinality) == true then
+						if IsPartyMemberMounted(shartycardinality) == true then
 							--for i=1,7 do
 								--yield("/ridepillion <"..partycardinality.."> "..i)
 								yield("/ridepillion <"..fartycardinality.."> 2")
