@@ -32,6 +32,8 @@ i have some nutty code i wrote for this that even takes object rotation into acc
 
 4. why aren't we limit breaking.... well maybe we will now hehehehe
 implemented. needs testing
+
+5. build the inizer? idk maybe
 ]]
 
 --*****************************************************************
@@ -55,10 +57,9 @@ end
 fren = "Fren Name"  	--can be partial as long as its unique
 autotoss = true			--every 100 ticks it will try to auto discard whatever is on auto discard list. useful in treasure maps
 fulftype = "unchanged"	--if you have lazyloot installed can setup how loot is handled. leave on "unchanged" if you dont want it to set your fulf settings. other setings include need, greed, pass
-cling = 0.5 			--distance to cling to fren
-clingy = true			--are we clingy? if not then the fren will have to swoop by to pick them up. recommend ON unless your doing quests or something.
+cling = 1 			--distance to cling to fren
 limitpct = 25			--what pct of life on target should we use lb at. it will automatically use lb3 if thats the cap or it will use lb2 if thats the cap
-formation = true		--follow in formation in combat?
+formation = true		--follow in formation? if false, then it will "cling"
 						--[[
 						like this -> . so that 1 is the main tank and the party will always kind of make this formation during combat
 						8	1	5
@@ -83,7 +84,7 @@ end
 local function distance(x1, y1, z1, x2, y2, z2)
 	if type(x1) ~= "number" then x1 = 0 end
 	if type(y1) ~= "number" then y1 = 0 end
-	if type(z1) ~= "number" then y1 = 0 end
+	if type(z1) ~= "number" then z1 = 0 end
 	if type(x2) ~= "number" then x2 = 0 end
 	if type(y2) ~= "number" then y2	= 0 end
 	if type(z2) ~= "number" then z2 = 0 end
@@ -96,28 +97,43 @@ local function distance(x1, y1, z1, x2, y2, z2)
 end
 
 function can_i_lb()
-	dps = false
-	joeb = GetClassJobId()
-	if joeb == 2 then dps = true end
-	if joeb == 4 then dps = true end
-	if joeb == 5 then dps = true end
-	if joeb == 7 then dps = true end
-	if joeb == 20 then dps = true end
-	if joeb == 22 then dps = true end
-	if joeb == 24 then dps = true end
-	if joeb == 25 then dps = true end
-	if joeb == 26 then dps = true end
-	if joeb == 27 then dps = true end
-	if joeb == 29 then dps = true end
-	if joeb == 30 then dps = true end
-	if joeb == 31 then dps = true end
-	if joeb == 34 then dps = true end
-	if joeb == 35 then dps = true end
-	if joeb == 38 then dps = true end
-	if joeb == 39 then dps = true end
---	if joeb == 41 then dps = true end --painter
---	if joeb == 42 then dps = true end --voper
-	return dps
+    local dpsJobs = {
+        [2] = true, [4] = true, [5] = true, [7] = true, [20] = true, [22] = true, [24] = true,
+        [25] = true, [26] = true, [27] = true, [29] = true, [30] = true, [31] = true,
+        [34] = true, [35] = true, [38] = true, [39] = true--,
+        -- [41] = true, --painter
+        -- [42] = true, --voper
+    }
+    local joeb = GetClassJobId()
+    return dpsJobs[joeb] or false
+end
+
+-- Function to calculate the offset based on follower index and leader's facing direction
+local function calculateOffset(followerIndex, leaderRotation)
+    -- Calculate offsetX and offsetY based on follower index and leader's facing direction
+    -- Example: Adjust offsetX and offsetY based on formation layout and leader's facing direction
+    local offsetX, offsetY = 0, 0
+    -- Adjust offsetX and offsetY based on formation layout and leader's facing direction
+    if followerIndex == 1 then
+        -- Example: Adjust offsetX and offsetY for follower 1
+        offsetX, offsetY = -1 * cling * 2, cling * 2
+    elseif followerIndex == 2 then
+        -- Example: Adjust offsetX and offsetY for follower 2
+        offsetX, offsetY = 0, cling * 2
+    elseif followerIndex == 3 then
+        -- Example: Adjust offsetX and offsetY for follower 3
+        offsetX, offsetY = cling * 2, cling * 2
+    elseif followerIndex == 4 then
+        -- Example: Adjust offsetX and offsetY for follower 4
+        offsetX, offsetY = -1 * cling * 2, 0
+    -- Handle other follower indexes similarly
+    end
+    
+    -- Rotate the offset based on the leader's facing direction
+    local rotatedOffsetX = offsetX * math.cos(leaderRotation) - offsetY * math.sin(leaderRotation)
+    local rotatedOffsetY = offsetX * math.sin(leaderRotation) + offsetY * math.cos(leaderRotation)
+    
+    return rotatedOffsetX, rotatedOffsetY
 end
 
 local function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ, leaderRotation)
@@ -132,44 +148,18 @@ local function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ,
     PathfindAndMoveTo(targetX, targetY, leaderZ, false)
 end
 
--- Function to calculate the offset based on follower index and leader's facing direction
-local function calculateOffset(followerIndex, leaderRotation)
-    -- Calculate offsetX and offsetY based on follower index and leader's facing direction
-    -- Example: Adjust offsetX and offsetY based on formation layout and leader's facing direction
-    local offsetX, offsetY = 0, 0
-    -- Adjust offsetX and offsetY based on formation layout and leader's facing direction
-    if followerIndex == 1 then
-        -- Example: Adjust offsetX and offsetY for follower 1
-        offsetX, offsetY = -5, 5
-    elseif followerIndex == 2 then
-        -- Example: Adjust offsetX and offsetY for follower 2
-        offsetX, offsetY = 0, 5
-    elseif followerIndex == 3 then
-        -- Example: Adjust offsetX and offsetY for follower 3
-        offsetX, offsetY = 5, 5
-    elseif followerIndex == 4 then
-        -- Example: Adjust offsetX and offsetY for follower 4
-        offsetX, offsetY = -5, 0
-    -- Handle other follower indexes similarly
-    end
-    
-    -- Rotate the offset based on the leader's facing direction
-    local rotatedOffsetX = offsetX * math.cos(leaderRotation) - offsetY * math.sin(leaderRotation)
-    local rotatedOffsetY = offsetX * math.sin(leaderRotation) + offsetY * math.cos(leaderRotation)
-    
-    return rotatedOffsetX, rotatedOffsetY
-end
-
 weirdvar = 1
 partycardinality = 2
 autotosscount = 0
 we_are_in = GetZoneID()
 we_were_in = GetZoneID()
 for i=0,7 do
-	if GetPartyMemberName(i) == fren then
+	--if GetPartyMemberName(i) == frenfren then
+	if GetPartyMemberName(i) == GetCharacterName() then
 		partycardinality = i
 	end
 end
+partycardinality = partycardinality + 1
 --turns out the above is worthless and not what i wanted for pillion. but we keep it anyways in case we need the data for something.
 local fartycardinality = 2
 local countfartula = 2
@@ -185,7 +175,7 @@ while countfartula < 9 do
 end
 
 --yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
-yield("Friend is party slot -> "..fartycardinality)
+yield("Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality)
 ClearTarget()
 
 while weirdvar == 1 do
@@ -204,7 +194,7 @@ while weirdvar == 1 do
 				end
 				--movement without formation
 				if GetCharacterCondition(26) == true and formation == false then --in combat
-					if clingy then
+					if formation == false then
 						--check distance to fren, if its more than cling, then
 						bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
 						if bistance > cling and bistance < 20 then
@@ -216,7 +206,7 @@ while weirdvar == 1 do
 				end
 				
 				--we are limitbreaking all over ourselves
-				if can_i_lb == true then
+				if can_i_lb() == true then
 					GetLimoot = 0 --init lb value. its 10k per 1 bar
 					GetLimoot = GetLimitBreakCurrentValue()
 					if type(GetLimoot) ~= "number" then  --error trap variable type because we dont like SND pausing
@@ -240,7 +230,7 @@ while weirdvar == 1 do
 				end
 
 				autotosscount = autotosscount  + 1
-				if autotoss == true and autotossc > 100 then
+				if autotoss == true and autotosscount > 100 then
 				   yield("/discardall")
 				   autotosscount = 0
 				end
@@ -272,7 +262,7 @@ while weirdvar == 1 do
 							end
 						end
 						--yield("/target <cross>")
-						if clingy then
+						if formation == false then
 							--check distance to fren, if its more than cling, then
 							bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
 							if bistance > cling and bistance < 20 then
