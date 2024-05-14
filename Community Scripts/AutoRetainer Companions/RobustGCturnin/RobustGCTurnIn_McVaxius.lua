@@ -9,12 +9,13 @@ for the below table templates,.. the 2nd (last var)
 
 --enter in names of chars that can edit emblems are in same GC as the FC otherwise it will update the GC for 15k gil
 --warning it will attempt to change the free company allegiance just in case. make sure the char has 15k gil
+--3rd var here is the tag if you aroe changing it
 local chars_EMBLEM = {
-  {"First Last@Server", 0},
-  {"First Last@Server", 0},
-  {"First Last@Server", 0},
-  {"First Last@Server", 0},
-  {"First Last@Server", 0}
+  {"First Last@Server", 0, "WHEEA"},
+  {"First Last@Server", 0, "WHEEB"},
+  {"First Last@Server", 0, "WHEEC"},
+  {"First Last@Server", 0, "WHEED"},
+  {"First Last@Server", 0, "WHEEE"}
 }
 
 --enter in names of characters that will be responsible for triggering FC Buffs
@@ -62,7 +63,7 @@ process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on w
 buy_fc_buffs     = 1 	--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
 process_players  = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
 process_emblem   = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks.
-
+process_tags	 = 0	--0=no, 1=randomize, 2=pick from emblem configuration list. remember this has to be the FC leader
 --[[
 ------------------------
 --SCRIPT REQUIREMENTS --
@@ -107,7 +108,9 @@ YesAlready -> YesNo -> /Purchase the action .*/
 --some ideas for next version
 --https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
 --stop repeating code for returning home.. introduces danger of errors popping up
---add in a check to see which job that isnt DOL or DOH is highest and switch to it for the auto equip shenanigans. but only if they are on a doh or dol job. make it a configuration option
+
+--FC TAG Randomizer?!?!
+--FC Tag re-writer?!?!
 ]]
 
 
