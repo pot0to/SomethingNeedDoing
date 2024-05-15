@@ -62,8 +62,8 @@ restock_amt   = 66666 --n>0 minimum amount of total fuel to reach, when restocki
 process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
 buy_fc_buffs     = 1 	--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
 process_players  = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
-process_emblem   = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks.
-process_tags	 = 0	--0=no, 1=randomize, 2=pick from emblem configuration list. remember this has to be the FC leader
+process_emblem   = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks. remember this has to be the FC leader
+process_tags	 = 0	--0=no, 1=full randomize, 2=lowercase only, 3=uppercase only, 4=randomly full upper OR lowercase, 5=pick from emblem configuration list. remember this has to be the FC leader
 --[[
 ------------------------
 --SCRIPT REQUIREMENTS --
@@ -120,6 +120,10 @@ loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDo
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
 DidWeLoadcorrectly()
+
+--debug new stuff
+--yield("FC Tag hehehe -> "..generateFiveDigitText(process_tags))
+--yield("/pcraft stop")
 
 -- Specify the path to your text file
 --[[
@@ -227,7 +231,7 @@ end
 GetPlayerGC(), 1 = Maelstrom, 2 = Adder?, 3 = ImmortalFlames
 GetFCGrandCompany(), text instead of enum of above
 ]]
-if process_emblem == 1 then
+if process_emblem == 1 or process_tags > 0 then
 	for i=1, #chars_EMBLEM do
 		yield("/echo "..chars_EMBLEM[i][1])
 		yield("/ays relog " ..chars_EMBLEM[i][1])
@@ -256,19 +260,35 @@ if process_emblem == 1 then
 		ungabunga()	--quick escape in case we got stuck in menu
 
 		 --now we get to the emblematizer
-		yield("<wait.5>")
-		yield("/target \"OIC Officer of Arms\"")
-		yield("/wait 0.5")
-		yield("/lockon")
-		yield("/wait 0.5")
-		yield("/automove")
-		yield("<wait.2>")
-		yield("/interact")
-		yield("<wait.3>")
-		yield("/pcall FreeCompanyCrestEditor true 5 0 0")
-		yield("<wait.2>")
-		yield("/pcall FreeCompanyCrestEditor false 0")
-		yield("<wait.2>")
+		if process_emblem == 1 then
+			yield("<wait.5>")
+			yield("/target \"OIC Officer of Arms\"")
+			yield("/wait 0.5")
+			yield("/lockon")
+			yield("/wait 0.5")
+			yield("/automove")
+			yield("<wait.2>")
+			yield("/interact")
+			yield("<wait.3>")
+			yield("/pcall FreeCompanyCrestEditor true 5 0 0")
+			yield("<wait.2>")
+			yield("/pcall FreeCompanyCrestEditor false 0")
+			yield("<wait.2>")
+		end
+
+		--process tag changing
+		--0=no, 1=full randomize, 2=lowercase only, 3=uppercase only, 4=randomly full upper OR lowercase, 5=pick from emblem configuration list. remember this has to be the FC leader
+		if process_tags > 0 then
+			tagnem = "Wheee"
+			--random tag generator
+			if process_tags < 5 then
+				tagnem = generateFiveDigitText(process_tags)
+			end
+			if process_tags == 5 then
+				tagnem = chars_EMBLEM[i][3]
+			end
+			--* do the actual tag assignment now
+		end
 
 		--if we are tp to inn. we will go to gridania yo
 		if chars_EMBLEM[i][2] ~= 2 then
