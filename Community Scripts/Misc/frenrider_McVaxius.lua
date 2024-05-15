@@ -13,53 +13,124 @@ bring some gysahl greens
 lazyloot plugin (if your doing anything other than fates)
 
 ***Few annoying problems that still exist
-1. sometimes it will wander off after an area change. i think this is a trailing moveto from the previous area.  and only happens if the leader and the follower teleport at same / almost same time to diff places
-solution here is to check for area changes and do a /visland stop  and a /vnavmesh stop  if we notice an area change
-**solution implemented needs testing
-
-2. RS attacks training dummies which is a never ending source of annoyance in housing wards
-NoHostileNames.json is the solution. gonna make this and include it i guess
-no. "NostraThomas" has promised to add a toggle to ignore dummies . so we'll just wait for that
-
-3. Players stacking up on master looks really bad
-maybe can add a spread coefficient and include it as part of the script startup. a nice way would be to sort the names alphabetically and assign clock spots based on that
-like this -> . so that 1 is the main tank and the party will always kind of make this formation. but only during combat ;~D
-8	1	5
-3		2
-7	4	6
-this would be on/off sort of thing
-i have some nutty code i wrote for this that even takes object rotation into account to determine where to stand for the formation.
-
-4. why aren't we limit breaking.... well maybe we will now hehehehe
-implemented. needs testing
-
-5. build the inizer? idk maybe
+none atm
 ]]
 
 --*****************************************************************
 --************************* START INIZER **************************
 --*****************************************************************
-filename_prefix = "frenrider_"
+--Purpose: to have default .ini values and version control on configs
+--personal ini file -> 
+filename_prefix = "frenrider_" --scriptname
+open_on_next_load = 0		   --set this to 1 if you want the next time the script loads, to open the explorer folder with all of the .ini files
+vershun = 1					   --version number used to decide if you want to delete/remake the ini files on next load. useful if your changing party leaders for groups of chars or new version of script with fundamental changes
+
+-- Function to open a folder in Explorer
+function openFolderInExplorer(folderPath)
+    -- Check if folderPath is provided
+    if folderPath then
+        -- Enclose folderPath in double quotes to handle spaces in path
+        folderPath = '"' .. folderPath .. '"'
+        -- Execute the command to open the folder in Explorer
+        os.execute('explorer ' .. folderPath)
+    else
+        yield("/echo Error: Folder path not provided.")
+    end
+end
+
+tempchar = GetCharacterName()
+--tempchar = tempchar:match("%s*(.-)%s*") --remove spaces at start and end only
+tempchar = tempchar:gsub("%s", "")  --remove all spaces
+tempchar = tempchar:gsub("'", "")   --remove all apostrophes
+local filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..filename_prefix.."_"..tempchar..".ini"
+
+if open_on_next_load == 1 then
+	openFolderInExplorer(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\")
+end
+
+function serialize(value)
+    if type(value) == "boolean" then
+        return tostring(value)
+    elseif type(value) == "number" then
+        return tostring(value)
+    else -- default to string
+        return '"' .. tostring(value) .. '"'
+    end
+end
+
+function deserialize(value)
+    if value == "true" then
+        return true
+    elseif value == "false" then
+        return false
+    elseif tonumber(value) then
+        return tonumber(value)
+    else
+        return value:gsub('^"(.*)"$', "%1")
+    end
+end
 
 function ini_check(varname, varvalue)
-	--*first check if the file exists
-		--*if the file doesnt exist. create it and add the new variable that was called
-		--*if the varname is "version" and its not the same as the one in the file. RECREATE the file
-	--*first check if the variable type already exists in the ini file
-		--*if it doesnt exist, add the new variable type to the file and return the default value
-		--*if it already exists, just pull the value and return it
+    local file = io.open(filename, "r")
+    if not file then
+        file = io.open(filename, "w")
+        if file then
+            file:write(varname .. "=" .. serialize(varvalue) .. "\n")
+            file:close()
+            return varvalue
+        else
+            yield("/echo Error: Unable to create or open file for writing: " .. filename)
+            return nil
+        end
+    end
+    file:close()
+
+    file = io.open(filename, "r")
+    local foundVar = false
+    local value = nil
+
+    for line in file:lines() do
+        local name, val = line:match("([^=]+)=(.*)")
+        if name == varname then
+            value = deserialize(val)
+            foundVar = true
+            break
+        elseif name == "version" and tonumber(val) ~= vershun then
+            yield("/echo Version mismatch. Recreating file.")
+            file:close()
+            os.remove(filename)
+            return ini_check(varname, varvalue)
+        end
+    end
+    file:close()
+
+    if not foundVar then
+        file = io.open(filename, "a")
+        if file then
+            file:write(varname .. "=" .. serialize(varvalue) .. "\n")
+            file:close()
+            return varvalue
+        else
+            yield("/echo Error: Unable to open file for writing: " .. filename)
+            return nil
+        end
+    end
+
+    return value
 end
+
+
+version = ini_check("version",vershun) --version number used to decide if you want to delete/remake the ini files on next load. useful if your changing party leaders for groups of chars or new version of script with fundamental changes
 --*****************************************************************
 --************************** END INIZER ***************************
 --*****************************************************************
 
 ---------CONFIGURATION SECTION---------
-fren = "Fren Name"  	--can be partial as long as its unique
-autotoss = true			--every 100 ticks it will try to auto discard whatever is on auto discard list. useful in treasure maps
-fulftype = "unchanged"	--if you have lazyloot installed can setup how loot is handled. leave on "unchanged" if you dont want it to set your fulf settings. other setings include need, greed, pass
-cling = 1 			--distance to cling to fren
-limitpct = 25			--what pct of life on target should we use lb at. it will automatically use lb3 if thats the cap or it will use lb2 if thats the cap
-formation = true		--follow in formation? if false, then it will "cling"
+fren = ini_check("fren", "Fren Name")  	--can be partial as long as its unique
+fulftype = ini_check("fulftype", "unchanged")	--if you have lazyloot installed can setup how loot is handled. leave on "unchanged" if you dont want it to set your fulf settings. other setings include need, greed, pass
+cling = ini_check("cling", 1) 				--distance to cling to fren
+limitpct = ini_check("limitpct", 25)			--what pct of life on target should we use lb at. it will automatically use lb3 if thats the cap or it will use lb2 if thats the cap
+formation = ini_check("formation", true)		--follow in formation? if false, then it will "cling"
 						--[[
 						like this -> . so that 1 is the main tank and the party will always kind of make this formation during combat
 						8	1	5
