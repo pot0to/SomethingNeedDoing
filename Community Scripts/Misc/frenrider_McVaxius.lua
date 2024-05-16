@@ -10,6 +10,7 @@ visland
 
 *optional:
 bring some gysahl greens
+discardhelper
 lazyloot plugin (if your doing anything other than fates)
 
 ***Few annoying problems that still exist

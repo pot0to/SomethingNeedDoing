@@ -5,7 +5,8 @@ well this script (will eventually) rotate through your alts, and visit a server 
 requires plugins
 Lifestream
 Teleporter
-Pandora -> autofill max until kawaii implements the thing for dropbox
+Pandora -> TURN OFF AUTO NUMERICS
+automaton -> TURN OFF AUTO NUMERICS
 Dropbox -> autoconfirm
 Visland
 Vnavmesh
@@ -14,6 +15,7 @@ YesAlready -> /Enter .*/
 
 Optional:
 Autoretainer
+Liza's plugin : Kitchen Sink if you want to use her queue method
 
 ]]
 
@@ -22,7 +24,8 @@ tonys_turf = "Maduin" --what server is tony on
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
 tony_type = 1 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
-bagmans_take = 2000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
+bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
+bagman_type = 0 --0 = pcalls, 1 = liza trade q
 
 --if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
 tony_x = 42069420
@@ -84,13 +87,25 @@ local function shake_hands()
 		--hack way to transfer gil for now
 		while GetGil() > bagmans_take do
 			yield("/echo here you go "..fat_tony..", another full bag, with respect")
-			yield("/trade")
-			yield("/wait 0.5")
-			yield("/pcall Trade true 2")
-			yield("/wait 0.5")
-			--yield("/pcall InputNumeric true 100000 <wait.1>") --this is just in case we want to specify/calculate the amount
-			yield("/pcall Trade true 0")
-			yield("/wait 5")
+			if bagman_type == 0 then
+				yield("/trade")
+				yield("/wait 0.5")
+				yield("/wait 0.5")
+				yield("/pcall Trade true 2")
+				if GetGil() > 999999 then
+					yield("/pcall InputNumeric true 1000000 <wait.1>") --this is just in case we want to specify/calculate the amount
+				end
+				if GetGil() < 1000000 then
+					snaccman = GetGil() - bagmans_take
+					yield("/pcall InputNumeric true ".. snaccman .." <wait.1>") --this is just in case we want to specify/calculate the amount
+				end
+				yield("/pcall Trade true 0")
+				yield("/wait 4")
+			end
+			if bagman_type == 1 then
+				--*need to think about this for next version
+			end
+			yield("/wait 1")
 		end
 	end
 end
@@ -125,7 +140,7 @@ for i=1,#franchise_owners do
 		--now we have to walk or teleport?!!?!? to fat tony, where is he waiting this time?
 		if tony_type == 0 then
 			yield("/echo "..fat_tony.." is meeting us in the alleyways.. watch your back")
-			yield("/tp \"tonys_spot\"")
+			yield("/tp "..tonys_spot)
 			ZoneTransition()
 		end
 		if tony_type > 0 then
@@ -184,6 +199,13 @@ for i=1,#franchise_owners do
 			end
 			--retainer bell nearby shenanigans
 			if franchise_owners[i][3] == 1 then
+				yield("/target \"Summoning Bell\"")
+				yield("/wait 2")
+				PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
+				visland_stop_moving() --added so we don't accidentally end before we get to the bell
+			end
+			if franchise_owners[i][3] == 2 then
+				--*limsa bell not implemented yet
 				yield("/target \"Summoning Bell\"")
 				yield("/wait 2")
 				PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
