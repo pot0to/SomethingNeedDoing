@@ -88,6 +88,7 @@ local function shake_hands()
 		--*some kind of loop to check gil amount until it reaches the desired remainder
 		--hack way to transfer gil for now
 		while GetGil() > bagmans_take do
+			yield("/target "..fat_tony)
 			yield("/echo here you go "..fat_tony..", another full bag, with respect")
 			if bagman_type == 0 then
 				yield("/trade")
