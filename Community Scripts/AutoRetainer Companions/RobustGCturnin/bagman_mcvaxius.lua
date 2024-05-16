@@ -82,6 +82,8 @@ local function shake_hands()
 		end
 		yield("/target "..fat_tony)
 		yield("/wait 1")
+		--DEBUG
+		--yield("/echo our return mode will be "..franchise_owners[1][2])
 		--*/dropbox trade gil thebag
 		--*some kind of loop to check gil amount until it reaches the desired remainder
 		--hack way to transfer gil for now
@@ -92,18 +94,32 @@ local function shake_hands()
 				yield("/wait 0.5")
 				yield("/wait 0.5")
 				yield("/pcall Trade true 2")
-				if GetGil() > 999999 then
-					yield("/pcall InputNumeric true 1000000 <wait.1>") --this is just in case we want to specify/calculate the amount
+				--verification of target before doing the following. otherwise hit escape!
+				tradename = GetNodeText("Trade", 20)
+				if tradename ~= fat_tony then
+					--we got someone with their hand in the till. we'll send them a fish wrapped in newspaper later
+					ungabunga()
 				end
-				if GetGil() < 1000000 then
-					snaccman = GetGil() - bagmans_take
-					yield("/pcall InputNumeric true ".. snaccman .." <wait.1>") --this is just in case we want to specify/calculate the amount
+				if tradename == fat_tony then
+					if GetGil() > 999999 then
+						yield("/pcall InputNumeric true 1000000 <wait.1>") --this is just in case we want to specify/calculate the amount
+					end
+					if GetGil() < 1000000 then
+						snaccman = GetGil() - bagmans_take
+						yield("/pcall InputNumeric true ".. snaccman .." <wait.1>") --this is just in case we want to specify/calculate the amount
+					end
+					yield("/pcall Trade true 0")
+					yield("/wait 4")
 				end
-				yield("/pcall Trade true 0")
-				yield("/wait 4")
 			end
 			if bagman_type == 1 then
-				--*need to think about this for next version
+				snaccman = GetGil() - bagmans_take
+				yield("/dropbox")
+				yield("/wait 0.5")
+				yield("/focustarget <t>")
+				yield("/wait 0.5")
+				yield("/dbq 1:"..snaccman)
+				--*how do we make the trading START?!?!?!
 			end
 			yield("/wait 1")
 		end
@@ -111,9 +127,9 @@ local function shake_hands()
 end
 
 for i=1,#franchise_owners do
-	 yield("/echo Loading bagman to deliver protection payments Fat Tony -> "..fat_tony..".  Bagman -> "..franchise_owners[i][1])
-	 yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
-	 yield("/ays relog " ..franchise_owners[i][1])
+	yield("/echo Loading bagman to deliver protection payments Fat Tony -> "..fat_tony..".  Bagman -> "..franchise_owners[i][1])
+	yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
+	yield("/ays relog " ..franchise_owners[i][1])
 	yield("/wait 2")
 	CharacterSafeWait()
     yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
@@ -128,7 +144,9 @@ for i=1,#franchise_owners do
 	end
 	
 	--allright time for a road trip. let get that bag to Tony
+	road_trip = 0
 	if GetGil() > bagmans_take then
+		road_trip = 1 --we took a road trip
 		--now we must head to fat_tony 
 		--first we have to find his neighbourhood, this uber drive better not complain
 		--are we on the right server already?
@@ -170,6 +188,8 @@ for i=1,#franchise_owners do
 			visland_stop_moving()
 		end
 		shake_hands() -- its a business doing pleasure with you tony as always
+	end
+	if road_trip == 1 then --we need to get home
 		--time to go home.. maybe?
 		if franchise_owners[i][2] == 0 then
 			yield("/echo wait why can't i leave "..fat_tony.."?")
@@ -204,12 +224,9 @@ for i=1,#franchise_owners do
 				PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
 				visland_stop_moving() --added so we don't accidentally end before we get to the bell
 			end
+			--limsa bell
 			if franchise_owners[i][3] == 2 then
-				--*limsa bell not implemented yet
-				yield("/target \"Summoning Bell\"")
-				yield("/wait 2")
-				PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
-				visland_stop_moving() --added so we don't accidentally end before we get to the bell
+				return_to_limsa_bell()
 			end
 		end
 	end
