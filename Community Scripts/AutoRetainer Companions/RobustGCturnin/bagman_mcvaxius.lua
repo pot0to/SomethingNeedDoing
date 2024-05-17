@@ -19,6 +19,10 @@ Liza's plugin : Kitchen Sink if you want to use her queue method
 
 ]]
 
+--Start because nobody read the instructions at the top <3
+PandoraSetFeatureState("Auto-Fill Numeric Dialogs", false) 
+--End because nobody read the instructions at the top <3
+
 fat_tony = "Firstname Lastname" --what is the name of the destination player who will receive the gil
 tonys_turf = "Maduin" --what server is tony on
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
