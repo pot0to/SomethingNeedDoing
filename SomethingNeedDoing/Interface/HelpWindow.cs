@@ -24,6 +24,7 @@ namespace SomethingNeedDoing.Interface;
 /// </summary>
 internal class HelpWindow : Window
 {
+    public static new readonly string WindowName = "Something Need Doing Help";
     private static readonly Vector4 ShadedColor = new(0.68f, 0.68f, 0.68f, 1.0f);
 
     private readonly (string Name, string? Alias, string Description, string[] Modifiers, string[] Examples)[] commandData = new[]
@@ -261,8 +262,7 @@ internal class HelpWindow : Window
     /// <summary>
     /// Initializes a new instance of the <see cref="HelpWindow"/> class.
     /// </summary>
-    public HelpWindow()
-        : base("Something Need Doing Help")
+    public HelpWindow(): base(WindowName)
     {
         this.Flags |= ImGuiWindowFlags.NoScrollbar;
 
@@ -327,6 +327,11 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+        "2024-05-18",
+        "- Added SetMapFlag()\n" +
+        "- Added DistanceBetween()\n");
 
         DisplayChangelog(
         "2024-05-11",

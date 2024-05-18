@@ -2,6 +2,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
+using ECommons.SimpleGui;
 using ImGuiNET;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Misc;
@@ -242,7 +243,7 @@ internal class MacroWindow : Window
 
         ImGui.SameLine();
         if (ImGuiEx.IconButton(FontAwesomeIcon.QuestionCircle, "Help"))
-            Service.Plugin.OpenHelpWindow();
+            EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == HelpWindow.WindowName)!.IsOpen ^= true;
 
         if (Service.MacroManager.State == LoopState.NotLoggedIn)
         { /* Nothing to do */
