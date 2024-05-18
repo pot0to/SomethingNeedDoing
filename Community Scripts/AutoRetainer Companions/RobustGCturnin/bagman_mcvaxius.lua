@@ -5,7 +5,8 @@ well this script (will eventually) rotate through your alts, and visit a server 
 requires plugins
 Lifestream
 Teleporter
-Pandora -> autofill max until kawaii implements the thing for dropbox
+Pandora -> TURN OFF AUTO NUMERICS
+automaton -> TURN OFF AUTO NUMERICS
 Dropbox -> autoconfirm
 Visland
 Vnavmesh
@@ -14,15 +15,21 @@ YesAlready -> /Enter .*/
 
 Optional:
 Autoretainer
+Liza's plugin : Kitchen Sink if you want to use her queue method
 
 ]]
+
+--Start because nobody read the instructions at the top <3
+PandoraSetFeatureState("Auto-Fill Numeric Dialogs", false) 
+--End because nobody read the instructions at the top <3
 
 fat_tony = "Firstname Lastname" --what is the name of the destination player who will receive the gil
 tonys_turf = "Maduin" --what server is tony on
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
 tony_type = 1 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
-bagmans_take = 2000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
+bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
+bagman_type = 0 --0 = pcalls, 1 = liza trade q
 
 --if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
 tony_x = 42069420
@@ -79,26 +86,55 @@ local function shake_hands()
 		end
 		yield("/target "..fat_tony)
 		yield("/wait 1")
+		--DEBUG
+		--yield("/echo our return mode will be "..franchise_owners[1][2])
 		--*/dropbox trade gil thebag
 		--*some kind of loop to check gil amount until it reaches the desired remainder
 		--hack way to transfer gil for now
 		while GetGil() > bagmans_take do
+			yield("/target "..fat_tony)
 			yield("/echo here you go "..fat_tony..", another full bag, with respect")
-			yield("/trade")
-			yield("/wait 0.5")
-			yield("/pcall Trade true 2")
-			yield("/wait 0.5")
-			--yield("/pcall InputNumeric true 100000 <wait.1>") --this is just in case we want to specify/calculate the amount
-			yield("/pcall Trade true 0")
-			yield("/wait 5")
+			if bagman_type == 0 then
+				yield("/trade")
+				yield("/wait 0.5")
+				yield("/wait 0.5")
+				yield("/pcall Trade true 2")
+				--verification of target before doing the following. otherwise hit escape!
+				tradename = GetNodeText("Trade", 20)
+				if tradename ~= fat_tony then
+					--we got someone with their hand in the till. we'll send them a fish wrapped in newspaper later
+					ungabunga()
+				end
+				if tradename == fat_tony then
+					if GetGil() > 999999 then
+						yield("/pcall InputNumeric true 1000000 <wait.1>") --this is just in case we want to specify/calculate the amount
+					end
+					if GetGil() < 1000000 then
+						snaccman = GetGil() - bagmans_take
+						yield("/pcall InputNumeric true ".. snaccman .." <wait.1>") --this is just in case we want to specify/calculate the amount
+					end
+					yield("/pcall Trade true 0")
+					yield("/wait 4")
+				end
+			end
+			if bagman_type == 1 then
+				snaccman = GetGil() - bagmans_take
+				yield("/dropbox")
+				yield("/wait 0.5")
+				yield("/focustarget <t>")
+				yield("/wait 0.5")
+				yield("/dbq 1:"..snaccman)
+				--*how do we make the trading START?!?!?!
+			end
+			yield("/wait 1")
 		end
 	end
 end
 
 for i=1,#franchise_owners do
-	 yield("/echo Loading bagman to deliver protection payments Fat Tony -> "..fat_tony..".  Bagman -> "..franchise_owners[i][1])
-	 yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
-	 yield("/ays relog " ..franchise_owners[i][1])
+	yield("/echo Loading bagman to deliver protection payments Fat Tony -> "..fat_tony..".  Bagman -> "..franchise_owners[i][1])
+	yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
+	yield("/ays relog " ..franchise_owners[i][1])
 	yield("/wait 2")
 	CharacterSafeWait()
     yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
@@ -113,7 +149,9 @@ for i=1,#franchise_owners do
 	end
 	
 	--allright time for a road trip. let get that bag to Tony
+	road_trip = 0
 	if GetGil() > bagmans_take then
+		road_trip = 1 --we took a road trip
 		--now we must head to fat_tony 
 		--first we have to find his neighbourhood, this uber drive better not complain
 		--are we on the right server already?
@@ -125,7 +163,7 @@ for i=1,#franchise_owners do
 		--now we have to walk or teleport?!!?!? to fat tony, where is he waiting this time?
 		if tony_type == 0 then
 			yield("/echo "..fat_tony.." is meeting us in the alleyways.. watch your back")
-			yield("/tp \"tonys_spot\"")
+			yield("/tp "..tonys_spot)
 			ZoneTransition()
 		end
 		if tony_type > 0 then
@@ -155,6 +193,8 @@ for i=1,#franchise_owners do
 			visland_stop_moving()
 		end
 		shake_hands() -- its a business doing pleasure with you tony as always
+	end
+	if road_trip == 1 then --we need to get home
 		--time to go home.. maybe?
 		if franchise_owners[i][2] == 0 then
 			yield("/echo wait why can't i leave "..fat_tony.."?")
@@ -188,6 +228,10 @@ for i=1,#franchise_owners do
 				yield("/wait 2")
 				PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
 				visland_stop_moving() --added so we don't accidentally end before we get to the bell
+			end
+			--limsa bell
+			if franchise_owners[i][3] == 2 then
+				return_to_limsa_bell()
 			end
 		end
 	end
