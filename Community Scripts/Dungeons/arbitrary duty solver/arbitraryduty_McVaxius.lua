@@ -895,6 +895,7 @@ yield("/vbm cfg AI Enabled true")
 yield("/echo Turning AI Self Follow On")
 yield("/wait 0.5")
 yield("/vbmai on")
+yield("/bmrai on")
 
 while repeated_trial < (repeat_trial + 1) do
 	--yield("/echo get limoooot"..GetLimitBreakCurrentValue().."get limootmax"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug for hpp. its bugged atm 2024 02 12 and seems to return 0
@@ -1117,6 +1118,7 @@ while repeated_trial < (repeat_trial + 1) do
 		if GetCharacterCondition(34) == true then --only trigger rebuild in a duty and when following a party leader
 			if char_snake == "party leader" then
 			    yield("/vbmai on")
+				yield("/bmrai on")
 				repeated_trial = repeated_trial + 1
 			end
 		end
@@ -1129,6 +1131,7 @@ while repeated_trial < (repeat_trial + 1) do
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false and GetTargetName()~="Exit" then --if we aren't in combat and in a duty
 		--yield("/equipguud") --this is super annoying and not needed
 		yield("/vbmai on")
+		yield("/bmrai on")
 		yield("/rotation auto")
 		--only party leader will do cd 5 because otherwise its spammy
 		if char_snake == "party leader" then
