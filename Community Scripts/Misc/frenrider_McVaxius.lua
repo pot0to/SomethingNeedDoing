@@ -20,19 +20,16 @@ none atm
 --*****************************************************************
 --************************* START INIZER **************************
 --*****************************************************************
---Purpose: to have default .ini values and version control on configs
---personal ini file -> 
-filename_prefix = "frenrider_" --scriptname
-open_on_next_load = 0		   --set this to 1 if you want the next time the script loads, to open the explorer folder with all of the .ini files
-vershun = 1					   --version number used to decide if you want to delete/remake the ini files on next load. useful if your changing party leaders for groups of chars or new version of script with fundamental changes
+-- Purpose: to have default .ini values and version control on configs
+-- Personal ini file
+filename_prefix = "frenrider_" -- Script name
+open_on_next_load = 0          -- Set this to 1 if you want the next time the script loads, to open the explorer folder with all of the .ini files
+vershun = 1                    -- Version number used to decide if you want to delete/remake the ini files on next load. useful if your changing party leaders for groups of chars or new version of script with fundamental changes
 
 -- Function to open a folder in Explorer
 function openFolderInExplorer(folderPath)
-    -- Check if folderPath is provided
     if folderPath then
-        -- Enclose folderPath in double quotes to handle spaces in path
         folderPath = '"' .. folderPath .. '"'
-        -- Execute the command to open the folder in Explorer
         os.execute('explorer ' .. folderPath)
     else
         yield("/echo Error: Folder path not provided.")
@@ -40,13 +37,12 @@ function openFolderInExplorer(folderPath)
 end
 
 tempchar = GetCharacterName()
---tempchar = tempchar:match("%s*(.-)%s*") --remove spaces at start and end only
-tempchar = tempchar:gsub("%s", "")  --remove all spaces
-tempchar = tempchar:gsub("'", "")   --remove all apostrophes
-local filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..filename_prefix.."_"..tempchar..".ini"
+tempchar = tempchar:gsub("%s", "")  -- Remove all spaces
+tempchar = tempchar:gsub("'", "")   -- Remove all apostrophes
+local filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..filename_prefix..tempchar..".ini"
 
 if open_on_next_load == 1 then
-	openFolderInExplorer(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\")
+    openFolderInExplorer(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\")
 end
 
 function serialize(value)
@@ -54,7 +50,7 @@ function serialize(value)
         return tostring(value)
     elseif type(value) == "number" then
         return tostring(value)
-    else -- default to string
+    else -- Default to string
         return '"' .. tostring(value) .. '"'
     end
 end
@@ -78,6 +74,7 @@ function ini_check(varname, varvalue)
         if file then
             file:write(varname .. "=" .. serialize(varvalue) .. "\n")
             file:close()
+            yield("/echo " .. varname .. " -> " .. tostring(varvalue))
             return varvalue
         else
             yield("/echo Error: Unable to create or open file for writing: " .. filename)
@@ -95,6 +92,7 @@ function ini_check(varname, varvalue)
         if name == varname then
             value = deserialize(val)
             foundVar = true
+            yield("/echo Loaded " .. varname .. " -> " .. tostring(value))
             break
         elseif name == "version" and tonumber(val) ~= vershun then
             yield("/echo Version mismatch. Recreating file.")
@@ -110,6 +108,7 @@ function ini_check(varname, varvalue)
         if file then
             file:write(varname .. "=" .. serialize(varvalue) .. "\n")
             file:close()
+            yield("/echo Initialized " .. varname .. " -> " .. tostring(varvalue))
             return varvalue
         else
             yield("/echo Error: Unable to open file for writing: " .. filename)
@@ -120,11 +119,11 @@ function ini_check(varname, varvalue)
     return value
 end
 
-
-version = ini_check("version",vershun) --version number used to decide if you want to delete/remake the ini files on next load. useful if your changing party leaders for groups of chars or new version of script with fundamental changes
+version = ini_check("version", vershun) -- Version number used to decide if you want to delete/remake the ini files on next load. useful if your changing party leaders for groups of chars or new version of script with fundamental changes
 --*****************************************************************
 --************************** END INIZER ***************************
 --*****************************************************************
+
 
 ---------CONFIGURATION SECTION---------
 fren = ini_check("fren", "Fren Name")  	--can be partial as long as its unique
