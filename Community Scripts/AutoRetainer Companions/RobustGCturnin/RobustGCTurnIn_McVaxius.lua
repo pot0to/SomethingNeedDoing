@@ -49,7 +49,7 @@ local chars_fn = {
 rcuck_count   = 1	--0..n starting the counter at 1, this is in case your manually resuming or want to start at later index value instead of just commenting out parts of it
 gachi_jumpy   = 0 	--0=no jump, 1=yes jump.  jump or not. sometimes navmesh goes through the shortcut in uldah and sometimes gets stuck getting to bells in housing districts
 auto_eqweep   = 0	--0=no, 1=yes + job change.  Basically this will check to see if your on a DOH or DOL, if you are then it will scan your DOW/DOM and switch you to the highest level one you have, auto equip and save gearset. niche feature i like for myself . off by default
-config_sell   = 0	--0=dont do anything,1=change char setting to not give dailog for non tradeables etc selling to npc, 2=reset setting back to yes check for non tradeables etc selling to npc. usecase for 1 and 2 are one time things for a cleaning run so that they can subsequently handle selling or not selling. this feature will be stripped out once limiana updaptes AR
+config_sell   = 0	--0=dont do anything,1=change char setting to not give dialog for non tradeables etc selling to npc, 2=reset setting back to yes check for non tradeables etc selling to npc. usecase for 1 and 2 are one time things for a cleaning run so that they can subsequently handle selling or not selling. this feature will be stripped out once limiana updaptes AR
 nnl			  = 1   --leave the novicenetwork
 ----------------------
 --Refueling Configs --
