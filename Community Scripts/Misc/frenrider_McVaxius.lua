@@ -67,59 +67,58 @@ function deserialize(value)
     end
 end
 
-function ini_check(varname, varvalue)
+function read_ini_file()
+    local variables = {}
     local file = io.open(filename, "r")
     if not file then
-        file = io.open(filename, "w")
-        if file then
-            file:write(varname .. "=" .. serialize(varvalue) .. "\n")
-            file:close()
-            yield("/echo " .. varname .. " -> " .. tostring(varvalue))
-            return varvalue
-        else
-            yield("/echo Error: Unable to create or open file for writing: " .. filename)
-            return nil
-        end
+        return variables
     end
-    file:close()
-
-    file = io.open(filename, "r")
-    local foundVar = false
-    local value = nil
 
     for line in file:lines() do
         local name, val = line:match("([^=]+)=(.*)")
-        if name == varname then
-            value = deserialize(val)
-            foundVar = true
-            yield("/echo Loaded " .. varname .. " -> " .. tostring(value))
-            break
-        elseif name == "version" and tonumber(val) ~= vershun then
-            yield("/echo Version mismatch. Recreating file.")
-            file:close()
-            os.remove(filename)
-            return ini_check(varname, varvalue)
+        if name and val then
+            variables[name] = deserialize(val)
         end
     end
     file:close()
-
-    if not foundVar then
-        file = io.open(filename, "a")
-        if file then
-            file:write(varname .. "=" .. serialize(varvalue) .. "\n")
-            file:close()
-            yield("/echo Initialized " .. varname .. " -> " .. tostring(varvalue))
-            return varvalue
-        else
-            yield("/echo Error: Unable to open file for writing: " .. filename)
-            return nil
-        end
-    end
-
-    return value
+    return variables
 end
 
-version = ini_check("version", vershun) -- Version number used to decide if you want to delete/remake the ini files on next load. useful if your changing party leaders for groups of chars or new version of script with fundamental changes
+function write_ini_file(variables)
+    local file = io.open(filename, "w")
+    if not file then
+        yield("/echo Error: Unable to open file for writing: " .. filename)
+        return
+    end
+
+    for name, value in pairs(variables) do
+        file:write(name .. "=" .. serialize(value) .. "\n")
+    end
+    file:close()
+end
+
+function ini_check(varname, varvalue)
+    local variables = read_ini_file()
+
+    if variables["version"] and tonumber(variables["version"]) ~= vershun then
+        yield("/echo Version mismatch. Recreating file.")
+        variables = {version = vershun}
+    end
+
+    if variables[varname] == nil then
+        variables[varname] = varvalue
+        yield("/echo Initialized " .. varname .. " -> " .. tostring(varvalue))
+    else
+        yield("/echo Loaded " .. varname .. " -> " .. tostring(variables[varname]))
+    end
+
+    write_ini_file(variables)
+    return variables[varname]
+end
+
+-- Ensure the version is always written to the file
+ini_check("version", vershun)
+
 --*****************************************************************
 --************************** END INIZER ***************************
 --*****************************************************************
