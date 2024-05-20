@@ -3,7 +3,7 @@
     Name: GatheringHelper
     Description: General gathering node recorder and movement script for MIN/BTN
     Author: LeafFriend, plottingCreeper (food and repair)
-    Version: 0.1.4
+    Version: 0.1.5
     Needed Plugins: vnavmesh, Pandora
     Needed Plugin Settings: Pandora Quick Gather enabled
 
@@ -14,6 +14,7 @@
     4. Script will register found nodes and go back to them after visiting all of them once
 
     <Changelog>
+    0.1.5   - Added functionality to ignore nodes by name 
     0.1.4   - Corrected search function, implemented with generalised TargetNearestObjectKind()
             - Added functionality to ping, includes known undetected nodes when pinging to nodes_went
             - Implement rate-limiting Id_Print()
@@ -68,6 +69,7 @@ do_extract  = true                                      --Set true or false to e
 do_reduce   = true                                      --Set true or false to perform aetherial reduction
 
 ---Gathering logic Settings
+ignored_nodes = {}                                      -- Name of nodes to be ignored if encountered while pinging. I.e. "Lush Vegetation", "Rocky Outcrop"
 num_inventory_free_slot_threshold = 1                   --Max number of free slots to be left before stopping script
 interval_rate = 0.1                                     --Seconds to wait for each action
 msgDelay = 3                                            --Seconds to wait to reprint the same message
@@ -198,6 +200,26 @@ function Split (inputstr, sep)
         table.insert(t, str)
     end
     return t
+end
+
+function CheckIfNodeShouldBeIgnored(node)
+    node = node or ""
+    local node_name = ParseNodeDataString(node)[1] or "No Match"
+    local ignore_node = false
+
+    for _, name in ipairs(ignored_nodes) do
+      if ignore_node == false then
+        if string.find(node_name, name) then
+          ignore_node = true
+        end
+      end
+    end
+
+    if ignore_node then
+      Id_Print("Node included in ignore list. Skipping...")
+    end
+
+    return ignore_node
 end
 
 --Global Variable Initialisation
@@ -556,7 +578,7 @@ function GetTargetData()
     local name = GetTargetName()
     local x = GetTargetRawXPos()
     local y = GetTargetRawYPos()
-    local z = GetTargetRawZPos()
+    local z = GetTargetRawZPos()   
     return name..","..x..","..y..","..z
 end
 
@@ -636,21 +658,26 @@ function TargetNearestObjectKind(objectKind, radius, subKind)
     local radius = radius or 0
     local subKind = subKind or 5
     local nearby_objects = GetNearbyObjectNames(radius^2, objectKind)
-	local names = {}
+local names = {}
 
     if nearby_objects and type(nearby_objects) == "userdata" and nearby_objects.Count > 0 then
         for i = 0, nearby_objects.Count - 1 do
-			if names[nearby_objects[i]] == nil then names[nearby_objects[i]] = 0
-			else names[nearby_objects[i]] = names[nearby_objects[i]] + 1 end
+            if names[nearby_objects[i]] == nil then
+               names[nearby_objects[i]] = 0
+            else
+              names[nearby_objects[i]] = names[nearby_objects[i]] + 1
+            end
 
             local target = nearby_objects[i] .. " <list." .. names[nearby_objects[i]] .. ">"
-            TargetWithSND(target)
-            if not GetTargetName() or nearby_objects[i] ~= GetTargetName()
-                or (objectKind == 2 and subKind ~= GetTargetSubKind())
-                or (objectKind == 2 and subKind == GetTargetSubKind() and GetTargetHPP() <= 0) then
-            elseif GetDistanceToTarget() < smallest_distance then
+            if not CheckIfNodeShouldBeIgnored(target) then
+              TargetWithSND(target)
+              if not GetTargetName() or nearby_objects[i] ~= GetTargetName()
+              or (objectKind == 2 and subKind ~= GetTargetSubKind())
+              or (objectKind == 2 and subKind == GetTargetSubKind() and GetTargetHPP() <= 0) then
+              elseif GetDistanceToTarget() < smallest_distance then
                 smallest_distance = GetDistanceToTarget()
                 closest_target = target
+              end
             end
         end
         ClearTarget()
@@ -855,7 +882,7 @@ function main()
         else
             break
         end
-
+        
         if next_node_move_to == nil then
             Id_Print("Traversed all found nodes!")
             Id_Print("Go find another!")
