@@ -118,8 +118,6 @@ local dist_between_points = 500
 local neverstop = true
 local i = 0
 
-local we_are_spreading = 0 --by default we aren't spreading
-
 --duty specific vars
 local dutycheck = 0
 local dutycheckupdate = 1
@@ -279,57 +277,6 @@ local function limitbreak()
 			--yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP().." get limoot"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug line
 		end
 	end
-end
-
-local function do_we_spread()
-    did_we_find_one = 0
-	--need to start getting the names of the ones that vbm doesn't resolve and add them here
-	--now we iterate through the list of possible entities
-    for _, entity_name in ipairs(spread_marker_entities) do
-         if GetDistanceToObject(entity_name) < 40 then
-             did_we_find_one = 1
-             break --escape from loop we found one!!!
-         end
-    end
-	if did_we_find_one == 1 then
-		--return true
-		we_are_spreading = 1 --indicate to the follow functions that we are spreading and not to try and do stuff
-		spread_em(5) --default 5 "distance" movement for now IMPROVE LATER with multi variable array with distances for each spread marker? and maybe some actual math because 1,1 is actually 1.4 distance from origin.
-		did_we_find_one = 0
-	end
-	if did_we_find_one == 0 then
-		--return false
-		--do nothing ;o
-		we_are_spreading = 0 -- we aren't spreading
-	end
-end
-
-local function spread_em(distance)
-    local deltaX, deltaY
-	deltaX = mecurrentLocX
-	deltaY = mecurrentLocY
-    if partymemberENUM == 1 then
-        deltaX, deltaY = 0, -distance  -- Move up
-    elseif partymemberENUM == 2 then
-        deltaX, deltaY = distance, 0  -- Move right
-    elseif partymemberENUM == 3 then
-        deltaX, deltaY = 0, distance  -- Move down
-    elseif partymemberENUM == 4 then
-        deltaX, deltaY = -distance, 0  -- Move left
-    elseif partymemberENUM == 5 then
-        deltaX, deltaY = distance, -distance  -- Move up right
-    elseif partymemberENUM == 6 then
-        deltaX, deltaY = distance, distance  -- Move down right
-    elseif partymemberENUM == 7 then
-        deltaX, deltaY = -distance, distance  -- Move down left
-    elseif partymemberENUM == 8 then
-        deltaX, deltaY = -distance, -distance  -- Move up left
-    else
-        yield("/echo Invalid direction - check partymemberENUM in your .ini file")
-    end
-    --time to do the movement!
-	yield("/"..movetype.." moveto "..deltaX.." "..deltaY.." "..mecurrentLocZ)
-	yield("/wait 5")
 end
 
 local function setdeest()
@@ -1066,7 +1013,7 @@ while repeated_trial < (repeat_trial + 1) do
 		arbitrary_duty() --this is the big boy
 		
 		--regular movement to target
-		if customized_behaviour == 0 and char_snake ~= "no follow" and char_snake ~= "party leader" and enemy_snake == "nothing" and we_are_spreading == 0 then --close gaps to party leader only if we are on follow mode
+		if customized_behaviour == 0 and char_snake ~= "no follow" and char_snake ~= "party leader" and enemy_snake == "nothing" then --close gaps to party leader only if we are on follow mode
 			setdeest()
 			if dist_between_points > snake_deest and dist_between_points < meh_deest then
 					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ) --sneak around when navmesh being weird
@@ -1076,7 +1023,7 @@ while repeated_trial < (repeat_trial + 1) do
 					--yield("/echo player follow distance between points: "..dist_between_points.." enemy deest"..enemy_deest.." char deest :"..snake_deest)
 			end
 		end
-		if customized_behaviour == 0 and enemy_snake ~= "nothing" and dutycheck == 0 and we_are_spreading == 0 then --close gaps to enemy only if we are on follow mode
+		if customized_behaviour == 0 and enemy_snake ~= "nothing" and dutycheck == 0 then --close gaps to enemy only if we are on follow mode
 			setdeest()
 			if dist_between_points > enemy_deest and dist_between_points < enemeh_deest then
 					--yield("/visland moveto "..currentLocX.." "..currentLocY.." "..currentLocZ)
