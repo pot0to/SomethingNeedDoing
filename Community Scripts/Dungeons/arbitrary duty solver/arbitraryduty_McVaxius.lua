@@ -1160,5 +1160,3 @@ while repeated_trial < (repeat_trial + 1) do
 	end
 	yield("/wait "..cycleTime) --the entire fuster cluck is looping at this rate
 end
-
---closerdecuman4
