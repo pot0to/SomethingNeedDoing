@@ -948,7 +948,7 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/wait 2")
 		yield("/echo We seem to be outside of the duty.. let us enter!")
 		--yield("/wait 15")	
-		yield("/wait 5")	
+		yield("/wait 5")
 		if repeat_type == 0 then --4 Real players (or scripts haha) using duty finder
 			yield("/finder")
 			yield("/echo attempting to trigger duty finder")
