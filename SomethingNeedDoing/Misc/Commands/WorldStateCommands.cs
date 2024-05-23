@@ -36,7 +36,7 @@ public class WorldStateCommands
     public unsafe float GetFlagXCoord() => AgentMap.Instance()->FlagMapMarker.XFloat;
     public unsafe float GetFlagYCoord() => AgentMap.Instance()->FlagMapMarker.YFloat;
     public unsafe float GetFlagZone() => AgentMap.Instance()->FlagMapMarker.TerritoryId;
-    public unsafe void SetMapFlag(uint territory, float worldX, float worldZ) => AgentMap.Instance()->SetFlagMapMarker(territory, Svc.Data.GetExcelSheet<TerritoryType>()!.GetRow(territory)!.Map.Value!.RowId, worldX, worldZ);
+    public unsafe void SetMapFlag(uint territory, float worldX, float worldY, float worldZ) => AgentMap.Instance()->SetFlagMapMarker(territory, Svc.Data.GetExcelSheet<TerritoryType>()!.GetRow(territory)!.Map.Value!.RowId, new Vector3(worldX, worldY, worldZ));
 
     public unsafe byte GetActiveWeatherID() => EnvManager.Instance()->ActiveWeather;
 
@@ -68,7 +68,7 @@ public class WorldStateCommands
     public unsafe float GetFateProgress(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Progress;
     #endregion
 
-    public static float DistanceBetween(float x1, float y1, float z1, float x2, float y2, float z2) => Vector3.DistanceSquared(new Vector3(x1, y1, z1), new Vector3(x2, y2, z2));
+    public float DistanceBetween(float x1, float y1, float z1, float x2, float y2, float z2) => Vector3.DistanceSquared(new Vector3(x1, y1, z1), new Vector3(x2, y2, z2));
 
     public unsafe float GetContentTimeLeft() => EventFramework.Instance()->GetInstanceContentDirector()->ContentDirector.ContentTimeLeft;
 

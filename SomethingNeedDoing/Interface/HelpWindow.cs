@@ -329,6 +329,10 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-05-23",
+        "- Fixes for the last two commands.\n");
+
+        DisplayChangelog(
         "2024-05-18",
         "- Added SetMapFlag()\n" +
         "- Added DistanceBetween()\n");
