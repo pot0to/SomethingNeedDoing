@@ -125,9 +125,10 @@ ini_check("version", vershun)
 
 
 ---------CONFIGURATION SECTION---------
-fren = ini_check("fren", "Fren Name")  	--can be partial as long as its unique
+fren = ini_check("fren", "Fren Name")  			--can be partial as long as its unique
 fulftype = ini_check("fulftype", "unchanged")	--if you have lazyloot installed can setup how loot is handled. leave on "unchanged" if you dont want it to set your fulf settings. other setings include need, greed, pass
-cling = ini_check("cling", 1) 				--distance to cling to fren
+cling = ini_check("cling", 1) 					--distance to cling to fren
+maxbistance = ini_check("maxbistance", 50) 				-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
 limitpct = ini_check("limitpct", 25)			--what pct of life on target should we use lb at. it will automatically use lb3 if thats the cap or it will use lb2 if thats the cap
 formation = ini_check("formation", true)		--follow in formation? if false, then it will "cling"
 						--[[
@@ -256,10 +257,12 @@ while weirdvar == 1 do
 	--catch if character is ready before doing anything
 	if IsPlayerAvailable() then
 		if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
-			if GetCharacterCondition(34) == false then  --not in duty 
+			if GetCharacterCondition(34) == false then  --not in duty  
 				--SAFETY CHECKS DONE, can do whatever you want now with characterconditions etc			
 				--movement with formation - initially we test while in any situation not just combat
-				if formation == true then
+				--check distance to fren, if its more than cling, then
+				bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
+				if formation == true and bistance < maxbistance then
 					-- Inside combat and formation enabled
 					local leaderX, leaderY, leaderZ = GetObjectRawXPos(fren), GetObjectRawYPos(fren), GetObjectRawZPos(fren)
 					local leaderRotation = GetObjectRotation(fren)
@@ -269,9 +272,7 @@ while weirdvar == 1 do
 				--movement without formation
 				if GetCharacterCondition(26) == true and formation == false then --in combat
 					if formation == false then
-						--check distance to fren, if its more than cling, then
-						bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
-						if bistance > cling and bistance < 20 then
+						if bistance > cling and bistance < maxbistance then
 						--yield("/target \""..fren.."\"")
 							PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
 						end
@@ -339,7 +340,7 @@ while weirdvar == 1 do
 						if formation == false then
 							--check distance to fren, if its more than cling, then
 							bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
-							if bistance > cling and bistance < 20 then
+							if bistance > cling and bistance < maxbistance then
 							--yield("/target \""..fren.."\"")
 								PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
 							end
