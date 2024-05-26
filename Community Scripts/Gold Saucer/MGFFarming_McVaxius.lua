@@ -20,11 +20,11 @@ in_saucer = 1
 while (mgf_counter < mgf_sucks) do
     --key_3 is /target "Blunderville Registrar" since SND will error out if target not found
     yield("/send KEY_3")
-    yield("<wait.0.35>")
+    yield("/wait 0.35")
     yield("/pinteract <wait.1>")
     yield("/pcall FGSEnterDialog true 0")
     yield("/pcall FGSEnterDialog true -2")
-    yield("<wait.1.0>")
+    yield("/wait 1.0")
     yield("/pcall ContentsFinderConfirm true 8")
     yield("/pcall ContentsFinderConfirm true -2")
     yield("/pcall FGSSpectatorMenu true 3")
@@ -41,7 +41,7 @@ while (mgf_counter < mgf_sucks) do
         yield("/echo Runs left:"..mgf_left)
     end
 end
-yield("<wait.10.0>")
+yield("/wait 10.0")
 yield("/echo we finished triggering")
 yield("/shutdown")
 --make sure pyes is setup do a fake shut down to get the auto text for it
