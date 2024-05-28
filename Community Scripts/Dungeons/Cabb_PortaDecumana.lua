@@ -7,13 +7,16 @@
 -- important: change the homeArea variable to the area ID you're going to idle in
 -- or your character will do nothing. default (341) is The Goblet
 
---vars
-local queued = false
-local toggled = false
-local loops = 999
-local done = 0
-local homeArea = 341
-local id = 0
+-- change these vars
+local loops = 999 -- max times to queue
+local homeArea = 341 -- area to idle in when queueing
+
+-- but not these
+local queued = false  -- script ran the queue sequence this loop
+local toggled = false -- disables AI if the shield is up
+local toggle2 = false -- added to disable the AI out of combat, stopping it from staring at people and spamming regen
+local done = 0        -- times successfully left dungeon
+local id = 0          -- current area ID
 
 -- searches for the Exit portal to let us know if the dungeon is done
 function checkForExit()
@@ -63,6 +66,10 @@ while done < loops do
     if id == 1048 and IsPlayerAvailable() then
         -- if we're in combat see if the boss has the immunity shield and stop attacking
         if GetCharacterCondition(26) then
+            if toggle2 == true then
+                yield("/vbmai on")
+                toggle2 = false
+            end
             if GetTargetName() == "The Ultima Weapon" then
                 if hasShield() and toggled == false then
                     toggled = true
@@ -73,9 +80,12 @@ while done < loops do
                     yield("/vbmai on")
                 end
             end
-        -- else check for the exit
         else
-            if checkForExit() == true then
+            if toggle2 == false then
+                yield("/vbmai off")
+                toggle2 = true
+            end
+            if checkForExit() == true then -- check for the exit
                 yield("/wait 5") -- if you want to try to farm comms increase this wait to hang around a bit after the boss is dead
                 queued = false
                 yield("/pdfleave")
