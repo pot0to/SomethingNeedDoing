@@ -38,7 +38,6 @@ function hasShield()
 end
 
 -- first run setup
-yield("/vbmai on")
 OpenRegularDuty(830) -- open duty finder to porta decumana
 yield("/waitaddon ContentsFinder")
 yield("/pcall ContentsFinder false 12 1") -- press the clear button
