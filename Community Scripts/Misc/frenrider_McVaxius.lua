@@ -341,6 +341,27 @@ while weirdvar == 1 do
 				--the code block that got this all started haha
 				--follow and mount fren
 				if GetCharacterCondition(26) == false then --not in combat
+					if GetCharacterCondition(4) == true and fly_you_fools == true then
+						--follow the fren
+						if GetCharacterCondition(4) == true and bistance > cling and PathIsRunning() == false and PathfindInProgress() == false then
+							--yield("/echo attempting to fly to fren")
+							yield("/target <"..fartycardinality..">")
+							yield("/follow")
+							yield("/wait 0.1") --we dont want to go tooo hard on this
+							--i could't make the following method smooth please help :(
+							--[[
+							yield("/vnavmesh flyto "..GetObjectRawXPos(fren).." "..GetObjectRawYPos(fren).." "..GetObjectRawZPos(fren))
+							looptillwedroop = 0
+							while looptillwedroop == 0 do
+								if PathIsRunning() == false and PathfindInProgress() == false then
+									looptillwedroop = 1
+									yield("/echo Debug Ok we reached path")
+								end
+								yield("/wait 0.1")
+							end
+							]]
+						end
+					end
 					if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false then --not mounted and not mounted2 (riding friend)
 						--chocobo stuff. first check if we can fly. if not don't try to chocobo
 						if HasFlightUnlocked() == true then
@@ -368,13 +389,8 @@ while weirdvar == 1 do
 						--[[yield("/ridepillion <"..mker.."> 1")
 						yield("/ridepillion <"..mker.."> 2")
 						yield("/ridepillion <"..mker.."> 3")]]
+						--yield("/echo fly fools .."..tostring(fly_you_fools))
 						if fly_you_fools == true then
-							--follow the fren
-							if bistance > cling and bistance < maxbistance then
-							--yield("/target \""..fren.."\"")
-								PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
-							end
-							yield("/wait 0.1") --we dont want to go tooo hard on this
 							if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false and IsPartyMemberMounted(shartycardinality) == true then
 								--mountup your own mount
 								yield("/mount \""..fool_flier.."\"")
