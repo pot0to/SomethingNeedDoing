@@ -135,6 +135,7 @@ ini_check("version", vershun)
 ---------CONFIGURATION SECTION---------
 fren = ini_check("fren", "Fren Name")  				--can be partial as long as its unique
 fly_you_fools = ini_check("fly_you_fools", false)	--(fly and follow instead of mount and wait) usecase: you dont have multi seater of sufficient size, or you want to have multiple multiseaters with diff peopel riding diff ones.  sometimes frendalf doesnt want you to ride him and will ask you to ride yourself right up into outer space
+fool_flier = ini_check("fool_flier", "Beast with 3 backs")	--if you have fly you fools as true, which beast shall you summon?
 fulftype = ini_check("fulftype", "unchanged")		--if you have lazyloot installed can setup how loot is handled. leave on "unchanged" if you dont want it to set your fulf settings. other setings include need, greed, pass
 cling = ini_check("cling", 1) 						--distance to cling to fren
 maxbistance = ini_check("maxbistance", 50) 			-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
@@ -331,8 +332,10 @@ while weirdvar == 1 do
 					we_were_in = we_are_in
 				end
 				
-				IsPartyMemberMounted(shartycardinality) == false and fly_you_fools == true then
-					--*continually try to dismount
+				if IsPartyMemberMounted(shartycardinality) == false and fly_you_fools == true then
+					--continually try to dismount
+					yield("/ac dismount")
+					yield("/wait 0.5")
 				end
 				
 				--the code block that got this all started haha
@@ -346,7 +349,7 @@ while weirdvar == 1 do
 								yield("/visland stop")
 								yield("/vnavmesh stop")
 								yield("/item Gysahl Greens")
-								yield("/wait 2")
+								yield("/wait 3")
 							end
 						end
 						--yield("/target <cross>")
@@ -366,7 +369,20 @@ while weirdvar == 1 do
 						yield("/ridepillion <"..mker.."> 2")
 						yield("/ridepillion <"..mker.."> 3")]]
 						if fly_you_fools == true then
-							--*mountup your own mount
+							--follow the fren
+							if bistance > cling and bistance < maxbistance then
+							--yield("/target \""..fren.."\"")
+								PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
+							end
+							yield("/wait 0.1") --we dont want to go tooo hard on this
+							if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false and IsPartyMemberMounted(shartycardinality) == true then
+								--mountup your own mount
+								yield("/mount \""..fool_flier.."\"")
+								yield("/wait 3")
+								--try to fly 
+								yield("/gaction jump")
+								yield("/lockon on")
+							end
 						end
 						if IsPartyMemberMounted(shartycardinality) == true and fly_you_fools == false then
 							--for i=1,7 do
