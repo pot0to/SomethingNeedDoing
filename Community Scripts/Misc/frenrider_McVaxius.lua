@@ -143,6 +143,8 @@ maxbistance = ini_check("maxbistance", 50) 				-- Max distance from fren that we
 limitpct = ini_check("limitpct", 25)					-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap
 rotationtype = ini_check("rotationtype", "Auto")		-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
 bossmodAI = ini_check("bossmodAI", "on")				-- do we want bossmodAI to be "on" or "off"
+feedme = ini_check("feedme", 4650)						-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
+feedme = ini_check("feedmeitem", "Boiled Egg")			-- eatfood, in this case the item name. for now this is how we'll do it. it isn't pretty but it will work.. for now..
 formation = ini_check("formation", true)				-- Follow in formation? If false, then it will "cling"
 						--[[
 						Like this -> . so that 1 is the main tank and the party will always kind of make this formation during combat
