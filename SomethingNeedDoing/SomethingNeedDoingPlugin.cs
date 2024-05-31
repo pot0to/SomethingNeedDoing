@@ -38,7 +38,7 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
         Service.GameEventManager = new GameEventManager();
         Service.MacroManager = new MacroManager();
 
-        EzConfigGui.Init(new MacroWindow().Draw);
+        EzConfigGui.Init(new MacroWindow());
         EzConfigGui.WindowSystem.AddWindow(new HelpWindow());
         MacroWindow.Setup();
 

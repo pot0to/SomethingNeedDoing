@@ -18,7 +18,7 @@ namespace SomethingNeedDoing.Interface;
 /// <summary>
 /// Main window for macro execution.
 /// </summary>
-internal class MacroWindow : Window
+internal class MacroWindow : ConfigWindow
 {
     private readonly Regex incrementalName = new(@"(?<all> \((?<index>\d+)\))$", RegexOptions.Compiled);
 
@@ -29,7 +29,7 @@ internal class MacroWindow : Window
     /// <summary>
     /// Initializes a new instance of the <see cref="MacroWindow"/> class.
     /// </summary>
-    public MacroWindow() : base($"Something Need Doing {Service.Plugin.GetType().Assembly.GetName().Version}###SomethingNeedDoing")
+    public MacroWindow()
     {
         LockButton = new()
         {
@@ -42,6 +42,7 @@ internal class MacroWindow : Window
 
     public static void Setup()
     {
+        EzConfigGui.Window.WindowName = $"Something Need Doing {Service.Plugin.GetType().Assembly.GetName().Version}###SomethingNeedDoing";
         EzConfigGui.Window.Size = new Vector2(525, 600);
         EzConfigGui.Window.SizeCondition = ImGuiCond.FirstUseEver;
         EzConfigGui.Window.RespectCloseHotkey = false;
@@ -83,7 +84,6 @@ internal class MacroWindow : Window
 
     private void DrawHeader()
     {
-        ImGui.TextUnformatted($"{Service.Configuration.LockWindow}: {EzConfigGui.Window.Flags}");
         if (ImGuiEx.IconButton(FontAwesomeIcon.Plus, "Add macro"))
         {
             var newNode = new MacroNode { Name = this.GetUniqueNodeName("Untitled macro") };
