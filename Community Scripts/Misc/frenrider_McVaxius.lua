@@ -24,7 +24,6 @@ none atm
 -- Personal ini file
 filename_prefix = "frenrider_" -- Script name
 open_on_next_load = 0          -- Set this to 1 if you want the next time the script loads, to open the explorer folder with all of the .ini files
-vershun = 1                    -- Version number used to decide if you want to delete/remake the ini files on next load. useful if your changing party leaders for groups of chars or new version of script with fundamental changes
 
 -- Function to open a folder in Explorer
 function openFolderInExplorer(folderPath)
@@ -117,7 +116,16 @@ function ini_check(varname, varvalue)
 end
 
 -- Ensure the version is always written to the file
+-- VERSION VAR --
+-- VERSION VAR --
+-- VERSION VAR --
+-- VERSION VAR --
+vershun = 1                    -- Version number used to decide if you want to delete/remake the ini files on next load. useful if your changing party leaders for groups of chars or new version of script with fundamental changes
 ini_check("version", vershun)
+-- VERSION VAR --
+-- VERSION VAR --
+-- VERSION VAR --
+-- VERSION VAR --
 
 --*****************************************************************
 --************************** END INIZER ***************************
@@ -125,12 +133,14 @@ ini_check("version", vershun)
 
 
 ---------CONFIGURATION SECTION---------
-fren = ini_check("fren", "Fren Name")  			--can be partial as long as its unique
-fulftype = ini_check("fulftype", "unchanged")	--if you have lazyloot installed can setup how loot is handled. leave on "unchanged" if you dont want it to set your fulf settings. other setings include need, greed, pass
-cling = ini_check("cling", 1) 					--distance to cling to fren
-maxbistance = ini_check("maxbistance", 50) 				-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
-limitpct = ini_check("limitpct", 25)			--what pct of life on target should we use lb at. it will automatically use lb3 if thats the cap or it will use lb2 if thats the cap
-formation = ini_check("formation", true)		--follow in formation? if false, then it will "cling"
+fren = ini_check("fren", "Fren Name")  				--can be partial as long as its unique
+fly_you_fools = ini_check("fly_you_fools", false)	--(fly and follow instead of mount and wait) usecase: you dont have multi seater of sufficient size, or you want to have multiple multiseaters with diff peopel riding diff ones.  sometimes frendalf doesnt want you to ride him and will ask you to ride yourself right up into outer space
+fool_flier = ini_check("fool_flier", "Beast with 3 backs")	--if you have fly you fools as true, which beast shall you summon?
+fulftype = ini_check("fulftype", "unchanged")		--if you have lazyloot installed can setup how loot is handled. leave on "unchanged" if you dont want it to set your fulf settings. other setings include need, greed, pass
+cling = ini_check("cling", 1) 						--distance to cling to fren
+maxbistance = ini_check("maxbistance", 50) 			-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
+limitpct = ini_check("limitpct", 25)				--what pct of life on target should we use lb at. it will automatically use lb3 if thats the cap or it will use lb2 if thats the cap
+formation = ini_check("formation", true)			--follow in formation? if false, then it will "cling"
 						--[[
 						like this -> . so that 1 is the main tank and the party will always kind of make this formation during combat
 						8	1	5
@@ -322,10 +332,37 @@ while weirdvar == 1 do
 					we_were_in = we_are_in
 				end
 				
+				if IsPartyMemberMounted(shartycardinality) == false and fly_you_fools == true then
+					--continually try to dismount
+					yield("/ac dismount")
+					yield("/wait 0.5")
+				end
+				
 				--the code block that got this all started haha
 				--follow and mount fren
 				if GetCharacterCondition(26) == false then --not in combat
-					if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false then --not mounted and notmounted2 (riding friend)
+					if GetCharacterCondition(4) == true and fly_you_fools == true then
+						--follow the fren
+						if GetCharacterCondition(4) == true and bistance > cling and PathIsRunning() == false and PathfindInProgress() == false then
+							--yield("/echo attempting to fly to fren")
+							yield("/target <"..fartycardinality..">")
+							yield("/follow")
+							yield("/wait 0.1") --we dont want to go tooo hard on this
+							--i could't make the following method smooth please help :(
+							--[[
+							yield("/vnavmesh flyto "..GetObjectRawXPos(fren).." "..GetObjectRawYPos(fren).." "..GetObjectRawZPos(fren))
+							looptillwedroop = 0
+							while looptillwedroop == 0 do
+								if PathIsRunning() == false and PathfindInProgress() == false then
+									looptillwedroop = 1
+									yield("/echo Debug Ok we reached path")
+								end
+								yield("/wait 0.1")
+							end
+							]]
+						end
+					end
+					if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false then --not mounted and not mounted2 (riding friend)
 						--chocobo stuff. first check if we can fly. if not don't try to chocobo
 						if HasFlightUnlocked() == true then
 							--check if chocobro is up or (soon) not!
@@ -333,7 +370,7 @@ while weirdvar == 1 do
 								yield("/visland stop")
 								yield("/vnavmesh stop")
 								yield("/item Gysahl Greens")
-								yield("/wait 2")
+								yield("/wait 3")
 							end
 						end
 						--yield("/target <cross>")
@@ -352,7 +389,18 @@ while weirdvar == 1 do
 						--[[yield("/ridepillion <"..mker.."> 1")
 						yield("/ridepillion <"..mker.."> 2")
 						yield("/ridepillion <"..mker.."> 3")]]
-						if IsPartyMemberMounted(shartycardinality) == true then
+						--yield("/echo fly fools .."..tostring(fly_you_fools))
+						if fly_you_fools == true then
+							if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false and IsPartyMemberMounted(shartycardinality) == true then
+								--mountup your own mount
+								yield("/mount \""..fool_flier.."\"")
+								yield("/wait 3")
+								--try to fly 
+								yield("/gaction jump")
+								yield("/lockon on")
+							end
+						end
+						if IsPartyMemberMounted(shartycardinality) == true and fly_you_fools == false then
 							--for i=1,7 do
 								--yield("/ridepillion <"..partycardinality.."> "..i)
 								yield("/ridepillion <"..fartycardinality.."> 2")

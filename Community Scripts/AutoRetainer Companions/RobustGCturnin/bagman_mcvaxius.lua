@@ -153,7 +153,7 @@ for i=1,#franchise_owners do
 	if GetGil() > bagmans_take then
 		road_trip = 1 --we took a road trip
 		--now we must head to fat_tony 
-		--first we have to find his neighbourhood, this uber drive better not complain
+		--first we have to find his neighbourhood, this uber driver better not complain
 		--are we on the right server already?
 		yield("/li "..tonys_turf)
 		yield("/wait 15")
