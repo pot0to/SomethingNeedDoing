@@ -2,6 +2,7 @@ using ClickLib;
 using Dalamud.Plugin;
 using ECommons;
 using ECommons.SimpleGui;
+using ImGuiNET;
 using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.Managers;
 using SomethingNeedDoing.Misc.Commands;
@@ -39,6 +40,7 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
 
         EzConfigGui.Init(new MacroWindow().Draw);
         EzConfigGui.WindowSystem.AddWindow(new HelpWindow());
+        MacroWindow.Setup();
 
         EzCmd.Add(Command, OnChatCommand, "Open a window to edit various settings.");
         Aliases.ToList().ForEach(a => EzCmd.Add(a, OnChatCommand, $"{Command} Alias"));
