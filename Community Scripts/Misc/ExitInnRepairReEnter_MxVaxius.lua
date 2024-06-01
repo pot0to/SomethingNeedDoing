@@ -2,6 +2,9 @@
 repair at 15%
 make sure we have more than 5k gil
 
+turn off SND targeting in SND options
+turn on targeting fix in simpletweaks
+
 Yesalready configs
 "YesNo"
 	/Repair all displayed items for.*/
