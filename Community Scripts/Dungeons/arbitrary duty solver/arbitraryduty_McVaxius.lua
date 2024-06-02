@@ -137,6 +137,13 @@ local WPsearchZ = 1
 local cycleTime = 1 --how many seconds to wait between cycles. might move this to the .ini file later
 local deathCounter = 0
 
+if lootchests == 0 then
+	yield("/fulf pass")
+end
+if lootchests > 0 then
+	yield("/fulf need")
+end
+
 local function distance(x1, y1, z1, x2, y2, z2)
     -- Following block to error trap some issues when changing areas
     local success, x1_num = pcall(tonumber, x1)
