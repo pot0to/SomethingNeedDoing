@@ -867,6 +867,12 @@ while repeated_trial < (repeat_trial + 1) do
 		if type(GetTargetHPP()) == "number" and GetTargetHPP() > 95 then
 			yield("/ac provoke")
 		end
+		--try to use a tank gap closer
+			yield("/ac Intervene")
+			yield("/ac Onslaught")
+			yield("/ac Plunge")
+			yield("/ac Primal Rend")
+			yield("/ac Rough Divide")
 	end
 
 	--[[
