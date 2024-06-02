@@ -277,18 +277,28 @@ while countfartula < 9 do
 end
 
 --yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
-yield("Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality.." Fren Join order -> "..shartycardinality)
+yield("/echo Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality.." Fren Join order -> "..shartycardinality)
 ClearTarget()
 
 --bmr follow off. default state
 --yield("/bmrai follow slot1")
 yield("/bmrai follow slot1")
+yield("/echo Beginning fren rider main loop")
 
 while weirdvar == 1 do
 	--catch if character is ready before doing anything
 	if IsPlayerAvailable() then
 		if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
-			if GetCharacterCondition(34) == true then
+			--Food check!
+			statoos = GetStatusTimeRemaining(48)
+			---yield("/echo "..statoos)
+			if type(GetItemCount(feedme)) == "number" then
+				if GetItemCount(feedme) > 0 and statoos < 300 then --refresh food if we are below 5 minutes left
+					yield("/item "..feedmeitem)
+				end
+			end
+
+			if GetCharacterCondition(34) == true then --in duty we might do some special things. mostly just follow the leader and let the ai do its thing.
 				--bmr follow on
 				--yield("/bmrai follow slot"..fartycardinality.."")
 				yield("/bmrai follow "..fren)
