@@ -59,6 +59,7 @@ restock_amt   = 66666 --n>0 minimum amount of total fuel to reach, when restocki
 --------------------
 --Process Configs --
 --------------------
+process_gc_rank  = 0		--0=no,1=yes. do we try to rank up the GC and maybe do a supply delivery turnin?
 process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
 buy_fc_buffs     = 1 	--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
 process_players  = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
@@ -176,6 +177,102 @@ function Final_GC_Cleaning()
 	
 	if nnl == 1 then
 		yield("/novicenetworkleave")
+	end
+	
+	--try to rankup before leaving
+	if process_gc_rank == 1 then
+		yield("/echo movement stopped - time for GC turn ins")
+		--yield("<wait.15>")
+		--yield("/waitaddon SelectString <maxwait.120>")
+		yield("/visland stop")
+		yield("/wait 1")
+		yield("/target Personnel Officer")
+		yield("/wait 1")
+		yield("/send NUMPAD0")
+		yield("/pcall SelectString true 0 <wait.1>")
+		yield("/send NUMPAD0")
+		yield("/wait 1")
+		yield("/send NUMPAD0")
+		yield("/wait 1")
+		yield("/pcall GrandCompanySupplyList true 0 1 2")
+		yield("/wait 1")
+		yield("/send NUMPAD0")
+		yield("/wait 1")
+		yield("/send NUMPAD0")
+		yield("/wait 1")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/wait 3")
+		GCrenk = GetFlamesGCRank()
+		if GetMaelstromGCRank() > GCrenk then
+			GC renk = GetMaelstromGCRank()
+		end
+		if GetAddersGCRank() > GCrenk then
+			GC renk = GetAddersGCRank()
+		end
+		if GCrenk < 4 then --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D
+			--try to promote
+			yield("/wait 1")
+			yield("/target Personnel Officer")
+			yield("/wait 1")
+			yield("/send NUMPAD0")
+			yield("/wait 1")
+			yield("/send NUMPAD2")
+			yield("/wait 0.5")
+			yield("/send NUMPAD0")
+			yield("/wait 0.5")
+			yield("/send NUMPAD0")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/wait 3")
+			--wait for char condition 1
+			while GetCharacterCondition(32) == true and GetCharacterCondition(35) == true do
+				yield("/wait 1")
+			end
+			yield("/wait 2")
+		end
+		if GCrenk < 7 and GCrenk > 4 then --if we are above 4 and below 7 we can go up to 7
+			--try to promote
+			yield("/wait 1")
+			yield("/target Personnel Officer")
+			yield("/wait 1")
+			yield("/send NUMPAD0")
+			yield("/wait 1")
+			yield("/send NUMPAD2")
+			yield("/wait 0.5")
+			yield("/send NUMPAD0")
+			yield("/wait 0.5")
+			yield("/send NUMPAD0")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/wait 3")
+			--wait for char condition 1
+			while GetCharacterCondition(32) == true and GetCharacterCondition(35) == true do
+				yield("/wait 1")
+			end
+			yield("/wait 2")
+		end
+		--output a log of the GC ranks and your current job level to a log file stored in the SND folder
+		GCrenk = GetFlamesGCRank()
+		if GetMaelstromGCRank() > GCrenk then
+			GCrenk = GetMaelstromGCRank()
+		end
+		if GetAddersGCRank() > GCrenk then
+			GCrenk = GetAddersGCRank()
+		end
+		local folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
+		local file = io.open(folderPath .. "GCrankLog.txt", "a")
+		if file then
+			-- Write text to the file
+			currentTime = os.date("*t")
+			formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
+			file:write(formattedTime.." - "..chars_fn[rcuck_count][1].." - Job Lv - "..GetLevel().." - GC Rank - "..GCrenk.."\n")
+			-- Close the file handle
+			file:close()
+			yield("/echo Text has been written to '" .. folderPath .. "GCrankLog.txt'")
+		else
+			yield("/echo Error: Unable to open file for writing")
+		end
 	end
 	
 	--limsa aetheryte
