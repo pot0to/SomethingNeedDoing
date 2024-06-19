@@ -1552,7 +1552,7 @@ yield(""/echo done!"")
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
         foreach (var value in Enum.GetValues(typeof(T)))
         {
-            ImGui.Text($"{Enum.GetName(typeof(T), value)}: {(byte)value}");
+            ImGui.Text($"{Enum.GetName(typeof(T), value)}: {Convert.ChangeType(value, Enum.GetUnderlyingType(typeof(T)))}");
         }
         ImGui.PopStyleColor();
     }
