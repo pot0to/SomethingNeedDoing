@@ -1,5 +1,5 @@
 --script to kind of autofollow specific person in party when not in a duty by riding their vehicule
---meant to use when your ahh botting treasure maps :~D
+--meant to use when your ahh botting treasure maps or fates with alts, but playing main char manually :~D
 
 --[[
 *requirements:
@@ -12,6 +12,8 @@ visland
 bring some gysahl greens
 discardhelper
 lazyloot plugin (if your doing anything other than fates)
+VBM/BMR (bmr has slash commands for following)
+RS/RSR (is RS still being updated?)
 
 ***Few annoying problems that still exist
 none atm
@@ -131,35 +133,50 @@ ini_check("version", vershun)
 --************************** END INIZER ***************************
 --*****************************************************************
 
-
 ---------CONFIGURATION SECTION---------
 fren = ini_check("fren", "Fren Name")  				--can be partial as long as its unique
 fly_you_fools = ini_check("fly_you_fools", false)	--(fly and follow instead of mount and wait) usecase: you dont have multi seater of sufficient size, or you want to have multiple multiseaters with diff peopel riding diff ones.  sometimes frendalf doesnt want you to ride him and will ask you to ride yourself right up into outer space
 fool_flier = ini_check("fool_flier", "Beast with 3 backs")	--if you have fly you fools as true, which beast shall you summon?
-fulftype = ini_check("fulftype", "unchanged")		--if you have lazyloot installed can setup how loot is handled. leave on "unchanged" if you dont want it to set your fulf settings. other setings include need, greed, pass
-cling = ini_check("cling", 1) 						--distance to cling to fren
-maxbistance = ini_check("maxbistance", 50) 			-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
-limitpct = ini_check("limitpct", 25)				--what pct of life on target should we use lb at. it will automatically use lb3 if thats the cap or it will use lb2 if thats the cap
-formation = ini_check("formation", true)			--follow in formation? if false, then it will "cling"
+fulftype = ini_check("fulftype", "unchanged")			-- If you have lazyloot installed can setup how loot is handled. Leave on "unchanged" if you don't want it to set your loot settings. Other settings include need, greed, pass and of course, off
+cling = ini_check("cling", 1) 							-- Distance to cling to fren when > bistance
+maxbistance = ini_check("maxbistance", 50) 				-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
+limitpct = ini_check("limitpct", 25)					-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap
+rotationtype = ini_check("rotationtype", "Auto")		-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
+bossmodAI = ini_check("bossmodAI", "on")				-- do we want bossmodAI to be "on" or "off"
+feedme = ini_check("feedme", 4650)						-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
+feedmeitem = ini_check("feedmeitem", "Boiled Egg")			-- eatfood, in this case the item name. for now this is how we'll do it. it isn't pretty but it will work.. for now..
+formation = ini_check("formation", true)				-- Follow in formation? If false, then it will "cling"
 						--[[
-						like this -> . so that 1 is the main tank and the party will always kind of make this formation during combat
+						Like this -> . so that 1 is the main tank and the party will always kind of make this formation during combat
 						8	1	5
 						3		2
 						7	4	6
 						]]
---mker = "cross" --in case you want the other shapes. valid shapes are triangle square circle attack1-8 bind1-3 ignore1-2
+-- mker = "cross" -- In case you want the other shapes. Valid shapes are triangle square circle attack1-8 bind1-3 ignore1-2
 -----------CONFIGURATION END-----------
 
---init
+----------------
+--INIT SECTION--
+----------------
 yield("/echo Starting fren rider")
 --yield("/target \""..fren.."\"")
 yield("/wait 0.5")
 --yield("/mk cross <t>")
 
+yield("/vbmai "..bossmodAI)
+yield("/bmrai "..bossmodAI)
+
+if rotationtype ~= "none" then
+	yield("/rotation "..rotationtype)
+end
+
 if fulftype ~= "unchanged" then
 	yield("/fulf on")
 	yield("/fulf "..fulftype)
 end
+----------------
+----INIT END----
+----------------
 
 --why is this so complicated? well because sometimes we get bad values and we need to sanitize that so snd does not STB (shit the bed)
 local function distance(x1, y1, z1, x2, y2, z2)
@@ -260,17 +277,37 @@ while countfartula < 9 do
 end
 
 --yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
-yield("Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality.." Fren Join order -> "..shartycardinality)
+yield("/echo Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality.." Fren Join order -> "..shartycardinality)
 ClearTarget()
+
+--bmr follow off. default state
+--yield("/bmrai follow slot1")
+yield("/bmrai follow slot1")
+yield("/echo Beginning fren rider main loop")
 
 while weirdvar == 1 do
 	--catch if character is ready before doing anything
 	if IsPlayerAvailable() then
 		if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
+			--Food check!
+			statoos = GetStatusTimeRemaining(48)
+			---yield("/echo "..statoos)
+			if type(GetItemCount(feedme)) == "number" then
+				if GetItemCount(feedme) > 0 and statoos < 300 then --refresh food if we are below 5 minutes left
+					yield("/item "..feedmeitem)
+				end
+			end
+
+			if GetCharacterCondition(34) == true then --in duty we might do some special things. mostly just follow the leader and let the ai do its thing.
+				--bmr follow on
+				--yield("/bmrai follow slot"..fartycardinality.."")
+				yield("/bmrai follow "..fren)
+			end
 			if GetCharacterCondition(34) == false then  --not in duty  
 				--SAFETY CHECKS DONE, can do whatever you want now with characterconditions etc			
 				--movement with formation - initially we test while in any situation not just combat
 				--check distance to fren, if its more than cling, then
+	
 				bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
 				if formation == true and bistance < maxbistance then
 					-- Inside combat and formation enabled
@@ -334,6 +371,8 @@ while weirdvar == 1 do
 				
 				if IsPartyMemberMounted(shartycardinality) == false and fly_you_fools == true then
 					--continually try to dismount
+					--bmr follow off.
+					yield("/bmrai follow slot1")
 					yield("/ac dismount")
 					yield("/wait 0.5")
 				end
@@ -345,9 +384,14 @@ while weirdvar == 1 do
 						--follow the fren
 						if GetCharacterCondition(4) == true and bistance > cling and PathIsRunning() == false and PathfindInProgress() == false then
 							--yield("/echo attempting to fly to fren")
+							--bmr follow on. we comin
+							--yield("/bmrai follow slot"..fartycardinality)
+							yield("/bmrai follow "..fren)
+
 							yield("/target <"..fartycardinality..">")
 							yield("/follow")
 							yield("/wait 0.1") --we dont want to go tooo hard on this
+							
 							--i could't make the following method smooth please help :(
 							--[[
 							yield("/vnavmesh flyto "..GetObjectRawXPos(fren).." "..GetObjectRawYPos(fren).." "..GetObjectRawZPos(fren))

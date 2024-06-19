@@ -137,6 +137,13 @@ local WPsearchZ = 1
 local cycleTime = 1 --how many seconds to wait between cycles. might move this to the .ini file later
 local deathCounter = 0
 
+if lootchests == 0 then
+	yield("/fulf pass")
+end
+if lootchests > 0 then
+	yield("/fulf need")
+end
+
 local function distance(x1, y1, z1, x2, y2, z2)
     -- Following block to error trap some issues when changing areas
     local success, x1_num = pcall(tonumber, x1)
@@ -205,20 +212,26 @@ local function getRandomNumber(min, max)
 end
 
 function targetchests()
-	chesttargeted = false
-	if GetTargetName() == "Treasure Coffer" then chesttargeted = true end
-	if string.len(GetTargetName()) == 0 or GetTargetName() == "Exit" or GetTargetName() == "Shortcut" or chesttargeted == true then
-		yield("/target Chest")
-		yield("/target \"Treasure Coffer\"")
-		yield("/wait 0.5")	
-		if chesttargeted == true then
-			yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
-			--yield("/autofollow")
-			yield("/echo Chest ! -> "..GetTargetName())
---			yield("/lockon")
---			yield("/automove")
-			yield("/rotation Cancel")
+	if lootchests > 0 then
+		PandoraSetFeatureConfigState("Auto-interact with Objects in Instances", "ExcludeExit", true) 
+		chesttargeted = false
+		if GetTargetName() == "Treasure Coffer" then chesttargeted = true end
+		if string.len(GetTargetName()) == 0 or GetTargetName() == "Exit" or GetTargetName() == "Shortcut" or chesttargeted == true then
+			yield("/target Chest")
+			yield("/target \"Treasure Coffer\"")
+			yield("/wait 0.5")	
+			if chesttargeted == true then
+				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+				--yield("/autofollow")
+				yield("/echo Chest ! -> "..GetTargetName())
+	--			yield("/lockon")
+	--			yield("/automove")
+				yield("/rotation Cancel")
+			end
 		end
+	end
+	if lootchests == 0 then 
+		PandoraSetFeatureConfigState("Auto-interact with Objects in Instances", "ExcludeExit", false) 
 	end
 end
 
@@ -854,6 +867,12 @@ while repeated_trial < (repeat_trial + 1) do
 		if type(GetTargetHPP()) == "number" and GetTargetHPP() > 95 then
 			yield("/ac provoke")
 		end
+		--try to use a tank gap closer
+			yield("/ac Intervene")
+			yield("/ac Onslaught")
+			yield("/ac Plunge")
+			yield("/ac Primal Rend")
+			yield("/ac Rough Divide")
 	end
 
 	--[[
@@ -894,6 +913,8 @@ while repeated_trial < (repeat_trial + 1) do
 		yield("/vnavmesh stop")
 		yield("/wait 2")
 		yield("/echo We seem to be outside of the duty.. let us enter!")
+		--reset this so we can sneak in a config change before ending script
+		PandoraSetFeatureConfigState("Auto-interact with Objects in Instances", "ExcludeExit", false) 
 		--yield("/wait 15")	
 		yield("/wait 5")
 		if repeat_type == 0 then --4 Real players (or scripts haha) using duty finder
@@ -1002,7 +1023,12 @@ while repeated_trial < (repeat_trial + 1) do
 					--yield("/automove on")
 					--replaced above with navmesh to exit
 					yield("/vnavmesh moveto "..GetObjectRawXPos("Exit").." "..GetObjectRawYPos("Exit").." "..GetObjectRawZPos("Exit"))
-					yield("/wait 10")
+					booxit = 0
+					while booxit < 10 do
+						yield("/wait 1")
+						yield("/interact")
+						booxit = booxit + 1
+					end
 				end
 			end
 		end
