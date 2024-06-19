@@ -329,6 +329,13 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-06-19",
+        "- Added GetFreeSlotsInContainer()\n" +
+        "- Added GetCurrentWorld()\n" +
+        "- Added GetHomeWorld()\n" +
+        "- Added the relevant sheet info needed for the above commands to Help\n");
+
+        DisplayChangelog(
         "2024-05-23",
         "- Fixes for the last two commands.\n");
 
@@ -1490,7 +1497,9 @@ yield(""/echo done!"")
                 ("Duty Roulette", this.DrawDutyRoulette),
                 ("Ocean Fishing Spots", this.DrawOceanFishingSpots),
                 ("Achievements", this.DrawAchievements),
-                ("ObjectKinds", this.DrawObjectKinds),
+                ("ObjectKinds", this.DrawEnum<ObjectKind>),
+                ("Worlds", this.DrawWorlds),
+                ("InventoryTypes", this.DrawEnum<InventoryType>),
             };
 
             foreach (var (title, dele) in tabs)
@@ -1526,13 +1535,24 @@ yield(""/echo done!"")
             ImGui.TextUnformatted($"gold @ {new Vector3(l.Item1, l.Item2, l.Item3)}");
     }
 
-    private void DrawObjectKinds()
+    private void DrawWorlds()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-        foreach (var value in Enum.GetValues(typeof(ObjectKind)))
+        foreach (var r in Service.DataManager.GetExcelSheet<World>()!.Where(w => w.IsPublic && w.DataCenter.Value?.RowId != 0))
         {
-            ImGui.Text($"{Enum.GetName(typeof(ObjectKind), value)}: {(byte)value}");
+            ImGui.Text($"{r.RowId}: {r.Name}");
+        }
+        ImGui.PopStyleColor();
+    }
+
+    private void DrawEnum<T>()
+    {
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        foreach (var value in Enum.GetValues(typeof(T)))
+        {
+            ImGui.Text($"{Enum.GetName(typeof(T), value)}: {(byte)value}");
         }
         ImGui.PopStyleColor();
     }

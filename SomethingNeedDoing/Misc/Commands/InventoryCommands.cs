@@ -42,4 +42,17 @@ public class InventoryCommands
         }
         return slots;
     }
+
+    public unsafe int GetFreeSlotsInContainer(uint container)
+    {
+        var inv = InventoryManager.Instance();
+        var cont = inv->GetInventoryContainer((InventoryType)container);
+        var slots = 0;
+        for (var i = 0; i < cont->Size; i++)
+        {
+            if (cont->Items[i].ItemID == 0)
+                slots++;
+        }
+        return slots;
+    }
 }

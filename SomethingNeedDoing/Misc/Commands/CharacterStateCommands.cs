@@ -83,6 +83,8 @@ public class CharacterStateCommands
     public uint GetMaxHP() => Svc.ClientState.LocalPlayer?.MaxHp ?? 0;
     public uint GetMP() => Svc.ClientState.LocalPlayer?.CurrentMp ?? 0;
     public uint GetMaxMP() => Svc.ClientState.LocalPlayer?.MaxMp ?? 0;
+    public uint GetCurrentWorld() => Svc.ClientState.LocalPlayer?.CurrentWorld.Id ?? 0;
+    public uint GetHomeWorld() => Svc.ClientState.LocalPlayer?.HomeWorld.Id ?? 0;
 
     public float GetPlayerRawXPos(string character = "")
     {
