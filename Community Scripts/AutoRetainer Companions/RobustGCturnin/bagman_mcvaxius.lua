@@ -29,7 +29,7 @@ tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
 tony_type = 1 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
 bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
-bagman_type = 0 --0 = pcalls, 1 = liza trade q
+bagman_type = 0 --0 = pcalls, 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil
 
 --if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
 tony_x = 42069420
@@ -37,18 +37,27 @@ tony_y = 42069420
 tony_z = 42069420
 
 --[[
-firstname, lastname, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell
+tony firstname, lastname, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, BAGMAN firstname, lastname
 ]]
 
 local franchise_owners = {
-{"Firstname Lastname@Server", 1, 0},
-{"Firstname Lastname@Server", 1, 0},
-{"Firstname Lastname@Server", 1, 0},
-{"Firstname Lastname@Server", 1, 0},
-{"Firstname Lastname@Server", 1, 0},
-{"Firstname Lastname@Server", 1, 0},
-{"Firstname Lastname@Server", 1, 0},
-{"Firstname Lastname@Server", 1, 0}
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"}
+}
+
+--dropbox queue config,   ItemID,Quantity
+--you can set quantity higher than existing to ensure max out
+local filled_bags = {
+{1,999999999},
+{2,999999999},
+{3,999999999}
 }
 
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
@@ -84,13 +93,15 @@ local function shake_hands()
 		if thebag < 0 then
 			thebag = GetGil()
 		end
+
+		--*loop until we have tony targeted
 		yield("/target "..fat_tony)
 		yield("/wait 1")
+		
 		--DEBUG
 		--yield("/echo our return mode will be "..franchise_owners[1][2])
-		--*/dropbox trade gil thebag
-		--*some kind of loop to check gil amount until it reaches the desired remainder
-		--hack way to transfer gil for now
+		
+		--pcall way to transfer gil only. we can't pcall other methods
 		while GetGil() > bagmans_take do
 			yield("/target "..fat_tony)
 			yield("/echo here you go "..fat_tony..", another full bag, with respect")
@@ -117,14 +128,38 @@ local function shake_hands()
 					yield("/wait 4")
 				end
 			end
-			if bagman_type == 1 then
-				snaccman = GetGil() - bagmans_take
+			if bagman_type > 0 then
 				yield("/dropbox")
-				yield("/wait 0.5")
-				yield("/focustarget <t>")
-				yield("/wait 0.5")
-				yield("/dbq 1:"..snaccman)
-				--*how do we make the trading START?!?!?!
+				yield("/wait 1")
+				if bagman_type == 1 then
+					for i=1, #filled_bags do
+						yield("/dbq "..filled_bags[i][1]..":"..filled_bags[i][2])
+					end
+				end
+				if bagman_type == 2 then
+					snaccman = GetGil() - bagmans_take
+					yield("/dropbox")
+					yield("/wait 0.5")
+					yield("/focustarget <t>")
+					yield("/wait 0.5")
+					yield("/dbq 1:"..snaccman)
+					
+					yield("/dbq 22500:*")  --  22500  Salvaged
+					yield("/dbq 22501:*")  --  22501  Salvaged
+					yield("/dbq 22502:*")  --  22502  Salvaged
+					yield("/dbq 22503:*")  --  22503  Salvaged
+					yield("/dbq 22504:*")  --  22504  Salvaged
+					yield("/dbq 22505:*")  --  22505  Salvaged
+					yield("/dbq 22506:*")  --  22506  Salvaged
+					yield("/dbq 22507:*")  --  22507  Salvaged
+				end
+				yield("/wait 4")
+				DropboxStart()
+
+				while DropboxIsBusy() do
+				  yield("/wait 0.1")
+				end
+				  yield("/wait 5")
 			end
 			yield("/wait 1")
 		end
