@@ -70,6 +70,21 @@ DidWeLoadcorrectly()
 
 yield("/ays multi d")
 
+local function distance(x1, y1, z1, x2, y2, z2)
+	if type(x1) ~= "number" then x1 = 0 end
+	if type(y1) ~= "number" then y1 = 0 end
+	if type(z1) ~= "number" then z1 = 0 end
+	if type(x2) ~= "number" then x2 = 0 end
+	if type(y2) ~= "number" then y2	= 0 end
+	if type(z2) ~= "number" then z2 = 0 end
+	zoobz = math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+	if type(zoobz) ~= "number" then
+		zoobz = 0
+	end
+    --return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+    return zoobz
+end
+
 local function approach_tony()
 	local specific_tony = 0
 	if tony_x ~= 42069420 and tony_y ~= 42069420 and tony_z ~= 42069420 then
@@ -94,9 +109,20 @@ local function shake_hands()
 			thebag = GetGil()
 		end
 
-		--*loop until we have tony targeted
+		--loop until we have tony targeted
 		yield("/target "..fat_tony)
 		yield("/wait 1")
+		while string.len(GetTargetName()) == 0 do
+			yield("/target "..fat_tony)
+			yield("/wait 1")
+		end
+		
+		--we got fat tony.  we just need to make sure he is within targeting distance. say <1 yalms before we continue
+		while distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)) > 0 do
+			yield("/echo this fat bastard better hurry up he is  "..distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)).." away!")
+			yield("/target "..fat_tony)   --just in case we had wrong "tony" targeted
+			yield("/wait 1")
+		end
 		
 		--DEBUG
 		--yield("/echo our return mode will be "..franchise_owners[1][2])
