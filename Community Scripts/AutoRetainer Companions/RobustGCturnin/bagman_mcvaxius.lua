@@ -167,13 +167,21 @@ local function shake_hands()
 end
 
 for i=1,#franchise_owners do
+	--update tony's name
+	fat_tony = franchise_owners[i][4]
+	
 	yield("/echo Loading bagman to deliver protection payments Fat Tony -> "..fat_tony..".  Bagman -> "..franchise_owners[i][1])
 	yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
-	yield("/ays relog " ..franchise_owners[i][1])
-	yield("/wait 2")
-	CharacterSafeWait()
+
+	--only switch chars if the bagman is changing. in some cases we are delivering to same tony or different tonies. we dont care about the numbers
+	if GetCharacterName(true) ~= franchise_owners[i][1] then
+		yield("/ays relog " ..franchise_owners[i][1])
+		yield("/wait 2")
+		CharacterSafeWait()
+	end	
+
     yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
-	
+
 	--AGP. always get paid.
 	--don't deliver if we can't pay ourselves. Tony is too lazy and stupid to come check our franchise anyways.
 	--tell him our grandmother was sick
