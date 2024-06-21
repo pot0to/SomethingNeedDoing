@@ -329,6 +329,14 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-06-21",
+        "- Added DropboxStart()\n" +
+        "- Added DropboxStop()\n" +
+        "- Added DropboxIsBusy()\n" +
+        "- Added DropboxGetItemQuantity()\n" +
+        "- Added DropboxSetItemQuantity()\n");
+
+        DisplayChangelog(
         "2024-06-19",
         "- Added GetFreeSlotsInContainer()\n" +
         "- Added GetCurrentWorld()\n" +

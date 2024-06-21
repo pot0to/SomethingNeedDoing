@@ -1,5 +1,6 @@
 ﻿using AutoRetainerAPI;
 using ECommons.DalamudServices;
+using Lumina.Excel.GeneratedSheets2;
 using SomethingNeedDoing.IPC;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace SomethingNeedDoing.Misc.Commands;
 public class IpcCommands
 {
     internal static IpcCommands Instance { get; } = new();
+    private Dropbox dropbox;
 
     public List<string> ListAllFunctions()
     {
@@ -34,6 +36,7 @@ public class IpcCommands
         NavmeshIPC.Init();
         DeliverooIPC.Init();
         PandorasBoxIPC.Init();
+        dropbox = new();
     }
 
     internal void Dispose()
@@ -175,5 +178,13 @@ public class IpcCommands
             data.Remove(nameof(SomethingNeedDoing));
         }
     }
+    #endregion
+
+    #region Dropbox
+    public void DropboxStart() => dropbox.BeginTradingQueue();
+    public void DropboxStop() => dropbox.Stop();
+    public bool DropboxIsBusy() => dropbox.IsBusy();
+    public int DropboxGetItemQuantity(uint id, bool hq) => dropbox.GetItemQuantity(id, hq);
+    public void DropboxSetItemQuantity(uint id, bool hq, int quantity) => dropbox.SetItemQuantity(id, hq, quantity);
     #endregion
 }
