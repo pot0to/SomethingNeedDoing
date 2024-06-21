@@ -30,6 +30,7 @@ tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust yo
 tony_type = 1 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
 bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
 bagman_type = 0 --0 = pcalls, 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil
+tonyception = 0 --0 = dont be fancy, 1 = we have multiple fat tonies in the table and therefore we need to give 1 gil at the end of the trade so tony will leave and the next tony can come
 
 --if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
 tony_x = 42069420
@@ -186,6 +187,14 @@ local function shake_hands()
 				  yield("/wait 0.1")
 				end
 				  yield("/wait 5")
+				  if tonyception == 1 then
+					yield("/echo Woah we need another tony out here im not giving you this next bag you mook")
+					yield("/dbq 1:1")
+					while DropboxIsBusy() do
+					  yield("/wait 0.1")
+					end
+					  yield("/wait 5")
+				  end
 			end
 			yield("/wait 1")
 		end
