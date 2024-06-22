@@ -3,13 +3,13 @@
   Author: McVaxius
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1190858719546835065
 
-for the below table templates,.. the 2nd (last var)
+for the below table templates,.. the 2nd var
 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte
 ]]
 
 --enter in names of chars that can edit emblems are in same GC as the FC otherwise it will update the GC for 15k gil
 --warning it will attempt to change the free company allegiance just in case. make sure the char has 15k gil
---3rd var here is the tag if you aroe changing it
+--3rd var here is the tag if you are changing it
 local chars_EMBLEM = {
   {"First Last@Server", 0, "WHEEA"},
   {"First Last@Server", 0, "WHEEB"},
@@ -27,16 +27,20 @@ local chars_FCBUFF = {
   {"First Last@Server", 0}
 }
 
---names of chars to do turnins
+--[[
+names of chars to do turnins
+The last var is whether this char will attempt GC supply turnins and attempt rank promotions.
+this will take up to 15-20 seconds so dont enable it for every character unless you really need it (supply missions for leveling jobs basically)
+]]
 local chars_fn = {
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0}
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0}
 }
 
 -------------------------
@@ -59,7 +63,6 @@ restock_amt   = 66666 --n>0 minimum amount of total fuel to reach, when restocki
 --------------------
 --Process Configs --
 --------------------
-process_gc_rank  = 0		--0=no,1=yes. do we try to rank up the GC and maybe do a supply delivery turnin?
 process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
 buy_fc_buffs     = 1 	--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
 process_players  = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
@@ -179,8 +182,8 @@ function Final_GC_Cleaning()
 		yield("/novicenetworkleave")
 	end
 	
-	--try to rankup before leaving
-	if process_gc_rank == 1 then
+	--try to turn in supply mission items and rankup before leaving if its set for that char
+	if chars_fn[rcuck_count][3] == 1 then
 		yield("/echo movement stopped - time for GC turn ins")
 		--yield("<wait.15>")
 		--yield("/waitaddon SelectString <maxwait.120>")
