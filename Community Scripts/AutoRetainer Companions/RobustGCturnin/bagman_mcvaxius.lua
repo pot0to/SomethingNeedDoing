@@ -197,7 +197,7 @@ local function shake_hands()
 				yield("/wait 4")
 				DropboxStart()
 				yield("/wait 2")
-				floo = true
+ 			    floo = DropboxIsBusy()
 				while floo == true do
 				  floo = DropboxIsBusy()
 				  yield("/wait 2")
@@ -206,12 +206,16 @@ local function shake_hands()
 				yield("/wait 5")
 				if tonyception == 1 then
 				  yield("/echo Woah we need another tony out here im not giving you this next bag you mook")
-				  yield("/dbq 1:1")
-				while floo == true do
-				  floo = DropboxIsBusy()
+				  --yield("/dbq 1:1") 
+				  DropboxSetItemQuantity(1,false,1)
+  				  DropboxStart()
 				  yield("/wait 2")
-   				  yield("/echo Trading happening!!")
-				end
+ 			      floo = DropboxIsBusy()
+				  while floo == true do
+					  floo = DropboxIsBusy()
+					  yield("/wait 2")
+					  yield("/echo Trading happening!!")
+				  end
 				  yield("/wait 5")
 				end
 			end
