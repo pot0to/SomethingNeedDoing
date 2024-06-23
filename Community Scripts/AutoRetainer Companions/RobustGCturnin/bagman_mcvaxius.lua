@@ -38,19 +38,18 @@ tony_y = 42069420
 tony_z = 42069420
 
 --[[
-tony firstname, lastname, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, BAGMAN firstname, lastname
+tony firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, BAGMAN firstnamelastname  (no server this time)
 ]]
 
 local franchise_owners = {
-{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
-{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
-{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
-{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
-{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
-{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
-{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
-{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"},
-{"Firstname Lastname@Server", 1, 0, "Firstname Lastname@Server"}
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname"},
+{"Firstname Lastname@Server", 1, 0, "Firstname Lastname"}
 }
 
 --dropbox queue config,   ItemID,Quantity
