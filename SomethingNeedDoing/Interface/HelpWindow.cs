@@ -329,6 +329,11 @@ internal class HelpWindow : Window
         ImGui.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-06-23",
+        "- Added GetLastInstanceServerID()\n" +
+        "- Added GetLastInstanceZoneID()\n");
+
+        DisplayChangelog(
         "2024-06-21",
         "- Added DropboxStart()\n" +
         "- Added DropboxStop()\n" +

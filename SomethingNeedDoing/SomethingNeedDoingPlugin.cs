@@ -5,6 +5,7 @@ using ECommons.SimpleGui;
 using ImGuiNET;
 using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.Managers;
+using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
 using System.Linq;
 
@@ -18,6 +19,8 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
     public string Name => "Something Need Doing (Expanded Edition)";
     private const string Command = "/somethingneeddoing";
     private static string[] Aliases => ["/pcraft", "/snd"];
+
+    private Watcher watcher;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SomethingNeedDoingPlugin"/> class.
@@ -44,6 +47,8 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
 
         EzCmd.Add(Command, OnChatCommand, "Open a window to edit various settings.");
         Aliases.ToList().ForEach(a => EzCmd.Add(a, OnChatCommand, $"{Command} Alias"));
+
+        watcher = new();
     }
 
 

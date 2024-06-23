@@ -1,7 +1,11 @@
-﻿using Dalamud.Utility;
+﻿using Dalamud.Hooking;
+using Dalamud.Memory;
+using Dalamud.Utility;
+using Dalamud.Utility.Signatures;
 using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -71,6 +75,9 @@ public class WorldStateCommands
     public float DistanceBetween(float x1, float y1, float z1, float x2, float y2, float z2) => Vector3.DistanceSquared(new Vector3(x1, y1, z1), new Vector3(x2, y2, z2));
 
     public unsafe float GetContentTimeLeft() => EventFramework.Instance()->GetInstanceContentDirector()->ContentDirector.ContentTimeLeft;
+
+    public unsafe int GetLastInstanceServerID() => WatchedValues.InstanceServerID;
+    public unsafe int GetLastInstanceZoneID() => WatchedValues.InstanceServerID;
 
     #region OceanFishing
     public unsafe uint GetCurrentOceanFishingRoute() => EventFramework.Instance()->GetInstanceContentOceanFishing()->CurrentRoute;
