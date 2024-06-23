@@ -119,7 +119,7 @@ local function shake_hands()
 		end
 		
 		--we got fat tony.  we just need to make sure he is within targeting distance. say <1 yalms before we continue
-		while distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)) > 0 do
+		while distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)) > 1.5 do
 			yield("/echo this fat bastard better hurry up he is  "..distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)).." away!")
 			yield("/target "..fat_tony)   --just in case we had wrong "tony" targeted
 			yield("/wait 1")
@@ -155,22 +155,35 @@ local function shake_hands()
 					yield("/wait 4")
 				end
 			end
-			if bagman_type > 0 then
+			if bagman_type > 0 then 
+				bagmans_take = 9999999999 --so the loop exits
 				yield("/dropbox")
 				yield("/wait 1")
+				yield("/focustarget <t>")
+				yield("/wait 0.5")
 				if bagman_type == 1 then
 					for i=1, #filled_bags do
-						yield("/dbq "..filled_bags[i][1]..":"..filled_bags[i][2])
+						--yield("/dbq "..filled_bags[i][1]..":"..filled_bags[i][2])  --kitchensync seems to immediately start trade would have to format this as a long concatenated string instead
+						DropboxSetItemQuantity(filled_bags[i][1],false,filled_bags[i][2])
 					end
 				end
 				if bagman_type == 2 then
 					snaccman = GetGil() - bagmans_take
 					yield("/dropbox")
 					yield("/wait 0.5")
-					yield("/focustarget <t>")
-					yield("/wait 0.5")
-					yield("/dbq 1:"..snaccman)
-					
+					if snaccman > 0 then
+						--yield("/dbq 1:"..snaccman) -- we can't rob tony.. yet
+						DropboxSetItemQuantity(1,false,snaccman)
+					end					
+					DropboxSetItemQuantity(22500,false,999999)
+					DropboxSetItemQuantity(22501,false,999999)
+					DropboxSetItemQuantity(22502,false,999999)
+					DropboxSetItemQuantity(22503,false,999999)
+					DropboxSetItemQuantity(22504,false,999999)
+					DropboxSetItemQuantity(22505,false,999999)
+					DropboxSetItemQuantity(22506,false,999999)
+					DropboxSetItemQuantity(22507,false,999999)
+					--[[
 					yield("/dbq 22500:*")  --  22500  Salvaged
 					yield("/dbq 22501:*")  --  22501  Salvaged
 					yield("/dbq 22502:*")  --  22502  Salvaged
@@ -179,22 +192,29 @@ local function shake_hands()
 					yield("/dbq 22505:*")  --  22505  Salvaged
 					yield("/dbq 22506:*")  --  22506  Salvaged
 					yield("/dbq 22507:*")  --  22507  Salvaged
+					]]
 				end
+				
 				yield("/wait 4")
 				DropboxStart()
-
-				while DropboxIsBusy() do
-				  yield("/wait 0.1")
+				yield("/wait 2")
+				floo = true
+				while floo == true do
+				  floo = DropboxIsBusy()
+				  yield("/wait 2")
+				  yield("/echo Trading happening!")
+				end
+				yield("/wait 5")
+				if tonyception == 1 then
+				  yield("/echo Woah we need another tony out here im not giving you this next bag you mook")
+				  yield("/dbq 1:1")
+				while floo == true do
+				  floo = DropboxIsBusy()
+				  yield("/wait 2")
+   				  yield("/echo Trading happening!!")
 				end
 				  yield("/wait 5")
-				  if tonyception == 1 then
-					yield("/echo Woah we need another tony out here im not giving you this next bag you mook")
-					yield("/dbq 1:1")
-					while DropboxIsBusy() do
-					  yield("/wait 0.1")
-					end
-					  yield("/wait 5")
-				  end
+				end
 			end
 			yield("/wait 1")
 		end
