@@ -38,6 +38,13 @@ tony_y = 42069420
 tony_z = 42069420
 
 --[[
+how do i get an xyz?
+run this:
+yield("/echo "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos().."")
+]]
+
+
+--[[
 tony firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, BAGMAN firstnamelastname  (no server this time)
 ]]
 
