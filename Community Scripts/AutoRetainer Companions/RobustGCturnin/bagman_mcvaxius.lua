@@ -162,7 +162,6 @@ local function shake_hands()
 				end
 			end
 			if bagman_type > 0 then 
-				bagmans_take = 9999999999 --so the loop exits
 				yield("/dropbox")
 				yield("/wait 1")
 				yield("/focustarget <t>")
@@ -201,6 +200,7 @@ local function shake_hands()
 					]]
 				end
 				
+				bagmans_take = 9999999999 --so the loop exits
 				yield("/wait 4")
 				DropboxStart()
 				yield("/wait 2")
