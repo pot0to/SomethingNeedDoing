@@ -76,6 +76,7 @@ DidWeLoadcorrectly()
 --If he has to come pick it up himself its gonna get messy
 
 yield("/ays multi d")
+snagmanstake = bagmanstake
 
 local function distance(x1, y1, z1, x2, y2, z2)
 	if type(x1) ~= "number" then x1 = 0 end
@@ -301,6 +302,7 @@ for i=1,#franchise_owners do
 			visland_stop_moving()
 		end
 		shake_hands() -- its a business doing pleasure with you tony as always
+		bagmans_take = snagmanstake
 	end
 	if road_trip == 1 then --we need to get home
 		--time to go home.. maybe?
