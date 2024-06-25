@@ -17,6 +17,9 @@ Optional:
 Autoretainer
 Liza's plugin : Kitchen Sink if you want to use her queue method
 
+Known issues:
+Something i need to confirm and report -> Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a, if i use pcall method they will keep trying until they finish delivering gil.  however
+if i use the dropbox method I am 99% sure it will just kind of sit there thinking its processing a dropbox queue but in fact its just sitting there doing nothing.
 ]]
 
 --Start because nobody read the instructions at the top <3
@@ -45,7 +48,7 @@ yield("/echo "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZP
 
 
 --[[
-tony firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, BAGMAN firstnamelastname  (no server this time)
+bagman firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, TONY firstnamelastname  (no server this time)
 ]]
 
 local franchise_owners = {
