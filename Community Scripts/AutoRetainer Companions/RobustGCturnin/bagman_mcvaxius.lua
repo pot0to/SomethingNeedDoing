@@ -11,11 +11,13 @@ Dropbox -> autoconfirm
 Visland
 Vnavmesh
 Simpletweaks -> enable targeting fix
+Simpletweaks -> enable estate list
 YesAlready -> /Enter .*/
 
 Optional:
 Autoretainer
 Liza's plugin : Kitchen Sink if you want to use her queue method
+Simpletweaks -> enable auto equip recommended
 
 Known issues:
 Something i need to confirm and report -> Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a, if i use pcall method they will keep trying until they finish delivering gil.  however
@@ -30,9 +32,9 @@ fat_tony = "Firstname Lastname" --what is the name of the destination player who
 tonys_turf = "Maduin" --what server is tony on
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
-tony_type = 1 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
+tony_type = 0 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
 bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
-bagman_type = 0 --0 = pcalls, 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil
+bagman_type = 0 --0 = pcalls (gil only, a bit sloppy too with no multi tony support), 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil
 tonyception = 0 --0 = dont be fancy, 1 = we have multiple fat tonies in the table and therefore we need to give 1 gil at the end of the trade so tony will leave and the next tony can come
 
 --if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
