@@ -19,10 +19,10 @@ yield("Flames Rank :"..GetFlamesGCRank())
 yield("Maelstrom Rank :"..GetMaelstromGCRank())
 yield("Adders Rank :"..GetAddersGCRank())
 
- yield("/echo movement stopped - time for GC turn ins")
+yield("/echo movement stopped - time for GC turn ins")
 --yield("<wait.15>")
 --yield("/waitaddon SelectString <maxwait.120>")
- yield("/visland stop")
+yield("/visland stop")
 yield("/wait 1")
 yield("/target Personnel Officer")
 yield("/wait 1")
@@ -44,10 +44,10 @@ yield("/wait 3")
 
 GCrenk = GetFlamesGCRank()
 if GetMaelstromGCRank() > GCrenk then
-	GC renk = GetMaelstromGCRank()
+	GCrenk = GetMaelstromGCRank()
 end
 if GetAddersGCRank() > GCrenk then
-	GC renk = GetAddersGCRank()
+	GCrenk = GetAddersGCRank()
 end
 
 if GCrenk < 4 then --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D

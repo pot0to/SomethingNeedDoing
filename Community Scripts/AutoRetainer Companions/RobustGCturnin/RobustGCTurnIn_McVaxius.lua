@@ -3,13 +3,13 @@
   Author: McVaxius
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1190858719546835065
 
-for the below table templates,.. the 2nd (last var)
+for the below table templates,.. the 2nd var
 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte
 ]]
 
 --enter in names of chars that can edit emblems are in same GC as the FC otherwise it will update the GC for 15k gil
 --warning it will attempt to change the free company allegiance just in case. make sure the char has 15k gil
---3rd var here is the tag if you aroe changing it
+--3rd var here is the tag if you are changing it
 local chars_EMBLEM = {
   {"First Last@Server", 0, "WHEEA"},
   {"First Last@Server", 0, "WHEEB"},
@@ -27,16 +27,20 @@ local chars_FCBUFF = {
   {"First Last@Server", 0}
 }
 
---names of chars to do turnins
+--[[
+names of chars to do turnins
+The last var is whether this char will attempt GC supply turnins and attempt rank promotions.
+this will take up to 15-20 seconds so dont enable it for every character unless you really need it (supply missions for leveling jobs basically)
+]]
 local chars_fn = {
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0},
- {"First Last@Server", 0}
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0},
+ {"First Last@Server", 0, 0}
 }
 
 -------------------------
@@ -176,6 +180,102 @@ function Final_GC_Cleaning()
 	
 	if nnl == 1 then
 		yield("/novicenetworkleave")
+	end
+	
+	--try to turn in supply mission items and rankup before leaving if its set for that char
+	if chars_fn[rcuck_count][3] == 1 then
+		yield("/echo movement stopped - time for GC turn ins")
+		--yield("<wait.15>")
+		--yield("/waitaddon SelectString <maxwait.120>")
+		yield("/visland stop")
+		yield("/wait 1")
+		yield("/target Personnel Officer")
+		yield("/wait 1")
+		yield("/send NUMPAD0")
+		yield("/pcall SelectString true 0 <wait.1>")
+		yield("/send NUMPAD0")
+		yield("/wait 1")
+		yield("/send NUMPAD0")
+		yield("/wait 1")
+		yield("/pcall GrandCompanySupplyList true 0 1 2")
+		yield("/wait 1")
+		yield("/send NUMPAD0")
+		yield("/wait 1")
+		yield("/send NUMPAD0")
+		yield("/wait 1")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/wait 3")
+		GCrenk = GetFlamesGCRank()
+		if GetMaelstromGCRank() > GCrenk then
+			GC renk = GetMaelstromGCRank()
+		end
+		if GetAddersGCRank() > GCrenk then
+			GC renk = GetAddersGCRank()
+		end
+		if GCrenk < 4 then --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D
+			--try to promote
+			yield("/wait 1")
+			yield("/target Personnel Officer")
+			yield("/wait 1")
+			yield("/send NUMPAD0")
+			yield("/wait 1")
+			yield("/send NUMPAD2")
+			yield("/wait 0.5")
+			yield("/send NUMPAD0")
+			yield("/wait 0.5")
+			yield("/send NUMPAD0")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/wait 3")
+			--wait for char condition 1
+			while GetCharacterCondition(32) == true and GetCharacterCondition(35) == true do
+				yield("/wait 1")
+			end
+			yield("/wait 2")
+		end
+		if GCrenk < 7 and GCrenk > 4 then --if we are above 4 and below 7 we can go up to 7
+			--try to promote
+			yield("/wait 1")
+			yield("/target Personnel Officer")
+			yield("/wait 1")
+			yield("/send NUMPAD0")
+			yield("/wait 1")
+			yield("/send NUMPAD2")
+			yield("/wait 0.5")
+			yield("/send NUMPAD0")
+			yield("/wait 0.5")
+			yield("/send NUMPAD0")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/wait 3")
+			--wait for char condition 1
+			while GetCharacterCondition(32) == true and GetCharacterCondition(35) == true do
+				yield("/wait 1")
+			end
+			yield("/wait 2")
+		end
+		--output a log of the GC ranks and your current job level to a log file stored in the SND folder
+		GCrenk = GetFlamesGCRank()
+		if GetMaelstromGCRank() > GCrenk then
+			GCrenk = GetMaelstromGCRank()
+		end
+		if GetAddersGCRank() > GCrenk then
+			GCrenk = GetAddersGCRank()
+		end
+		local folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
+		local file = io.open(folderPath .. "GCrankLog.txt", "a")
+		if file then
+			-- Write text to the file
+			currentTime = os.date("*t")
+			formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
+			file:write(formattedTime.." - "..chars_fn[rcuck_count][1].." - Job Lv - "..GetLevel().." - GC Rank - "..GCrenk.."\n")
+			-- Close the file handle
+			file:close()
+			yield("/echo Text has been written to '" .. folderPath .. "GCrankLog.txt'")
+		else
+			yield("/echo Error: Unable to open file for writing")
+		end
 	end
 	
 	--limsa aetheryte
