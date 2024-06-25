@@ -62,8 +62,14 @@ local franchise_owners = {
 {"Firstname Lastname@Server", 1, 0, "Firstname Lastname"}
 }
 
---dropbox queue config,   ItemID,Quantity
---you can set quantity higher than existing to ensure max out
+--[[
+dropbox queue config,   ItemID,Quantity
+you can set quantity higher than existing to ensure max out
+1 = Gil
+10155 = Ceruleum Fuel
+10373 = Magitek Repair Mats
+ill add more commonly used IDs here eventually dont wanna clutter too much though.
+]]
 local filled_bags = {
 {1,999999999},
 {2,999999999},
