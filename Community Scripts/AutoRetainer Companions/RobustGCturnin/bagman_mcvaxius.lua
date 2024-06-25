@@ -21,15 +21,16 @@ Liza's plugin : Kitchen Sink if you want to use her queue method
 Simpletweaks -> enable auto equip recommended
 
 Known issues:
+"Race Condition with trade windows"
 Something i need to confirm and report -> Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a, if i use pcall method they will keep trying until they finish delivering gil.  however
-if i use the dropbox method I am 99% sure it will just kind of sit there thinking its processing a dropbox queue but in fact its just sitting there doing nothing.
+if i use the dropbox method I am 99% sure it will just kind of sit there thinking its processing a dropbox queue but in fact its just sitting there doing nothing if any of the trade windows are open
+while other clients are trying and failing to open one with the char from account A.
 ]]
 
 --Start because nobody read the instructions at the top <3
 PandoraSetFeatureState("Auto-Fill Numeric Dialogs", false) 
 --End because nobody read the instructions at the top <3
 
-fat_tony = "Firstname Lastname" --what is the name of the destination player who will receive the gil
 tonys_turf = "Maduin" --what server is tony on
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
@@ -51,7 +52,7 @@ yield("/echo "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZP
 
 
 --[[
-bagman firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, TONY firstnamelastname  (no server this time)
+BAGMAN firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, TONY firstnamelastname  (no server this time)
 ]]
 
 local franchise_owners = {
@@ -97,6 +98,7 @@ DidWeLoadcorrectly()
 --If he has to come pick it up himself its gonna get messy
 
 yield("/ays multi d")
+fat_tony = "Firstname Lastname" --this is just a placeholder you dont have to technically set it.
 snagmanstake = bagmanstake
 
 local function distance(x1, y1, z1, x2, y2, z2)
