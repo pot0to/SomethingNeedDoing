@@ -13,6 +13,7 @@ Vnavmesh
 Simpletweaks -> enable targeting fix
 Simpletweaks -> enable estate list
 YesAlready -> /Enter .*/
+Something Need Doing -> Turn off SND Targeting in options
 
 Optional:
 Autoretainer
