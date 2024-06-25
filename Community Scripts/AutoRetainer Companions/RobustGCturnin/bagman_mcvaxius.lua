@@ -65,7 +65,16 @@ local franchise_owners = {
 }
 
 --[[
-dropbox queue config,   ItemID,Quantity
+dropbox queue config template:
+
+local filled_bags = {
+{ItemID,Quantity},
+{ItemID,Quantity},
+{ItemID,Quantity}
+}
+
+notice lack of comma on last one. you can otherwise have as many items as you want in this list
+
 you can set quantity higher than existing to ensure max out
 1 = Gil
 10155 = Ceruleum Fuel
