@@ -11,25 +11,32 @@ Dropbox -> autoconfirm
 Visland
 Vnavmesh
 Simpletweaks -> enable targeting fix
+Simpletweaks -> enable estate list
 YesAlready -> /Enter .*/
+Something Need Doing -> Turn off SND Targeting in options
 
 Optional:
 Autoretainer
 Liza's plugin : Kitchen Sink if you want to use her queue method
+Simpletweaks -> enable auto equip recommended
 
+Known issues:
+"Race Condition with trade windows"
+Something i need to confirm and report -> Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a, if i use pcall method they will keep trying until they finish delivering gil.  however
+if i use the dropbox method I am 99% sure it will just kind of sit there thinking its processing a dropbox queue but in fact its just sitting there doing nothing if any of the trade windows are open
+while other clients are trying and failing to open one with the char from account A.
 ]]
 
 --Start because nobody read the instructions at the top <3
 PandoraSetFeatureState("Auto-Fill Numeric Dialogs", false) 
 --End because nobody read the instructions at the top <3
 
-fat_tony = "Firstname Lastname" --what is the name of the destination player who will receive the gil
 tonys_turf = "Maduin" --what server is tony on
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
-tony_type = 1 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
+tony_type = 0 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
 bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
-bagman_type = 0 --0 = pcalls, 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil
+bagman_type = 0 --0 = pcalls (gil only, a bit sloppy too with no multi tony support), 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil
 tonyception = 0 --0 = dont be fancy, 1 = we have multiple fat tonies in the table and therefore we need to give 1 gil at the end of the trade so tony will leave and the next tony can come
 
 --if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
@@ -45,7 +52,7 @@ yield("/echo "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZP
 
 
 --[[
-tony firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, BAGMAN firstnamelastname  (no server this time)
+BAGMAN firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, TONY firstnamelastname  (no server this time)
 ]]
 
 local franchise_owners = {
@@ -59,8 +66,23 @@ local franchise_owners = {
 {"Firstname Lastname@Server", 1, 0, "Firstname Lastname"}
 }
 
---dropbox queue config,   ItemID,Quantity
---you can set quantity higher than existing to ensure max out
+--[[
+dropbox queue config template:
+
+local filled_bags = {
+{ItemID,Quantity},
+{ItemID,Quantity},
+{ItemID,Quantity}
+}
+
+notice lack of comma on last one. you can otherwise have as many items as you want in this list
+
+you can set quantity higher than existing to ensure max out
+1 = Gil
+10155 = Ceruleum Fuel
+10373 = Magitek Repair Mats
+ill add more commonly used IDs here eventually dont wanna clutter too much though.
+]]
 local filled_bags = {
 {1,999999999},
 {2,999999999},
@@ -76,6 +98,7 @@ DidWeLoadcorrectly()
 --If he has to come pick it up himself its gonna get messy
 
 yield("/ays multi d")
+fat_tony = "Firstname Lastname" --this is just a placeholder you dont have to technically set it.
 snagmanstake = bagmanstake
 
 local function distance(x1, y1, z1, x2, y2, z2)
