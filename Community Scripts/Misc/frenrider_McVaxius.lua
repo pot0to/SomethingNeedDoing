@@ -139,7 +139,7 @@ fly_you_fools = ini_check("fly_you_fools", false)			--(fly and follow instead of
 fool_flier = ini_check("fool_flier", "Beast with 3 backs")	--if you have fly you fools as true, which beast shall you summon?
 fulftype = ini_check("fulftype", "unchanged")				-- If you have lazyloot installed can setup how loot is handled. Leave on "unchanged" if you don't want it to set your loot settings. Other settings include need, greed, pass and of course, off
 cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistance
-clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr
+clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr, 3 = automaton autofollow, 4 = vanilla game follow
 maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
 limitpct = ini_check("limitpct", 25)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap
 rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
@@ -251,13 +251,20 @@ function clingmove(nemm)
 		PathfindAndMoveTo(GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm), false)
 	end
 	--visland
-	if clingtype == 0 then
-		yield("/visland moveto "..GetObjectRawXPos(nemm).." "..GetObjectRawYPos(nemm).." "..GetObjectRawZPos(nemm)) --*untested
+	if clingtype == 1 then
+		yield("/visland moveto "..GetObjectRawXPos(nemm).." "..GetObjectRawYPos(nemm).." "..GetObjectRawZPos(nemm)) --* verify this is correct later when we can load dalamud
 	end
 	--bmr
-	if clingtype == 0 then
-		yield("/bmrai followtarget true") --* verify this is correct later when we can load qolbar
-		yield("/bmrai follow "..nemm) 	  --* verify this is correct later when we can load dalamud/bmr
+	if clingtype == 2 then
+		yield("/bmrai followtarget true") --* verify this is correct later when we can load dalamud
+		yield("/bmrai follow "..nemm) 	  --* verify this is correct later when we can load dalamud
+	end
+	if clingtype == 3 then
+		yield("/autofollow "..nemm) --* verify this is correct later when we can load dalamud
+	end
+	if clingtype == 4 then
+		yield("/target "..nemm) --* verify this is correct later when we can load dalamud
+		yield("/follow")
 	end
 end
 
