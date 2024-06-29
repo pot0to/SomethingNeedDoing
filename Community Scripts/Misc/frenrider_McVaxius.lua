@@ -263,8 +263,17 @@ function clingmove(nemm)
 		yield("/autofollow "..nemm) --* verify this is correct later when we can load dalamud
 	end
 	if clingtype == 4 then
-		yield("/target "..nemm) --* verify this is correct later when we can load dalamud
-		yield("/follow")
+		--we only doing this silly method out of combat
+		if GetCharacterCondition(26) == false
+			yield("/target "..nemm) --* verify this is correct later when we can load dalamud
+			yield("/follow")
+		end
+		--if we in combat and target is nemm we will clear it becuase that may bork autotarget from RSR
+		if GetCharacterCondition(26) == true
+			if nemm == GetTargetName() then
+				ClearTarget()
+			end
+		end
 	end
 end
 
