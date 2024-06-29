@@ -157,6 +157,25 @@ formation = ini_check("formation", true)					-- Follow in formation? If false, t
 -----------CONFIGURATION END-----------
 
 ----------------
+--INIT SECTION--
+----------------
+yield("/echo Starting fren rider")
+--yield("/target \""..fren.."\"")
+yield("/wait 0.5")
+--yield("/mk cross <t>")
+
+yield("/vbmai "..bossmodAI)
+yield("/bmrai "..bossmodAI)
+
+if rotationtype ~= "none" then
+	yield("/rotation "..rotationtype)
+end
+
+if fulftype ~= "unchanged" then
+	yield("/fulf on")
+	yield("/fulf "..fulftype)
+end
+----------------
 ----INIT END----
 ----------------
 
