@@ -5,5 +5,5 @@ namespace SomethingNeedDoing.Misc;
 
 public static class LegacyHelpers
 {
-    public static void SetTarget(this ITargetManager targetManager, GameObject obj) => targetManager.Target = obj;
+    public static void SetTarget(this ITargetManager targetManager, IGameObject obj) => targetManager.Target = obj;
 }

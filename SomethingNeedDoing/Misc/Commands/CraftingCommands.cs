@@ -57,7 +57,7 @@ public class CraftingCommands()
     public unsafe bool IsCollectable()
     {
         var addon = this.GetSynthesisAddon();
-        return addon->AtkUnitBase.UldManager.NodeList[34]->IsVisible;
+        return addon->AtkUnitBase.UldManager.NodeList[34]->IsVisible();
     }
 
     public unsafe string GetCondition(bool lower = true)

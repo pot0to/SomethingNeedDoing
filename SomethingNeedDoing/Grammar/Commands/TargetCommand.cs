@@ -61,7 +61,7 @@ internal class TargetCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        GameObject? target;
+        IGameObject? target;
 
         if (partyIndex != default)
             target = Svc.Party[partyIndex - 1]?.GameObject;

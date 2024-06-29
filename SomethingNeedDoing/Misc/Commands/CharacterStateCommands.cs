@@ -140,7 +140,7 @@ public class CharacterStateCommands
     public unsafe int GetLevel(int expArrayIndex = -1)
     {
         if (expArrayIndex == -1) expArrayIndex = Svc.ClientState.LocalPlayer!.ClassJob.GameData!.ExpArrayIndex;
-        return UIState.Instance()->PlayerState.ClassJobLevelArray[expArrayIndex];
+        return UIState.Instance()->PlayerState.ClassJobLevels[expArrayIndex];
     }
 
     public unsafe byte GetPlayerGC() => UIState.Instance()->PlayerState.GrandCompany;
@@ -155,11 +155,11 @@ public class CharacterStateCommands
 
     public unsafe uint GetCurrentBait() => PlayerState.Instance()->FishingBait;
 
-    public unsafe ushort GetLimitBreakCurrentValue() => UIState.Instance()->LimitBreakController.CurrentValue;
-    public unsafe uint GetLimitBreakBarValue() => UIState.Instance()->LimitBreakController.BarValue;
+    public unsafe ushort GetLimitBreakCurrentValue() => UIState.Instance()->LimitBreakController.CurrentUnits;
+    public unsafe uint GetLimitBreakBarValue() => UIState.Instance()->LimitBreakController.BarUnits;
     public unsafe byte GetLimitBreakBarCount() => UIState.Instance()->LimitBreakController.BarCount;
 
-    public unsafe uint GetPenaltyRemainingInMinutes() => UIState.Instance()->RouletteController.GetPenaltyRemainingInMinutes(0);
+    public unsafe uint GetPenaltyRemainingInMinutes() => UIState.Instance()->InstanceContent.GetPenaltyRemainingInMinutes(0);
 
     public unsafe byte GetMaelstromGCRank() => PlayerState.Instance()->GCRankMaelstrom;
     public unsafe byte GetFlamesGCRank() => PlayerState.Instance()->GCRankImmortalFlames;

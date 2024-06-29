@@ -62,5 +62,5 @@ internal class TargetEnemyCommand : MacroCommand
         await this.PerformWait(token);
     }
 
-    private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.GameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position);
+    private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.IGameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position);
 }

@@ -110,7 +110,7 @@ public class AddonCommands
 
         var addon = (AtkUnitBase*)ptr;
         var node = GetNodeByIDChain(addon->GetRootNode(), ids);
-        return node != null && node->IsVisible;
+        return node != null && node->IsVisible();
     }
 
     private unsafe AtkResNode* GetNodeByIDChain(AtkResNode* node, params int[] ids)
@@ -118,7 +118,7 @@ public class AddonCommands
         if (node == null || ids.Length <= 0)
             return null;
 
-        if (node->NodeID == ids[0])
+        if (node->NodeId == ids[0])
         {
             if (ids.Length == 1)
                 return node;

@@ -34,7 +34,7 @@ public class InventoryCommands
             var inv = c->GetInventoryContainer(x);
             for (var i = 0; i < inv->Size; i++)
             {
-                if (inv->Items[i].ItemID == 0)
+                if (inv->Items[i].ItemId == 0)
                 {
                     slots++;
                 }
@@ -50,7 +50,7 @@ public class InventoryCommands
         var slots = 0;
         for (var i = 0; i < cont->Size; i++)
         {
-            if (cont->Items[i].ItemID == 0)
+            if (cont->Items[i].ItemId == 0)
                 slots++;
         }
         return slots;

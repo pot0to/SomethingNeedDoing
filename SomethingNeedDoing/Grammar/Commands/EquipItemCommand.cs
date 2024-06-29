@@ -107,7 +107,7 @@ internal class EquipItemCommand : MacroCommand
             or InventoryType.ArmoryWrist
             or InventoryType.ArmoryRings
             or InventoryType.ArmorySoulCrystal ? AgentId.ArmouryBoard : AgentId.Inventory;
-        var addonId = AgentModule.Instance()->GetAgentByInternalId(agentId)->GetAddonID();
+        var addonId = AgentModule.Instance()->GetAgentByInternalId(agentId)->GetAddonId();
         var ctx = AgentInventoryContext.Instance();
         ctx->OpenForItemSlot(pos.Value.inv, pos.Value.slot, addonId);
 
@@ -116,7 +116,7 @@ internal class EquipItemCommand : MacroCommand
         {
             for (var i = 0; i < contextMenu->AtkValuesCount; i++)
             {
-                var firstEntryIsEquip = ctx->EventIdSpan[i] == 25; // i'th entry will fire eventid 7+i; eventid 25 is 'equip'
+                var firstEntryIsEquip = ctx->EventIds[i] == 25; // i'th entry will fire eventid 7+i; eventid 25 is 'equip'
                 if (firstEntryIsEquip)
                 {
                     Svc.Log.Debug($"Equipping item #{itemId} from {pos.Value.inv} @ {pos.Value.slot}, index {i}");
@@ -141,7 +141,7 @@ internal class EquipItemCommand : MacroCommand
             var cont = InventoryManager.Instance()->GetInventoryContainer(inv);
             for (var i = 0; i < cont->Size; ++i)
             {
-                if (cont->GetInventorySlot(i)->ItemID == itemId)
+                if (cont->GetInventorySlot(i)->ItemId == itemId)
                 {
                     return (inv, i);
                 }
