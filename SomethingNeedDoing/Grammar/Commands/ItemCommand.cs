@@ -22,7 +22,7 @@ internal class ItemCommand : MacroCommand
 
     public static nint itemContextMenuAgent = nint.Zero;
     public delegate void UseItemDelegate(nint itemContextMenuAgent, uint itemID, uint inventoryPage, uint inventorySlot, short a5);
-    public static UseItemDelegate UseItemSig;
+    public static UseItemDelegate UseItemSig = null!;
 
     private readonly string itemName;
     private readonly ItemQualityModifier itemQualityMod;
