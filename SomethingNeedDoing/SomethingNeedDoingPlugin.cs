@@ -2,7 +2,6 @@ using ClickLib;
 using Dalamud.Plugin;
 using ECommons;
 using ECommons.SimpleGui;
-using ImGuiNET;
 using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.Managers;
 using SomethingNeedDoing.Misc;
