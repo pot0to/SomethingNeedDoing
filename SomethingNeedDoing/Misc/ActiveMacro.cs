@@ -91,12 +91,12 @@ internal partial class ActiveMacro : IDisposable
             ? $"/craft {craftCount}{echoMod}"
             : $"/gate {craftCount - 1}{echoMod}";
 
-        var clickSteps = string.Join("\n", new string[]
-        {
+        var clickSteps = string.Join("\n",
+        [
             $@"/waitaddon ""RecipeNote""{maxwaitMod}",
             $@"/click ""synthesize""",
             $@"/waitaddon ""Synthesis""{maxwaitMod}",
-        });
+        ]);
 
         var loopStep = $"/loop{echoMod}";
 

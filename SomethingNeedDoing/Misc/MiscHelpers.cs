@@ -41,7 +41,7 @@ internal class MiscHelpers
 
     public static bool IsLuaCode(string code)
     {
-        string[] luaPatterns = {
+        string[] luaPatterns = [
             @"function\s+.+\(.*\)",
             @"\bend\b",
             @"local\s+\w+",
@@ -53,7 +53,7 @@ internal class MiscHelpers
             @"\bif\b",
             @"\belseif\b",
             @"\belse\b"
-        };
+        ];
 
         foreach (var pattern in luaPatterns)
             if (Regex.IsMatch(code, pattern))

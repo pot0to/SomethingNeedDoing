@@ -27,8 +27,8 @@ internal class HelpWindow : Window
     public static new readonly string WindowName = "Something Need Doing Help";
     private static readonly Vector4 ShadedColor = new(0.68f, 0.68f, 0.68f, 1.0f);
 
-    private readonly (string Name, string? Alias, string Description, string[] Modifiers, string[] Examples)[] commandData = new[]
-    {
+    private readonly (string Name, string? Alias, string Description, string[] Modifiers, string[] Examples)[] commandData =
+    [
         (
             "action", "ac",
             "Execute an action and wait for the server to respond.",
@@ -41,11 +41,10 @@ internal class HelpWindow : Window
         (
             "click", null,
             "Click a pre-defined button in an addon or window.",
-            new[] { "wait" },
-            new[]
-            {
+            ["wait"],
+            [
                 "/click synthesize",
-            }),
+            ]),
         (
             "craft", "gate",
             "Similar to loop but used at the start of a macro with an infinite /loop at the end. Allows a certain amount of executions before stopping the macro.",
@@ -57,137 +56,122 @@ internal class HelpWindow : Window
         (
             "loop", null,
             "Loop the current macro forever, or a certain amount of times.",
-            new[] { "wait", "echo" },
-            new[]
-            {
+            ["wait", "echo"],
+            [
                 "/loop",
                 "/loop 5",
-            }),
+            ]),
         (
             "recipe", null,
             "Open the recipe book to a specific recipe.",
-            new[] { "wait" },
-            new[]
-            {
+            ["wait"],
+            [
                 "/recipe \"Tsai tou Vounou\"",
-            }),
+            ]),
         (
             "require", null,
             "Require a certain effect to be present before continuing.",
-            new[] { "wait", "maxwait" },
-            new[]
-            {
+            ["wait", "maxwait"],
+            [
                 "/require \"Well Fed\"",
-            }),
+            ]),
         (
             "requirequality", null,
             "Require a certain amount of quality be present before continuing.",
-            new[] { "wait", "maxwait" },
-            new[]
-            {
+            ["wait", "maxwait"],
+            [
                 "/requirequality 3000",
-            }),
+            ]),
         (
             "requirerepair", null,
             "Pause if an item is at zero durability.",
-            new[] { "wait" },
-            new[]
-            {
+            ["wait"],
+            [
                 "/requirerepair",
-            }),
+            ]),
         (
             "requirespiritbond", null,
             "Pause when an item is ready to have materia extracted. Optional argument to keep crafting if the next highest spiritbond is greater-than-or-equal to the argument value.",
-            new[] { "wait" },
-            new[]
-            {
+            ["wait"],
+            [
                 "/requirespiritbond",
                 "/requirespiritbond 99.5",
-            }),
+            ]),
         (
             "requirestats", null,
             "Require a certain amount of stats effect to be present before continuing. Syntax is Craftsmanship, Control, then CP.",
-            new[] { "wait", "maxwait" },
-            new[]
-            {
+            ["wait", "maxwait"],
+            [
                 "/requirestats 2700 2600 500",
-            }),
+            ]),
         (
             "item", null,
             "Use an item, stopping the macro if the item is not present.",
-            new[] { "hq", "wait" },
-            new[]
-            {
+            ["hq", "wait"],
+            [
                 "/item Calamari Ripieni",
                 "/item Calamari Ripieni <hq> <wait.3>",
-            }),
+            ]),
         (
             "runmacro", null,
             "Start a macro from within another macro.",
-            new[] { "wait" },
-            new[]
-            {
+            ["wait"],
+            [
                 "/runmacro \"Sub macro\"",
-            }),
+            ]),
         (
             "send", null,
             "Send an arbitrary keystroke with optional modifiers. Keys are pressed in the same order as the command.",
-            new[] { "wait" },
-            new[]
-            {
+            ["wait"],
+            [
                 "/send MULTIPLY",
                 "/send NUMPAD0",
                 "/send CONTROL+MENU+SHIFT+NUMPAD0",
-            }),
+            ]),
         (
             "hold", null,
             "Send an arbitrary keystroke, to be held down, with optional modifiers. Keys are pressed in the same order as the command.",
-            new[] { "wait" },
-            new[]
-            {
+            ["wait"],
+            [
                 "/hold MULTIPLY",
                 "/hold NUMPAD0",
                 "/hold CONTROL+MENU+SHIFT+NUMPAD0",
-            }),
+            ]),
         (
             "release", null,
             "Send an arbitrary keystroke, to be released, with optional modifiers. Keys are pressed in the same order as the command.",
-            new[] { "wait" },
-            new[]
-            {
+            ["wait"],
+            [
                 "/release MULTIPLY",
                 "/release NUMPAD0",
                 "/release CONTROL+MENU+SHIFT+NUMPAD0",
-            }),
+            ]),
         (
             "target", null,
             "Target anyone and anything that can be selected.",
-            new[] { "wait", "index" },
-            new[]
-            {
+            ["wait", "index"],
+            [
                 "/target Eirikur",
                 "/target Moyce",
-            }),
+            ]),
         (
             "waitaddon", null,
             "Wait for an addon, otherwise known as a UI component to be present. You can discover these names by using the \"Addon Inspector\" view inside the \"/xldata\" window.",
-            new[] { "wait", "maxwait" },
-            new[]
-            {
+            ["wait", "maxwait"],
+            [
                 "/waitaddon RecipeNote",
-            }),
+            ]),
         (
             "wait", null,
             "The same as the wait modifier, but as a command.",
             Array.Empty<string>(),
-            new[]
-            {
+            [
                 "/wait 1-5",
-            }),
-    };
+            ]),
+    ];
 
-    private readonly (string Name, string Description, string[] Examples)[] modifierData = new[]
-    {
+    private readonly (string Name, string Description, string[] Examples)[] modifierData =
+    [
         (
             "wait",
             "Wait a certain amount of time, or a random time within a range.",
@@ -243,10 +227,10 @@ internal class HelpWindow : Window
             {
                 "/target abc <list.5>",
             }),
-    };
+    ];
 
-    private readonly (string Name, string Description, string? Example)[] cliData = new[]
-    {
+    private readonly (string Name, string Description, string? Example)[] cliData =
+    [
         ("help", "Show this window.", null),
         ("run", "Run a macro, the name must be unique.", "/pcraft run MyMacro"),
         ("run loop #", "Run a macro and then loop N times, the name must be unique. Only the last /loop in the macro is replaced", "/pcraft run loop 5 MyMacro"),
@@ -255,7 +239,7 @@ internal class HelpWindow : Window
         ("resume", "Resume the currently paused macro.", null),
         ("stop", "Clear the currently executing macro list.", null),
         ("stop loop", "Clear the currently executing macro list at the next /loop.", null),
-    };
+    ];
 
     private readonly List<string> clickNames;
 
@@ -327,6 +311,10 @@ internal class HelpWindow : Window
         }
 
         ImGui.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+        "2024-07-03",
+        "- Added the /callback command.\n");
 
         DisplayChangelog(
         "2024-06-29",
