@@ -48,7 +48,7 @@ internal class RequireQualityCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Service.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {this.Text}");
 
         var current = CraftingCommands.Instance.GetQuality();
 

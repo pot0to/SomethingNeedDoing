@@ -10,9 +10,6 @@ using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
-/// <summary>
-/// The /action command.
-/// </summary>
 internal class ActionCommand : MacroCommand
 {
     private const int SafeCraftMaxWait = 5000;
@@ -31,14 +28,6 @@ internal class ActionCommand : MacroCommand
         PopulateCraftingQualityActionNames();
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ActionCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original text.</param>
-    /// <param name="actionName">Action name.</param>
-    /// <param name="waitMod">Wait value.</param>
-    /// <param name="unsafeMod">Perform the action safely.</param>
-    /// <param name="conditionMod">Required crafting condition.</param>
     private ActionCommand(string text, string actionName, WaitModifier waitMod, UnsafeModifier unsafeMod, ConditionModifier conditionMod) : base(text, waitMod)
     {
         this.actionName = actionName.ToLowerInvariant();
@@ -46,17 +35,8 @@ internal class ActionCommand : MacroCommand
         this.conditionMod = conditionMod;
     }
 
-    /// <summary>
-    /// Gets the event framework data waiter.
-    /// </summary>
-    private static ManualResetEvent DataWaiter
-        => Service.GameEventManager.DataAvailableWaiter;
+    private static ManualResetEvent DataWaiter => Service.GameEventManager.DataAvailableWaiter;
 
-    /// <summary>
-    /// Parse the text as a command.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <returns>A parsed command.</returns>
     public static ActionCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
@@ -72,14 +52,13 @@ internal class ActionCommand : MacroCommand
         return new ActionCommand(text, nameValue, waitModifier, unsafeModifier, conditionModifier);
     }
 
-    /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Service.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {this.Text}");
 
         if (!this.conditionMod.HasCondition())
         {
-            Service.Log.Debug($"Condition skip: {this.Text}");
+            Svc.Log.Debug($"Condition skip: {this.Text}");
             return;
         }
 
@@ -89,20 +68,20 @@ internal class ActionCommand : MacroCommand
             {
                 if (CraftingCommands.Instance.IsNotCrafting())
                 {
-                    Service.Log.Debug($"Not crafting skip: {this.Text}");
+                    Svc.Log.Debug($"Not crafting skip: {this.Text}");
                     return;
                 }
 
                 if (CraftingCommands.Instance.HasMaxProgress())
                 {
-                    Service.Log.Debug($"Max progress skip: {this.Text}");
+                    Svc.Log.Debug($"Max progress skip: {this.Text}");
                     return;
                 }
             }
 
             if (Service.Configuration.QualitySkip && IsSkippableCraftingQualityAction(this.actionName) && CraftingCommands.Instance.HasMaxQuality())
             {
-                Service.Log.Debug($"Max quality skip: {this.Text}");
+                Svc.Log.Debug($"Max quality skip: {this.Text}");
                 return;
             }
 
@@ -112,7 +91,7 @@ internal class ActionCommand : MacroCommand
 
             if (Service.Configuration.SmartWait)
             {
-                Service.Log.Debug("Smart wait");
+                Svc.Log.Debug("Smart wait");
 
                 if (this.unsafeMod.IsUnsafe)
                 {
@@ -126,7 +105,7 @@ internal class ActionCommand : MacroCommand
                         throw new MacroActionTimeoutError("Did not receive a timely response");
                 }
 
-                while (Service.Condition[ConditionFlag.Crafting40])
+                while (Svc.Condition[ConditionFlag.Crafting40])
                     await Task.Delay(250, token);
             }
             else
@@ -140,20 +119,16 @@ internal class ActionCommand : MacroCommand
         else
         {
             Service.ChatManager.SendMessage(this.Text);
-
             await this.PerformWait(token);
         }
     }
 
-    private static bool IsCraftingAction(string name)
-        => CraftingActionNames.Contains(name);
-
-    private static bool IsSkippableCraftingQualityAction(string name)
-        => CraftingQualityActionNames.Contains(name);
+    private static bool IsCraftingAction(string name) => CraftingActionNames.Contains(name);
+    private static bool IsSkippableCraftingQualityAction(string name) => CraftingQualityActionNames.Contains(name);
 
     private static void PopulateCraftingNames()
     {
-        var actions = Service.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Action>()!;
+        var actions = Svc.Data.GetExcelSheet<Sheets.Action>()!;
         foreach (var row in actions)
         {
             var job = row.ClassJob?.Value?.ClassJobCategory?.Value;
@@ -170,7 +145,7 @@ internal class ActionCommand : MacroCommand
             }
         }
 
-        var craftActions = Service.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.CraftAction>()!;
+        var craftActions = Svc.Data.GetExcelSheet<Sheets.CraftAction>()!;
         foreach (var row in craftActions)
         {
             var name = row.Name.RawString.ToLowerInvariant();
@@ -206,14 +181,14 @@ internal class ActionCommand : MacroCommand
             260, 261, 262, 263, 264, 265, 266, 267, // Great Strides
         };
 
-        var actions = Service.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Action>()!;
+        var actions = Svc.Data.GetExcelSheet<Sheets.Action>()!;
         foreach (var actionID in actionIDs)
         {
             var name = actions.GetRow(actionID)!.Name.RawString.ToLowerInvariant();
             CraftingQualityActionNames.Add(name);
         }
 
-        var craftActions = Service.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.CraftAction>()!;
+        var craftActions = Svc.Data.GetExcelSheet<Sheets.CraftAction>()!;
         foreach (var craftID in craftIDs)
         {
             var name = craftActions.GetRow(craftID)!.Name.RawString.ToLowerInvariant();

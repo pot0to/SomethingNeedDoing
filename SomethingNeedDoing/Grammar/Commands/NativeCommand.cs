@@ -1,6 +1,5 @@
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,7 +35,7 @@ internal class NativeCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Service.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {this.Text}");
 
         Service.ChatManager.SendMessage($"{(new[] { "/", "<" }.Any(this.Text.StartsWith) ? this.Text : $"/e {this.Text}")}");
 

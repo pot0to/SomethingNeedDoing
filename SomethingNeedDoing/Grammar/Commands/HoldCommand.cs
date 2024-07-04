@@ -3,7 +3,6 @@ using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,7 +54,7 @@ internal class HoldCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Service.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {this.Text}");
 
         if (this.vkCodes.Length == 1)
         {

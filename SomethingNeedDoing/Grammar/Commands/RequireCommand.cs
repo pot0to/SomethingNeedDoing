@@ -2,16 +2,12 @@ using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
-/// <summary>
-/// The /require command.
-/// </summary>
 internal class RequireCommand : MacroCommand
 {
     private const int StatusCheckMaxWait = 1000;
@@ -22,19 +18,12 @@ internal class RequireCommand : MacroCommand
     private readonly uint[] statusIDs;
     private readonly int maxWait;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RequireCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original text.</param>
-    /// <param name="statusName">Status name.</param>
-    /// <param name="wait">Wait value.</param>
-    /// <param name="maxWait">MaxWait value.</param>
     private RequireCommand(string text, string statusName, WaitModifier wait, MaxWaitModifier maxWait) : base(text, wait)
     {
         statusName = statusName.ToLowerInvariant();
-        var sheet = Service.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Status>()!;
+        var sheet = Svc.Data.GetExcelSheet<Sheets.Status>()!;
         this.statusIDs = sheet
-            .Where(row => row.Name.RawString.ToLowerInvariant() == statusName)
+            .Where(row => row.Name.RawString.Equals(statusName, System.StringComparison.InvariantCultureIgnoreCase))
             .Select(row => row.RowId)
             .ToArray()!;
 
@@ -43,11 +32,6 @@ internal class RequireCommand : MacroCommand
             : maxWait.Wait;
     }
 
-    /// <summary>
-    /// Parse the text as a command.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <returns>A parsed command.</returns>
     public static RequireCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
@@ -62,10 +46,9 @@ internal class RequireCommand : MacroCommand
         return new RequireCommand(text, nameValue, waitModifier, maxWaitModifier);
     }
 
-    /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Service.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {this.Text}");
 
         bool IsStatusPresent() => CharacterStateCommands.Instance.HasStatusId(this.statusIDs);
 

@@ -7,14 +7,14 @@ using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ECommons;
-using ECommons.DalamudServices;
+using ECommons.Automation.UIInput;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
+using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 
 namespace SomethingNeedDoing.Interface;
@@ -254,7 +254,7 @@ internal class HelpWindow : Window
         this.SizeCondition = ImGuiCond.FirstUseEver;
         this.RespectCloseHotkey = false;
 
-        this.clickNames = ClickLib.Click.GetClickNames();
+        this.clickNames = [.. ClickHelper.GetAvailableClicks()];
     }
 
     /// <inheritdoc/>
@@ -301,16 +301,19 @@ internal class HelpWindow : Window
     {
         static void DisplayChangelog(string date, string changes, bool separator = true)
         {
-            ImGui.Text(date);
-            ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+            ImGui.TextUnformatted(date);
+            using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
             ImGui.TextWrapped(changes);
-            ImGui.PopStyleColor();
 
             if (separator)
                 ImGui.Separator();
         }
 
-        ImGui.PushFont(UiBuilder.MonoFont);
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+        "2024-07-04",
+        "- Fixed /click command. This update dropped clicklib support and click names are slightly different now. Please consult the help menu.\n");
 
         DisplayChangelog(
         "2024-07-03",
@@ -971,22 +974,18 @@ internal class HelpWindow : Window
             "- Various /pcraft commands have been added. View the help menu for more details.\n" +
             "- There is also a help menu.\n",
             false);
-
-        ImGui.PopFont();
     }
 
     private void DrawOptions()
     {
-        ImGui.PushFont(UiBuilder.MonoFont);
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         static void DisplayOption(params string[] lines)
         {
-            ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+            using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
 
             foreach (var line in lines)
                 ImGui.TextWrapped(line);
-
-            ImGui.PopStyleColor();
         }
 
         if (ImGui.CollapsingHeader("Crafting skips"))
@@ -1283,93 +1282,69 @@ internal class HelpWindow : Window
                 Service.Configuration.Save();
             }
         }
-
-        ImGui.PopFont();
     }
 
     private void DrawCommands()
     {
-        ImGui.PushFont(UiBuilder.MonoFont);
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         foreach (var (name, alias, desc, modifiers, examples) in this.commandData)
         {
-            ImGui.Text($"/{name}");
+            ImGui.TextUnformatted($"/{name}");
 
-            ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+            using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
 
             if (alias != null)
-                ImGui.Text($"- Alias: /{alias}");
+                ImGui.TextUnformatted($"- Alias: /{alias}");
 
             ImGui.TextWrapped($"- Description: {desc}");
 
-            ImGui.Text("- Modifiers:");
+            ImGui.TextUnformatted("- Modifiers:");
             foreach (var mod in modifiers)
-                ImGui.Text($"  - <{mod}>");
+                ImGui.TextUnformatted($"  - <{mod}>");
 
-            ImGui.Text("- Examples:");
+            ImGui.TextUnformatted("- Examples:");
             foreach (var example in examples)
-                ImGui.Text($"  - {example}");
-
-            ImGui.PopStyleColor();
+                ImGui.TextUnformatted($"  - {example}");
 
             ImGui.Separator();
         }
-
-        ImGui.PopFont();
     }
 
     private void DrawModifiers()
     {
-        ImGui.PushFont(UiBuilder.MonoFont);
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         foreach (var (name, desc, examples) in this.modifierData)
         {
-            ImGui.Text($"<{name}>");
-
-            ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-
+            ImGui.TextUnformatted($"<{name}>");
+            using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
             ImGui.TextWrapped($"- Description: {desc}");
-
-            ImGui.Text("- Examples:");
+            ImGui.TextUnformatted("- Examples:");
             foreach (var example in examples)
-                ImGui.Text($"  - {example}");
-
-            ImGui.PopStyleColor();
-
+                ImGui.TextUnformatted($"  - {example}");
             ImGui.Separator();
         }
-
-        ImGui.PopFont();
     }
 
     private void DrawCli()
     {
-        ImGui.PushFont(UiBuilder.MonoFont);
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         foreach (var (name, desc, example) in this.cliData)
         {
-            ImGui.Text($"/pcraft {name}");
-
-            ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-
+            ImGui.TextUnformatted($"/pcraft {name}");
+            using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
             ImGui.TextWrapped($"- Description: {desc}");
-
             if (example != null)
-            {
-                ImGui.Text($"- Example: {example}");
-            }
-
-            ImGui.PopStyleColor();
-
+                ImGui.TextUnformatted($"- Example: {example}");
             ImGui.Separator();
         }
-
-        ImGui.PopFont();
     }
 
     private void DrawLua()
     {
-        ImGui.PushFont(UiBuilder.MonoFont);
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         var text = @"
 Lua scripts work by yielding commands back to the macro engine.
@@ -1412,39 +1387,32 @@ yield(""/echo done!"")
 
         foreach (var (commandName, commandInstance) in commands)
         {
-            ImGui.Text($"{commandName}");
-            ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+            ImGui.TextUnformatted($"{commandName}");
+            using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
             ImGui.TextWrapped(string.Join("\n", commandInstance.ListAllFunctions()));
-            ImGui.PopStyleColor();
             ImGui.Separator();
         }
-
-        ImGui.PopFont();
     }
 
     private void DrawClicks()
     {
-        ImGui.PushFont(UiBuilder.MonoFont);
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
-        ImGui.TextWrapped("Refer to https://github.com/Limiana/ClickLib/tree/master/ClickLib/Clicks for any details.");
+        ImGui.TextWrapped("Refer to https://github.com/NightmareXIV/ECommons/tree/master/ECommons/UIHelpers/AddonMasterImplementations for any details.");
         ImGui.Separator();
 
         foreach (var name in this.clickNames)
-        {
-            ImGui.Text($"/click {name}");
-        }
-
-        ImGui.PopFont();
+            ImGuiUtils.ClickToCopyText($"/click {name}");
     }
 
     private void DrawVirtualKeys()
     {
-        ImGui.PushFont(UiBuilder.MonoFont);
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         ImGui.TextWrapped("Active keys will highlight green.");
         ImGui.Separator();
 
-        var validKeys = Service.KeyState.GetValidVirtualKeys().ToHashSet();
+        var validKeys = Svc.KeyState.GetValidVirtualKeys().ToHashSet();
 
         var names = Enum.GetNames<VirtualKey>();
         var values = Enum.GetValues<VirtualKey>();
@@ -1457,18 +1425,16 @@ yield(""/echo done!"")
             if (!validKeys.Contains(vkCode))
                 continue;
 
-            var isActive = Service.KeyState[vkCode];
+            var isActive = Svc.KeyState[vkCode];
 
             if (isActive)
                 ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.HealerGreen);
 
-            ImGui.Text($"/send {name}");
+            ImGui.TextUnformatted($"/send {name}");
 
             if (isActive)
                 ImGui.PopStyleColor();
         }
-
-        ImGui.PopFont();
     }
 
     private void DrawAllConditions()
@@ -1480,11 +1446,11 @@ yield(""/echo done!"")
 
         foreach (ConditionFlag flag in Enum.GetValues(typeof(ConditionFlag)))
         {
-            var isActive = Service.Condition[flag];
+            var isActive = Svc.Condition[flag];
             if (isActive)
                 ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.HealerGreen);
 
-            ImGui.Text($"ID: {(int)flag} Enum: {flag}");
+            ImGui.TextUnformatted($"ID: {(int)flag} Enum: {flag}");
 
             if (isActive)
                 ImGui.PopStyleColor();
@@ -1544,94 +1510,70 @@ yield(""/echo done!"")
     private void DrawWorlds()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
-        foreach (var r in Service.DataManager.GetExcelSheet<World>()!.Where(w => w.IsPublic && w.DataCenter.Value?.RowId != 0))
-        {
-            ImGui.Text($"{r.RowId}: {r.Name}");
-        }
-        ImGui.PopStyleColor();
+        using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
+        foreach (var r in Svc.Data.GetExcelSheet<World>()!.Where(w => w.IsPublic && w.DataCenter.Value?.RowId != 0))
+            ImGui.TextUnformatted($"{r.RowId}: {r.Name}");
     }
 
     private void DrawEnum<T>()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
         foreach (var value in Enum.GetValues(typeof(T)))
-        {
-            ImGui.Text($"{Enum.GetName(typeof(T), value)}: {Convert.ChangeType(value, Enum.GetUnderlyingType(typeof(T)))}");
-        }
-        ImGui.PopStyleColor();
+            ImGui.TextUnformatted($"{Enum.GetName(typeof(T), value)}: {Convert.ChangeType(value, Enum.GetUnderlyingType(typeof(T)))}");
     }
 
     private readonly IEnumerable<Achievement> achievementsSheet = Svc.Data.GetExcelSheet<Achievement>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
     private void DrawAchievements()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
         foreach (var w in this.achievementsSheet)
-        {
-            ImGui.Text($"{w.RowId}: {w.Name}");
-        }
-        ImGui.PopStyleColor();
+            ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
     }
 
     private readonly IEnumerable<FishingSpot> fishingSpotsSheet = Svc.Data.GetExcelSheet<FishingSpot>(Svc.ClientState.ClientLanguage)!.Where(x => x.PlaceNameMain.Value?.RowId != 0);
     private void DrawOceanFishingSpots()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
         foreach (var w in this.fishingSpotsSheet)
-        {
-            ImGui.Text($"{w.RowId}: {w.PlaceName.Value!.Name}");
-        }
-        ImGui.PopStyleColor();
+            ImGui.TextUnformatted($"{w.RowId}: {w.PlaceName.Value!.Name}");
     }
 
     private readonly IEnumerable<ContentRoulette> rouletteSheet = Svc.Data.GetExcelSheet<ContentRoulette>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
     private void DrawDutyRoulette()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
         foreach (var w in this.rouletteSheet)
-        {
-            ImGui.Text($"{w.RowId}: {w.Name}");
-        }
-        ImGui.PopStyleColor();
+            ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
     }
 
     private readonly IEnumerable<ContentFinderCondition> cfcSheet = Svc.Data.GetExcelSheet<ContentFinderCondition>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
     private void DrawCFC()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
         foreach (var w in this.cfcSheet)
-        {
-            ImGui.Text($"{w.RowId}: {w.Name}");
-        }
-        ImGui.PopStyleColor();
+            ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
     }
 
     private readonly IEnumerable<Weather> weatherSheet = Svc.Data.GetExcelSheet<Weather>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
     private void DrawWeather()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
         foreach (var w in this.weatherSheet)
-        {
-            ImGui.Text($"{w.RowId}: {w.Name}");
-        }
-        ImGui.PopStyleColor();
+            ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
     }
 
     private readonly IEnumerable<ClassJob> classJobSheet = Svc.Data.GetExcelSheet<ClassJob>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
     private void DrawClassJob()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        ImGui.PushStyleColor(ImGuiCol.Text, ShadedColor);
+        using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
         foreach (var cj in this.classJobSheet)
-        {
-            ImGui.Text($"{cj.RowId}: {cj.Name}; ExpArrayIndex={cj.ExpArrayIndex}");
-        }
-        ImGui.PopStyleColor();
+            ImGui.TextUnformatted($"{cj.RowId}: {cj.Name}; ExpArrayIndex={cj.ExpArrayIndex}");
     }
 }

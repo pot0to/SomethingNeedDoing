@@ -7,7 +7,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using SomethingNeedDoing.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace SomethingNeedDoing.Misc.Commands;
@@ -27,7 +26,7 @@ public class CraftingCommands()
         }
         return list;
     }
-    public bool IsCrafting() => Service.Condition[ConditionFlag.Crafting] && !Service.Condition[ConditionFlag.PreparingToCraft];
+    public bool IsCrafting() => Svc.Condition[ConditionFlag.Crafting] && !Svc.Condition[ConditionFlag.PreparingToCraft];
 
     public bool IsNotCrafting() => !this.IsCrafting();
 
@@ -50,7 +49,7 @@ public class CraftingCommands()
 
     private unsafe AddonSynthesis* GetSynthesisAddon()
     {
-        var ptr = Service.GameGui.GetAddonByName("Synthesis", 1);
+        var ptr = Svc.GameGui.GetAddonByName("Synthesis", 1);
         return ptr == nint.Zero ? throw new MacroCommandError("Could not find Synthesis addon") : (AddonSynthesis*)ptr;
     }
 
@@ -138,25 +137,25 @@ public class CraftingCommands()
 
     public int GetCp()
     {
-        var cp = Service.ClientState.LocalPlayer?.CurrentCp ?? 0;
+        var cp = Svc.ClientState.LocalPlayer?.CurrentCp ?? 0;
         return (int)cp;
     }
 
     public int GetMaxCp()
     {
-        var cp = Service.ClientState.LocalPlayer?.MaxCp ?? 0;
+        var cp = Svc.ClientState.LocalPlayer?.MaxCp ?? 0;
         return (int)cp;
     }
 
     public int GetGp()
     {
-        var gp = Service.ClientState.LocalPlayer?.CurrentGp ?? 0;
+        var gp = Svc.ClientState.LocalPlayer?.CurrentGp ?? 0;
         return (int)gp;
     }
 
     public int GetMaxGp()
     {
-        var gp = Service.ClientState.LocalPlayer?.MaxGp ?? 0;
+        var gp = Svc.ClientState.LocalPlayer?.MaxGp ?? 0;
         return (int)gp;
     }
 
@@ -179,20 +178,20 @@ public class CraftingCommands()
         var im = InventoryManager.Instance();
         if (im == null)
         {
-            Service.Log.Error("InventoryManager was null");
+            Svc.Log.Error("InventoryManager was null");
             return false;
         }
 
         var equipped = im->GetInventoryContainer(InventoryType.EquippedItems);
         if (equipped == null)
         {
-            Service.Log.Error("InventoryContainer was null");
+            Svc.Log.Error("InventoryContainer was null");
             return false;
         }
 
         if (equipped->Loaded == 0)
         {
-            Service.Log.Error($"InventoryContainer is not loaded");
+            Svc.Log.Error($"InventoryContainer is not loaded");
             return false;
         }
 
@@ -216,20 +215,20 @@ public class CraftingCommands()
         var im = InventoryManager.Instance();
         if (im == null)
         {
-            Service.Log.Error("InventoryManager was null");
+            Svc.Log.Error("InventoryManager was null");
             return false;
         }
 
         var equipped = im->GetInventoryContainer(InventoryType.EquippedItems);
         if (equipped == null)
         {
-            Service.Log.Error("InventoryContainer was null");
+            Svc.Log.Error("InventoryContainer was null");
             return false;
         }
 
         if (equipped->Loaded == 0)
         {
-            Service.Log.Error("InventoryContainer is not loaded");
+            Svc.Log.Error("InventoryContainer is not loaded");
             return false;
         }
 
@@ -256,7 +255,7 @@ public class CraftingCommands()
 
         if (allExtract)
         {
-            Service.Log.Debug("All items are spiritbound, pausing");
+            Svc.Log.Debug("All items are spiritbound, pausing");
             return true;
         }
 
@@ -265,7 +264,7 @@ public class CraftingCommands()
             // Don't wait, extract immediately
             if (within == 100)
             {
-                Service.Log.Debug("An item is spiritbound, pausing");
+                Svc.Log.Debug("An item is spiritbound, pausing");
                 return true;
             }
 
@@ -273,12 +272,12 @@ public class CraftingCommands()
             // i.e. 100 and 99, do another craft to finish the 99.
             if (nextHighest >= within)
             {
-                Service.Log.Debug($"The next highest spiritbond is above ({nextHighest} >= {within}), keep going");
+                Svc.Log.Debug($"The next highest spiritbond is above ({nextHighest} >= {within}), keep going");
                 return false;
             }
             else
             {
-                Service.Log.Debug($"The next highest spiritbond is below ({nextHighest} < {within}), pausing");
+                Svc.Log.Debug($"The next highest spiritbond is below ({nextHighest} < {within}), pausing");
                 return true;
             }
         }
@@ -291,7 +290,7 @@ public class CraftingCommands()
         var uiState = UIState.Instance();
         if (uiState == null)
         {
-            Service.Log.Error("UIState is null");
+            Svc.Log.Error("UIState is null");
             return false;
         }
 

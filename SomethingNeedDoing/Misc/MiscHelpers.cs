@@ -1,8 +1,8 @@
-﻿using FFXIVClientStructs.FFXIV.Client.Game.Object;
+﻿using ECommons.Logging;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using ImGuiNET;
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace SomethingNeedDoing.Misc;
@@ -10,7 +10,7 @@ namespace SomethingNeedDoing.Misc;
 internal class MiscHelpers
 {
     private static readonly unsafe nint pronounModule = (nint)Framework.Instance()->GetUIModule()->GetPronounModule();
-    private static readonly unsafe delegate* unmanaged<nint, uint, GameObject*> getGameObjectFromPronounID = (delegate* unmanaged<nint, uint, GameObject*>)Service.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 85 ?? ?? ?? ?? 8D 4F DD");
+    private static readonly unsafe delegate* unmanaged<nint, uint, GameObject*> getGameObjectFromPronounID = (delegate* unmanaged<nint, uint, GameObject*>)Svc.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 85 ?? ?? ?? ?? 8D 4F DD");
     public static unsafe GameObject* GetGameObjectFromPronounID(uint id) => getGameObjectFromPronounID(pronounModule, id);
 
     public static string ConvertClipboardToSafeString()
@@ -23,8 +23,8 @@ internal class MiscHelpers
         catch (NullReferenceException ex)
         {
             text = string.Empty;
-            Service.ChatManager.PrintError($"[SND] Could not import from clipboard.");
-            Service.Log.Error(ex, "Clipboard import error");
+            DuoLog.Error($"Clipboard import error");
+            Svc.Log.Error($"{ex.Message}\n{ex.StackTrace}");
         }
 
         // Replace \r with \r\n, usually from copy/pasting from the in-game macro window

@@ -1,13 +1,10 @@
 ﻿using Dalamud.Game.ClientState.Objects.Enums;
-using ECommons.DalamudServices;
 using ECommons.GameFunctions;
-using ECommons.Reflection;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Reflection;
 
@@ -54,7 +51,7 @@ internal class EntityStateCommands
     public unsafe uint GetTargetFateID() => Svc.Targets.Target != null ? Svc.Targets.Target.Struct()->FateId : 0;
     public unsafe bool IsTargetMounted()
     {
-        var target = Service.TargetManager.Target;
+        var target = Svc.Targets.Target;
         if (target == null)
             return false;
 
@@ -62,10 +59,10 @@ internal class EntityStateCommands
             return false;
 
         var targetGameObject = target.Struct();
-        if (targetGameObject->ObjectIndex + 1 > Service.ObjectTable.Length)
+        if (targetGameObject->ObjectIndex + 1 > Svc.Objects.Length)
             return false;
 
-        var mountObject = Service.ObjectTable[targetGameObject->ObjectIndex + 1];
+        var mountObject = Svc.Objects[targetGameObject->ObjectIndex + 1];
         if (mountObject == null || mountObject.ObjectKind != ObjectKind.MountType)
             return false;
         return true;
@@ -117,10 +114,10 @@ internal class EntityStateCommands
             return false;
 
         var targetGameObject = target.Struct();
-        if (targetGameObject->ObjectIndex + 1 > Service.ObjectTable.Length)
+        if (targetGameObject->ObjectIndex + 1 > Svc.Objects.Length)
             return false;
 
-        var mountObject = Service.ObjectTable[targetGameObject->ObjectIndex + 1];
+        var mountObject = Svc.Objects[targetGameObject->ObjectIndex + 1];
         if (mountObject == null || mountObject.ObjectKind != ObjectKind.MountType)
             return false;
         return true;
@@ -154,10 +151,10 @@ internal class EntityStateCommands
             return false;
 
         var targetGameObject = target.Struct();
-        if (targetGameObject->ObjectIndex + 1 > Service.ObjectTable.Length)
+        if (targetGameObject->ObjectIndex + 1 > Svc.Objects.Length)
             return false;
 
-        var mountObject = Service.ObjectTable[targetGameObject->ObjectIndex + 1];
+        var mountObject = Svc.Objects[targetGameObject->ObjectIndex + 1];
         if (mountObject == null || mountObject.ObjectKind != ObjectKind.MountType)
             return false;
         return true;

@@ -1,15 +1,12 @@
-﻿using Dalamud.Memory;
-using ECommons;
+﻿using ECommons;
 using ECommons.Automation;
-using ECommons.DalamudServices;
-using ECommons.UIHelpers;
+using ECommons.Automation.UIInput;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using SomethingNeedDoing.Exceptions;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -94,7 +91,7 @@ public class AddonCommands
 
     public unsafe bool IsAddonVisible(string addonName)
     {
-        var ptr = Service.GameGui.GetAddonByName(addonName, 1);
+        var ptr = Svc.GameGui.GetAddonByName(addonName, 1);
         if (ptr == nint.Zero)
             return false;
 
@@ -104,13 +101,19 @@ public class AddonCommands
 
     public unsafe bool IsNodeVisible(string addonName, params int[] ids)
     {
-        var ptr = Service.GameGui.GetAddonByName(addonName, 1);
+        var ptr = Svc.GameGui.GetAddonByName(addonName, 1);
         if (ptr == nint.Zero)
             return false;
 
         var addon = (AtkUnitBase*)ptr;
         var node = GetNodeByIDChain(addon->GetRootNode(), ids);
         return node != null && node->IsVisible();
+    }
+
+    public void GetClicks()
+    {
+        foreach (var s in ClickHelper.GetAvailableClicks())
+            Svc.Log.Info(s);
     }
 
     private unsafe AtkResNode* GetNodeByIDChain(AtkResNode* node, params int[] ids)
@@ -149,7 +152,7 @@ public class AddonCommands
 
     public unsafe bool IsAddonReady(string addonName)
     {
-        var ptr = Service.GameGui.GetAddonByName(addonName, 1);
+        var ptr = Svc.GameGui.GetAddonByName(addonName, 1);
         if (ptr == nint.Zero)
             return false;
 
@@ -159,7 +162,7 @@ public class AddonCommands
 
     public unsafe string GetToastNodeText(int index, params int[] nodeNumbers)
     {
-        var ptr = (AtkUnitBase*)Service.GameGui.GetAddonByName("_WideText", index);
+        var ptr = (AtkUnitBase*)Svc.GameGui.GetAddonByName("_WideText", index);
         if (ptr == null) return string.Empty;
         if (ptr->UldManager.NodeList == null || ptr->UldManager.NodeListCount < 4) return string.Empty;
 
@@ -200,7 +203,7 @@ public class AddonCommands
         if (nodeNumbers.Length == 0)
             throw new MacroCommandError("At least one node number is required");
 
-        var ptr = Service.GameGui.GetAddonByName(addonName, 1);
+        var ptr = Svc.GameGui.GetAddonByName(addonName, 1);
         if (ptr == nint.Zero)
             throw new MacroCommandError($"Could not find {addonName} addon");
 
@@ -245,7 +248,7 @@ public class AddonCommands
 
     public unsafe void SetNodeText(string addonName, string text, params int[] ids)
     {
-        var ptr = Service.GameGui.GetAddonByName(addonName, 1);
+        var ptr = Svc.GameGui.GetAddonByName(addonName, 1);
         if (ptr == nint.Zero)
             return;
 
@@ -257,7 +260,7 @@ public class AddonCommands
 
     public unsafe string GetSelectStringText(int index)
     {
-        var ptr = Service.GameGui.GetAddonByName("SelectString", 1);
+        var ptr = Svc.GameGui.GetAddonByName("SelectString", 1);
         if (ptr == nint.Zero)
             throw new MacroCommandError("Could not find SelectString addon");
 
@@ -265,7 +268,7 @@ public class AddonCommands
         var popup = &addon->PopupMenu.PopupMenu;
 
         var count = popup->EntryCount;
-        Service.Log.Debug($"index={index} // Count={count} // {index < 0 || index > count}");
+        Svc.Log.Debug($"index={index} // Count={count} // {index < 0 || index > count}");
         if (index < 0 || index > count)
             throw new MacroCommandError("Index out of range");
 
@@ -277,7 +280,7 @@ public class AddonCommands
 
     public unsafe string GetSelectIconStringText(int index)
     {
-        var ptr = Service.GameGui.GetAddonByName("SelectIconString", 1);
+        var ptr = Svc.GameGui.GetAddonByName("SelectIconString", 1);
         if (ptr == nint.Zero)
             throw new MacroCommandError("Could not find SelectIconString addon");
 

@@ -1,11 +1,5 @@
-﻿using Dalamud.Hooking;
-using Dalamud.Memory;
-using Dalamud.Utility;
-using Dalamud.Utility.Signatures;
-using ECommons.DalamudServices;
-using FFXIVClientStructs.FFXIV.Client.Game.Event;
+﻿using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -13,7 +7,6 @@ using Lumina.Excel.GeneratedSheets2;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Numerics;
 using System.Reflection;
 
@@ -35,7 +28,7 @@ public class WorldStateCommands
         return list;
     }
 
-    public int GetZoneID() => Service.ClientState.TerritoryType;
+    public int GetZoneID() => Svc.ClientState.TerritoryType;
 
     public unsafe float GetFlagXCoord() => AgentMap.Instance()->FlagMapMarker.XFloat;
     public unsafe float GetFlagYCoord() => AgentMap.Instance()->FlagMapMarker.YFloat;

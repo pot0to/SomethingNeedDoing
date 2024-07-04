@@ -1,71 +1,23 @@
 using Dalamud.Configuration;
 using Dalamud.Game.Text;
-using ECommons.DalamudServices;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace SomethingNeedDoing;
 
-/// <summary>
-/// Plugin configuration.
-/// </summary>
 public class SomethingNeedDoingConfiguration : IPluginConfiguration
 {
-    /// <summary>
-    /// Gets or sets the configuration version.
-    /// </summary>
     public int Version { get; set; } = 1;
-
-    /// <summary>
-    /// Gets or sets the window's position lock.
-    /// </summary>
     public bool LockWindow { get; set; } = false;
-
-    /// <summary>
-    /// Gets the root folder.
-    /// </summary>
     public FolderNode RootFolder { get; private set; } = new FolderNode { Name = "/" };
-
-    /// <summary>
-    /// Gets or sets a value indicating whether to skip craft actions when not crafting.
-    /// </summary>
     public bool CraftSkip { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether to intelligently wait for crafting actions to complete instead of using wait modifiers.
-    /// </summary>
     public bool SmartWait { get; set; } = false;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether to skip quality increasing actions when at 100% HQ chance.
-    /// </summary>
     public bool QualitySkip { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether to count the /loop number as the total iterations, rather than the amount to loop.
-    /// </summary>
     public bool LoopTotal { get; set; } = false;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether to always echo /loop commands.
-    /// </summary>
     public bool LoopEcho { get; set; } = false;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether to disable the monospaced font.
-    /// </summary>
     public bool DisableMonospaced { get; set; } = false;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether to use the "CraftLoop" template.
-    /// </summary>
     public bool UseCraftLoopTemplate { get; set; } = false;
-
-    /// <summary>
-    /// Gets or sets the "CraftLoop" template.
-    /// </summary>
     public string CraftLoopTemplate { get; set; } =
         "/craft {{count}}\n" +
         "/waitaddon \"RecipeNote\" <maxwait.5>" +
@@ -74,46 +26,14 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
         "{{macro}}" +
         "/loop";
 
-    /// <summary>
-    /// Gets or sets a value indicating whether to start crafting loops from the recipe note window.
-    /// </summary>
     public bool CraftLoopFromRecipeNote { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets the maximum wait value for the "CraftLoop" maxwait modifier.
-    /// </summary>
     public int CraftLoopMaxWait { get; set; } = 5;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the "CraftLoop" loop should have an echo modifier.
-    /// </summary>
     public bool CraftLoopEcho { get; set; } = false;
-
-    /// <summary>
-    /// Gets or sets the maximum number of retries when an action does not receive a timely response.
-    /// </summary>
     public int MaxTimeoutRetries { get; set; } = 0;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether errors should be audible.
-    /// </summary>
     public bool NoisyErrors { get; set; } = false;
-
-    /// <summary>
-    /// Gets or sets the beep frequency.
-    /// </summary>
     public int BeepFrequency { get; set; } = 900;
-
-    /// <summary>
-    /// Gets or sets the beep duration.
-    /// </summary>
     public int BeepDuration { get; set; } = 250;
-
-    /// <summary>
-    /// Gets or sets the beep count.
-    /// </summary>
     public int BeepCount { get; set; } = 3;
-
     public bool UseSNDTargeting { get; set; } = true;
     public bool UseItemStructsVersion { get; set; } = true;
 
@@ -151,22 +71,10 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
         return conf ?? new SomethingNeedDoingConfiguration();
     }
 
-    /// <summary>
-    /// Save the plugin configuration.
-    /// </summary>
-    internal void Save() => Service.Interface.SavePluginConfig(this);
+    internal void Save() => Svc.PluginInterface.SavePluginConfig(this);
 
-    /// <summary>
-    /// Get all nodes in the tree.
-    /// </summary>
-    /// <returns>All the nodes.</returns>
     internal IEnumerable<INode> GetAllNodes() => new INode[] { this.RootFolder }.Concat(this.GetAllNodes(this.RootFolder.Children));
 
-    /// <summary>
-    /// Gets all the nodes in this subset of the tree.
-    /// </summary>
-    /// <param name="nodes">Nodes to search.</param>
-    /// <returns>The nodes in the tree.</returns>
     internal IEnumerable<INode> GetAllNodes(IEnumerable<INode> nodes)
     {
         foreach (var node in nodes)
@@ -183,12 +91,6 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
         }
     }
 
-    /// <summary>
-    /// Tries to find the parent of a node.
-    /// </summary>
-    /// <param name="node">Node to check.</param>
-    /// <param name="parent">Parent of the node or null.</param>
-    /// <returns>A value indicating whether the parent was found.</returns>
     internal bool TryFindParent(INode node, out FolderNode? parent)
     {
         foreach (var candidate in this.GetAllNodes())

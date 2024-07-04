@@ -45,6 +45,18 @@ internal static class ImGuiUtils
         }
     }
 
+    public static void ClickToCopyText(string text, string textCopy = null)
+    {
+        textCopy ??= text;
+        ImGui.TextUnformatted($"{text}");
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+            if (textCopy != text) ImGui.SetTooltip(textCopy);
+        }
+        if (ImGui.IsItemClicked()) ImGui.SetClipboardText($"{textCopy}");
+    }
+
     public static void TextLink(Action callback, string textToShow = "")
     {
         ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonHovered]);

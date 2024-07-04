@@ -2,13 +2,11 @@ using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface.Windowing;
 using ECommons.SimpleGui;
 using ImGuiNET;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Misc;
 using System;
-using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -107,7 +105,7 @@ internal class MacroWindow : ConfigWindow
             RootFolder.Children.Add(node);
 
             if (MiscHelpers.IsLuaCode(text))
-                node.IsLua = true;
+                node.Language = Language.Lua;
 
             node.Contents = text;
             Service.Configuration.Save();
@@ -368,7 +366,7 @@ internal class MacroWindow : ConfigWindow
             this.activeMacroNode = null;
         }
 
-        var luaEnabled = node.IsLua;
+        var luaEnabled = node.Language == Language.Lua;
         if (luaEnabled)
         {
             ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.HealerGreen);
@@ -379,7 +377,10 @@ internal class MacroWindow : ConfigWindow
         ImGui.SameLine();
         if (ImGuiEx.IconButton(FontAwesomeIcon.Code, "Lua script"))
         {
-            node.IsLua ^= true;
+            if (node.Language == Language.Lua)
+                node.Language = Language.Native;
+            else
+                node.Language = Language.Lua;
             Service.Configuration.Save();
         }
 
@@ -448,7 +449,7 @@ internal class MacroWindow : ConfigWindow
             var text = MiscHelpers.ConvertClipboardToSafeString();
 
             if (MiscHelpers.IsLuaCode(text))
-                node.IsLua = true;
+                node.Language = Language.Lua;
 
             node.Contents = text;
             Service.Configuration.Save();
@@ -572,7 +573,7 @@ internal class MacroWindow : ConfigWindow
         catch (Exception ex)
         {
             Service.ChatManager.PrintError($"Unexpected error");
-            Service.Log.Error(ex, "Unexpected error");
+            Svc.Log.Error(ex, "Unexpected error");
         }
     }
 

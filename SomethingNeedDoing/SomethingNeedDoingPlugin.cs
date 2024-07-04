@@ -1,4 +1,3 @@
-using ClickLib;
 using Dalamud.Plugin;
 using ECommons;
 using ECommons.SimpleGui;
@@ -6,30 +5,21 @@ using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.Managers;
 using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
-using System.Linq;
 
 namespace SomethingNeedDoing;
 
-/// <summary>
-/// Main plugin implementation.
-/// </summary>
 public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
 {
-    public string Name => "Something Need Doing (Expanded Edition)";
+    public static string Name => "Something Need Doing (Expanded Edition)";
+    public static string Prefix => "SND";
     private const string Command = "/somethingneeddoing";
     private static string[] Aliases => ["/pcraft", "/snd"];
 
-    private Watcher watcher;
+    private readonly Watcher watcher;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SomethingNeedDoingPlugin"/> class.
-    /// </summary>
-    /// <param name="pluginInterface">Dalamud plugin interface.</param>
     public SomethingNeedDoingPlugin(IDalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
-
-        Click.Initialize();
 
         Service.Plugin = this;
         Service.Configuration = SomethingNeedDoingConfiguration.Load(pluginInterface.ConfigDirectory);

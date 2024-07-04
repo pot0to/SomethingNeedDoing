@@ -12,9 +12,6 @@ using System.Threading.Channels;
 
 namespace SomethingNeedDoing.Managers;
 
-/// <summary>
-/// Manager that handles displaying output in the chat box.
-/// </summary>
 internal class ChatManager : IDisposable
 {
     private readonly Channel<string> chatBoxMessages = Channel.CreateUnbounded<string>();
@@ -22,67 +19,45 @@ internal class ChatManager : IDisposable
     [Signature("48 89 5C 24 ?? 57 48 83 EC 20 48 8B FA 48 8B D9 45 84 C9")]
     private readonly ProcessChatBoxDelegate processChatBox = null!;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ChatManager"/> class.
-    /// </summary>
     public ChatManager()
     {
-        SignatureHelper.Initialise(this);
-        Service.Framework.Update += this.FrameworkUpdate;
+        Svc.Hook.InitializeFromAttributes(this);
+        Svc.Framework.Update += this.FrameworkUpdate;
     }
 
     private unsafe delegate void ProcessChatBoxDelegate(UIModule* uiModule, IntPtr message, IntPtr unused, byte a4);
 
-    /// <inheritdoc/>
     public void Dispose()
     {
-        Service.Framework.Update -= this.FrameworkUpdate;
-
+        Svc.Framework.Update -= this.FrameworkUpdate;
         this.chatBoxMessages.Writer.Complete();
     }
 
-    /// <summary>
-    /// Print a normal message.
-    /// </summary>
-    /// <param name="message">The message to print.</param>
     public void PrintMessage(string message)
-        => Service.ChatGui.Print(new XivChatEntry()
+        => Svc.Chat.Print(new XivChatEntry()
         {
             Type = Service.Configuration.ChatType,
-            Message = $"[SND] {message}",
+            Message = $"[{SomethingNeedDoingPlugin.Prefix}] {message}",
         });
 
-    /// <summary>
-    /// Print a happy message.
-    /// </summary>
-    /// <param name="message">The message to print.</param>
-    /// <param name="color">UiColor value.</param>
     public void PrintColor(string message, UiColor color)
-        => Service.ChatGui.Print(
-            new XivChatEntry()
-            {
-                Type = Service.Configuration.ChatType,
-                Message = new SeString(
-                    new UIForegroundPayload((ushort)color),
-                    new TextPayload($"[SND] {message}"),
-                    UIForegroundPayload.UIForegroundOff),
-            });
+        => Svc.Chat.Print(new XivChatEntry()
+        {
+            Type = Service.Configuration.ChatType,
+            Message = new SeString(
+                new UIForegroundPayload((ushort)color),
+                new TextPayload($"[{SomethingNeedDoingPlugin.Prefix}] {message}"),
+                UIForegroundPayload.UIForegroundOff),
+        });
 
-    /// <summary>
-    /// Print an error message.
-    /// </summary>
-    /// <param name="message">The message to print.</param>
     public void PrintError(string message)
-        => Service.ChatGui.Print(new XivChatEntry()
+        => Svc.Chat.Print(new XivChatEntry()
         {
             Type = Service.Configuration.ErrorChatType,
-            Message = $"[SND] {message}",
+            Message = $"[{SomethingNeedDoingPlugin.Prefix}] {message}",
         });
 
-    /// <summary>
-    /// Process a command through the chat box.
-    /// </summary>
-    /// <param name="message">Message to send.</param>
+
     public async void SendMessage(string message) => await this.chatBoxMessages.Writer.WriteAsync(message);
 
     /// <summary>

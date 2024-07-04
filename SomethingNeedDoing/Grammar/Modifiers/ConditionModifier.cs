@@ -1,6 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.UI;
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace SomethingNeedDoing.Grammar.Modifiers;
@@ -63,10 +62,10 @@ internal class ConditionModifier : MacroModifier
         if (this.conditions.Length == 0)
             return true;
 
-        var addon = Service.GameGui.GetAddonByName("Synthesis", 1);
+        var addon = Svc.GameGui.GetAddonByName("Synthesis", 1);
         if (addon == IntPtr.Zero)
         {
-            Service.Log.Debug("Could not find Synthesis addon");
+            Svc.Log.Debug("Could not find Synthesis addon");
             return true;
         }
 

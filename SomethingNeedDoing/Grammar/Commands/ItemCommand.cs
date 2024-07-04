@@ -1,15 +1,12 @@
-using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Sheets = Lumina.Excel.GeneratedSheets;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -43,7 +40,7 @@ internal class ItemCommand : MacroCommand
         {
             try
             {
-                UseItemSig = Marshal.GetDelegateForFunctionPointer<UseItemDelegate>(Service.SigScanner.ScanText("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 89 7C 24 38"));
+                UseItemSig = Marshal.GetDelegateForFunctionPointer<UseItemDelegate>(Svc.SigScanner.ScanText("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 89 7C 24 38"));
                 unsafe { itemContextMenuAgent = (nint)Framework.Instance()->GetUIModule()->GetAgentModule()->GetAgentByInternalId(AgentId.InventoryContext); }
             }
             catch { Svc.Log.Error($"Failed to load {nameof(UseItemSig)}"); }
@@ -72,13 +69,13 @@ internal class ItemCommand : MacroCommand
     /// <inheritdoc/>
     public override async System.Threading.Tasks.Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Service.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {this.Text}");
 
         var itemId = this.SearchItemId(this.itemName);
-        Service.Log.Debug($"Item found: {itemId}");
+        Svc.Log.Debug($"Item found: {itemId}");
 
         var count = this.GetInventoryItemCount(itemId, this.itemQualityMod.IsHq);
-        Service.Log.Debug($"Item Count: {count}");
+        Svc.Log.Debug($"Item Count: {count}");
         if (count == 0 && Service.Configuration.StopMacroIfItemNotFound)
             throw new MacroCommandError("You do not have that item");
 
@@ -116,8 +113,8 @@ internal class ItemCommand : MacroCommand
 
     private uint SearchItemId(string itemName)
     {
-        var sheet = Service.DataManager.GetExcelSheet<Sheets.Item>()!;
-        var item = sheet.FirstOrDefault(r => r.Name.ToString().ToLowerInvariant() == itemName);
+        var sheet = Svc.Data.GetExcelSheet<Sheets.Item>()!;
+        var item = sheet.FirstOrDefault(r => r.Name.ToString().Equals(itemName, System.StringComparison.InvariantCultureIgnoreCase));
         return item == null ? throw new MacroCommandError("Item not found") : item.RowId;
     }
 }

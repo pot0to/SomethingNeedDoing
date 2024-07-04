@@ -2,10 +2,10 @@
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar;
 using SomethingNeedDoing.Grammar.Commands;
+using SomethingNeedDoing.Managers;
 using SomethingNeedDoing.Misc.Commands;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -27,7 +27,7 @@ internal partial class ActiveMacro : IDisposable
     {
         this.Node = node;
 
-        if (node.IsLua)
+        if (node.Language == Language.Lua)
         {
             this.Steps = [];
             return;
@@ -168,7 +168,7 @@ internal partial class ActiveMacro : IDisposable
     /// </summary>
     public void Loop()
     {
-        if (this.Node.IsLua)
+        if (this.Node.Language == Language.Lua)
             throw new MacroCommandError("Loop is not supported for Lua scripts");
 
         this.StepIndex = -1;
@@ -180,7 +180,7 @@ internal partial class ActiveMacro : IDisposable
     /// <returns>A command.</returns>
     public MacroCommand? GetCurrentStep()
     {
-        if (this.Node.IsLua)
+        if (this.Node.Language == Language.Lua)
         {
             if (this.lua == null)
                 this.InitLuaScript();
@@ -199,6 +199,8 @@ internal partial class ActiveMacro : IDisposable
 
             return command;
         }
+        if (this.Node.Language == Language.CSharp)
+            CSharpManager.RunSnippet(this.Node.Contents);
 
         return this.StepIndex < 0 || this.StepIndex >= this.Steps.Count ? null : this.Steps[this.StepIndex];
     }
@@ -237,7 +239,7 @@ internal partial class ActiveMacro : IDisposable
             var methods = type.GetMethods(flags);
             foreach (var method in methods)
             {
-                Service.Log.Debug($"Adding Lua method: {method.Name}");
+                Svc.Log.Debug($"Adding Lua method: {method.Name}");
                 lua.RegisterFunction(method.Name, obj, method);
             }
         }

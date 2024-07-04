@@ -58,7 +58,7 @@ internal class GateCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Service.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {this.Text}");
 
         if (this.echoMod.PerformEcho || Service.Configuration.LoopEcho)
         {

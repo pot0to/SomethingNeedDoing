@@ -73,7 +73,7 @@ internal class RequireStatsCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Service.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {this.Text}");
 
         bool AreStatsGood() => CraftingCommands.Instance.HasStats(this.requiredCraftsmanship, this.requiredControl, this.requiredCp);
 

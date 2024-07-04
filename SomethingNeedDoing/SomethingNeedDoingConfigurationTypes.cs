@@ -16,6 +16,14 @@ public interface INode
     public string Name { get; set; }
 }
 
+public enum Language
+{
+    Native,
+    CSharp,
+    Lua,
+    Python,
+}
+
 /// <summary>
 /// Macro node type.
 /// </summary>
@@ -43,6 +51,7 @@ public class MacroNode : INode
     /// Gets or sets a value indicating whether the macro is a Lua script.
     /// </summary>
     public bool IsLua { get; set; } = false;
+    public Language Language { get; set; } = Language.Native;
 }
 
 /// <summary>

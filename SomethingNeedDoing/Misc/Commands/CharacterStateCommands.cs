@@ -1,5 +1,4 @@
 ﻿using Dalamud.Utility;
-using ECommons.DalamudServices;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
@@ -8,7 +7,6 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using Lumina.Excel.GeneratedSheets;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace SomethingNeedDoing.Misc.Commands;
@@ -34,9 +32,9 @@ public class CharacterStateCommands
     public unsafe bool HasStatus(string statusName)
     {
         statusName = statusName.ToLowerInvariant();
-        var sheet = Service.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Status>()!;
+        var sheet = Svc.Data.GetExcelSheet<Sheets.Status>()!;
         var statusIDs = sheet
-            .Where(row => row.Name.RawString.ToLowerInvariant() == statusName)
+            .Where(row => row.Name.RawString.Equals(statusName, System.StringComparison.InvariantCultureIgnoreCase))
             .Select(row => row.RowId)
             .ToArray()!;
 
@@ -45,7 +43,7 @@ public class CharacterStateCommands
 
     public unsafe bool HasStatusId(params uint[] statusIDs)
     {
-        var statusID = Service.ClientState.LocalPlayer!.StatusList
+        var statusID = Svc.ClientState.LocalPlayer!.StatusList
             .Select(se => se.StatusId)
             .ToList().Intersect(statusIDs)
             .FirstOrDefault();
@@ -57,20 +55,20 @@ public class CharacterStateCommands
     public float GetStatusTimeRemaining(uint statusID) => Svc.ClientState.LocalPlayer?.StatusList.FirstOrDefault(x => x.StatusId == statusID)?.RemainingTime ?? 0;
     public uint GetStatusSourceID(uint statusID) => Svc.ClientState.LocalPlayer?.StatusList.FirstOrDefault(x => x.StatusId == statusID)?.SourceId ?? 0;
 
-    public bool GetCharacterCondition(int flagID, bool hasCondition = true) => hasCondition ? Service.Condition[flagID] : !Service.Condition[flagID];
+    public bool GetCharacterCondition(int flagID, bool hasCondition = true) => hasCondition ? Svc.Condition[flagID] : !Svc.Condition[flagID];
 
     public string GetCharacterName(bool includeWorld = false) =>
-        Service.ClientState.LocalPlayer == null ? "null"
-        : includeWorld ? $"{Service.ClientState.LocalPlayer.Name}@{Service.ClientState.LocalPlayer.HomeWorld.GameData!.Name}"
-        : Service.ClientState.LocalPlayer.Name.ToString();
+        Svc.ClientState.LocalPlayer == null ? "null"
+        : includeWorld ? $"{Svc.ClientState.LocalPlayer.Name}@{Svc.ClientState.LocalPlayer.HomeWorld.GameData!.Name}"
+        : Svc.ClientState.LocalPlayer.Name.ToString();
 
-    public bool IsInZone(int zoneID) => Service.ClientState.TerritoryType == zoneID;
+    public bool IsInZone(int zoneID) => Svc.ClientState.TerritoryType == zoneID;
 
-    public bool IsLocalPlayerNull() => Service.ClientState.LocalPlayer == null;
+    public bool IsLocalPlayerNull() => Svc.ClientState.LocalPlayer == null;
 
-    public bool IsPlayerDead() => Service.ClientState.LocalPlayer!.IsDead;
+    public bool IsPlayerDead() => Svc.ClientState.LocalPlayer!.IsDead;
 
-    public bool IsPlayerCasting() => Service.ClientState.LocalPlayer!.IsCasting;
+    public bool IsPlayerCasting() => Svc.ClientState.LocalPlayer!.IsCasting;
 
     public unsafe bool IsMoving() => AgentMap.Instance()->IsPlayerMoving == 1;
 

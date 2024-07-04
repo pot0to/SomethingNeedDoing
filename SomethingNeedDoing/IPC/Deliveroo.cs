@@ -14,8 +14,8 @@ internal static class DeliverooIPC
 
     internal static void Init()
     {
-        IsTurnInRunning = Service.Interface.GetIpcSubscriber<bool>(IsTurnInRunningStr);
-        TurnInStarted = Service.Interface.GetIpcSubscriber<object>(TurnInStartedStr);
-        TurnInStopped = Service.Interface.GetIpcSubscriber<object>(TurnInStoppedStr);
+        IsTurnInRunning = Svc.PluginInterface.GetIpcSubscriber<bool>(IsTurnInRunningStr);
+        TurnInStarted = Svc.PluginInterface.GetIpcSubscriber<object>(TurnInStartedStr);
+        TurnInStopped = Svc.PluginInterface.GetIpcSubscriber<object>(TurnInStoppedStr);
     }
 }

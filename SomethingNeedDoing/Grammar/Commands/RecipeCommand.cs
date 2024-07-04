@@ -1,38 +1,22 @@
+using ECommons;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
-using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Sheets = Lumina.Excel.GeneratedSheets;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
-/// <summary>
-/// The /recipe command.
-/// </summary>
 internal class RecipeCommand : MacroCommand
 {
     private static readonly Regex Regex = new(@"^/recipe\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private readonly string recipeName;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RecipeCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original text.</param>
-    /// <param name="recipeName">Recipe name.</param>
-    /// <param name="wait">Wait value.</param>
-    private RecipeCommand(string text, string recipeName, WaitModifier wait)
-        : base(text, wait) => this.recipeName = recipeName.ToLowerInvariant();
+    private RecipeCommand(string text, string recipeName, WaitModifier wait) : base(text, wait) => this.recipeName = recipeName.ToLowerInvariant();
 
-    /// <summary>
-    /// Parse the text as a command.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <returns>A parsed command.</returns>
     public static RecipeCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
@@ -46,27 +30,22 @@ internal class RecipeCommand : MacroCommand
         return new RecipeCommand(text, nameValue, waitModifier);
     }
 
-    /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Service.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {this.Text}");
 
-        if (this.AddonSynthesisIsOpen())
+        if (AddonSynthesisIsOpen())
             throw new MacroCommandError("/recipe cannot be used while the Synthesis window is open.");
 
         var recipeId = this.SearchRecipeId(this.recipeName);
-        Service.Log.Debug($"Recipe found: {recipeId}");
+        Svc.Log.Debug($"Recipe found: {recipeId}");
 
         this.OpenRecipeNote(recipeId);
 
         await this.PerformWait(token);
     }
 
-    private bool AddonSynthesisIsOpen()
-    {
-        var addon = Service.GameGui.GetAddonByName("Synthesis", 1);
-        return addon != IntPtr.Zero;
-    }
+    private unsafe bool AddonSynthesisIsOpen() => GenericHelpers.TryGetAddonByName<AtkUnitBase>("Synthesis", out _);
 
     private unsafe void OpenRecipeNote(uint recipeID)
     {
@@ -79,7 +58,7 @@ internal class RecipeCommand : MacroCommand
 
     private uint SearchRecipeId(string recipeName)
     {
-        var sheet = Service.DataManager.GetExcelSheet<Sheets.Recipe>()!;
+        var sheet = Svc.Data.GetExcelSheet<Sheets.Recipe>()!;
         var recipes = sheet.Where(r => r.ItemResult.Value?.Name.ToString().ToLowerInvariant() == recipeName).ToList();
 
         switch (recipes.Count)
@@ -87,7 +66,7 @@ internal class RecipeCommand : MacroCommand
             case 0: throw new MacroCommandError("Recipe not found");
             case 1: return recipes.First().RowId;
             default:
-                var jobId = Service.ClientState.LocalPlayer?.ClassJob.Id;
+                var jobId = Svc.ClientState.LocalPlayer?.ClassJob.Id;
 
                 var recipe = recipes.Where(r => this.GetClassJobID(r) == jobId).FirstOrDefault();
                 if (recipe == default)

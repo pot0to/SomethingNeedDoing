@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SomethingNeedDoing.Misc;
 public static class DeepDungeonDataIDs

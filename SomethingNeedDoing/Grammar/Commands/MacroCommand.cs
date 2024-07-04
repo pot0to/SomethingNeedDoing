@@ -19,10 +19,7 @@ internal abstract class MacroCommand
     /// </summary>
     /// <param name="text">Original line text.</param>
     /// <param name="waitMod">Wait value.</param>
-    protected MacroCommand(string text, WaitModifier waitMod)
-        : this(text, waitMod.Wait, waitMod.Until)
-    {
-    }
+    protected MacroCommand(string text, WaitModifier waitMod) : this(text, waitMod.Wait, waitMod.Until) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MacroCommand"/> class.
@@ -125,13 +122,13 @@ internal abstract class MacroCommand
         if (this.WaitUntil == 0)
         {
             sleep = TimeSpan.FromMilliseconds(this.Wait);
-            Service.Log.Debug($"Sleeping for {sleep.TotalMilliseconds} millis");
+            Svc.Log.Debug($"Sleeping for {sleep.TotalMilliseconds} millis");
         }
         else
         {
             var value = Rand.Next(this.Wait, this.WaitUntil);
             sleep = TimeSpan.FromMilliseconds(value);
-            Service.Log.Debug($"Sleeping for {sleep.TotalMilliseconds} millis ({this.Wait} to {this.WaitUntil})");
+            Svc.Log.Debug($"Sleeping for {sleep.TotalMilliseconds} millis ({this.Wait} to {this.WaitUntil})");
         }
 
         await Task.Delay(sleep, token);

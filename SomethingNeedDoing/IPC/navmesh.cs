@@ -38,30 +38,30 @@ internal class NavmeshIPC
     {
         try
         {
-            _navIsReady = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Nav.IsReady");
-            _navBuildProgress = Service.Interface.GetIpcSubscriber<float>($"{Name}.Nav.BuildProgress");
-            _navReload = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Nav.Reload");
-            _navRebuild = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Nav.Rebuild");
-            _navPathfind = Service.Interface.GetIpcSubscriber<Vector3, Vector3, bool, Task<List<Vector3>>>($"{Name}.Nav.Pathfind");
-            _navIsAutoLoad = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Nav.IsAutoLoad");
-            _navSetAutoLoad = Service.Interface.GetIpcSubscriber<bool, object>($"{Name}.Nav.SetAutoLoad");
+            _navIsReady = Svc.PluginInterface.GetIpcSubscriber<bool>($"{Name}.Nav.IsReady");
+            _navBuildProgress = Svc.PluginInterface.GetIpcSubscriber<float>($"{Name}.Nav.BuildProgress");
+            _navReload = Svc.PluginInterface.GetIpcSubscriber<bool>($"{Name}.Nav.Reload");
+            _navRebuild = Svc.PluginInterface.GetIpcSubscriber<bool>($"{Name}.Nav.Rebuild");
+            _navPathfind = Svc.PluginInterface.GetIpcSubscriber<Vector3, Vector3, bool, Task<List<Vector3>>>($"{Name}.Nav.Pathfind");
+            _navIsAutoLoad = Svc.PluginInterface.GetIpcSubscriber<bool>($"{Name}.Nav.IsAutoLoad");
+            _navSetAutoLoad = Svc.PluginInterface.GetIpcSubscriber<bool, object>($"{Name}.Nav.SetAutoLoad");
 
-            _queryMeshNearestPoint = Service.Interface.GetIpcSubscriber<Vector3, float, float, Vector3?>($"{Name}.Query.Mesh.NearestPoint");
-            _queryMeshPointOnFloor = Service.Interface.GetIpcSubscriber<Vector3, bool, float, Vector3?>($"{Name}.Query.Mesh.PointOnFloor");
+            _queryMeshNearestPoint = Svc.PluginInterface.GetIpcSubscriber<Vector3, float, float, Vector3?>($"{Name}.Query.Mesh.NearestPoint");
+            _queryMeshPointOnFloor = Svc.PluginInterface.GetIpcSubscriber<Vector3, bool, float, Vector3?>($"{Name}.Query.Mesh.PointOnFloor");
 
-            _pathMoveTo = Service.Interface.GetIpcSubscriber<List<Vector3>, bool, object>($"{Name}.Path.MoveTo");
-            _pathStop = Service.Interface.GetIpcSubscriber<object>($"{Name}.Path.Stop");
-            _pathIsRunning = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Path.IsRunning");
-            _pathNumWaypoints = Service.Interface.GetIpcSubscriber<int>($"{Name}.Path.NumWaypoints");
-            _pathGetMovementAllowed = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Path.GetMovementAllowed");
-            _pathSetMovementAllowed = Service.Interface.GetIpcSubscriber<bool, object>($"{Name}.Path.SetMovementAllowed");
-            _pathGetAlignCamera = Service.Interface.GetIpcSubscriber<bool>($"{Name}.Path.GetAlignCamera");
-            _pathSetAlignCamera = Service.Interface.GetIpcSubscriber<bool, object>($"{Name}.Path.SetAlignCamera");
-            _pathGetTolerance = Service.Interface.GetIpcSubscriber<float>($"{Name}.Path.GetTolerance");
-            _pathSetTolerance = Service.Interface.GetIpcSubscriber<float, object>($"{Name}.Path.SetTolerance");
+            _pathMoveTo = Svc.PluginInterface.GetIpcSubscriber<List<Vector3>, bool, object>($"{Name}.Path.MoveTo");
+            _pathStop = Svc.PluginInterface.GetIpcSubscriber<object>($"{Name}.Path.Stop");
+            _pathIsRunning = Svc.PluginInterface.GetIpcSubscriber<bool>($"{Name}.Path.IsRunning");
+            _pathNumWaypoints = Svc.PluginInterface.GetIpcSubscriber<int>($"{Name}.Path.NumWaypoints");
+            _pathGetMovementAllowed = Svc.PluginInterface.GetIpcSubscriber<bool>($"{Name}.Path.GetMovementAllowed");
+            _pathSetMovementAllowed = Svc.PluginInterface.GetIpcSubscriber<bool, object>($"{Name}.Path.SetMovementAllowed");
+            _pathGetAlignCamera = Svc.PluginInterface.GetIpcSubscriber<bool>($"{Name}.Path.GetAlignCamera");
+            _pathSetAlignCamera = Svc.PluginInterface.GetIpcSubscriber<bool, object>($"{Name}.Path.SetAlignCamera");
+            _pathGetTolerance = Svc.PluginInterface.GetIpcSubscriber<float>($"{Name}.Path.GetTolerance");
+            _pathSetTolerance = Svc.PluginInterface.GetIpcSubscriber<float, object>($"{Name}.Path.SetTolerance");
 
-            _pathfindAndMoveTo = Service.Interface.GetIpcSubscriber<Vector3, bool, bool>($"{Name}.SimpleMove.PathfindAndMoveTo");
-            _pathfindInProgress = Service.Interface.GetIpcSubscriber<bool>($"{Name}.SimpleMove.PathfindInProgress");
+            _pathfindAndMoveTo = Svc.PluginInterface.GetIpcSubscriber<Vector3, bool, bool>($"{Name}.SimpleMove.PathfindAndMoveTo");
+            _pathfindInProgress = Svc.PluginInterface.GetIpcSubscriber<bool>($"{Name}.SimpleMove.PathfindInProgress");
         }
         catch (Exception ex) { ex.Log(); }
     }

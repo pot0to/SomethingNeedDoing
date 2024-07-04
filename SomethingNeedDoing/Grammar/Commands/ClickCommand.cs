@@ -1,5 +1,6 @@
-using ClickLib;
-using ClickLib.Exceptions;
+using ECommons;
+using ECommons.Automation.UIInput;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
@@ -10,29 +11,14 @@ using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
-/// <summary>
-/// The /click command.
-/// </summary>
 internal class ClickCommand : MacroCommand
 {
     private static readonly Regex Regex = new(@"^/click\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly string clickName;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ClickCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original text.</param>
-    /// <param name="clickName">Click name.</param>
-    /// <param name="wait">Wait value.</param>
-    private ClickCommand(string text, string clickName, WaitModifier wait)
-        : base(text, wait) => this.clickName = clickName;
+    private ClickCommand(string text, string clickName, WaitModifier wait) : base(text, wait) => this.clickName = clickName;
 
-    /// <summary>
-    /// Parse the text as a command.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <returns>A parsed command.</returns>
     public static ClickCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
@@ -46,22 +32,24 @@ internal class ClickCommand : MacroCommand
         return new ClickCommand(text, nameValue, waitModifier);
     }
 
-    /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Service.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {this.Text}");
 
         try
         {
-            Click.SendClick(this.clickName.ToLowerInvariant());
-        }
-        catch (ClickNotFoundError)
-        {
-            throw new MacroCommandError("Click not found");
+            unsafe
+            {
+                var addonName = clickName[..clickName.IndexOf('_')];
+                if (GenericHelpers.TryGetAddonByName<AtkUnitBase>(addonName, out var addon))
+                    ClickHelper.SendClick(this.clickName, (nint)addon);
+                else
+                    throw new MacroCommandError($"Addon {addonName} not found.");
+            }
         }
         catch (Exception ex)
         {
-            Service.Log.Error(ex, "Unexpected click error");
+            Svc.Log.Error(ex, "Unexpected click error");
             throw new MacroCommandError("Unexpected click error", ex);
         }
 
