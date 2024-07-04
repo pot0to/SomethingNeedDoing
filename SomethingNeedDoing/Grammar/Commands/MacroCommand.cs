@@ -40,9 +40,9 @@ internal abstract class MacroCommand
     /// <param name="until">WaitUntil value.</param>
     protected MacroCommand(string text, int wait, int until)
     {
-        this.Text = text;
-        this.Wait = wait;
-        this.WaitUntil = until;
+        Text = text;
+        Wait = wait;
+        WaitUntil = until;
     }
 
     /// <summary>
@@ -54,10 +54,10 @@ internal abstract class MacroCommand
     /// <param name="index">Object index value.</param>
     protected MacroCommand(string text, int wait, int until, int index)
     {
-        this.Text = text;
-        this.Wait = wait;
-        this.WaitUntil = until;
-        this.ObjectIndex = index;
+        Text = text;
+        Wait = wait;
+        WaitUntil = until;
+        ObjectIndex = index;
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ internal abstract class MacroCommand
     public int ObjectIndex { get; }
 
     /// <inheritdoc/>
-    public override string ToString() => this.Text;
+    public override string ToString() => Text;
 
     /// <summary>
     /// Execute a macro command.
@@ -115,20 +115,20 @@ internal abstract class MacroCommand
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     protected async Task PerformWait(CancellationToken token)
     {
-        if (this.Wait == 0 && this.WaitUntil == 0)
+        if (Wait == 0 && WaitUntil == 0)
             return;
 
         TimeSpan sleep;
-        if (this.WaitUntil == 0)
+        if (WaitUntil == 0)
         {
-            sleep = TimeSpan.FromMilliseconds(this.Wait);
+            sleep = TimeSpan.FromMilliseconds(Wait);
             Svc.Log.Debug($"Sleeping for {sleep.TotalMilliseconds} millis");
         }
         else
         {
-            var value = Rand.Next(this.Wait, this.WaitUntil);
+            var value = Rand.Next(Wait, WaitUntil);
             sleep = TimeSpan.FromMilliseconds(value);
-            Svc.Log.Debug($"Sleeping for {sleep.TotalMilliseconds} millis ({this.Wait} to {this.WaitUntil})");
+            Svc.Log.Debug($"Sleeping for {sleep.TotalMilliseconds} millis ({Wait} to {WaitUntil})");
         }
 
         await Task.Delay(sleep, token);

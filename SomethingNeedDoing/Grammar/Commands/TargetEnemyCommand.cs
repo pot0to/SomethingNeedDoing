@@ -17,7 +17,7 @@ internal class TargetEnemyCommand : MacroCommand
 
     private TargetEnemyCommand(string text, WaitModifier wait, IndexModifier index) : base(text, wait, index)
     {
-        this.targetIndex = index.ObjectId;
+        targetIndex = index.ObjectId;
         Svc.Log.Info("making new command");
     }
 
@@ -43,7 +43,7 @@ internal class TargetEnemyCommand : MacroCommand
         if (target != default)
             Svc.Targets.Target = target;
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 
     private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.IGameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position);

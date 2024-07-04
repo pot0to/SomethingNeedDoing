@@ -73,7 +73,7 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
 
     internal void Save() => Svc.PluginInterface.SavePluginConfig(this);
 
-    internal IEnumerable<INode> GetAllNodes() => new INode[] { this.RootFolder }.Concat(this.GetAllNodes(this.RootFolder.Children));
+    internal IEnumerable<INode> GetAllNodes() => new INode[] { RootFolder }.Concat(GetAllNodes(RootFolder.Children));
 
     internal IEnumerable<INode> GetAllNodes(IEnumerable<INode> nodes)
     {
@@ -82,7 +82,7 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
             yield return node;
             if (node is FolderNode folder)
             {
-                var childNodes = this.GetAllNodes(folder.Children);
+                var childNodes = GetAllNodes(folder.Children);
                 foreach (var childNode in childNodes)
                 {
                     yield return childNode;
@@ -93,7 +93,7 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
 
     internal bool TryFindParent(INode node, out FolderNode? parent)
     {
-        foreach (var candidate in this.GetAllNodes())
+        foreach (var candidate in GetAllNodes())
         {
             if (candidate is FolderNode folder && folder.Children.Contains(node))
             {

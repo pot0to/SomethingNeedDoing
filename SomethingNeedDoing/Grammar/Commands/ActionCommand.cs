@@ -54,46 +54,46 @@ internal class ActionCommand : MacroCommand
 
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        if (!this.conditionMod.HasCondition())
+        if (!conditionMod.HasCondition())
         {
-            Svc.Log.Debug($"Condition skip: {this.Text}");
+            Svc.Log.Debug($"Condition skip: {Text}");
             return;
         }
 
-        if (IsCraftingAction(this.actionName))
+        if (IsCraftingAction(actionName))
         {
             if (Service.Configuration.CraftSkip)
             {
                 if (CraftingCommands.Instance.IsNotCrafting())
                 {
-                    Svc.Log.Debug($"Not crafting skip: {this.Text}");
+                    Svc.Log.Debug($"Not crafting skip: {Text}");
                     return;
                 }
 
                 if (CraftingCommands.Instance.HasMaxProgress())
                 {
-                    Svc.Log.Debug($"Max progress skip: {this.Text}");
+                    Svc.Log.Debug($"Max progress skip: {Text}");
                     return;
                 }
             }
 
-            if (Service.Configuration.QualitySkip && IsSkippableCraftingQualityAction(this.actionName) && CraftingCommands.Instance.HasMaxQuality())
+            if (Service.Configuration.QualitySkip && IsSkippableCraftingQualityAction(actionName) && CraftingCommands.Instance.HasMaxQuality())
             {
-                Svc.Log.Debug($"Max quality skip: {this.Text}");
+                Svc.Log.Debug($"Max quality skip: {Text}");
                 return;
             }
 
             DataWaiter.Reset();
 
-            Service.ChatManager.SendMessage(this.Text);
+            Service.ChatManager.SendMessage(Text);
 
             if (Service.Configuration.SmartWait)
             {
                 Svc.Log.Debug("Smart wait");
 
-                if (this.unsafeMod.IsUnsafe)
+                if (unsafeMod.IsUnsafe)
                 {
                     // Pause a moment to let the action begin
                     await Task.Delay(250, token);
@@ -110,16 +110,16 @@ internal class ActionCommand : MacroCommand
             }
             else
             {
-                await this.PerformWait(token);
+                await PerformWait(token);
 
-                if (!this.unsafeMod.IsUnsafe && !DataWaiter.WaitOne(SafeCraftMaxWait))
+                if (!unsafeMod.IsUnsafe && !DataWaiter.WaitOne(SafeCraftMaxWait))
                     throw new MacroActionTimeoutError("Did not receive a timely response");
             }
         }
         else
         {
-            Service.ChatManager.SendMessage(this.Text);
-            await this.PerformWait(token);
+            Service.ChatManager.SendMessage(Text);
+            await PerformWait(token);
         }
     }
 

@@ -248,13 +248,13 @@ internal class HelpWindow : Window
     /// </summary>
     public HelpWindow(): base(WindowName)
     {
-        this.Flags |= ImGuiWindowFlags.NoScrollbar;
+        Flags |= ImGuiWindowFlags.NoScrollbar;
 
-        this.Size = new Vector2(400, 600);
-        this.SizeCondition = ImGuiCond.FirstUseEver;
-        this.RespectCloseHotkey = false;
+        Size = new Vector2(400, 600);
+        SizeCondition = ImGuiCond.FirstUseEver;
+        RespectCloseHotkey = false;
 
-        this.clickNames = [.. ClickHelper.GetAvailableClicks()];
+        clickNames = [.. ClickHelper.GetAvailableClicks()];
     }
 
     /// <inheritdoc/>
@@ -264,17 +264,17 @@ internal class HelpWindow : Window
         {
             var tabs = new (string Title, System.Action Dele)[]
             {
-                ("Changelog", this.DrawChangelog),
-                ("Options", this.DrawOptions),
-                ("Commands", this.DrawCommands),
-                ("Modifiers", this.DrawModifiers),
-                ("Lua", this.DrawLua),
-                ("CLI", this.DrawCli),
-                ("Clicks", this.DrawClicks),
-                ("Sends", this.DrawVirtualKeys),
-                ("Conditions", this.DrawAllConditions),
-                ("Game Data", this.DrawGameData),
-                ("Debug", this.DrawDebug),
+                ("Changelog", DrawChangelog),
+                ("Options", DrawOptions),
+                ("Commands", DrawCommands),
+                ("Modifiers", DrawModifiers),
+                ("Lua", DrawLua),
+                ("CLI", DrawCli),
+                ("Clicks", DrawClicks),
+                ("Sends", DrawVirtualKeys),
+                ("Conditions", DrawAllConditions),
+                ("Game Data", DrawGameData),
+                ("Debug", DrawDebug),
             };
 
             foreach (var (title, dele) in tabs)
@@ -1288,7 +1288,7 @@ internal class HelpWindow : Window
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
-        foreach (var (name, alias, desc, modifiers, examples) in this.commandData)
+        foreach (var (name, alias, desc, modifiers, examples) in commandData)
         {
             ImGui.TextUnformatted($"/{name}");
 
@@ -1315,7 +1315,7 @@ internal class HelpWindow : Window
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
-        foreach (var (name, desc, examples) in this.modifierData)
+        foreach (var (name, desc, examples) in modifierData)
         {
             ImGui.TextUnformatted($"<{name}>");
             using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
@@ -1331,7 +1331,7 @@ internal class HelpWindow : Window
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
-        foreach (var (name, desc, example) in this.cliData)
+        foreach (var (name, desc, example) in cliData)
         {
             ImGui.TextUnformatted($"/pcraft {name}");
             using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
@@ -1401,7 +1401,7 @@ yield(""/echo done!"")
         ImGui.TextWrapped("Refer to https://github.com/NightmareXIV/ECommons/tree/master/ECommons/UIHelpers/AddonMasterImplementations for any details.");
         ImGui.Separator();
 
-        foreach (var name in this.clickNames)
+        foreach (var name in clickNames)
             ImGuiUtils.ClickToCopyText($"/click {name}");
     }
 
@@ -1463,15 +1463,15 @@ yield(""/echo done!"")
         {
             var tabs = new (string Title, System.Action Dele)[]
             {
-                ("ClassJob", this.DrawClassJob),
-                ("Weather", this.DrawWeather),
-                ("CFC", this.DrawCFC),
-                ("Duty Roulette", this.DrawDutyRoulette),
-                ("Ocean Fishing Spots", this.DrawOceanFishingSpots),
-                ("Achievements", this.DrawAchievements),
-                ("ObjectKinds", this.DrawEnum<ObjectKind>),
-                ("Worlds", this.DrawWorlds),
-                ("InventoryTypes", this.DrawEnum<InventoryType>),
+                ("ClassJob", DrawClassJob),
+                ("Weather", DrawWeather),
+                ("CFC", DrawCFC),
+                ("Duty Roulette", DrawDutyRoulette),
+                ("Ocean Fishing Spots", DrawOceanFishingSpots),
+                ("Achievements", DrawAchievements),
+                ("ObjectKinds", DrawEnum<ObjectKind>),
+                ("Worlds", DrawWorlds),
+                ("InventoryTypes", DrawEnum<InventoryType>),
             };
 
             foreach (var (title, dele) in tabs)
@@ -1528,7 +1528,7 @@ yield(""/echo done!"")
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
-        foreach (var w in this.achievementsSheet)
+        foreach (var w in achievementsSheet)
             ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
     }
 
@@ -1537,7 +1537,7 @@ yield(""/echo done!"")
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
-        foreach (var w in this.fishingSpotsSheet)
+        foreach (var w in fishingSpotsSheet)
             ImGui.TextUnformatted($"{w.RowId}: {w.PlaceName.Value!.Name}");
     }
 
@@ -1546,7 +1546,7 @@ yield(""/echo done!"")
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
-        foreach (var w in this.rouletteSheet)
+        foreach (var w in rouletteSheet)
             ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
     }
 
@@ -1555,7 +1555,7 @@ yield(""/echo done!"")
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
-        foreach (var w in this.cfcSheet)
+        foreach (var w in cfcSheet)
             ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
     }
 
@@ -1564,7 +1564,7 @@ yield(""/echo done!"")
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
-        foreach (var w in this.weatherSheet)
+        foreach (var w in weatherSheet)
             ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
     }
 
@@ -1573,7 +1573,7 @@ yield(""/echo done!"")
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         using var colour = ImRaii.PushColor(ImGuiCol.Text, ShadedColor);
-        foreach (var cj in this.classJobSheet)
+        foreach (var cj in classJobSheet)
             ImGui.TextUnformatted($"{cj.RowId}: {cj.Name}; ExpArrayIndex={cj.ExpArrayIndex}");
     }
 }

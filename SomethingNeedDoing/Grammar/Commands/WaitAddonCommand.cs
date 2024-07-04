@@ -41,9 +41,9 @@ internal class WaitAddonCommand : MacroCommand
 
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        var (addonPtr, isVisible) = await this.LinearWait(AddonCheckInterval, this.maxWait, this.IsAddonVisible, token);
+        var (addonPtr, isVisible) = await LinearWait(AddonCheckInterval, maxWait, IsAddonVisible, token);
 
         if (addonPtr == IntPtr.Zero && Service.Configuration.StopMacroIfAddonNotFound)
             throw new MacroCommandError("Addon not found");
@@ -51,12 +51,12 @@ internal class WaitAddonCommand : MacroCommand
         if (!isVisible && Service.Configuration.StopMacroIfAddonNotVisible)
             throw new MacroCommandError("Addon not visible");
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 
     private unsafe (IntPtr Addon, bool IsVisible) IsAddonVisible()
     {
-        var addonPtr = Svc.GameGui.GetAddonByName(this.addonName, 1);
+        var addonPtr = Svc.GameGui.GetAddonByName(addonName, 1);
         if (addonPtr == IntPtr.Zero)
             return (addonPtr, false);
 

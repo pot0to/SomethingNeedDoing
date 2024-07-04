@@ -10,7 +10,7 @@ internal class DistanceModifier : MacroModifier
 {
     private static readonly Regex Regex = new(@"(?<modifier><distance\.(?<distance>\d+(?:\.\d+)?)>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private DistanceModifier(int distance) => this.Distance = distance;
+    private DistanceModifier(int distance) => Distance = distance;
 
     /// <summary>
     /// Gets the objectIndex of the specified Target.

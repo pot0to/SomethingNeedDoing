@@ -14,7 +14,7 @@ internal class ActionCommands
 
     public List<string> ListAllFunctions()
     {
-        var methods = this.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+        var methods = GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
         var list = new List<string>();
         foreach (var method in methods.Where(x => x.Name != nameof(ListAllFunctions) && x.DeclaringType != typeof(object)))
         {
@@ -28,7 +28,7 @@ internal class ActionCommands
 
     private delegate void AbandonDuty(bool a1);
 
-    public void LeaveDuty() => this.abandonDuty(false);
+    public void LeaveDuty() => abandonDuty(false);
 
     public unsafe void TeleportToGCTown(bool useTickets = false)
     {
@@ -60,25 +60,25 @@ internal class ActionCommands
 
     private unsafe uint GetSpellActionId(uint actionId) => ActionManager.Instance()->GetAdjustedActionId(actionId);
 
-    public unsafe float GetRecastTimeElapsed(uint actionId) => ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Action, this.GetSpellActionId(actionId));
+    public unsafe float GetRecastTimeElapsed(uint actionId) => ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Action, GetSpellActionId(actionId));
     public unsafe float GetRealRecastTimeElapsed(uint actionId) => ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Action, actionId);
 
-    public unsafe float GetRecastTime(uint actionId) => ActionManager.Instance()->GetRecastTime(ActionType.Action, this.GetSpellActionId(actionId));
+    public unsafe float GetRecastTime(uint actionId) => ActionManager.Instance()->GetRecastTime(ActionType.Action, GetSpellActionId(actionId));
     public unsafe float GetRealRecastTime(uint actionId) => ActionManager.Instance()->GetRecastTime(ActionType.Action, actionId);
 
-    public float GetSpellCooldown(uint actionId) => Math.Abs(this.GetRecastTime(this.GetSpellActionId(actionId)) - this.GetRecastTimeElapsed(this.GetSpellActionId(actionId)));
-    public float GetRealSpellCooldown(uint actionId) => Math.Abs(this.GetRealRecastTime(actionId) - this.GetRealRecastTimeElapsed(actionId));
+    public float GetSpellCooldown(uint actionId) => Math.Abs(GetRecastTime(GetSpellActionId(actionId)) - GetRecastTimeElapsed(GetSpellActionId(actionId)));
+    public float GetRealSpellCooldown(uint actionId) => Math.Abs(GetRealRecastTime(actionId) - GetRealRecastTimeElapsed(actionId));
 
     public int GetSpellCooldownInt(uint actionId)
     {
-        var cooldown = (int)Math.Ceiling(this.GetSpellCooldown(actionId) % this.GetRecastTime(actionId));
+        var cooldown = (int)Math.Ceiling(GetSpellCooldown(actionId) % GetRecastTime(actionId));
         return Math.Max(0, cooldown);
     }
 
     public int GetActionStackCount(int maxStacks, uint actionId)
     {
-        var cooldown = this.GetSpellCooldownInt(actionId);
-        var recastTime = this.GetRecastTime(actionId);
+        var cooldown = GetSpellCooldownInt(actionId);
+        var recastTime = GetRecastTime(actionId);
 
         return cooldown <= 0 || recastTime == 0 ? maxStacks : maxStacks - (int)Math.Ceiling(cooldown / (recastTime / maxStacks));
     }

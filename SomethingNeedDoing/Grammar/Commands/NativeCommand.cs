@@ -35,10 +35,10 @@ internal class NativeCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        Service.ChatManager.SendMessage($"{(new[] { "/", "<" }.Any(this.Text.StartsWith) ? this.Text : $"/e {this.Text}")}");
+        Service.ChatManager.SendMessage($"{(new[] { "/", "<" }.Any(Text.StartsWith) ? Text : $"/e {Text}")}");
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

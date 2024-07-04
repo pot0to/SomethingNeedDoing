@@ -39,19 +39,19 @@ internal class SendCommand : MacroCommand
 
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        if (this.vkCodes.Length == 1)
+        if (vkCodes.Length == 1)
         {
-            Keyboard.Send(this.vkCodes[0]);
+            Keyboard.Send(vkCodes[0]);
         }
         else
         {
-            var key = this.vkCodes.Last();
-            var mods = this.vkCodes.SkipLast(1);
+            var key = vkCodes.Last();
+            var mods = vkCodes.SkipLast(1);
             Keyboard.Send(key, mods);
         }
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

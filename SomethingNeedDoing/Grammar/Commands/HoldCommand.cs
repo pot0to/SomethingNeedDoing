@@ -54,19 +54,19 @@ internal class HoldCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        if (this.vkCodes.Length == 1)
+        if (vkCodes.Length == 1)
         {
-            Keyboard.Hold(this.vkCodes[0]);
+            Keyboard.Hold(vkCodes[0]);
         }
         else
         {
-            var key = this.vkCodes.Last();
-            var mods = this.vkCodes.SkipLast(1);
+            var key = vkCodes.Last();
+            var mods = vkCodes.SkipLast(1);
             Keyboard.Hold(key, mods);
         }
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

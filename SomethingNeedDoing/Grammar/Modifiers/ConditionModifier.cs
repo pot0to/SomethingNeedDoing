@@ -59,7 +59,7 @@ internal class ConditionModifier : MacroModifier
     /// <returns>A parsed command.</returns>
     public unsafe bool HasCondition()
     {
-        if (this.conditions.Length == 0)
+        if (conditions.Length == 0)
             return true;
 
         var addon = Svc.GameGui.GetAddonByName("Synthesis", 1);
@@ -72,9 +72,9 @@ internal class ConditionModifier : MacroModifier
         var addonPtr = (AddonSynthesis*)addon;
         var text = addonPtr->Condition->NodeText.ToString().ToLowerInvariant();
 
-        var matchesText = this.conditions.Any(name => name == text);
+        var matchesText = conditions.Any(name => name == text);
 
-        if (this.negated)
+        if (negated)
             matchesText ^= true;
 
         return matchesText;

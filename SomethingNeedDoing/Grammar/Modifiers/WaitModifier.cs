@@ -13,8 +13,8 @@ internal class WaitModifier : MacroModifier
 
     private WaitModifier(int wait, int until)
     {
-        this.Wait = wait;
-        this.Until = until;
+        Wait = wait;
+        Until = until;
     }
 
     /// <summary>

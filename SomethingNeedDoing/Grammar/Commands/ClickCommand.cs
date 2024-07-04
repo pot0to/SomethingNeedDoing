@@ -34,7 +34,7 @@ internal class ClickCommand : MacroCommand
 
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
         try
         {
@@ -42,7 +42,7 @@ internal class ClickCommand : MacroCommand
             {
                 var addonName = clickName[..clickName.IndexOf('_')];
                 if (GenericHelpers.TryGetAddonByName<AtkUnitBase>(addonName, out var addon))
-                    ClickHelper.SendClick(this.clickName, (nint)addon);
+                    ClickHelper.SendClick(clickName, (nint)addon);
                 else
                     throw new MacroCommandError($"Addon {addonName} not found.");
             }
@@ -53,6 +53,6 @@ internal class ClickCommand : MacroCommand
             throw new MacroCommandError("Unexpected click error", ex);
         }
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

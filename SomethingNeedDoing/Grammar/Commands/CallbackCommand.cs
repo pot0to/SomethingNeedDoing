@@ -97,6 +97,6 @@ internal class CallbackCommand : MacroCommand
         {
             Callback.Fire(addon, updateState, valueArgs.ToArray());
         }
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

@@ -20,7 +20,7 @@ internal class TargetCommand : MacroCommand
 
     private TargetCommand(string text, string targetName, WaitModifier wait, IndexModifier index, ListIndexModifier listIndex, PartyIndexModifier partyIndex) : base(text, wait, index)
     {
-        this.targetIndex = index.ObjectId;
+        targetIndex = index.ObjectId;
         this.targetName = targetName.ToLowerInvariant();
         this.listIndex = listIndex.ListIndex;
         this.partyIndex = partyIndex.PartyIndex;
@@ -50,8 +50,8 @@ internal class TargetCommand : MacroCommand
             Svc.Log.Info($"looking for non party member target");
             target = Svc.Objects
                 .OrderBy(o => Vector3.Distance(o.Position, Svc.ClientState.LocalPlayer!.Position))
-                .Where(obj => obj.Name.TextValue.Equals(this.targetName, System.StringComparison.InvariantCultureIgnoreCase) && obj.IsTargetable && (this.targetIndex <= 0 || obj.ObjectIndex == this.targetIndex))
-                .Skip(this.listIndex)
+                .Where(obj => obj.Name.TextValue.Equals(targetName, System.StringComparison.InvariantCultureIgnoreCase) && obj.IsTargetable && (targetIndex <= 0 || obj.ObjectIndex == targetIndex))
+                .Skip(listIndex)
                 .FirstOrDefault();
 
         if (target == default && Service.Configuration.StopMacroIfTargetNotFound)
@@ -59,6 +59,6 @@ internal class TargetCommand : MacroCommand
         if (target != default)
             Svc.Targets.Target = target;
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

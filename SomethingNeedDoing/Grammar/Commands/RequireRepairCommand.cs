@@ -40,11 +40,11 @@ internal class RequireRepairCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
         if (CraftingCommands.Instance.NeedsRepair())
             throw new MacroPause("You need to repair", UiColor.Yellow);
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

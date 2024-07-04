@@ -17,7 +17,7 @@ public class CraftingCommands()
 
     public List<string> ListAllFunctions()
     {
-        var methods = this.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+        var methods = GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
         var list = new List<string>();
         foreach (var method in methods.Where(x => x.Name != nameof(ListAllFunctions) && x.DeclaringType != typeof(object)))
         {
@@ -28,7 +28,7 @@ public class CraftingCommands()
     }
     public bool IsCrafting() => Svc.Condition[ConditionFlag.Crafting] && !Svc.Condition[ConditionFlag.PreparingToCraft];
 
-    public bool IsNotCrafting() => !this.IsCrafting();
+    public bool IsNotCrafting() => !IsCrafting();
 
     private unsafe int GetNodeTextAsInt(AtkTextNode* node, string error)
     {
@@ -55,13 +55,13 @@ public class CraftingCommands()
 
     public unsafe bool IsCollectable()
     {
-        var addon = this.GetSynthesisAddon();
+        var addon = GetSynthesisAddon();
         return addon->AtkUnitBase.UldManager.NodeList[34]->IsVisible();
     }
 
     public unsafe string GetCondition(bool lower = true)
     {
-        var addon = this.GetSynthesisAddon();
+        var addon = GetSynthesisAddon();
         var text = addon->Condition->NodeText.ToString();
 
         if (lower)
@@ -70,69 +70,69 @@ public class CraftingCommands()
         return text;
     }
 
-    public bool HasCondition(string condition, bool lower = true) => condition == this.GetCondition(lower);
+    public bool HasCondition(string condition, bool lower = true) => condition == GetCondition(lower);
 
     public unsafe int GetProgress()
     {
-        var addon = this.GetSynthesisAddon();
-        return this.GetNodeTextAsInt(addon->CurrentProgress, "Could not parse current progress number in the Synthesis addon");
+        var addon = GetSynthesisAddon();
+        return GetNodeTextAsInt(addon->CurrentProgress, "Could not parse current progress number in the Synthesis addon");
     }
 
     public unsafe int GetMaxProgress()
     {
-        var addon = this.GetSynthesisAddon();
-        return this.GetNodeTextAsInt(addon->MaxProgress, "Could not parse max progress number in the Synthesis addon");
+        var addon = GetSynthesisAddon();
+        return GetNodeTextAsInt(addon->MaxProgress, "Could not parse max progress number in the Synthesis addon");
     }
 
     public bool HasMaxProgress()
     {
-        var current = this.GetProgress();
-        var max = this.GetMaxProgress();
+        var current = GetProgress();
+        var max = GetMaxProgress();
         return current == max;
     }
 
     public unsafe int GetQuality()
     {
-        var addon = this.GetSynthesisAddon();
-        return this.GetNodeTextAsInt(addon->CurrentQuality, "Could not parse current quality number in the Synthesis addon");
+        var addon = GetSynthesisAddon();
+        return GetNodeTextAsInt(addon->CurrentQuality, "Could not parse current quality number in the Synthesis addon");
     }
 
     public unsafe int GetMaxQuality()
     {
-        var addon = this.GetSynthesisAddon();
-        return this.GetNodeTextAsInt(addon->MaxQuality, "Could not parse max quality number in the Synthesis addon");
+        var addon = GetSynthesisAddon();
+        return GetNodeTextAsInt(addon->MaxQuality, "Could not parse max quality number in the Synthesis addon");
     }
 
     public bool HasMaxQuality()
     {
-        var step = this.GetStep();
+        var step = GetStep();
 
         if (step <= 1)
             return false;
 
-        if (this.IsCollectable())
+        if (IsCollectable())
         {
-            var current = this.GetQuality();
-            var max = this.GetMaxQuality();
+            var current = GetQuality();
+            var max = GetMaxQuality();
             return current == max;
         }
         else
         {
-            var percentHq = this.GetPercentHQ();
+            var percentHq = GetPercentHQ();
             return percentHq == 100;
         }
     }
 
     public unsafe int GetDurability()
     {
-        var addon = this.GetSynthesisAddon();
-        return this.GetNodeTextAsInt(addon->CurrentDurability, "Could not parse current durability number in the Synthesis addon");
+        var addon = GetSynthesisAddon();
+        return GetNodeTextAsInt(addon->CurrentDurability, "Could not parse current durability number in the Synthesis addon");
     }
 
     public unsafe int GetMaxDurability()
     {
-        var addon = this.GetSynthesisAddon();
-        return this.GetNodeTextAsInt(addon->StartingDurability, "Could not parse max durability number in the Synthesis addon");
+        var addon = GetSynthesisAddon();
+        return GetNodeTextAsInt(addon->StartingDurability, "Could not parse max durability number in the Synthesis addon");
     }
 
     public int GetCp()
@@ -161,15 +161,15 @@ public class CraftingCommands()
 
     public unsafe int GetStep()
     {
-        var addon = this.GetSynthesisAddon();
-        var step = this.GetNodeTextAsInt(addon->StepNumber, "Could not parse current step number in the Synthesis addon");
+        var addon = GetSynthesisAddon();
+        var step = GetNodeTextAsInt(addon->StepNumber, "Could not parse current step number in the Synthesis addon");
         return step;
     }
 
     public unsafe int GetPercentHQ()
     {
-        var addon = this.GetSynthesisAddon();
-        var step = this.GetNodeTextAsInt(addon->HQPercentage, "Could not parse percent hq number in the Synthesis addon");
+        var addon = GetSynthesisAddon();
+        var step = GetNodeTextAsInt(addon->HQPercentage, "Could not parse percent hq number in the Synthesis addon");
         return step;
     }
 
@@ -302,9 +302,9 @@ public class CraftingCommands()
         return hasStats;
     }
 
-    public unsafe uint GetProgressIncrease(uint actionID) => this.GetActionResult(actionID).Progress;
+    public unsafe uint GetProgressIncrease(uint actionID) => GetActionResult(actionID).Progress;
 
-    public unsafe uint GetQualityIncrease(uint actionID) => this.GetActionResult(actionID).Quality;
+    public unsafe uint GetQualityIncrease(uint actionID) => GetActionResult(actionID).Quality;
 
     private unsafe (uint Progress, uint Quality) GetActionResult(uint id)
     {

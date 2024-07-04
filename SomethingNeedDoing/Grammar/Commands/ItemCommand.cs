@@ -69,19 +69,19 @@ internal class ItemCommand : MacroCommand
     /// <inheritdoc/>
     public override async System.Threading.Tasks.Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        var itemId = this.SearchItemId(this.itemName);
+        var itemId = SearchItemId(itemName);
         Svc.Log.Debug($"Item found: {itemId}");
 
-        var count = this.GetInventoryItemCount(itemId, this.itemQualityMod.IsHq);
+        var count = GetInventoryItemCount(itemId, itemQualityMod.IsHq);
         Svc.Log.Debug($"Item Count: {count}");
         if (count == 0 && Service.Configuration.StopMacroIfItemNotFound)
             throw new MacroCommandError("You do not have that item");
 
-        this.UseItem(itemId, this.itemQualityMod.IsHq);
+        UseItem(itemId, itemQualityMod.IsHq);
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 
     private unsafe void UseItem(uint itemID, bool isHQ = false)

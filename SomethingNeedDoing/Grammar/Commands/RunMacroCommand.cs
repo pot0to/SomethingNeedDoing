@@ -46,17 +46,17 @@ internal class RunMacroCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
         var macroNode = Service.Configuration
             .GetAllNodes().OfType<MacroNode>()
-            .FirstOrDefault(macro => macro.Name == this.macroName);
+            .FirstOrDefault(macro => macro.Name == macroName);
 
         if (macroNode == default)
             throw new MacroCommandError("No macro with that name");
 
         Service.MacroManager.EnqueueMacro(macroNode);
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

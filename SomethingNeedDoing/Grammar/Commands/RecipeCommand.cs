@@ -32,17 +32,17 @@ internal class RecipeCommand : MacroCommand
 
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
         if (AddonSynthesisIsOpen())
             throw new MacroCommandError("/recipe cannot be used while the Synthesis window is open.");
 
-        var recipeId = this.SearchRecipeId(this.recipeName);
+        var recipeId = SearchRecipeId(recipeName);
         Svc.Log.Debug($"Recipe found: {recipeId}");
 
-        this.OpenRecipeNote(recipeId);
+        OpenRecipeNote(recipeId);
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 
     private unsafe bool AddonSynthesisIsOpen() => GenericHelpers.TryGetAddonByName<AtkUnitBase>("Synthesis", out _);
@@ -68,7 +68,7 @@ internal class RecipeCommand : MacroCommand
             default:
                 var jobId = Svc.ClientState.LocalPlayer?.ClassJob.Id;
 
-                var recipe = recipes.Where(r => this.GetClassJobID(r) == jobId).FirstOrDefault();
+                var recipe = recipes.Where(r => GetClassJobID(r) == jobId).FirstOrDefault();
                 if (recipe == default)
                     return recipes.First().RowId;
 

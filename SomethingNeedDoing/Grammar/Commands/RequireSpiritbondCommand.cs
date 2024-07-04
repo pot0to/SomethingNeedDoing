@@ -49,11 +49,11 @@ internal class RequireSpiritbondCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        if (CraftingCommands.Instance.CanExtractMateria(this.within))
+        if (CraftingCommands.Instance.CanExtractMateria(within))
             throw new MacroPause("You can extract materia now", UiColor.Green);
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

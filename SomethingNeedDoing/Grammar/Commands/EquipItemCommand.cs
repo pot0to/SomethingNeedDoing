@@ -35,7 +35,7 @@ internal class EquipItemCommand : MacroCommand
     private EquipItemCommand(string text, uint itemID, WaitModifier wait, EchoModifier echo) : base(text, wait)
     {
         this.itemID = itemID;
-        this.echoMod = echo;
+        echoMod = echo;
     }
 
     /// <summary>
@@ -61,9 +61,9 @@ internal class EquipItemCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        EquipItem(this.itemID);
+        EquipItem(itemID);
         await Task.Delay(10, token);
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 
     private static int EquipAttemptLoops = 0;

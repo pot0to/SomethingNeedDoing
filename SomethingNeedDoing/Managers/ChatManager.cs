@@ -22,15 +22,15 @@ internal class ChatManager : IDisposable
     public ChatManager()
     {
         Svc.Hook.InitializeFromAttributes(this);
-        Svc.Framework.Update += this.FrameworkUpdate;
+        Svc.Framework.Update += FrameworkUpdate;
     }
 
     private unsafe delegate void ProcessChatBoxDelegate(UIModule* uiModule, IntPtr message, IntPtr unused, byte a4);
 
     public void Dispose()
     {
-        Svc.Framework.Update -= this.FrameworkUpdate;
-        this.chatBoxMessages.Writer.Complete();
+        Svc.Framework.Update -= FrameworkUpdate;
+        chatBoxMessages.Writer.Complete();
     }
 
     public void PrintMessage(string message)
@@ -58,23 +58,23 @@ internal class ChatManager : IDisposable
         });
 
 
-    public async void SendMessage(string message) => await this.chatBoxMessages.Writer.WriteAsync(message);
+    public async void SendMessage(string message) => await chatBoxMessages.Writer.WriteAsync(message);
 
     /// <summary>
     /// Clear the queue of messages to send to the chatbox.
     /// </summary>
     public void Clear()
     {
-        var reader = this.chatBoxMessages.Reader;
+        var reader = chatBoxMessages.Reader;
         while (reader.Count > 0 && reader.TryRead(out var _))
             continue;
     }
 
     private void FrameworkUpdate(IFramework framework)
     {
-        if (this.chatBoxMessages.Reader.TryRead(out var message))
+        if (chatBoxMessages.Reader.TryRead(out var message))
         {
-            this.SendMessageInternal(message);
+            SendMessageInternal(message);
         }
     }
 
@@ -87,7 +87,7 @@ internal class ChatManager : IDisposable
         var payloadPtr = Marshal.AllocHGlobal(400);
         Marshal.StructureToPtr(payload, payloadPtr, false);
 
-        this.processChatBox(uiModule, payloadPtr, IntPtr.Zero, 0);
+        processChatBox(uiModule, payloadPtr, IntPtr.Zero, 0);
 
         Marshal.FreeHGlobal(payloadPtr);
     }
@@ -110,17 +110,17 @@ internal class ChatManager : IDisposable
         internal ChatPayload(string text)
         {
             var stringBytes = Encoding.UTF8.GetBytes(text);
-            this.textPtr = Marshal.AllocHGlobal(stringBytes.Length + 30);
+            textPtr = Marshal.AllocHGlobal(stringBytes.Length + 30);
 
-            Marshal.Copy(stringBytes, 0, this.textPtr, stringBytes.Length);
-            Marshal.WriteByte(this.textPtr + stringBytes.Length, 0);
+            Marshal.Copy(stringBytes, 0, textPtr, stringBytes.Length);
+            Marshal.WriteByte(textPtr + stringBytes.Length, 0);
 
-            this.textLen = (ulong)(stringBytes.Length + 1);
+            textLen = (ulong)(stringBytes.Length + 1);
 
-            this.unk1 = 64;
-            this.unk2 = 0;
+            unk1 = 64;
+            unk2 = 0;
         }
 
-        public void Dispose() => Marshal.FreeHGlobal(this.textPtr);
+        public void Dispose() => Marshal.FreeHGlobal(textPtr);
     }
 }

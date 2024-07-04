@@ -35,9 +35,9 @@ internal class RequireStatsCommand : MacroCommand
     /// <param name="maxWait">MaxWait value.</param>
     private RequireStatsCommand(string text, uint craftsmanship, uint control, uint cp, WaitModifier wait, MaxWaitModifier maxWait) : base(text, wait)
     {
-        this.requiredCraftsmanship = craftsmanship;
-        this.requiredControl = control;
-        this.requiredCp = cp;
+        requiredCraftsmanship = craftsmanship;
+        requiredControl = control;
+        requiredCp = cp;
 
         this.maxWait = maxWait.Wait == 0
             ? StatusCheckMaxWait
@@ -73,15 +73,15 @@ internal class RequireStatsCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        bool AreStatsGood() => CraftingCommands.Instance.HasStats(this.requiredCraftsmanship, this.requiredControl, this.requiredCp);
+        bool AreStatsGood() => CraftingCommands.Instance.HasStats(requiredCraftsmanship, requiredControl, requiredCp);
 
-        var hasStats = await this.LinearWait(StatusCheckInterval, this.maxWait, AreStatsGood, token);
+        var hasStats = await LinearWait(StatusCheckInterval, maxWait, AreStatsGood, token);
 
         if (!hasStats)
             throw new MacroCommandError("Required stats were not found");
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

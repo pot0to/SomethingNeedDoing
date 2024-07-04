@@ -53,8 +53,8 @@ internal class WaitCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

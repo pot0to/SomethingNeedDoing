@@ -25,16 +25,16 @@ internal partial class ActiveMacro : IDisposable
     /// <param name="node">The node to run.</param>
     public ActiveMacro(MacroNode node)
     {
-        this.Node = node;
+        Node = node;
 
         if (node.Language == Language.Lua)
         {
-            this.Steps = [];
+            Steps = [];
             return;
         }
 
         var contents = ModifyMacroForCraftLoop(node.Contents, node.CraftingLoop, node.CraftLoopCount);
-        this.Steps = MacroParser.Parse(contents).ToList();
+        Steps = MacroParser.Parse(contents).ToList();
     }
 
     /// <summary>
@@ -154,24 +154,24 @@ internal partial class ActiveMacro : IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        this.luaGenerator?.Dispose();
-        this.lua?.Dispose();
+        luaGenerator?.Dispose();
+        lua?.Dispose();
     }
 
     /// <summary>
     /// Go to the next step.
     /// </summary>
-    public void NextStep() => this.StepIndex++;
+    public void NextStep() => StepIndex++;
 
     /// <summary>
     /// Loop.
     /// </summary>
     public void Loop()
     {
-        if (this.Node.Language == Language.Lua)
+        if (Node.Language == Language.Lua)
             throw new MacroCommandError("Loop is not supported for Lua scripts");
 
-        this.StepIndex = -1;
+        StepIndex = -1;
     }
 
     /// <summary>
@@ -180,12 +180,12 @@ internal partial class ActiveMacro : IDisposable
     /// <returns>A command.</returns>
     public MacroCommand? GetCurrentStep()
     {
-        if (this.Node.Language == Language.Lua)
+        if (Node.Language == Language.Lua)
         {
-            if (this.lua == null)
-                this.InitLuaScript();
+            if (lua == null)
+                InitLuaScript();
 
-            var results = this.luaGenerator!.Call();
+            var results = luaGenerator!.Call();
             if (results.Length == 0)
                 return null;
 
@@ -195,19 +195,19 @@ internal partial class ActiveMacro : IDisposable
             var command = MacroParser.ParseLine(text);
 
             if (command != null)
-                this.Steps.Add(command);
+                Steps.Add(command);
 
             return command;
         }
-        if (this.Node.Language == Language.CSharp)
-            CSharpManager.RunSnippet(this.Node.Contents);
+        if (Node.Language == Language.CSharp)
+            CSharpManager.RunSnippet(Node.Contents);
 
-        return this.StepIndex < 0 || this.StepIndex >= this.Steps.Count ? null : this.Steps[this.StepIndex];
+        return StepIndex < 0 || StepIndex >= Steps.Count ? null : Steps[StepIndex];
     }
 
     private void InitLuaScript()
     {
-        var script = this.Node.Contents
+        var script = Node.Contents
             .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
             .Select(line => $"  {line}")
             .Join('\n');
@@ -244,22 +244,22 @@ internal partial class ActiveMacro : IDisposable
             }
         }
 
-        this.lua = new Lua();
-        this.lua.State.Encoding = Encoding.UTF8;
-        this.lua.LoadCLRPackage();
+        lua = new Lua();
+        lua.State.Encoding = Encoding.UTF8;
+        lua.LoadCLRPackage();
 
         #region special methods
-        RegisterClassMethods(this.lua, ActionCommands.Instance);
-        RegisterClassMethods(this.lua, AddonCommands.Instance);
-        RegisterClassMethods(this.lua, CharacterStateCommands.Instance);
-        RegisterClassMethods(this.lua, CraftingCommands.Instance);
-        RegisterClassMethods(this.lua, EntityStateCommands.Instance);
-        RegisterClassMethods(this.lua, InventoryCommands.Instance);
-        RegisterClassMethods(this.lua, IpcCommands.Instance);
-        RegisterClassMethods(this.lua, QuestCommands.Instance);
-        RegisterClassMethods(this.lua, SystemCommands.Instance);
-        RegisterClassMethods(this.lua, WorldStateCommands.Instance);
-        RegisterClassMethods(this.lua, InternalCommands.Instance);
+        RegisterClassMethods(lua, ActionCommands.Instance);
+        RegisterClassMethods(lua, AddonCommands.Instance);
+        RegisterClassMethods(lua, CharacterStateCommands.Instance);
+        RegisterClassMethods(lua, CraftingCommands.Instance);
+        RegisterClassMethods(lua, EntityStateCommands.Instance);
+        RegisterClassMethods(lua, InventoryCommands.Instance);
+        RegisterClassMethods(lua, IpcCommands.Instance);
+        RegisterClassMethods(lua, QuestCommands.Instance);
+        RegisterClassMethods(lua, SystemCommands.Instance);
+        RegisterClassMethods(lua, WorldStateCommands.Instance);
+        RegisterClassMethods(lua, InternalCommands.Instance);
         #endregion
 
         script = string.Format(EntrypointTemplate, script);
@@ -317,15 +317,15 @@ internal partial class ActiveMacro : IDisposable
 //        }
 //        #endregion
 
-        this.lua.DoString(FStringSnippet);
-        this.lua.DoString(PackageSearchersSnippet);
+        lua.DoString(FStringSnippet);
+        lua.DoString(PackageSearchersSnippet);
 
-        var results = this.lua.DoString(script);
+        var results = lua.DoString(script);
 
         if (results.Length == 0 || results[0] is not LuaFunction coro)
             throw new MacroCommandError("Could not get Lua entrypoint.");
 
-        this.luaGenerator = coro;
+        luaGenerator = coro;
     }
 }
 

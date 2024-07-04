@@ -30,13 +30,13 @@ internal class LoopCommand : MacroCommand
     private LoopCommand(string text, int loopCount, WaitModifier wait, EchoModifier echo)
         : base(text, wait)
     {
-        this.loopsRemaining = loopCount >= 0 ? loopCount : MaxLoops;
-        this.startingLoops = this.loopsRemaining;
+        loopsRemaining = loopCount >= 0 ? loopCount : MaxLoops;
+        startingLoops = loopsRemaining;
 
-        if (Service.Configuration.LoopTotal && this.loopsRemaining != 0 && this.loopsRemaining != MaxLoops)
-            this.loopsRemaining -= 1;
+        if (Service.Configuration.LoopTotal && loopsRemaining != 0 && loopsRemaining != MaxLoops)
+            loopsRemaining -= 1;
 
-        this.echoMod = echo;
+        echoMod = echo;
     }
 
     /// <summary>
@@ -64,35 +64,35 @@ internal class LoopCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        if (this.loopsRemaining == MaxLoops)
+        if (loopsRemaining == MaxLoops)
         {
-            if (this.echoMod.PerformEcho || Service.Configuration.LoopEcho)
+            if (echoMod.PerformEcho || Service.Configuration.LoopEcho)
             {
                 Service.ChatManager.PrintMessage("Looping");
             }
         }
         else
         {
-            if (this.echoMod.PerformEcho || Service.Configuration.LoopEcho)
+            if (echoMod.PerformEcho || Service.Configuration.LoopEcho)
             {
-                if (this.loopsRemaining == 0)
+                if (loopsRemaining == 0)
                 {
                     Service.ChatManager.PrintMessage("No loops remaining");
                 }
                 else
                 {
-                    var noun = this.loopsRemaining == 1 ? "loop" : "loops";
-                    Service.ChatManager.PrintMessage($"{this.loopsRemaining} {noun} remaining");
+                    var noun = loopsRemaining == 1 ? "loop" : "loops";
+                    Service.ChatManager.PrintMessage($"{loopsRemaining} {noun} remaining");
                 }
             }
 
-            this.loopsRemaining--;
+            loopsRemaining--;
 
-            if (this.loopsRemaining < 0)
+            if (loopsRemaining < 0)
             {
-                this.loopsRemaining = this.startingLoops;
+                loopsRemaining = startingLoops;
                 return;
             }
         }
@@ -101,6 +101,6 @@ internal class LoopCommand : MacroCommand
         Service.MacroManager.LoopCheckForPause();
         Service.MacroManager.LoopCheckForStop();
         await Task.Delay(10, token);
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

@@ -18,14 +18,14 @@ internal partial class MacroManager : IDisposable
 
     public MacroManager()
     {
-        Svc.ClientState.Login += this.OnLogin;
+        Svc.ClientState.Login += OnLogin;
 
         // If we're already logged in, toggle the waiter.
         if (Svc.ClientState.LocalPlayer != null)
-            this.loggedInWaiter.Set();
+            loggedInWaiter.Set();
 
         // Start the loop.
-        Task.Factory.StartNew(this.EventLoop, TaskCreationOptions.LongRunning);
+        Task.Factory.StartNew(EventLoop, TaskCreationOptions.LongRunning);
     }
 
     public LoopState State { get; private set; } = LoopState.Waiting;
@@ -36,81 +36,81 @@ internal partial class MacroManager : IDisposable
 
     public void Dispose()
     {
-        Svc.ClientState.Login -= this.OnLogin;
+        Svc.ClientState.Login -= OnLogin;
 
-        this.eventLoopTokenSource.Cancel();
-        this.eventLoopTokenSource.Dispose();
+        eventLoopTokenSource.Cancel();
+        eventLoopTokenSource.Dispose();
 
-        this.loggedInWaiter.Dispose();
-        this.pausedWaiter.Dispose();
+        loggedInWaiter.Dispose();
+        pausedWaiter.Dispose();
     }
 
     private void OnLogin()
     {
-        this.loggedInWaiter.Set();
-        this.State = LoopState.Waiting;
+        loggedInWaiter.Set();
+        State = LoopState.Waiting;
     }
 
     private async void EventLoop()
     {
-        var token = this.eventLoopTokenSource.Token;
+        var token = eventLoopTokenSource.Token;
 
         while (!token.IsCancellationRequested)
         {
             try
             {
                 // Check if the logged in waiter is set
-                if (!this.loggedInWaiter.WaitOne(0))
+                if (!loggedInWaiter.WaitOne(0))
                 {
-                    this.State = LoopState.NotLoggedIn;
-                    this.macroStack.Clear();
+                    State = LoopState.NotLoggedIn;
+                    macroStack.Clear();
                 }
 
                 // Wait to be logged in
-                this.loggedInWaiter.WaitOne();
+                loggedInWaiter.WaitOne();
 
                 // Check if the paused waiter has been set
-                if (!this.pausedWaiter.WaitOne(0))
+                if (!pausedWaiter.WaitOne(0))
                 {
-                    this.State = this.macroStack.Count == 0
+                    State = macroStack.Count == 0
                         ? LoopState.Waiting
                         : LoopState.Paused;
                 }
 
                 // Wait for the un-pause button
-                this.pausedWaiter.WaitOne();
+                pausedWaiter.WaitOne();
 
                 // Grab from the stack, or go back to being paused
-                if (!this.macroStack.TryPeek(out var macro))
+                if (!macroStack.TryPeek(out var macro))
                 {
-                    this.pausedWaiter.Reset();
+                    pausedWaiter.Reset();
                     continue;
                 }
 
-                this.State = LoopState.Running;
-                if (await this.ProcessMacro(macro, token))
+                State = LoopState.Running;
+                if (await ProcessMacro(macro, token))
                 {
-                    this.macroStack.Pop().Dispose();
+                    macroStack.Pop().Dispose();
                 }
             }
             catch (OperationCanceledException)
             {
                 Svc.Log.Verbose("Event loop has been cancelled");
-                this.State = LoopState.Stopped;
+                State = LoopState.Stopped;
                 break;
             }
             catch (ObjectDisposedException)
             {
                 Svc.Log.Verbose("Event loop has been disposed");
-                this.State = LoopState.Stopped;
+                State = LoopState.Stopped;
                 break;
             }
             catch (Exception ex)
             {
                 Svc.Log.Error(ex, "Unhandled exception occurred");
                 Service.ChatManager.PrintError("Peon has died unexpectedly.");
-                this.macroStack.Clear();
-                this.PlayErrorSound();
+                macroStack.Clear();
+                PlayErrorSound();
             }
         }
     }
@@ -135,8 +135,8 @@ internal partial class MacroManager : IDisposable
         catch (MacroPause ex)
         {
             Service.ChatManager.PrintColor($"{ex.Message}", ex.Color);
-            this.pausedWaiter.Reset();
-            this.PlayErrorSound();
+            pausedWaiter.Reset();
+            PlayErrorSound();
             return false;
         }
         catch (MacroActionTimeoutError ex)
@@ -148,28 +148,28 @@ internal partial class MacroManager : IDisposable
                 message += $", retrying ({attempt}/{maxRetries})";
                 Service.ChatManager.PrintError(message);
                 attempt++;
-                return await this.ProcessMacro(macro, token, attempt);
+                return await ProcessMacro(macro, token, attempt);
             }
             else
             {
                 Service.ChatManager.PrintError(message);
-                this.pausedWaiter.Reset();
-                this.PlayErrorSound();
+                pausedWaiter.Reset();
+                PlayErrorSound();
                 return false;
             }
         }
         catch (LuaScriptException ex)
         {
             Service.ChatManager.PrintError($"Failure while running script: {ex.Message}");
-            this.pausedWaiter.Reset();
-            this.PlayErrorSound();
+            pausedWaiter.Reset();
+            PlayErrorSound();
             return false;
         }
         catch (MacroCommandError ex)
         {
             Service.ChatManager.PrintError($"Failure while running {step} (step {macro.StepIndex + 1}): {ex.Message}");
-            this.pausedWaiter.Reset();
-            this.PlayErrorSound();
+            pausedWaiter.Reset();
+            PlayErrorSound();
             return false;
         }
 
@@ -195,74 +195,74 @@ internal partial class MacroManager : IDisposable
 internal sealed partial class MacroManager
 {
     public (string Name, int StepIndex)[] MacroStatus
-        => this.macroStack
+        => macroStack
             .ToArray() // Collection was modified after the enumerator was instantiated.
             .Select(macro => (macro.Node.Name, macro.StepIndex + 1))
             .ToArray();
 
     public void EnqueueMacro(MacroNode node)
     {
-        this.macroStack.Push(new ActiveMacro(node));
-        this.pausedWaiter.Set();
+        macroStack.Push(new ActiveMacro(node));
+        pausedWaiter.Set();
     }
 
     public void Pause(bool pauseAtLoop = false)
     {
         if (pauseAtLoop)
         {
-            this.PauseAtLoop ^= true;
-            this.StopAtLoop = false;
+            PauseAtLoop ^= true;
+            StopAtLoop = false;
         }
         else
         {
-            this.PauseAtLoop = false;
-            this.StopAtLoop = false;
-            this.pausedWaiter.Reset();
+            PauseAtLoop = false;
+            StopAtLoop = false;
+            pausedWaiter.Reset();
             Service.ChatManager.Clear();
         }
     }
 
     public void LoopCheckForPause()
     {
-        if (this.PauseAtLoop)
-            this.Pause(false);
+        if (PauseAtLoop)
+            Pause(false);
     }
 
-    public void Resume() => this.pausedWaiter.Set();
+    public void Resume() => pausedWaiter.Set();
 
     public void Stop(bool stopAtLoop = false)
     {
         if (stopAtLoop)
         {
-            this.PauseAtLoop = false;
-            this.StopAtLoop ^= true;
+            PauseAtLoop = false;
+            StopAtLoop ^= true;
         }
         else
         {
-            this.PauseAtLoop = false;
-            this.StopAtLoop = false;
+            PauseAtLoop = false;
+            StopAtLoop = false;
 
-            this.eventLoopTokenSource.TryReset();
+            eventLoopTokenSource.TryReset();
 
-            this.pausedWaiter.Set();
-            this.macroStack.Clear();
+            pausedWaiter.Set();
+            macroStack.Clear();
             Service.ChatManager.Clear();
         }
     }
 
     public void LoopCheckForStop()
     {
-        if (this.StopAtLoop)
-            this.Stop(false);
+        if (StopAtLoop)
+            Stop(false);
     }
 
     public void NextStep()
     {
-        if (this.macroStack.TryPeek(out var macro))
+        if (macroStack.TryPeek(out var macro))
             macro.NextStep();
     }
 
-    public string[] CurrentMacroContent() => this.macroStack.TryPeek(out var result) ? result.Steps.Select(s => s.ToString()).ToArray() : Array.Empty<string>();
+    public string[] CurrentMacroContent() => macroStack.TryPeek(out var result) ? result.Steps.Select(s => s.ToString()).ToArray() : Array.Empty<string>();
 
-    public int CurrentMacroStep() => this.macroStack.TryPeek(out var result) ? result.StepIndex : 0;
+    public int CurrentMacroStep() => macroStack.TryPeek(out var result) ? result.StepIndex : 0;
 }

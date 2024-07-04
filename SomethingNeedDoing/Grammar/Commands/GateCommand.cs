@@ -29,8 +29,8 @@ internal class GateCommand : MacroCommand
     private GateCommand(string text, int craftCount, WaitModifier wait, EchoModifier echo)
         : base(text, wait)
     {
-        this.startingCrafts = this.craftsRemaining = craftCount;
-        this.echoMod = echo;
+        startingCrafts = craftsRemaining = craftCount;
+        echoMod = echo;
     }
 
     /// <summary>
@@ -58,28 +58,28 @@ internal class GateCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        if (this.echoMod.PerformEcho || Service.Configuration.LoopEcho)
+        if (echoMod.PerformEcho || Service.Configuration.LoopEcho)
         {
-            if (this.craftsRemaining == 0)
+            if (craftsRemaining == 0)
             {
                 Service.ChatManager.PrintMessage("No crafts remaining");
             }
             else
             {
-                var noun = this.craftsRemaining == 1 ? "craft" : "crafts";
-                Service.ChatManager.PrintMessage($"{this.craftsRemaining} {noun} remaining");
+                var noun = craftsRemaining == 1 ? "craft" : "crafts";
+                Service.ChatManager.PrintMessage($"{craftsRemaining} {noun} remaining");
             }
         }
 
-        this.craftsRemaining--;
+        craftsRemaining--;
 
-        await this.PerformWait(token);
+        await PerformWait(token);
 
-        if (this.craftsRemaining < 0)
+        if (craftsRemaining < 0)
         {
-            this.craftsRemaining = this.startingCrafts;
+            craftsRemaining = startingCrafts;
             throw new GateComplete();
         }
     }

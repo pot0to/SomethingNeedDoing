@@ -10,7 +10,7 @@ internal class PartyIndexModifier : MacroModifier
 {
     private static readonly Regex Regex = new(@"(?<modifier><(?<index>\d+)>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private PartyIndexModifier(int index) => this.PartyIndex = index;
+    private PartyIndexModifier(int index) => PartyIndex = index;
 
     /// <summary>
     /// Gets the objectIndex of the specified Target.

@@ -32,6 +32,6 @@ internal class InteractCommand : MacroCommand
         if (target != default)
             unsafe { TargetSystem.Instance()->InteractWithObject(target.Struct(), false); }
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

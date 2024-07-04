@@ -24,7 +24,7 @@ internal class RequireQualityCommand : MacroCommand
     /// <param name="text">Original text.</param>
     /// <param name="quality">Quality value.</param>
     /// <param name="wait">Wait value.</param>
-    private RequireQualityCommand(string text, uint quality, WaitModifier wait) : base(text, wait) => this.requiredQuality = quality;
+    private RequireQualityCommand(string text, uint quality, WaitModifier wait) : base(text, wait) => requiredQuality = quality;
 
     /// <summary>
     /// Parse the text as a command.
@@ -48,13 +48,13 @@ internal class RequireQualityCommand : MacroCommand
     /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
         var current = CraftingCommands.Instance.GetQuality();
 
-        if (current < this.requiredQuality)
+        if (current < requiredQuality)
             throw new MacroPause("Required quality was not found", UiColor.Red);
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

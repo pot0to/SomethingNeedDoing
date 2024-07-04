@@ -22,7 +22,7 @@ internal class RequireCommand : MacroCommand
     {
         statusName = statusName.ToLowerInvariant();
         var sheet = Svc.Data.GetExcelSheet<Sheets.Status>()!;
-        this.statusIDs = sheet
+        statusIDs = sheet
             .Where(row => row.Name.RawString.Equals(statusName, System.StringComparison.InvariantCultureIgnoreCase))
             .Select(row => row.RowId)
             .ToArray()!;
@@ -48,15 +48,15 @@ internal class RequireCommand : MacroCommand
 
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
-        Svc.Log.Debug($"Executing: {this.Text}");
+        Svc.Log.Debug($"Executing: {Text}");
 
-        bool IsStatusPresent() => CharacterStateCommands.Instance.HasStatusId(this.statusIDs);
+        bool IsStatusPresent() => CharacterStateCommands.Instance.HasStatusId(statusIDs);
 
-        var hasStatus = await this.LinearWait(StatusCheckInterval, this.maxWait, IsStatusPresent, token);
+        var hasStatus = await LinearWait(StatusCheckInterval, maxWait, IsStatusPresent, token);
 
         if (!hasStatus)
             throw new MacroCommandError("Status effect not found");
 
-        await this.PerformWait(token);
+        await PerformWait(token);
     }
 }

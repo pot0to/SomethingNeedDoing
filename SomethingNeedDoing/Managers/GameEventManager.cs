@@ -6,7 +6,7 @@ namespace SomethingNeedDoing.Managers;
 
 internal class GameEventManager : IDisposable
 {
-    public GameEventManager() => Svc.Condition.ConditionChange += this.Condition_ConditionChange;
+    public GameEventManager() => Svc.Condition.ConditionChange += Condition_ConditionChange;
 
     /// <summary>
     /// Gets a waiter that is released when an action or crafting action is received through the Event Framework.
@@ -16,8 +16,8 @@ internal class GameEventManager : IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        Svc.Condition.ConditionChange -= this.Condition_ConditionChange;
-        this.DataAvailableWaiter.Dispose();
+        Svc.Condition.ConditionChange -= Condition_ConditionChange;
+        DataAvailableWaiter.Dispose();
     }
 
     private void Condition_ConditionChange(ConditionFlag flag, bool value)

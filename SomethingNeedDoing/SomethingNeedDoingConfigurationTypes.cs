@@ -89,13 +89,13 @@ public class ConcreteNodeConverter : JsonConverter
         var jObject = JObject.Load(reader);
         var jType = jObject["$type"]?.Value<string>();
 
-        if (jType == this.SimpleName(typeof(MacroNode)))
+        if (jType == SimpleName(typeof(MacroNode)))
         {
             var obj = new MacroNode();
             serializer.Populate(jObject.CreateReader(), obj);
             return obj;
         }
-        else if (jType == this.SimpleName(typeof(FolderNode)))
+        else if (jType == SimpleName(typeof(FolderNode)))
         {
             var obj = new FolderNode();
             serializer.Populate(jObject.CreateReader(), obj);
