@@ -21,7 +21,7 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
     public string CraftLoopTemplate { get; set; } =
         "/craft {{count}}\n" +
         "/waitaddon \"RecipeNote\" <maxwait.5>" +
-        "/click \"synthesize\"" +
+        "/click \"RecipeNote_Synthesize\"" +
         "/waitaddon \"Synthesis\" <maxwait.5>" +
         "{{macro}}" +
         "/loop";
@@ -122,12 +122,9 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
             Svc.Log.Error($"Invalid configuration key or type");
     }
 
-    internal object GetProperty(string key)
+    internal object? GetProperty(string key)
     {
         var property = typeof(SomethingNeedDoingConfiguration).GetProperty(key);
-        if (property != null && property.Name != "Version" && property.CanWrite)
-            return property.GetValue(this)!;
-        else
-            return null;
+        return property != null && property.Name != "Version" && property.CanWrite ? property.GetValue(this) : null;
     }
 }

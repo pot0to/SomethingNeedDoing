@@ -45,7 +45,7 @@ internal static class ImGuiUtils
         }
     }
 
-    public static void ClickToCopyText(string text, string textCopy = null)
+    public static void ClickToCopyText(string text, string? textCopy = null)
     {
         textCopy ??= text;
         ImGui.TextUnformatted($"{text}");

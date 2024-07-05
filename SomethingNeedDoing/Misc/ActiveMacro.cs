@@ -94,7 +94,7 @@ internal partial class ActiveMacro : IDisposable
         var clickSteps = string.Join("\n",
         [
             $@"/waitaddon ""RecipeNote""{maxwaitMod}",
-            $@"/click ""synthesize""",
+            $@"/click ""RecipeNote_Synthesize""",
             $@"/waitaddon ""Synthesis""{maxwaitMod}",
         ]);
 

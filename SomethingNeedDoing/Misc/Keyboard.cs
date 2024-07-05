@@ -12,7 +12,7 @@ namespace SomethingNeedDoing.Misc;
 /// </summary>
 internal static class Keyboard
 {
-    private static readonly IntPtr? handle = null;
+    //private static readonly IntPtr? handle = null;
 
     /// <summary>
     /// Send a virtual key.
