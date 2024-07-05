@@ -24,9 +24,7 @@ internal class InteractCommand : MacroCommand
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
         _ = IndexModifier.TryParse(ref text, out var indexModifier);
         var match = Regex.Match(text);
-        if (!match.Success)
-            throw new MacroSyntaxError(text);
-        return new InteractCommand(text, waitModifier, indexModifier);
+        return match.Success ? new InteractCommand(text, waitModifier, indexModifier) : throw new MacroSyntaxError(text);
     }
 
     public override async Task Execute(ActiveMacro macro, CancellationToken token)

@@ -20,6 +20,13 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-07-05",
+        "- Fixed CraftLoop to support the new click system.\n" +
+        "- Cleaned up the help menu in relation to the new click system and added some missing commands.\n" +
+        "- Commands in the help menu can now be copied to clipboard via clicking.\n" +
+        "- Added retainer selection clicks\n");
+
+        DisplayChangelog(
         "2024-07-04",
         "- Fixed /click command. This update dropped clicklib support and click names are slightly different now. Please consult the help menu.\n");
 
