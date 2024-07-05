@@ -199,7 +199,7 @@ function can_i_lb()
     local dpsJobs = {
         [2]  = true, [4]  = true, [5]  = true, [7]  = true, [20] = true, [22] = true, [24] = true,
         [25] = true, [26] = true, [27] = true, [29] = true, [30] = true, [31] = true,
-        [34] = true, [35] = true, [38] = true, [39] = true, [41]
+        [34] = true, [35] = true, [38] = true, [39] = true, [41] = true
     }
     local joeb = GetClassJobId()
     return dpsJobs[joeb] or false
@@ -256,20 +256,27 @@ function clingmove(nemm)
 	end
 	--bmr
 	if clingtype == 2 then
-		yield("/bmrai followtarget true") --* verify this is correct later when we can load dalamud
-		yield("/bmrai follow "..nemm) 	  --* verify this is correct later when we can load dalamud
+		bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm))
+		if bistance < maxbistance then
+			yield("/bmrai followtarget true") --* verify this is correct later when we can load dalamud
+			yield("/bmrai follow "..nemm) 	  --* verify this is correct later when we can load dalamud
+		end
+		if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
+			yield("/bmrai followtarget true") --* verify this is correct later when we can load dalamud
+			yield("/bmrai follow "..GetCharacterName()) 	  --* verify this is correct later when we can load dalamud
+		end
 	end
 	if clingtype == 3 then
 		yield("/autofollow "..nemm) --* verify this is correct later when we can load dalamud
 	end
 	if clingtype == 4 then
 		--we only doing this silly method out of combat
-		if GetCharacterCondition(26) == false
+		if GetCharacterCondition(26) == false then
 			yield("/target "..nemm) --* verify this is correct later when we can load dalamud
 			yield("/follow")
 		end
 		--if we in combat and target is nemm we will clear it becuase that may bork autotarget from RSR
-		if GetCharacterCondition(26) == true
+		if GetCharacterCondition(26) == true then
 			if nemm == GetTargetName() then
 				ClearTarget()
 			end
