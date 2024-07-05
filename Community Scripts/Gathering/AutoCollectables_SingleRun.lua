@@ -1,12 +1,13 @@
 --[[
     Name: AutoCollectables
     Description: General collectables script for MIN/BTN, based on auto gather collectables for the miner or botanist relic steps from Em
-    Author: LeafFriend, Em
-    Version: 0.1.2
+    Author: LeafFriend, Em, catz
+    Version: 0.1.3
 ]]
 
 --[[
     <Changelog>
+    0.1.3   - Changes for DT
     0.1.2   - Added ability to gain more gathering attempts if possible when doing final collection at max Collectability
     0.1.1.2 - Fixed condition checking for looping
     0.1.1.1 - Added support for calling script in GatheringHelper
@@ -65,7 +66,7 @@ function scour_coll()
     local data
     repeat
         yield("/wait "..interval_rate)
-        data = GetNodeText("GatheringMasterpiece", 97)
+        data = GetNodeText("GatheringMasterpiece", 103)
     until (type(data) == "string")
     return tonumber(data:sub(-3)) or 0
 end
@@ -75,29 +76,29 @@ function meticulous_coll()
     local data
     repeat
         yield("/wait "..interval_rate)
-        data = GetNodeText("GatheringMasterpiece", 73)
+        data = GetNodeText("GatheringMasterpiece", 79)
     until (type(data) == "string")
     return tonumber(data:sub(-3)) or 0
 end
 
 --Returns current Collectability of Collectable being gathered
 function current_coll()
-    return tonumber(GetNodeText("GatheringMasterpiece", 175)) or max_coll
+    return tonumber(GetNodeText("GatheringMasterpiece", 181)) or max_coll
 end
 
 --Returns available actions left before gathering node disappears
 function actions_left()
-    return tonumber(GetNodeText("GatheringMasterpiece", 55)) or 0
+    return tonumber(GetNodeText("GatheringMasterpiece", 61)) or 0
 end
 
 --Returns maximum actions possible at current gathering node
 function max_actions()
-    return tonumber(GetNodeText("GatheringMasterpiece", 53)) or 0
+    return tonumber(GetNodeText("GatheringMasterpiece", 59)) or 0
 end
 
 --Returns minimum Collectability for the current Collectable being gathered to be usable
 function min_coll()
-    return tonumber(GetNodeText("GatheringMasterpiece", 168, 0)) or 0
+    return tonumber(GetNodeText("GatheringMasterpiece", 174, 0)) or 0
 end
 
 --Wrapper for gaining more gathering attempts to Collect
@@ -206,12 +207,11 @@ function main()
     current_gp = GetGp()
     Id_Print("Current GP: "..current_gp)
     class_check()
-
     --Logic for which rotation to perform
     if (scour_coll() == max_base_scour_coll and current_gp >= 2 * scrutiny_gp + action_one_more_gp) then
-        standard()
+		standard()
     elseif (current_gp >= 3 * scrutiny_gp) then
-        low_stat()
+		low_stat()
     else
         ephemeral()
     end
