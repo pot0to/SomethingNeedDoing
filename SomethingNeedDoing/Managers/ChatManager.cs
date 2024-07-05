@@ -3,8 +3,8 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
+using ECommons.ChatMethods;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using SomethingNeedDoing.Misc;
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -40,7 +40,7 @@ internal class ChatManager : IDisposable
             Message = $"[{SomethingNeedDoingPlugin.Prefix}] {message}",
         });
 
-    public void PrintColor(string message, UiColor color)
+    public void PrintColor(string message, UIColor color)
         => Svc.Chat.Print(new XivChatEntry()
         {
             Type = Service.Configuration.ChatType,

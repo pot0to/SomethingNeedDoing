@@ -131,7 +131,7 @@ public class AddonCommands
 
             var childNode = node->ChildNode;
             if (childNode != null)
-                return GetNodeByIDChain(childNode, newList.ToArray());
+                return GetNodeByIDChain(childNode, [.. newList]);
 
             if ((int)node->Type >= 1000)
             {
@@ -139,7 +139,7 @@ public class AddonCommands
                 var component = componentNode->Component;
                 var uldManager = component->UldManager;
                 childNode = uldManager.NodeList[0];
-                return childNode == null ? null : GetNodeByIDChain(childNode, newList.ToArray());
+                return childNode == null ? null : GetNodeByIDChain(childNode, [.. newList]);
             }
 
             return null;

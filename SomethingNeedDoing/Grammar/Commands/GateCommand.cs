@@ -13,7 +13,11 @@ namespace SomethingNeedDoing.Grammar.Commands;
 /// </summary>
 internal class GateCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/(craft|gate)(?:\s+(?<count>\d+))?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["craft", "gate"];
+    public static string Description => "Similar to loop but used at the start of a macro with an infinite /loop at the end. Allows a certain amount of executions before stopping the macro.";
+    public static string[] Examples => ["/craft 10"];
+
+    private static readonly Regex Regex = new($@"^/({string.Join("|", Commands)})(?:\s+(?<count>\d+))?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly EchoModifier echoMod;
     private readonly int startingCrafts;

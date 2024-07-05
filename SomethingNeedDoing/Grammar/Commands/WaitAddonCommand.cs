@@ -11,10 +11,14 @@ namespace SomethingNeedDoing.Grammar.Commands;
 
 internal class WaitAddonCommand : MacroCommand
 {
+    public static string[] Commands => ["waitaddon"];
+    public static string Description => "Wait for an addon, otherwise known as a UI component to be present. You can discover these names by using the \"Addon Inspector\" view inside the \"/xldata\" window.";
+    public static string[] Examples => ["/waitaddon RecipeNote"];
+
     private const int AddonCheckMaxWait = 5000;
     private const int AddonCheckInterval = 500;
 
-    private static readonly Regex Regex = new(@"^/waitaddon\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly string addonName;
     private readonly int maxWait;

@@ -12,7 +12,11 @@ namespace SomethingNeedDoing.Grammar.Commands;
 
 internal class SendCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/send\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["send"];
+    public static string Description => "Send an arbitrary keystroke with optional modifiers. Keys are pressed in the same order as the command.";
+    public static string[] Examples => ["/send MULTIPLY", "/send NUMPAD0", "/send CONTROL+MENU+SHIFT+NUMPAD0"];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly VirtualKey[] vkCodes;
 
@@ -42,9 +46,7 @@ internal class SendCommand : MacroCommand
         Svc.Log.Debug($"Executing: {Text}");
 
         if (vkCodes.Length == 1)
-        {
             Keyboard.Send(vkCodes[0]);
-        }
         else
         {
             var key = vkCodes.Last();

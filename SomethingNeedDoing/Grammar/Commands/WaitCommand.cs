@@ -13,7 +13,11 @@ namespace SomethingNeedDoing.Grammar.Commands;
 /// </summary>
 internal class WaitCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/wait\s+(?<wait>\d+(?:\.\d+)?)(?:-(?<until>\d+(?:\.\d+)?))?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["wait"];
+    public static string Description => "The same as the wait modifier, but as a command.";
+    public static string[] Examples => ["/wait 1-5"];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<wait>\d+(?:\.\d+)?)(?:-(?<until>\d+(?:\.\d+)?))?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WaitCommand"/> class.
@@ -21,10 +25,7 @@ internal class WaitCommand : MacroCommand
     /// <param name="text">Original text.</param>
     /// <param name="wait">Wait value.</param>
     /// <param name="waitUntil">WaitUntil value.</param>
-    private WaitCommand(string text, int wait, int waitUntil)
-        : base(text, wait, waitUntil)
-    {
-    }
+    private WaitCommand(string text, int wait, int waitUntil) : base(text, wait, waitUntil) { }
 
     /// <summary>
     /// Parse the text as a command.

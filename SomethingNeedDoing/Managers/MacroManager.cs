@@ -262,7 +262,7 @@ internal sealed partial class MacroManager
             macro.NextStep();
     }
 
-    public string[] CurrentMacroContent() => macroStack.TryPeek(out var result) ? result.Steps.Select(s => s.ToString()).ToArray() : Array.Empty<string>();
+    public string[] CurrentMacroContent() => macroStack.TryPeek(out var result) ? result.Steps.Select(s => s.ToString()).ToArray() : [];
 
     public int CurrentMacroStep() => macroStack.TryPeek(out var result) ? result.StepIndex : 0;
 }

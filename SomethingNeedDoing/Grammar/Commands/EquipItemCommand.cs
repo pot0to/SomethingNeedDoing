@@ -15,34 +15,23 @@ using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
-/// <summary>
-/// The /equipitem command.
-/// </summary>
 internal class EquipItemCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/equipitem(?:\s+(?<itemid>\d+))?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["equipitem"];
+    public static string Description => "Checks your inventory and armoury for an item and tries to equip it.";
+    public static string[] Examples => ["/equipitem 40280"];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}(?:\s+(?<itemid>\d+))?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly EchoModifier echoMod;
     private readonly uint itemID;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="EquipItemCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original text.</param>
-    /// <param name="itemID">Item ID.</param>
-    /// <param name="wait">Wait value.</param>
-    /// <param name="echo">Echo value.</param>
     private EquipItemCommand(string text, uint itemID, WaitModifier wait, EchoModifier echo) : base(text, wait)
     {
         this.itemID = itemID;
         echoMod = echo;
     }
 
-    /// <summary>
-    /// Parse the text as a command.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <returns>A parsed command.</returns>
     public static EquipItemCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
@@ -58,7 +47,6 @@ internal class EquipItemCommand : MacroCommand
         return new EquipItemCommand(text, itemID, waitModifier, echoModifier);
     }
 
-    /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         EquipItem(itemID);

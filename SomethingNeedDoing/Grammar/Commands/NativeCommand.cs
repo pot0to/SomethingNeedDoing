@@ -15,10 +15,7 @@ internal class NativeCommand : MacroCommand
     /// </summary>
     /// <param name="text">Original text.</param>
     /// <param name="wait">Wait value.</param>
-    private NativeCommand(string text, WaitModifier wait)
-        : base(text, wait)
-    {
-    }
+    private NativeCommand(string text, WaitModifier wait) : base(text, wait) { }
 
     /// <summary>
     /// Parse the text as a command.

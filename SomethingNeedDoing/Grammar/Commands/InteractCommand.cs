@@ -11,7 +11,11 @@ namespace SomethingNeedDoing.Grammar.Commands;
 
 internal class InteractCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/interact$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["interact"];
+    public static string Description => "Checks your inventory and armoury for an item and tries to equip it.";
+    public static string[] Examples => ["/equipitem 40280"];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private InteractCommand(string text, WaitModifier wait, IndexModifier index) : base(text, wait, index) { }
 

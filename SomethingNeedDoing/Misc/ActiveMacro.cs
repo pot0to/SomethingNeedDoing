@@ -264,58 +264,58 @@ internal partial class ActiveMacro : IDisposable
 
         script = string.Format(EntrypointTemplate, script);
 
-//        #region globals
-//        this.lua["Interface"] = Svc.PluginInterface;
-//        this.lua["IClientState"] = Svc.ClientState;
-//        this.lua["IGameGui"] = Svc.GameGui;
-//        this.lua["IDataManager"] = Svc.Data;
-//        this.lua["IBuddyList"] = Svc.Buddies;
-//        this.lua["IChatGui"] = Svc.Chat;
-//        this.lua["ICommandManager"] = Svc.Commands;
-//        this.lua["ICondition"] = Svc.Condition;
-//        this.lua["IFateTable"] = Svc.Fates;
-//        this.lua["IFlyTextGui"] = Svc.FlyText;
-//        this.lua["IFramework"] = Svc.Framework;
-//        this.lua["IGameNetwork"] = Svc.GameNetwork;
-//        this.lua["IJobGauges"] = Svc.Gauges;
-//        this.lua["IKeyState"] = Svc.KeyState;
-//        this.lua["ILibcFunction"] = Svc.LibcFunction;
-//        this.lua["IObjectTable"] = Svc.Objects;
-//        this.lua["IPartyFinderGui"] = Svc.PfGui;
-//        this.lua["IPartyList"] = Svc.Party;
-//        this.lua["ISigScanner"] = Svc.SigScanner;
-//        this.lua["ITargetManager"] = Svc.Targets;
-//        this.lua["IToastGui"] = Svc.Toasts;
-//        this.lua["IGameConfig"] = Svc.GameConfig;
-//        this.lua["IGameLifecycle"] = Svc.GameLifecycle;
-//        this.lua["IGamepadState"] = Svc.GamepadState;
-//        this.lua["IDtrBar"] = Svc.DtrBar;
-//        this.lua["IDutyState"] = Svc.DutyState;
-//        this.lua["IGameInteropProvider"] = Svc.Hook;
-//        this.lua["ITextureProvider"] = Svc.Texture;
-//        this.lua["IPluginLog"] = Svc.Log;
-//        this.lua["IAddonLifecycle"] = Svc.AddonLifecycle;
-//        this.lua["IAetheryteList"] = Svc.AetheryteList;
-//        this.lua["IAddonEventManager"] = Svc.AddonEventManager;
-//        this.lua["ITextureSubstitution"] = Svc.TextureSubstitution;
-//        this.lua["ITitleScreenMenu"] = Svc.TitleScreenMenu;
-//        unsafe
-//        {
-//#pragma warning disable CS8605 // Unboxing a possibly null value.
-//            this.lua["ActionManager"] = (ActionManager)Marshal.PtrToStructure((nint)ActionManager.Instance(), typeof(ActionManager));
-//            this.lua["AgentMap"] = (AgentMap)Marshal.PtrToStructure((nint)AgentMap.Instance(), typeof(AgentMap));
-//            this.lua["EnvManager"] = (EnvManager)Marshal.PtrToStructure((nint)EnvManager.Instance(), typeof(EnvManager));
-//            this.lua["EventFramework"] = (EventFramework)Marshal.PtrToStructure((nint)EventFramework.Instance(), typeof(EventFramework));
-//            this.lua["FateManager"] = (FateManager)Marshal.PtrToStructure((nint)FateManager.Instance(), typeof(FateManager));
-//            this.lua["Framework"] = (Framework)Marshal.PtrToStructure((nint)Framework.Instance(), typeof(Framework));
-//            this.lua["InventoryManager"] = (InventoryManager)Marshal.PtrToStructure((nint)InventoryManager.Instance(), typeof(InventoryManager));
-//            this.lua["PlayerState"] = (PlayerState)Marshal.PtrToStructure((nint)PlayerState.Instance(), typeof(PlayerState));
-//            this.lua["QuestManager"] = (QuestManager)Marshal.PtrToStructure((nint)QuestManager.Instance(), typeof(QuestManager));
-//            this.lua["RouletteController"] = (RouletteController)Marshal.PtrToStructure((nint)RouletteController.Instance(), typeof(RouletteController));
-//            this.lua["UIState"] = (UIState)Marshal.PtrToStructure((nint)UIState.Instance(), typeof(UIState));
-//#pragma warning restore CS8605 // Unboxing a possibly null value.
-//        }
-//        #endregion
+        //        #region globals
+        //        this.lua["Interface"] = Svc.PluginInterface;
+        //        this.lua["IClientState"] = Svc.ClientState;
+        //        this.lua["IGameGui"] = Svc.GameGui;
+        //        this.lua["IDataManager"] = Svc.Data;
+        //        this.lua["IBuddyList"] = Svc.Buddies;
+        //        this.lua["IChatGui"] = Svc.Chat;
+        //        this.lua["ICommandManager"] = Svc.Commands;
+        //        this.lua["ICondition"] = Svc.Condition;
+        //        this.lua["IFateTable"] = Svc.Fates;
+        //        this.lua["IFlyTextGui"] = Svc.FlyText;
+        //        this.lua["IFramework"] = Svc.Framework;
+        //        this.lua["IGameNetwork"] = Svc.GameNetwork;
+        //        this.lua["IJobGauges"] = Svc.Gauges;
+        //        this.lua["IKeyState"] = Svc.KeyState;
+        //        this.lua["ILibcFunction"] = Svc.LibcFunction;
+        //        this.lua["IObjectTable"] = Svc.Objects;
+        //        this.lua["IPartyFinderGui"] = Svc.PfGui;
+        //        this.lua["IPartyList"] = Svc.Party;
+        //        this.lua["ISigScanner"] = Svc.SigScanner;
+        //        this.lua["ITargetManager"] = Svc.Targets;
+        //        this.lua["IToastGui"] = Svc.Toasts;
+        //        this.lua["IGameConfig"] = Svc.GameConfig;
+        //        this.lua["IGameLifecycle"] = Svc.GameLifecycle;
+        //        this.lua["IGamepadState"] = Svc.GamepadState;
+        //        this.lua["IDtrBar"] = Svc.DtrBar;
+        //        this.lua["IDutyState"] = Svc.DutyState;
+        //        this.lua["IGameInteropProvider"] = Svc.Hook;
+        //        this.lua["ITextureProvider"] = Svc.Texture;
+        //        this.lua["IPluginLog"] = Svc.Log;
+        //        this.lua["IAddonLifecycle"] = Svc.AddonLifecycle;
+        //        this.lua["IAetheryteList"] = Svc.AetheryteList;
+        //        this.lua["IAddonEventManager"] = Svc.AddonEventManager;
+        //        this.lua["ITextureSubstitution"] = Svc.TextureSubstitution;
+        //        this.lua["ITitleScreenMenu"] = Svc.TitleScreenMenu;
+        //        unsafe
+        //        {
+        //#pragma warning disable CS8605 // Unboxing a possibly null value.
+        //            this.lua["ActionManager"] = (ActionManager)Marshal.PtrToStructure((nint)ActionManager.Instance(), typeof(ActionManager));
+        //            this.lua["AgentMap"] = (AgentMap)Marshal.PtrToStructure((nint)AgentMap.Instance(), typeof(AgentMap));
+        //            this.lua["EnvManager"] = (EnvManager)Marshal.PtrToStructure((nint)EnvManager.Instance(), typeof(EnvManager));
+        //            this.lua["EventFramework"] = (EventFramework)Marshal.PtrToStructure((nint)EventFramework.Instance(), typeof(EventFramework));
+        //            this.lua["FateManager"] = (FateManager)Marshal.PtrToStructure((nint)FateManager.Instance(), typeof(FateManager));
+        //            this.lua["Framework"] = (Framework)Marshal.PtrToStructure((nint)Framework.Instance(), typeof(Framework));
+        //            this.lua["InventoryManager"] = (InventoryManager)Marshal.PtrToStructure((nint)InventoryManager.Instance(), typeof(InventoryManager));
+        //            this.lua["PlayerState"] = (PlayerState)Marshal.PtrToStructure((nint)PlayerState.Instance(), typeof(PlayerState));
+        //            this.lua["QuestManager"] = (QuestManager)Marshal.PtrToStructure((nint)QuestManager.Instance(), typeof(QuestManager));
+        //            this.lua["RouletteController"] = (RouletteController)Marshal.PtrToStructure((nint)RouletteController.Instance(), typeof(RouletteController));
+        //            this.lua["UIState"] = (UIState)Marshal.PtrToStructure((nint)UIState.Instance(), typeof(UIState));
+        //#pragma warning restore CS8605 // Unboxing a possibly null value.
+        //        }
+        //        #endregion
 
         lua.DoString(FStringSnippet);
         lua.DoString(PackageSearchersSnippet);

@@ -1,4 +1,5 @@
-﻿using SomethingNeedDoing.Exceptions;
+﻿using ECommons.ChatMethods;
+using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
@@ -8,27 +9,16 @@ using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
-/// <summary>
-/// The /requirerepair command.
-/// </summary>
 internal class RequireRepairCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/requirerepair\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["requirerepair"];
+    public static string Description => "Pause if an item is at zero durability.";
+    public static string[] Examples => ["/requirerepair"];
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RequireRepairCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original text.</param>
-    /// <param name="wait">Wait value.</param>
-    private RequireRepairCommand(string text, WaitModifier wait) : base(text, wait)
-    {
-    }
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    /// <summary>
-    /// Parse the text as a command.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <returns>A parsed command.</returns>
+    private RequireRepairCommand(string text, WaitModifier wait) : base(text, wait) { }
+
     public static RequireRepairCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
@@ -37,13 +27,12 @@ internal class RequireRepairCommand : MacroCommand
         return !match.Success ? throw new MacroSyntaxError(text) : new RequireRepairCommand(text, waitModifier);
     }
 
-    /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Svc.Log.Debug($"Executing: {Text}");
 
         if (CraftingCommands.Instance.NeedsRepair())
-            throw new MacroPause("You need to repair", UiColor.Yellow);
+            throw new MacroPause("You need to repair", UIColor.Yellow);
 
         await PerformWait(token);
     }

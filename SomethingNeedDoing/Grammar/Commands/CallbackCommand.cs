@@ -13,7 +13,11 @@ namespace SomethingNeedDoing.Grammar.Commands;
 
 internal class CallbackCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/callback\s+(?<addon>\b\w+\b)\s+(?<updateState>true|false)\s+(?<values>(true|false|\b\w+\b|-?\d+|""[^""]+"")(\s+(true|false|\b\w+\b|-?\d+|""[^""]+""))*)\s*$", RegexOptions.Compiled);
+    public static string[] Commands => ["callback"];
+    public static string Description => "Send arbitrary inputs to most addons in the game.";
+    public static string[] Examples => ["/callback AddonName UpdateState [AtkValues]", "/callback FashionCheck true -1"];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<addon>\b\w+\b)\s+(?<updateState>true|false)\s+(?<values>(true|false|\b\w+\b|-?\d+|""[^""]+"")(\s+(true|false|\b\w+\b|-?\d+|""[^""]+""))*)\s*$", RegexOptions.Compiled);
     private readonly unsafe AtkUnitBase* addon;
     private readonly bool updateState;
     private readonly List<object> valueArgs = [];
@@ -30,8 +34,6 @@ internal class CallbackCommand : MacroCommand
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
 
         var match = Regex.Match(text);
-        if (!match.Success)
-            throw new MacroSyntaxError(text);
 
         var addonGroup = match.Groups["addon"];
         var boolGroup = match.Groups["updateState"];
@@ -95,7 +97,7 @@ internal class CallbackCommand : MacroCommand
     {
         unsafe
         {
-            Callback.Fire(addon, updateState, valueArgs.ToArray());
+            Callback.Fire(addon, updateState, [.. valueArgs]);
         }
         await PerformWait(token);
     }

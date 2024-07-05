@@ -43,8 +43,8 @@ public class WorldStateCommands
     public unsafe int GetCurrentEorzeaHour() => DateTimeOffset.FromUnixTimeSeconds(Framework.Instance()->ClientTime.EorzeaTime).Hour;
 
     #region Fate
-    public unsafe List<ushort> GetActiveFates() =>
-        FateManager.Instance()->Fates.AsSpan().ToArray()
+    public unsafe List<ushort> GetActiveFates()
+        => FateManager.Instance()->Fates.AsSpan().ToArray()
         .Where(f => f.Value is not null)
         .OrderBy(f => Vector3.Distance(Svc.ClientState.LocalPlayer!.Position, f.Value->Location))
         .Select(f => f.Value->FateId)
@@ -110,8 +110,8 @@ public class WorldStateCommands
     public List<(float, float, float)> GetTrapLocations() => Svc.Objects.OrderBy(DistanceToObject).Where(x => DeepDungeonDataIDs.TrapIDs.ContainsKey(x.DataId)).Select(x => (x.Position.X, x.Position.Y, x.Position.Z)).ToList();
     #endregion
 
-    public List<string> GetNearbyObjectNames(float distance = 0, byte objectKind = 0) =>
-        Svc.Objects
+    public List<string> GetNearbyObjectNames(float distance = 0, byte objectKind = 0)
+        => Svc.Objects
             .OrderBy(o => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position))
             .Where(o => o.IsTargetable && (distance == 0 || Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position) <= distance) && (objectKind == 0 || (byte)o.ObjectKind == objectKind))
             .Select(o => o.Name.TextValue)

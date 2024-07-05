@@ -15,8 +15,6 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
     private const string Command = "/somethingneeddoing";
     private static string[] Aliases => ["/pcraft", "/snd"];
 
-    private readonly Watcher watcher;
-
     public SomethingNeedDoingPlugin(IDalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
@@ -37,9 +35,8 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
         EzCmd.Add(Command, OnChatCommand, "Open a window to edit various settings.");
         Aliases.ToList().ForEach(a => EzCmd.Add(a, OnChatCommand, $"{Command} Alias"));
 
-        watcher = new();
+        _ = new Watcher();
     }
-
 
     public void Dispose()
     {

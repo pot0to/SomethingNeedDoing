@@ -1,3 +1,4 @@
+using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
 using System;
@@ -14,30 +15,10 @@ internal abstract class MacroCommand
 {
     private static readonly Random Rand = new();
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MacroCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original line text.</param>
-    /// <param name="waitMod">Wait value.</param>
     protected MacroCommand(string text, WaitModifier waitMod) : this(text, waitMod.Wait, waitMod.Until) { }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MacroCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original line text.</param>
-    /// <param name="waitMod">Wait value.</param>
-    /// <param name="indexMod">Index value.</param>
-    protected MacroCommand(string text, WaitModifier waitMod, IndexModifier indexMod)
-        : this(text, waitMod.Wait, waitMod.Until, indexMod.ObjectId)
-    {
-    }
+    protected MacroCommand(string text, WaitModifier waitMod, IndexModifier indexMod) : this(text, waitMod.Wait, waitMod.Until, indexMod.ObjectId) { }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MacroCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original line text.</param>
-    /// <param name="wait">Wait value.</param>
-    /// <param name="until">WaitUntil value.</param>
     protected MacroCommand(string text, int wait, int until)
     {
         Text = text;
@@ -45,13 +26,6 @@ internal abstract class MacroCommand
         WaitUntil = until;
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MacroCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original line text.</param>
-    /// <param name="wait">Wait value.</param>
-    /// <param name="until">WaitUntil value.</param>
-    /// <param name="index">Object index value.</param>
     protected MacroCommand(string text, int wait, int until, int index)
     {
         Text = text;

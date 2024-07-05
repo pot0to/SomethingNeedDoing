@@ -47,7 +47,7 @@ internal class ConditionModifier : MacroModifier
         }
         else
         {
-            command = new ConditionModifier(Array.Empty<string>(), false);
+            command = new ConditionModifier([], false);
         }
 
         return success;

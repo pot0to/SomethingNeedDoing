@@ -12,9 +12,12 @@ namespace SomethingNeedDoing.Grammar.Commands;
 
 internal class ActionCommand : MacroCommand
 {
+    public static string[] Commands => ["ac", "action"];
+    public static string Description => "Execute an action and wait for the server to respond.";
+    public static string[] Examples => ["/ac Groundwork", "/ac \"Tricks of the Trade\""];
     private const int SafeCraftMaxWait = 5000;
 
-    private static readonly Regex Regex = new(@"^/(?:ac|action)\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex Regex = new($@"^/(?:{string.Join("|", Commands)})\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly HashSet<string> CraftingActionNames = [];
     private static readonly HashSet<string> CraftingQualityActionNames = [];
 

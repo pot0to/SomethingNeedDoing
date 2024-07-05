@@ -12,7 +12,11 @@ namespace SomethingNeedDoing.Grammar.Commands;
 /// </summary>
 internal class RunMacroCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/runmacro\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["runmacro"];
+    public static string Description => "Start a macro from within another macro.";
+    public static string[] Examples => ["/runmacro \"Sub macro\""];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly string macroName;
 

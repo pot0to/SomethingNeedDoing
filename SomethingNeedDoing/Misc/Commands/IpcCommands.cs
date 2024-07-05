@@ -10,7 +10,7 @@ namespace SomethingNeedDoing.Misc.Commands;
 public class IpcCommands
 {
     internal static IpcCommands Instance { get; } = new();
-    private Dropbox dropbox;
+    private readonly Dropbox dropbox;
 
     public List<string> ListAllFunctions()
     {
@@ -99,21 +99,21 @@ public class IpcCommands
     #region AutoRetainer
     public unsafe void ARSetSuppressed(bool state) => _autoRetainerApi.Suppressed = state;
 
-    public unsafe List<string> ARGetRegisteredCharacters() =>
-        _autoRetainerApi.GetRegisteredCharacters().AsParallel()
+    public unsafe List<string> ARGetRegisteredCharacters()
+        => _autoRetainerApi.GetRegisteredCharacters().AsParallel()
         .Select(c => $"{_autoRetainerApi.GetOfflineCharacterData(c).Name}@{_autoRetainerApi.GetOfflineCharacterData(c).World}").ToList();
 
-    public unsafe List<string> ARGetRegisteredEnabledCharacters() =>
-        _autoRetainerApi.GetRegisteredCharacters().AsParallel()
+    public unsafe List<string> ARGetRegisteredEnabledCharacters()
+        => _autoRetainerApi.GetRegisteredCharacters().AsParallel()
         .Where(c => _autoRetainerApi.GetOfflineCharacterData(c).Enabled)
         .Select(c => $"{_autoRetainerApi.GetOfflineCharacterData(c).Name}@{_autoRetainerApi.GetOfflineCharacterData(c).World}").ToList();
 
-    public unsafe List<string> ARGetRegisteredRetainers() =>
-        _autoRetainerApi.GetRegisteredCharacters().AsParallel()
+    public unsafe List<string> ARGetRegisteredRetainers()
+        => _autoRetainerApi.GetRegisteredCharacters().AsParallel()
         .Select(c => _autoRetainerApi.GetOfflineCharacterData(c).RetainerData.Select(r => r.Name)).SelectMany(names => names).ToList();
 
-    public unsafe List<string> ARGetRegisteredEnabledRetainers() =>
-        _autoRetainerApi.GetRegisteredCharacters().AsParallel()
+    public unsafe List<string> ARGetRegisteredEnabledRetainers()
+        => _autoRetainerApi.GetRegisteredCharacters().AsParallel()
         .Where(c => _autoRetainerApi.GetOfflineCharacterData(c).Enabled)
         .Select(c => _autoRetainerApi.GetOfflineCharacterData(c).RetainerData
         .Where(r => r.HasVenture).Select(r => r.Name)).SelectMany(names => names).ToList();

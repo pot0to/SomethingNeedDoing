@@ -10,10 +10,14 @@ namespace SomethingNeedDoing.Grammar.Commands;
 
 internal class RequireCommand : MacroCommand
 {
+    public static string[] Commands => ["require"];
+    public static string Description => "Require a certain effect to be present before continuing.";
+    public static string[] Examples => ["/require \"Well Fed\""];
+
     private const int StatusCheckMaxWait = 1000;
     private const int StatusCheckInterval = 250;
 
-    private static readonly Regex Regex = new(@"^/require\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly uint[] statusIDs;
     private readonly int maxWait;

@@ -1,4 +1,4 @@
-﻿using SomethingNeedDoing.Misc;
+﻿using ECommons.ChatMethods;
 using System;
 
 namespace SomethingNeedDoing.Exceptions;
@@ -6,18 +6,12 @@ namespace SomethingNeedDoing.Exceptions;
 /// <summary>
 /// Error thrown when a macro needs to pause, but not treat it like an error.
 /// </summary>
-internal partial class MacroPause : InvalidOperationException
+/// <remarks>
+/// Initializes a new instance of the <see cref="MacroPause"/> class.
+/// </remarks>
+/// <param name="command">The reason for stopping.</param>
+/// <param name="color">SeString color.</param>
+internal partial class MacroPause(string command, UIColor color) : InvalidOperationException($"Macro paused: {command}")
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MacroPause"/> class.
-    /// </summary>
-    /// <param name="command">The reason for stopping.</param>
-    /// <param name="color">SeString color.</param>
-    public MacroPause(string command, UiColor color)
-        : base($"Macro paused: {command}") => Color = color;
-
-    /// <summary>
-    /// Gets the color.
-    /// </summary>
-    public UiColor Color { get; }
+    public UIColor Color { get; } = color;
 }

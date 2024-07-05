@@ -13,7 +13,11 @@ namespace SomethingNeedDoing.Grammar.Commands;
 
 internal class ClickCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/click\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["click"];
+    public static string Description => "Click a pre-defined button in an addon or window.";
+    public static string[] Examples => ["/click RecipeNote_Synthesize"];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly string clickName;
 

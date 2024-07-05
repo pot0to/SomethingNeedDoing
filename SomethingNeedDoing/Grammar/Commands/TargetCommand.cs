@@ -11,7 +11,11 @@ namespace SomethingNeedDoing.Grammar.Commands;
 
 internal class TargetCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/target\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["target"];
+    public static string Description => "Target anyone and anything that can be selected.";
+    public static string[] Examples => ["/target Eirikur", "/target Moyce"];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly string targetName;
     private readonly int targetIndex;
@@ -48,11 +52,11 @@ internal class TargetCommand : MacroCommand
             target = Svc.Party[partyIndex - 1]?.GameObject;
         else
             Svc.Log.Info($"looking for non party member target");
-            target = Svc.Objects
-                .OrderBy(o => Vector3.Distance(o.Position, Svc.ClientState.LocalPlayer!.Position))
-                .Where(obj => obj.Name.TextValue.Equals(targetName, System.StringComparison.InvariantCultureIgnoreCase) && obj.IsTargetable && (targetIndex <= 0 || obj.ObjectIndex == targetIndex))
-                .Skip(listIndex)
-                .FirstOrDefault();
+        target = Svc.Objects
+            .OrderBy(o => Vector3.Distance(o.Position, Svc.ClientState.LocalPlayer!.Position))
+            .Where(obj => obj.Name.TextValue.Equals(targetName, System.StringComparison.InvariantCultureIgnoreCase) && obj.IsTargetable && (targetIndex <= 0 || obj.ObjectIndex == targetIndex))
+            .Skip(listIndex)
+            .FirstOrDefault();
 
         if (target == default && Service.Configuration.StopMacroIfTargetNotFound)
             throw new MacroCommandError("Could not find target");

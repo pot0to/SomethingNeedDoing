@@ -1,4 +1,5 @@
-﻿using SomethingNeedDoing.Exceptions;
+﻿using ECommons.ChatMethods;
+using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
@@ -9,28 +10,18 @@ using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
-/// <summary>
-/// The /requiremateria command.
-/// </summary>
 internal class RequireSpiritbondCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/requirespiritbond(\s+(?<within>\d+(?:\.\d+)?))?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["requirespiritbond"];
+    public static string Description => "Pause when an item is ready to have materia extracted. Optional argument to keep crafting if the next highest spiritbond is greater-than-or-equal to the argument value.";
+    public static string[] Examples => ["/requirespiritbond", "/requirespiritbond 99.5"];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}(\s+(?<within>\d+(?:\.\d+)?))?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly float within;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RequireSpiritbondCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original text.</param>
-    /// <param name="within">Check if other items are within a certain percentage.</param>
-    /// <param name="wait">Wait value.</param>
     private RequireSpiritbondCommand(string text, float within, WaitModifier wait) : base(text, wait) => this.within = within;
 
-    /// <summary>
-    /// Parse the text as a command.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <returns>A parsed command.</returns>
     public static RequireSpiritbondCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
@@ -46,13 +37,12 @@ internal class RequireSpiritbondCommand : MacroCommand
         return new RequireSpiritbondCommand(text, within, waitModifier);
     }
 
-    /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Svc.Log.Debug($"Executing: {Text}");
 
         if (CraftingCommands.Instance.CanExtractMateria(within))
-            throw new MacroPause("You can extract materia now", UiColor.Green);
+            throw new MacroPause("You can extract materia now", UIColor.Green);
 
         await PerformWait(token);
     }

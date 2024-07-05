@@ -9,46 +9,31 @@ using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
-/// <summary>
-/// The /requirestats command.
-/// </summary>
 internal class RequireStatsCommand : MacroCommand
 {
+    public static string[] Commands => ["requirestats"];
+    public static string Description => "Require a certain amount of stats effect to be present before continuing. Syntax is Craftsmanship, Control, then CP.";
+    public static string[] Examples => ["/requirestats 2700 2600 500"];
+
     private const int StatusCheckMaxWait = 1000;
     private const int StatusCheckInterval = 250;
 
-    private static readonly Regex Regex = new(@"^/requirestats\s+(?<craftsmanship>\d+)\s+(?<control>\d+)\s+(?<cp>\d+)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<craftsmanship>\d+)\s+(?<control>\d+)\s+(?<cp>\d+)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly uint requiredCraftsmanship;
     private readonly uint requiredControl;
     private readonly uint requiredCp;
     private readonly int maxWait;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RequireStatsCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original text.</param>
-    /// <param name="craftsmanship">Craftsmanship value.</param>
-    /// <param name="control">Control value.</param>
-    /// <param name="cp">Cp value.</param>
-    /// <param name="wait">Wait value.</param>
-    /// <param name="maxWait">MaxWait value.</param>
     private RequireStatsCommand(string text, uint craftsmanship, uint control, uint cp, WaitModifier wait, MaxWaitModifier maxWait) : base(text, wait)
     {
         requiredCraftsmanship = craftsmanship;
         requiredControl = control;
         requiredCp = cp;
 
-        this.maxWait = maxWait.Wait == 0
-            ? StatusCheckMaxWait
-            : maxWait.Wait;
+        this.maxWait = maxWait.Wait == 0 ? StatusCheckMaxWait : maxWait.Wait;
     }
 
-    /// <summary>
-    /// Parse the text as a command.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <returns>A parsed command.</returns>
     public static RequireStatsCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
@@ -70,7 +55,6 @@ internal class RequireStatsCommand : MacroCommand
         return new RequireStatsCommand(text, craftsmanship, control, cp, waitModifier, maxWaitModifier);
     }
 
-    /// <inheritdoc/>
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Svc.Log.Debug($"Executing: {Text}");

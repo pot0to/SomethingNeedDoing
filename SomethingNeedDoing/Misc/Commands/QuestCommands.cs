@@ -48,7 +48,7 @@ internal class QuestCommands
         var matchingRows = questNames.Select((n, i) => (n, i)).Where(t => !string.IsNullOrEmpty(t.n) && IsMatch(name, t.n)).ToList();
         if (matchingRows.Count > 1)
         {
-            matchingRows = matchingRows.OrderByDescending(t => MatchingScore(t.n, name)).ToList();
+            matchingRows = [.. matchingRows.OrderByDescending(t => MatchingScore(t.n, name))];
         }
         return matchingRows.Count > 0 ? Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.GetRow((uint)matchingRows.First().i)!.RowId : null;
     }

@@ -57,8 +57,8 @@ public class CharacterStateCommands
 
     public bool GetCharacterCondition(int flagID, bool hasCondition = true) => hasCondition ? Svc.Condition[flagID] : !Svc.Condition[flagID];
 
-    public string GetCharacterName(bool includeWorld = false) =>
-        Svc.ClientState.LocalPlayer == null ? "null"
+    public string GetCharacterName(bool includeWorld = false)
+        => Svc.ClientState.LocalPlayer == null ? "null"
         : includeWorld ? $"{Svc.ClientState.LocalPlayer.Name}@{Svc.ClientState.LocalPlayer.HomeWorld.GameData!.Name}"
         : Svc.ClientState.LocalPlayer.Name.ToString();
 

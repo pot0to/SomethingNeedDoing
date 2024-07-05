@@ -12,7 +12,11 @@ namespace SomethingNeedDoing.Grammar.Commands;
 
 internal class RecipeCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/recipe\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["recipe"];
+    public static string Description => "Open the recipe book to a specific recipe.";
+    public static string[] Examples => ["/recipe \"Tsai tou Vounou\""];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private readonly string recipeName;
 
     private RecipeCommand(string text, string recipeName, WaitModifier wait) : base(text, wait) => this.recipeName = recipeName.ToLowerInvariant();
@@ -68,7 +72,7 @@ internal class RecipeCommand : MacroCommand
             default:
                 var jobId = Svc.ClientState.LocalPlayer?.ClassJob.Id;
 
-                var recipe = recipes.Where(r => GetClassJobID(r) == jobId).FirstOrDefault();
+                var recipe = recipes.FirstOrDefault(r => GetClassJobID(r) == jobId);
                 if (recipe == default)
                     return recipes.First().RowId;
 
@@ -76,7 +80,7 @@ internal class RecipeCommand : MacroCommand
         }
     }
 
-    private uint GetClassJobID(Sheets.Recipe recipe) =>
+    private uint GetClassJobID(Sheets.Recipe recipe)
         // Name           CraftType ClassJob
         // Carpenter      0         8
         // Blacksmith     1         9
@@ -86,5 +90,5 @@ internal class RecipeCommand : MacroCommand
         // Weaver         5         13
         // Alchemist      6         14
         // Culinarian     7         15
-        recipe.CraftType.Value!.RowId + 8;
+        => recipe.CraftType.Value!.RowId + 8;
 }

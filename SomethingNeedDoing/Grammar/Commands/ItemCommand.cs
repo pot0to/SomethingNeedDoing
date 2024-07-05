@@ -10,12 +10,13 @@ using System.Threading;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
-/// <summary>
-/// The /item command.
-/// </summary>
 internal class ItemCommand : MacroCommand
 {
-    private static readonly Regex Regex = new(@"^/item\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static string[] Commands => ["item"];
+    public static string Description => "Use an item, stopping the macro if the item is not present.";
+    public static string[] Examples => ["/item Calamari Ripieni", "/item Calamari Ripieni <hq> <wait.3>"];
+
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     public static nint itemContextMenuAgent = nint.Zero;
     public delegate void UseItemDelegate(nint itemContextMenuAgent, uint itemID, uint inventoryPage, uint inventorySlot, short a5);
@@ -24,15 +25,7 @@ internal class ItemCommand : MacroCommand
     private readonly string itemName;
     private readonly ItemQualityModifier itemQualityMod;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ItemCommand"/> class.
-    /// </summary>
-    /// <param name="text">Original text.</param>
-    /// <param name="itemName">Item name.</param>
-    /// <param name="wait">Wait value.</param>
-    /// <param name="itemQualityMod">Required quality of the item used.</param>
-    private ItemCommand(string text, string itemName, WaitModifier wait, ItemQualityModifier itemQualityMod)
-        : base(text, wait)
+    private ItemCommand(string text, string itemName, WaitModifier wait, ItemQualityModifier itemQualityMod) : base(text, wait)
     {
         this.itemName = itemName.ToLowerInvariant();
         this.itemQualityMod = itemQualityMod;
@@ -47,11 +40,6 @@ internal class ItemCommand : MacroCommand
         }
     }
 
-    /// <summary>
-    /// Parse the text as a command.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <returns>A parsed command.</returns>
     public static ItemCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
@@ -66,7 +54,6 @@ internal class ItemCommand : MacroCommand
         return new ItemCommand(text, nameValue, waitModifier, itemQualityModifier);
     }
 
-    /// <inheritdoc/>
     public override async System.Threading.Tasks.Task Execute(ActiveMacro macro, CancellationToken token)
     {
         Svc.Log.Debug($"Executing: {Text}");

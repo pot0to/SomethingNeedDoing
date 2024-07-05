@@ -9,6 +9,8 @@ namespace SomethingNeedDoing.Misc;
 
 internal static class ImGuiUtils
 {
+    public static readonly Vector4 ShadedColor = new(0.68f, 0.68f, 0.68f, 1.0f);
+
     public static void URLLink(string URL, string textToShow = "", bool showTooltip = true, ImFontPtr? iconFont = null)
     {
         ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.Button]);

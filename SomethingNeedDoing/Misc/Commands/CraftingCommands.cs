@@ -308,39 +308,11 @@ public class CraftingCommands()
 
     private unsafe (uint Progress, uint Quality) GetActionResult(uint id)
     {
-
         var agent = AgentCraftActionSimulator.Instance();
         if (agent == null) return (0, 0);
 
-        var progress = 0U;
-        var quality = 0U;
-
-        // Find Progress
-        var p = (ProgressEfficiencyCalculation*)agent->Progress;
-        for (var i = 0; i < sizeof(ProgressEfficiencyCalculations) / sizeof(ProgressEfficiencyCalculation); i++)
-        {
-            if (p == null) break;
-            if (p->ActionId == id)
-            {
-                progress = p->ProgressIncrease;
-                break;
-            }
-
-            p++;
-        }
-
-        var q = (QualityEfficiencyCalculation*)agent->Quality;
-        for (var i = 0; i < sizeof(QualityEfficiencyCalculations) / sizeof(QualityEfficiencyCalculation); i++)
-        {
-            if (q == null) break;
-            if (q->ActionId == id)
-            {
-                quality = q->QualityIncrease;
-                break;
-            }
-
-            q++;
-        }
+        var progress = agent->Progress.FirstOrDefault(_p => _p.ActionId == id).ProgressIncrease;
+        var quality = agent->Quality.FirstOrDefault(q => q.ActionId == id).QualityIncrease;
 
         return (progress, quality);
     }
