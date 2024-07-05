@@ -35,7 +35,6 @@ end
 
 --Wrapper for Gatherer class check and their respective ingame Actions
 function class_check()
-	Id_Print("class_check")
     if (GetClassJobId() == 17) then
         action_name_one_more = "Ageless Words"
         action_name_meticulous = "Meticulous Woodsman"
@@ -43,7 +42,6 @@ function class_check()
         action_name_one_more = "Solid Reason"
         action_name_meticulous = "Meticulous Prospector"
     end
-	Id_Print("class_check end")
 end
 
 --Wrapper for running ingame Actions
