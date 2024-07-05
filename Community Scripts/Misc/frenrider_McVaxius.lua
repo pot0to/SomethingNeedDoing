@@ -146,7 +146,7 @@ rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use
 bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
 feedme = ini_check("feedme", 4650)							-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
 feedmeitem = ini_check("feedmeitem", "Boiled Egg")			-- eatfood, in this case the item name. for now this is how we'll do it. it isn't pretty but it will work.. for now..
-formation = ini_check("formation", true)					-- Follow in formation? If false, then it will "cling"
+formation = ini_check("formation", false)					-- Follow in formation? If false, then it will "cling"
 						--[[
 						Like this -> . so that 1 is the main tank and the party will always kind of make this formation during combat
 						8	1	5
@@ -258,11 +258,11 @@ function clingmove(nemm)
 	if clingtype == 2 then
 		bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm))
 		if bistance < maxbistance then
-			yield("/bmrai followtarget true") --* verify this is correct later when we can load dalamud
+			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
 			yield("/bmrai follow "..nemm) 	  --* verify this is correct later when we can load dalamud
 		end
 		if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
-			yield("/bmrai followtarget true") --* verify this is correct later when we can load dalamud
+			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
 			yield("/bmrai follow "..GetCharacterName()) 	  --* verify this is correct later when we can load dalamud
 		end
 	end
