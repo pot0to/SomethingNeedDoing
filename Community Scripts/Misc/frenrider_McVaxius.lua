@@ -139,6 +139,7 @@ fly_you_fools = ini_check("fly_you_fools", false)			--(fly and follow instead of
 fool_flier = ini_check("fool_flier", "Beast with 3 backs")	--if you have fly you fools as true, which beast shall you summon?
 fulftype = ini_check("fulftype", "unchanged")				-- If you have lazyloot installed can setup how loot is handled. Leave on "unchanged" if you don't want it to set your loot settings. Other settings include need, greed, pass and of course, off
 cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistance
+force_gyasahl = ini_check("force_gyasahl", false) 	    -- force gysahl green usage . maybe cause problems in towns with follow
 clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr, 3 = automaton autofollow, 4 = vanilla game follow
 maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
 limitpct = ini_check("limitpct", 25)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap
@@ -448,7 +449,7 @@ while weirdvar == 1 do
 					end
 					if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false then --not mounted and not mounted2 (riding friend)
 						--chocobo stuff. first check if we can fly. if not don't try to chocobo
-						if HasFlightUnlocked() == true then
+						if HasFlightUnlocked() == true or force_gyasahl == true then
 							--check if chocobro is up or (soon) not!
 							if GetBuddyTimeRemaining() < 900 and GetItemCount(4868) > 0 then
 								yield("/visland stop")
@@ -465,7 +466,7 @@ while weirdvar == 1 do
 							--yield("/target \""..fren.."\"")
 								--PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
 								clingmove(fren) --movement func
-								yield("/echo DEBUG line 467ish")
+								--yield("/echo DEBUG line 467ish")
 							end
 							yield("/wait 0.5")
 						end	
