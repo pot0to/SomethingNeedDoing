@@ -141,7 +141,7 @@ fulftype = ini_check("fulftype", "unchanged")				-- If you have lazyloot install
 cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistance
 force_gyasahl = ini_check("force_gyasahl", false) 	    -- force gysahl green usage . maybe cause problems in towns with follow
 clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr, 3 = automaton autofollow, 4 = vanilla game follow
-maxbistance = ini_check("maxbistance", 15) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
+maxbistance = ini_check("maxbistance", 25) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
 limitpct = ini_check("limitpct", 25)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap
 rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
 bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
