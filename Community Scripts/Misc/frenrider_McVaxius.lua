@@ -141,7 +141,7 @@ fulftype = ini_check("fulftype", "unchanged")				-- If you have lazyloot install
 cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistance
 force_gyasahl = ini_check("force_gyasahl", false) 	    -- force gysahl green usage . maybe cause problems in towns with follow
 clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr, 3 = automaton autofollow, 4 = vanilla game follow
-maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
+maxbistance = ini_check("maxbistance", 15) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
 limitpct = ini_check("limitpct", 25)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap
 rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
 bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
@@ -157,25 +157,6 @@ formation = ini_check("formation", false)					-- Follow in formation? If false, 
 -- mker = "cross" -- In case you want the other shapes. Valid shapes are triangle square circle attack1-8 bind1-3 ignore1-2
 -----------CONFIGURATION END-----------
 
-----------------
---INIT SECTION--
-----------------
-yield("/echo Starting fren rider")
---yield("/target \""..fren.."\"")
-yield("/wait 0.5")
---yield("/mk cross <t>")
-
-yield("/vbmai "..bossmodAI)
-yield("/bmrai "..bossmodAI)
-
-if rotationtype ~= "none" then
-	yield("/rotation "..rotationtype)
-end
-
-if fulftype ~= "unchanged" then
-	yield("/fulf on")
-	yield("/fulf "..fulftype)
-end
 ----------------
 ----INIT END----
 ----------------
@@ -329,6 +310,20 @@ while weirdvar == 1 do
 	--catch if character is ready before doing anything
 	if IsPlayerAvailable() then
 		if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
+			bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
+			if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
+				clingmove(GetCharacterName())
+			end
+
+			--dismount regardless of in duty or not
+			if IsPartyMemberMounted(shartycardinality) == false and fly_you_fools == true and GetCharacterCondition(4) == true then
+				--continually try to dismount
+				--bmr follow off.
+				yield("/bmrai follow slot1")
+				yield("/ac dismount")
+				yield("/wait 0.5")
+			end
+
 			--Food check!
 			statoos = GetStatusTimeRemaining(48)
 			---yield("/echo "..statoos)
@@ -348,7 +343,6 @@ while weirdvar == 1 do
 				--movement with formation - initially we test while in any situation not just combat
 				--check distance to fren, if its more than cling, then
 	
-				bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
 				if formation == true and bistance < maxbistance then
 					-- Inside combat and formation enabled
 					local leaderX, leaderY, leaderZ = GetObjectRawXPos(fren), GetObjectRawYPos(fren), GetObjectRawZPos(fren)
@@ -409,15 +403,7 @@ while weirdvar == 1 do
 					ClearTarget()
 					we_were_in = we_are_in
 				end
-				
-				if IsPartyMemberMounted(shartycardinality) == false and fly_you_fools == true and GetCharacterCondition(4) == true then
-					--continually try to dismount
-					--bmr follow off.
-					yield("/bmrai follow slot1")
-					yield("/ac dismount")
-					yield("/wait 0.5")
-				end
-				
+							
 				--the code block that got this all started haha
 				--follow and mount fren
 				if GetCharacterCondition(26) == false then --not in combat
