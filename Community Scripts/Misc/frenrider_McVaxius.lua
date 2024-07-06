@@ -264,6 +264,7 @@ function clingmove(nemm)
 		if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
 			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
 			yield("/bmrai follow "..GetCharacterName()) 	  --* verify this is correct later when we can load dalamud
+			yield("/echo too far! stop following!")
 		end
 	end
 	if clingtype == 3 then
@@ -408,7 +409,7 @@ while weirdvar == 1 do
 					we_were_in = we_are_in
 				end
 				
-				if IsPartyMemberMounted(shartycardinality) == false and fly_you_fools == true then
+				if IsPartyMemberMounted(shartycardinality) == false and fly_you_fools == true and GetCharacterCondition(4) == true then
 					--continually try to dismount
 					--bmr follow off.
 					yield("/bmrai follow slot1")
@@ -464,6 +465,7 @@ while weirdvar == 1 do
 							--yield("/target \""..fren.."\"")
 								--PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
 								clingmove(fren) --movement func
+								yield("/echo DEBUG line 467ish")
 							end
 							yield("/wait 0.5")
 						end	
