@@ -467,7 +467,7 @@ while weirdvar == 1 do
 							if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false and IsPartyMemberMounted(shartycardinality) == true then
 								--mountup your own mount
 								yield("/mount \""..fool_flier.."\"")
-								yield("/wait 3")
+								yield("/wait 5")
 								--try to fly 
 								yield("/gaction jump")
 								yield("/lockon on")
