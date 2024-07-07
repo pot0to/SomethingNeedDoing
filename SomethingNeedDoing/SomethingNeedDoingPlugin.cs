@@ -30,6 +30,7 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
 
         EzConfigGui.Init(new MacroWindow());
         EzConfigGui.WindowSystem.AddWindow(new HelpWindow());
+        EzConfigGui.WindowSystem.AddWindow(new ExcelWindow());
         MacroWindow.Setup();
 
         EzCmd.Add(Command, OnChatCommand, "Open a window to edit various settings.");
@@ -168,6 +169,11 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
         else if (arguments == "help")
         {
             EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == HelpWindow.WindowName)!.IsOpen ^= true;
+            return;
+        }
+        else if (arguments == "excel")
+        {
+            EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == ExcelWindow.WindowName)!.IsOpen ^= true;
             return;
         }
         else if (arguments.StartsWith("cfg"))

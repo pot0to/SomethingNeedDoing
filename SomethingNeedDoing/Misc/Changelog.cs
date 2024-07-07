@@ -21,6 +21,12 @@ internal class Changelog
 
         DisplayChangelog(
         "2024-07-05",
+        "- Removed the alt /item option.\n" +
+        "- Added an excel sheet browser\n" +
+        "- Added JournalDetail clicks\n");
+
+        DisplayChangelog(
+        "2024-07-05",
         "- Fixed CraftLoop to support the new click system.\n" +
         "- Cleaned up the help menu in relation to the new click system and added some missing commands.\n" +
         "- Commands in the help menu can now be copied to clipboard via clicking.\n" +

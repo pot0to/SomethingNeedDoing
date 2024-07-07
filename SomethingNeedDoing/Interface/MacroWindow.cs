@@ -257,6 +257,9 @@ internal class MacroWindow : ConfigWindow
         ImGui.SameLine();
         if (ImGuiEx.IconButton(FontAwesomeIcon.QuestionCircle, "Help"))
             EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == HelpWindow.WindowName)!.IsOpen ^= true;
+        ImGui.SameLine();
+        if (ImGuiEx.IconButton(FontAwesomeIcon.FileExcel, "Excel Browser"))
+            EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == ExcelWindow.WindowName)!.IsOpen ^= true;
 
         if (Service.MacroManager.State == LoopState.NotLoggedIn)
         { /* Nothing to do */

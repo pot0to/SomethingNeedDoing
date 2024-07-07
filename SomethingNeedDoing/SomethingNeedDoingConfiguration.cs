@@ -44,6 +44,12 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
     public bool StopMacroIfAddonNotFound { get; set; } = true;
     public bool StopMacroIfAddonNotVisible { get; set; } = true;
 
+    public bool SortByOffsets { get; set; } = true;
+    public bool AlwaysShowOffsets { get; set; } = true;
+    public bool LineHeightImages { get; set; } = true;
+    public bool HighlightLinks { get; set; } = true;
+    public bool PreferHr1 { get; set; } = true;
+
     /// <summary>
     /// Gets or sets the chat channel to use.
     /// </summary>

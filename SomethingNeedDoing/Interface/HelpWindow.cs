@@ -6,11 +6,9 @@ using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using ECommons;
 using ECommons.Automation.UIInput;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 using SomethingNeedDoing.Grammar.Commands;
 using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
@@ -396,24 +394,24 @@ internal class HelpWindow : Window
 
         if (ImGui.CollapsingHeader("/item"))
         {
-            var defaultUseItem = Service.Configuration.UseItemStructsVersion;
-            if (ImGui.Checkbox("Use SND's /useitem system", ref defaultUseItem))
-            {
-                Service.Configuration.UseItemStructsVersion = defaultUseItem;
-                Service.Configuration.Save();
-            }
+            //var defaultUseItem = Service.Configuration.UseItemStructsVersion;
+            //if (ImGui.Checkbox("Use SND's /useitem system", ref defaultUseItem))
+            //{
+            //    Service.Configuration.UseItemStructsVersion = defaultUseItem;
+            //    Service.Configuration.Save();
+            //}
 
-            DisplayOption("- Does not support stopping the macro if any error occurs.");
+            //DisplayOption("- Does not support stopping the macro if any error occurs.");
 
             var stopMacroNotFound = Service.Configuration.StopMacroIfItemNotFound;
-            if (ImGui.Checkbox("Stop macro if the item to use is not found (only applies to SND's /item system)", ref stopMacroNotFound))
+            if (ImGui.Checkbox("Stop macro if the item to use is not found", ref stopMacroNotFound))
             {
                 Service.Configuration.StopMacroIfItemNotFound = stopMacroNotFound;
                 Service.Configuration.Save();
             }
 
             var stopMacro = Service.Configuration.StopMacroIfCantUseItem;
-            if (ImGui.Checkbox("Stop macro if you cannot use an item (only applies to SND's /item system)", ref stopMacro))
+            if (ImGui.Checkbox("Stop macro if you cannot use an item", ref stopMacro))
             {
                 Service.Configuration.StopMacroIfCantUseItem = stopMacro;
                 Service.Configuration.Save();
@@ -452,6 +450,44 @@ internal class HelpWindow : Window
             if (ImGui.Checkbox("Stop macro if the requested addon is not visible", ref stopMacroVisible))
             {
                 Service.Configuration.StopMacroIfAddonNotVisible = stopMacroVisible;
+                Service.Configuration.Save();
+            }
+        }
+
+        if (ImGui.CollapsingHeader("Excel Browser"))
+        {
+            var showOffsets = Service.Configuration.AlwaysShowOffsets;
+            if (ImGui.Checkbox("Show offsets", ref showOffsets))
+            {
+                Service.Configuration.AlwaysShowOffsets = showOffsets;
+                Service.Configuration.Save();
+            }
+
+            var sortByOffsets = Service.Configuration.SortByOffsets;
+            if (ImGui.Checkbox("Sort by offsets", ref sortByOffsets))
+            {
+                Service.Configuration.SortByOffsets = sortByOffsets;
+                Service.Configuration.Save();
+            }
+
+            var lineHeightImages = Service.Configuration.LineHeightImages;
+            if (ImGui.Checkbox("Line height images", ref lineHeightImages))
+            {
+                Service.Configuration.LineHeightImages = lineHeightImages;
+                Service.Configuration.Save();
+            }
+
+            var highlightLinks = Service.Configuration.HighlightLinks;
+            if (ImGui.Checkbox("Highlight links", ref highlightLinks))
+            {
+                Service.Configuration.HighlightLinks = highlightLinks;
+                Service.Configuration.Save();
+            }
+
+            var preferHr1 = Service.Configuration.PreferHr1;
+            if (ImGui.Checkbox("Prefer high resolution images", ref preferHr1))
+            {
+                Service.Configuration.PreferHr1 = preferHr1;
                 Service.Configuration.Save();
             }
         }
@@ -642,14 +678,7 @@ yield(""/echo done!"")
         {
             var tabs = new (string Title, System.Action Dele)[]
             {
-                ("ClassJob", DrawClassJob),
-                ("Weather", DrawWeather),
-                ("CFC", DrawCFC),
-                ("Duty Roulette", DrawDutyRoulette),
-                ("Ocean Fishing Spots", DrawOceanFishingSpots),
-                ("Achievements", DrawAchievements),
                 ("ObjectKinds", DrawEnum<ObjectKind>),
-                ("Worlds", DrawWorlds),
                 ("InventoryTypes", DrawEnum<InventoryType>),
             };
 
@@ -686,73 +715,11 @@ yield(""/echo done!"")
             ImGui.TextUnformatted($"gold @ {new Vector3(l.Item1, l.Item2, l.Item3)}");
     }
 
-    private void DrawWorlds()
-    {
-        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
-        foreach (var r in Svc.Data.GetExcelSheet<World>()!.Where(w => w.IsPublic && w.DataCenter.Value?.RowId != 0))
-            ImGui.TextUnformatted($"{r.RowId}: {r.Name}");
-    }
-
     private void DrawEnum<T>()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
         foreach (var value in Enum.GetValues(typeof(T)))
             ImGui.TextUnformatted($"{Enum.GetName(typeof(T), value)}: {Convert.ChangeType(value, Enum.GetUnderlyingType(typeof(T)))}");
-    }
-
-    private readonly IEnumerable<Achievement> achievementsSheet = Svc.Data.GetExcelSheet<Achievement>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
-    private void DrawAchievements()
-    {
-        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
-        foreach (var w in achievementsSheet)
-            ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
-    }
-
-    private readonly IEnumerable<FishingSpot> fishingSpotsSheet = Svc.Data.GetExcelSheet<FishingSpot>(Svc.ClientState.ClientLanguage)!.Where(x => x.PlaceNameMain.Value?.RowId != 0);
-    private void DrawOceanFishingSpots()
-    {
-        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
-        foreach (var w in fishingSpotsSheet)
-            ImGui.TextUnformatted($"{w.RowId}: {w.PlaceName.Value!.Name}");
-    }
-
-    private readonly IEnumerable<ContentRoulette> rouletteSheet = Svc.Data.GetExcelSheet<ContentRoulette>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
-    private void DrawDutyRoulette()
-    {
-        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
-        foreach (var w in rouletteSheet)
-            ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
-    }
-
-    private readonly IEnumerable<ContentFinderCondition> cfcSheet = Svc.Data.GetExcelSheet<ContentFinderCondition>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
-    private void DrawCFC()
-    {
-        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
-        foreach (var w in cfcSheet)
-            ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
-    }
-
-    private readonly IEnumerable<Weather> weatherSheet = Svc.Data.GetExcelSheet<Weather>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
-    private void DrawWeather()
-    {
-        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
-        foreach (var w in weatherSheet)
-            ImGui.TextUnformatted($"{w.RowId}: {w.Name}");
-    }
-
-    private readonly IEnumerable<ClassJob> classJobSheet = Svc.Data.GetExcelSheet<ClassJob>(Svc.ClientState.ClientLanguage)!.Where(x => !x.Name.RawString.IsNullOrEmpty());
-    private void DrawClassJob()
-    {
-        using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-        using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
-        foreach (var cj in classJobSheet)
-            ImGui.TextUnformatted($"{cj.RowId}: {cj.Name}; ExpArrayIndex={cj.ExpArrayIndex}");
     }
 }

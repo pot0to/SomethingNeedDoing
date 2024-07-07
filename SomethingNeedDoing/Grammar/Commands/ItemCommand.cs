@@ -1,10 +1,8 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -29,15 +27,15 @@ internal class ItemCommand : MacroCommand
     {
         this.itemName = itemName.ToLowerInvariant();
         this.itemQualityMod = itemQualityMod;
-        if (!Service.Configuration.UseItemStructsVersion)
-        {
-            try
-            {
-                UseItemSig = Marshal.GetDelegateForFunctionPointer<UseItemDelegate>(Svc.SigScanner.ScanText("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 89 7C 24 38"));
-                unsafe { itemContextMenuAgent = (nint)Framework.Instance()->GetUIModule()->GetAgentModule()->GetAgentByInternalId(AgentId.InventoryContext); }
-            }
-            catch { Svc.Log.Error($"Failed to load {nameof(UseItemSig)}"); }
-        }
+        //if (!Service.Configuration.UseItemStructsVersion)
+        //{
+        //    try
+        //    {
+        //        UseItemSig = Marshal.GetDelegateForFunctionPointer<UseItemDelegate>(Svc.SigScanner.ScanText("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 89 7C 24 38"));
+        //        unsafe { itemContextMenuAgent = (nint)Framework.Instance()->GetUIModule()->GetAgentModule()->GetAgentByInternalId(AgentId.InventoryContext); }
+        //    }
+        //    catch { Svc.Log.Error($"Failed to load {nameof(UseItemSig)}"); }
+        //}
     }
 
     public static ItemCommand Parse(string text)
@@ -63,11 +61,14 @@ internal class ItemCommand : MacroCommand
 
         var count = GetInventoryItemCount(itemId, itemQualityMod.IsHq);
         Svc.Log.Debug($"Item Count: {count}");
-        if (count == 0 && Service.Configuration.StopMacroIfItemNotFound)
-            throw new MacroCommandError("You do not have that item");
+        if (count == 0)
+        {
+            if (Service.Configuration.StopMacroIfItemNotFound)
+                throw new MacroCommandError("You do not have that item");
+            return;
+        }
 
         UseItem(itemId, itemQualityMod.IsHq);
-
         await PerformWait(token);
     }
 
@@ -80,14 +81,9 @@ internal class ItemCommand : MacroCommand
         if (isHQ)
             itemID += 1_000_000;
 
-        if (Service.Configuration.UseItemStructsVersion)
-        {
-            var result = agent->UseItem(itemID);
-            if (result != 0 && Service.Configuration.StopMacroIfCantUseItem)
-                throw new MacroCommandError("Failed to use item");
-        }
-        else
-            UseItemSig(itemContextMenuAgent, itemID, 9999, 0, 0);
+        var result = agent->UseItem(itemID);
+        if (result != 0 && Service.Configuration.StopMacroIfCantUseItem)
+            throw new MacroCommandError("Failed to use item");
     }
 
     private unsafe int GetInventoryItemCount(uint itemID, bool isHQ)
