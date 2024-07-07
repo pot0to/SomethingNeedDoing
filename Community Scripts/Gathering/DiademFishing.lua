@@ -7,9 +7,10 @@
     Author: UcanPatates  
 
     **********************
-    * Version  |  1.1.0  *
+    * Version  |  1.1.1  *
     **********************
 
+    -> 1.1.1  : Update for DT changed the /click talk to /click  Talk_Click.
     -> 1.1.0  : Changed the forced preset and some fixes.
     -> 1.0.9  : Now purchases the exact amount of bait and dark matter.
     -> 1.0.8  : Some tweaks to the pathing to fix a jumping when not supposed to issue.
@@ -553,7 +554,7 @@ function WeGoIn()
             elseif GetCharacterCondition(32, false) then
                 yield("/interact")
             elseif IsAddonVisible("Talk") then
-                yield("/click talk")
+                yield("/click  Talk_Click")
             elseif IsAddonVisible("SelectString") then
                 yield("/pcall SelectString true 0")
             elseif IsAddonVisible("SelectYesno") then
