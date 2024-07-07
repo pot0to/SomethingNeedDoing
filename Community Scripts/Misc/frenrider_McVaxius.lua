@@ -141,8 +141,8 @@ fulftype = ini_check("fulftype", "unchanged")				-- If you have lazyloot install
 cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistance
 force_gyasahl = ini_check("force_gyasahl", false) 	    -- force gysahl green usage . maybe cause problems in towns with follow
 clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr, 3 = automaton autofollow, 4 = vanilla game follow
-maxbistance = ini_check("maxbistance", 25) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
-limitpct = ini_check("limitpct", 25)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap
+maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
+limitpct = ini_check("limitpct", -1)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap, -1 disables it
 rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
 bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
 feedme = ini_check("feedme", 4650)							-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
@@ -363,7 +363,7 @@ while weirdvar == 1 do
 				end
 				
 				--we are limitbreaking all over ourselves
-				if can_i_lb() == true then
+				if can_i_lb() == true and limitpct > -1 then
 					GetLimoot = 0 --init lb value. its 10k per 1 bar
 					GetLimoot = GetLimitBreakCurrentValue()
 					if type(GetLimoot) ~= "number" then  --error trap variable type because we dont like SND pausing
