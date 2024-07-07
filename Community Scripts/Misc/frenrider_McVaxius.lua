@@ -16,7 +16,7 @@ VBM/BMR (bmr has slash commands for following)
 RS/RSR (is RS still being updated?)
 
 ***Few annoying problems that still exist
-none atm
+--*dont follow during combat unless non caster. will require bmr contemplation
 ]]
 
 --*****************************************************************
@@ -134,18 +134,20 @@ ini_check("version", vershun)
 --*****************************************************************
 
 ---------CONFIGURATION SECTION---------
-fren = ini_check("fren", "Fren Name")  				--can be partial as long as its unique
-fly_you_fools = ini_check("fly_you_fools", false)	--(fly and follow instead of mount and wait) usecase: you dont have multi seater of sufficient size, or you want to have multiple multiseaters with diff peopel riding diff ones.  sometimes frendalf doesnt want you to ride him and will ask you to ride yourself right up into outer space
+fren = ini_check("fren", "Fren Name")  						--can be partial as long as its unique
+fly_you_fools = ini_check("fly_you_fools", false)			--(fly and follow instead of mount and wait) usecase: you dont have multi seater of sufficient size, or you want to have multiple multiseaters with diff peopel riding diff ones.  sometimes frendalf doesnt want you to ride him and will ask you to ride yourself right up into outer space
 fool_flier = ini_check("fool_flier", "Beast with 3 backs")	--if you have fly you fools as true, which beast shall you summon?
-fulftype = ini_check("fulftype", "unchanged")			-- If you have lazyloot installed can setup how loot is handled. Leave on "unchanged" if you don't want it to set your loot settings. Other settings include need, greed, pass and of course, off
-cling = ini_check("cling", 1) 							-- Distance to cling to fren when > bistance
-maxbistance = ini_check("maxbistance", 50) 				-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
-limitpct = ini_check("limitpct", 25)					-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap
-rotationtype = ini_check("rotationtype", "Auto")		-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
-bossmodAI = ini_check("bossmodAI", "on")				-- do we want bossmodAI to be "on" or "off"
-feedme = ini_check("feedme", 4650)						-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
+fulftype = ini_check("fulftype", "unchanged")				-- If you have lazyloot installed can setup how loot is handled. Leave on "unchanged" if you don't want it to set your loot settings. Other settings include need, greed, pass and of course, off
+cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistance
+force_gyasahl = ini_check("force_gyasahl", false) 	    -- force gysahl green usage . maybe cause problems in towns with follow
+clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr, 3 = automaton autofollow, 4 = vanilla game follow
+maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
+limitpct = ini_check("limitpct", -1)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap, -1 disables it
+rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
+bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
+feedme = ini_check("feedme", 4650)							-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
 feedmeitem = ini_check("feedmeitem", "Boiled Egg")			-- eatfood, in this case the item name. for now this is how we'll do it. it isn't pretty but it will work.. for now..
-formation = ini_check("formation", true)				-- Follow in formation? If false, then it will "cling"
+formation = ini_check("formation", false)					-- Follow in formation? If false, then it will "cling"
 						--[[
 						Like this -> . so that 1 is the main tank and the party will always kind of make this formation during combat
 						8	1	5
@@ -155,25 +157,6 @@ formation = ini_check("formation", true)				-- Follow in formation? If false, th
 -- mker = "cross" -- In case you want the other shapes. Valid shapes are triangle square circle attack1-8 bind1-3 ignore1-2
 -----------CONFIGURATION END-----------
 
-----------------
---INIT SECTION--
-----------------
-yield("/echo Starting fren rider")
---yield("/target \""..fren.."\"")
-yield("/wait 0.5")
---yield("/mk cross <t>")
-
-yield("/vbmai "..bossmodAI)
-yield("/bmrai "..bossmodAI)
-
-if rotationtype ~= "none" then
-	yield("/rotation "..rotationtype)
-end
-
-if fulftype ~= "unchanged" then
-	yield("/fulf on")
-	yield("/fulf "..fulftype)
-end
 ----------------
 ----INIT END----
 ----------------
@@ -196,11 +179,9 @@ end
 
 function can_i_lb()
     local dpsJobs = {
-        [2] = true, [4] = true, [5] = true, [7] = true, [20] = true, [22] = true, [24] = true,
+        [2]  = true, [4]  = true, [5]  = true, [7]  = true, [20] = true, [22] = true, [24] = true,
         [25] = true, [26] = true, [27] = true, [29] = true, [30] = true, [31] = true,
-        [34] = true, [35] = true, [38] = true, [39] = true--,
-        -- [41] = true, --painter
-        -- [42] = true, --voper
+        [34] = true, [35] = true, [38] = true, [39] = true, [41] = true
     }
     local joeb = GetClassJobId()
     return dpsJobs[joeb] or false
@@ -246,6 +227,46 @@ local function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ,
     PathfindAndMoveTo(targetX, targetY, leaderZ, false)
 end
 
+function clingmove(nemm)
+	--navmesh
+	if clingtype == 0 then
+		PathfindAndMoveTo(GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm), false)
+	end
+	--visland
+	if clingtype == 1 then
+		yield("/visland moveto "..GetObjectRawXPos(nemm).." "..GetObjectRawYPos(nemm).." "..GetObjectRawZPos(nemm)) --* verify this is correct later when we can load dalamud
+	end
+	--bmr
+	if clingtype == 2 then
+		bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm))
+		if bistance < maxbistance then
+			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
+			yield("/bmrai follow "..nemm) 	  --* verify this is correct later when we can load dalamud
+		end
+		if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
+			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
+			yield("/bmrai follow "..GetCharacterName()) 	  --* verify this is correct later when we can load dalamud
+			yield("/echo too far! stop following!")
+		end
+	end
+	if clingtype == 3 then
+		yield("/autofollow "..nemm) --* verify this is correct later when we can load dalamud
+	end
+	if clingtype == 4 then
+		--we only doing this silly method out of combat
+		if GetCharacterCondition(26) == false then
+			yield("/target "..nemm) --* verify this is correct later when we can load dalamud
+			yield("/follow")
+		end
+		--if we in combat and target is nemm we will clear it becuase that may bork autotarget from RSR
+		if GetCharacterCondition(26) == true then
+			if nemm == GetTargetName() then
+				ClearTarget()
+			end
+		end
+	end
+end
+
 weirdvar = 1
 shartycardinality = 2 -- leader
 partycardinality = 2 -- me
@@ -289,6 +310,20 @@ while weirdvar == 1 do
 	--catch if character is ready before doing anything
 	if IsPlayerAvailable() then
 		if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
+			bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
+			if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
+				clingmove(GetCharacterName())
+			end
+
+			--dismount regardless of in duty or not
+			if IsPartyMemberMounted(shartycardinality) == false and fly_you_fools == true and GetCharacterCondition(4) == true then
+				--continually try to dismount
+				--bmr follow off.
+				yield("/bmrai follow slot1")
+				yield("/ac dismount")
+				yield("/wait 0.5")
+			end
+
 			--Food check!
 			statoos = GetStatusTimeRemaining(48)
 			---yield("/echo "..statoos)
@@ -308,7 +343,6 @@ while weirdvar == 1 do
 				--movement with formation - initially we test while in any situation not just combat
 				--check distance to fren, if its more than cling, then
 	
-				bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
 				if formation == true and bistance < maxbistance then
 					-- Inside combat and formation enabled
 					local leaderX, leaderY, leaderZ = GetObjectRawXPos(fren), GetObjectRawYPos(fren), GetObjectRawZPos(fren)
@@ -321,14 +355,15 @@ while weirdvar == 1 do
 					if formation == false then
 						if bistance > cling and bistance < maxbistance then
 						--yield("/target \""..fren.."\"")
-							PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
+							--PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
+							clingmove(fren) --movement func
 						end
 						yield("/wait 0.5")
 					end	
 				end
 				
 				--we are limitbreaking all over ourselves
-				if can_i_lb() == true then
+				if can_i_lb() == true and limitpct > -1 then
 					GetLimoot = 0 --init lb value. its 10k per 1 bar
 					GetLimoot = GetLimitBreakCurrentValue()
 					if type(GetLimoot) ~= "number" then  --error trap variable type because we dont like SND pausing
@@ -368,15 +403,7 @@ while weirdvar == 1 do
 					ClearTarget()
 					we_were_in = we_are_in
 				end
-				
-				if IsPartyMemberMounted(shartycardinality) == false and fly_you_fools == true then
-					--continually try to dismount
-					--bmr follow off.
-					yield("/bmrai follow slot1")
-					yield("/ac dismount")
-					yield("/wait 0.5")
-				end
-				
+							
 				--the code block that got this all started haha
 				--follow and mount fren
 				if GetCharacterCondition(26) == false then --not in combat
@@ -408,7 +435,7 @@ while weirdvar == 1 do
 					end
 					if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false then --not mounted and not mounted2 (riding friend)
 						--chocobo stuff. first check if we can fly. if not don't try to chocobo
-						if HasFlightUnlocked() == true then
+						if HasFlightUnlocked() == true or force_gyasahl == true then
 							--check if chocobro is up or (soon) not!
 							if GetBuddyTimeRemaining() < 900 and GetItemCount(4868) > 0 then
 								yield("/visland stop")
@@ -423,7 +450,9 @@ while weirdvar == 1 do
 							bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
 							if bistance > cling and bistance < maxbistance then
 							--yield("/target \""..fren.."\"")
-								PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
+								--PathfindAndMoveTo(GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren), false)
+								clingmove(fren) --movement func
+								--yield("/echo DEBUG line 467ish")
 							end
 							yield("/wait 0.5")
 						end	
@@ -438,7 +467,7 @@ while weirdvar == 1 do
 							if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false and IsPartyMemberMounted(shartycardinality) == true then
 								--mountup your own mount
 								yield("/mount \""..fool_flier.."\"")
-								yield("/wait 3")
+								yield("/wait 5")
 								--try to fly 
 								yield("/gaction jump")
 								yield("/lockon on")
