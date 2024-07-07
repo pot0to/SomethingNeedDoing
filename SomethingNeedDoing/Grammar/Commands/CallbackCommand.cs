@@ -18,11 +18,11 @@ internal class CallbackCommand : MacroCommand
     public static string[] Examples => ["/callback AddonName UpdateState [AtkValues]", "/callback FashionCheck true -1"];
 
     private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<addon>\b\w+\b)\s+(?<updateState>true|false)\s+(?<values>(true|false|\b\w+\b|-?\d+|""[^""]+"")(\s+(true|false|\b\w+\b|-?\d+|""[^""]+""))*)\s*$", RegexOptions.Compiled);
-    private readonly unsafe AtkUnitBase* addon;
+    private readonly unsafe string addon;
     private readonly bool updateState;
     private readonly List<object> valueArgs = [];
 
-    private unsafe CallbackCommand(AtkUnitBase* addon, bool updateState, List<object> valueArgs, WaitModifier wait) : base("", wait)
+    private unsafe CallbackCommand(string addon, bool updateState, List<object> valueArgs, WaitModifier wait) : base("", wait)
     {
         this.addon = addon;
         this.updateState = updateState;
@@ -41,7 +41,7 @@ internal class CallbackCommand : MacroCommand
 
         if (!addonGroup.Success)
             throw new MacroSyntaxError(text, $"Invalid addon {addonGroup.Value}. Please follow \"/callback <addon> <bool> <atkValues>\"");
-        if (!boolGroup.Success)
+        if (!boolGroup.Success || !bool.TryParse(boolGroup.Value, out var boolArg))
             throw new MacroSyntaxError(text, $"Invalid bool {boolGroup.Value}. Please follow \"/callback <addon> <bool> <atkValues>\"");
         if (!valueGroup.Success)
             throw new MacroSyntaxError(text, $"Invalid values {valueGroup.Value}. Please follow \"/callback <addon> <bool> <atkValues>\"");
@@ -87,23 +87,20 @@ internal class CallbackCommand : MacroCommand
 
         if (!string.IsNullOrEmpty(current))
             throw new MacroSyntaxError(text, "Unclosed quotes.");
-        if (TryGetAddonByName<AtkUnitBase>(addonGroup.Value, out var addonArg) && bool.TryParse(boolGroup.Value, out var result))
-            return new CallbackCommand(addonArg, result, valueArgs, waitModifier);
-        else
-            throw new MacroCommandError($"Addon {addonGroup.Value} not found.");
+        return new CallbackCommand(addonGroup.Value, boolArg, valueArgs, waitModifier);
     }
 
     public async override Task Execute(ActiveMacro macro, CancellationToken token)
     {
         unsafe
         {
-            if (!IsAddonReady(addon))
+            if (!TryGetAddonByName<AtkUnitBase>(addon, out var addonArg))
             {
                 if (Service.Configuration.StopMacroIfAddonNotFound)
-                    throw new MacroCommandError($"Addon {addon->NameString} not found.");
+                    throw new MacroCommandError($"Addon {addon} not found.");
             }
             else
-                Callback.Fire(addon, updateState, [.. valueArgs]);
+                Callback.Fire(addonArg, updateState, [.. valueArgs]);
         }
         await PerformWait(token);
     }

@@ -24,7 +24,8 @@ internal class Changelog
         "- Removed the alt /item option.\n" +
         "- Added an excel sheet browser\n" +
         "- Added JournalDetail clicks\n" +
-        "- More /callback safeties and more accurate logging.\n");
+        "- More /callback safeties and more accurate logging.\n" +
+        "- Added SelectIconString entry clicks\n");
 
         DisplayChangelog(
         "2024-07-05",
