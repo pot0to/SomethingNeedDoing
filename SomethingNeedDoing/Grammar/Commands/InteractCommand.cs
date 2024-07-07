@@ -12,8 +12,8 @@ namespace SomethingNeedDoing.Grammar.Commands;
 internal class InteractCommand : MacroCommand
 {
     public static string[] Commands => ["interact"];
-    public static string Description => "Checks your inventory and armoury for an item and tries to equip it.";
-    public static string[] Examples => ["/equipitem 40280"];
+    public static string Description => "Interacts with curent target.";
+    public static string[] Examples => ["/interact"];
 
     private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 

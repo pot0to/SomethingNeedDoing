@@ -12,8 +12,8 @@ namespace SomethingNeedDoing.Grammar.Commands;
 internal class TargetEnemyCommand : MacroCommand
 {
     public static string[] Commands => ["targetenemy"];
-    public static string Description => "Checks your inventory and armoury for an item and tries to equip it.";
-    public static string[] Examples => ["/equipitem 40280"];
+    public static string Description => "Targets the nearest enemy.";
+    public static string[] Examples => ["/targetenemy"];
 
     private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -22,7 +22,6 @@ internal class TargetEnemyCommand : MacroCommand
     private TargetEnemyCommand(string text, WaitModifier wait, IndexModifier index) : base(text, wait, index)
     {
         targetIndex = index.ObjectId;
-        Svc.Log.Info("making new command");
     }
 
     public static TargetEnemyCommand Parse(string text)
@@ -32,7 +31,6 @@ internal class TargetEnemyCommand : MacroCommand
         var match = Regex.Match(text);
         if (!match.Success)
             throw new MacroSyntaxError(text);
-        Svc.Log.Info("parsing");
         return new TargetEnemyCommand(text, waitModifier, indexModifier);
     }
 
