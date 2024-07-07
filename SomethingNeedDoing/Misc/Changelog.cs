@@ -20,10 +20,11 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-        "2024-07-05",
+        "2024-07-07",
         "- Removed the alt /item option.\n" +
         "- Added an excel sheet browser\n" +
-        "- Added JournalDetail clicks\n");
+        "- Added JournalDetail clicks\n" +
+        "- More /callback safeties and more accurate logging.\n");
 
         DisplayChangelog(
         "2024-07-05",
