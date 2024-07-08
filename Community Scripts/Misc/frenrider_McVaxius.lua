@@ -301,7 +301,7 @@ end
 yield("/echo Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality.." Fren Join order -> "..shartycardinality)
 ClearTarget()
 
---bmr follow off. default state
+--bmr follow off. default state. slot1 is the runner of this script
 --yield("/bmrai follow slot1")
 yield("/bmrai follow slot1")
 yield("/echo Beginning fren rider main loop")
@@ -336,7 +336,9 @@ while weirdvar == 1 do
 			if GetCharacterCondition(34) == true then --in duty we might do some special things. mostly just follow the leader and let the ai do its thing.
 				--bmr follow on
 				--yield("/bmrai follow slot"..fartycardinality.."")
-				yield("/bmrai follow "..fren)
+				--yield("/bmrai follow "..fren)
+				--we will use clingmove not bmrai follow as it breaks pathing from that point onwards
+				clingmove(fren)
 			end
 			if GetCharacterCondition(34) == false then  --not in duty  
 				--SAFETY CHECKS DONE, can do whatever you want now with characterconditions etc			
@@ -413,7 +415,8 @@ while weirdvar == 1 do
 							--yield("/echo attempting to fly to fren")
 							--bmr follow on. we comin
 							--yield("/bmrai follow slot"..fartycardinality)
-							yield("/bmrai follow "..fren)
+							--yield("/bmrai follow "..fren)
+							clingmove(fren)
 
 							yield("/target <"..fartycardinality..">")
 							yield("/follow")
