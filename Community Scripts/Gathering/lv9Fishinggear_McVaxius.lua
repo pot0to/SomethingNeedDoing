@@ -84,7 +84,7 @@ visland_stop_moving()
 
 --auto equip and bait setup
 yield("/ac bait")
-yield("/wait 1")
+yield("/wait 5")
 yield("/pcall Bait true 29717 false")
 yield("/wait 1")
 yield("/ac bait")
