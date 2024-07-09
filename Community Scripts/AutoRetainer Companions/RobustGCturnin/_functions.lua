@@ -153,6 +153,13 @@ function visland_stop_moving()
  yield("/visland stop")
  yield("/vnavmesh stop")
  yield("/wait 3")
+ --added becuase simpletweaks is slow to update :(
+ yield("/character")
+ yield("/wait 1")
+ yield("/pcall Character true 12")
+ yield("/wait 1")
+ yield("/pcall RecommendEquip true 0")
+ yield("/wait 1")
 end
 
 
