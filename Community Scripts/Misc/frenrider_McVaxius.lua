@@ -17,6 +17,7 @@ RS/RSR (is RS still being updated?)
 
 ***Few annoying problems that still exist
 --*dont follow during combat unless non caster. will require bmr contemplation
+--*sometimes on area changes it changes party order which can break things. have to think about this.  only happens when the leader isnt the one that made the group
 ]]
 
 --*****************************************************************
@@ -163,7 +164,7 @@ formation = ini_check("formation", false)					-- Follow in formation? If false, 
 ----------------
 
 --why is this so complicated? well because sometimes we get bad values and we need to sanitize that so snd does not STB (shit the bed)
-local function distance(x1, y1, z1, x2, y2, z2)
+function distance(x1, y1, z1, x2, y2, z2)
 	if type(x1) ~= "number" then x1 = 0 end
 	if type(y1) ~= "number" then y1 = 0 end
 	if type(z1) ~= "number" then z1 = 0 end
@@ -188,8 +189,12 @@ function can_i_lb()
     return dpsJobs[joeb] or false
 end
 
+function am_i_ranged()
+	--*stub to be sorted out later to deal with known issue(s)
+end
+
 -- Function to calculate the offset based on follower index and leader's facing direction
-local function calculateOffset(followerIndex, leaderRotation)
+function calculateOffset(followerIndex, leaderRotation)
     -- Calculate offsetX and offsetY based on follower index and leader's facing direction
     -- Example: Adjust offsetX and offsetY based on formation layout and leader's facing direction
     local offsetX, offsetY = 0, 0
@@ -216,7 +221,7 @@ local function calculateOffset(followerIndex, leaderRotation)
     return rotatedOffsetX, rotatedOffsetY
 end
 
-local function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ, leaderRotation)
+function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ, leaderRotation)
     -- Calculate the formation position based on follower index and leader's facing direction
     local offsetX, offsetY = calculateOffset(followerIndex, leaderRotation)
     
@@ -271,7 +276,7 @@ end
 weirdvar = 1
 shartycardinality = 2 -- leader
 partycardinality = 2 -- me
-local fartycardinality = 2 --leader ui cardinality
+fartycardinality = 2 --leader ui cardinality
 autotosscount = 0
 we_are_in = GetZoneID()
 we_were_in = GetZoneID()
@@ -286,7 +291,7 @@ end
 partycardinality = partycardinality + 1
 --turns out the above is worthless and not what i wanted for pillion. but we keep it anyways in case we need the data for something.
 
-local countfartula = 2
+countfartula = 2
 while countfartula < 9 do
 	yield("/target <"..countfartula..">")
 	yield("/wait 0.5")
