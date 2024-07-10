@@ -160,6 +160,25 @@ formation = ini_check("formation", false)					-- Follow in formation? If false, 
 -----------CONFIGURATION END-----------
 
 ----------------
+--INIT SECTION--
+----------------
+yield("/echo Starting fren rider")
+--yield("/target \""..fren.."\"")
+yield("/wait 0.5")
+--yield("/mk cross <t>")
+
+yield("/vbmai "..bossmodAI)
+yield("/bmrai "..bossmodAI)
+
+if rotationtype ~= "none" then
+	yield("/rotation "..rotationtype)
+end
+
+if fulftype ~= "unchanged" then
+	yield("/fulf on")
+	yield("/fulf "..fulftype)
+end
+----------------
 ----INIT END----
 ----------------
 
@@ -292,16 +311,21 @@ partycardinality = partycardinality + 1
 --turns out the above is worthless and not what i wanted for pillion. but we keep it anyways in case we need the data for something.
 
 countfartula = 2
-while countfartula < 9 do
-	yield("/target <"..countfartula..">")
-	yield("/wait 0.5")
-	yield("/echo is it "..GetTargetName().."?")
-	if GetTargetName() == fren then
-		fartycardinality = countfartula
-		countfartula = 9
+function counting_fartula()
+countfartula = 2 --redeclare dont worry its fine.
+	while countfartula < 9 do
+		yield("/target <"..countfartula..">")
+		yield("/wait 0.5")
+		yield("/echo is it "..GetTargetName().."?")
+		if GetTargetName() == fren then
+			fartycardinality = countfartula
+			countfartula = 9
+			--yield("Aha... count fartula is -> "..fartycardinality)
+		end
+		countfartula = countfartula + 1
 	end
-	countfartula = countfartula + 1
 end
+counting_fartula() --we can call it before mounting because the order changes sometimes after a duty ends or after changing areas (AFTER a duty ends?) idk it was hard to recreate but this solves it.
 
 --yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
 yield("/echo Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality.." Fren Join order -> "..shartycardinality)
@@ -485,6 +509,7 @@ while weirdvar == 1 do
 						if IsPartyMemberMounted(shartycardinality) == true and fly_you_fools == false then
 							--for i=1,7 do
 								--yield("/ridepillion <"..partycardinality.."> "..i)
+								counting_fartula()
 								yield("/ridepillion <"..fartycardinality.."> 2")
 							--end
 							yield("/echo Attempting to Mount Friend")
