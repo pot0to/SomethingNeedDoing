@@ -185,8 +185,8 @@ function return_to_inn()
 end
 
 function return_to_fc()
-	--yield("/tp Estate Hall")
-	yield("/tp Estate Hall (Free Company)")
+	--yield("/tp Estate Hall") --old way
+	yield("/tp Estate Hall (Free Company)") --new way notice the brackets
 	yield("/wait 1")
 	--yield("/waitaddon Nowloading <maxwait.15>")
 	yield("/wait 15")
