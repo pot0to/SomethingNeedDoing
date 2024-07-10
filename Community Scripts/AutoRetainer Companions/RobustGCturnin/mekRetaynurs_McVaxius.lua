@@ -12,6 +12,14 @@ also assumes limsa start and quests.
 
 tested pretty hard :~D it is 6 minutes run time from start to finish
 
+
+CONFEEGOOORASHUNS
+CONFEEGOOORASHUNS
+CONFEEGOOORASHUNS
+CONFEEGOOORASHUNS
+CONFEEGOOORASHUNS
+CONFEEGOOORASHUNS
+for now requires you to be in limsa and have a combat job preferrably over 45
 --simpletweaks config -> targeting fix
 --snd -> turn off snd targeting
 
@@ -223,6 +231,9 @@ while goatshart == 1 do
 		floatblart = floatblart + 1
 		if floatblart > 3 then
 			goatshart = 0
+		end
+		if GetCharacterCondition(26) == true then
+			floatblart = 0
 		end
 	end
 	yield("/target dusk bat")
