@@ -20,6 +20,10 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-07-11",
+        "- Fixed IsAddonReady erroneously returning true.\n");
+
+        DisplayChangelog(
         "2024-07-07",
         "- Removed the alt /item option.\n" +
         "- Added an excel sheet browser\n" +

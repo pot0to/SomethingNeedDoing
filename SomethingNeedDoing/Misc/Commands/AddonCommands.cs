@@ -9,6 +9,7 @@ using SomethingNeedDoing.Exceptions;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace SomethingNeedDoing.Misc.Commands;
 
@@ -89,15 +90,8 @@ public class AddonCommands
         return 0;
     }
 
-    public unsafe bool IsAddonVisible(string addonName)
-    {
-        var ptr = Svc.GameGui.GetAddonByName(addonName, 1);
-        if (ptr == nint.Zero)
-            return false;
-
-        var addon = (AtkUnitBase*)ptr;
-        return addon->IsVisible;
-    }
+    public unsafe bool IsAddonVisible(string addonName) => GenericHelpers.TryGetAddonByName<AtkUnitBase>(addonName, out var addon) && addon->IsVisible;
+    public unsafe bool IsAddonReady(string addonName) => GenericHelpers.TryGetAddonByName<AtkUnitBase>(addonName, out var addon) && GenericHelpers.IsAddonReady(addon);
 
     public unsafe bool IsNodeVisible(string addonName, params int[] ids)
     {
@@ -148,16 +142,6 @@ public class AddonCommands
         //check siblings
         var sibNode = node->PrevSiblingNode;
         return sibNode != null ? GetNodeByIDChain(sibNode, ids) : null;
-    }
-
-    public unsafe bool IsAddonReady(string addonName)
-    {
-        var ptr = Svc.GameGui.GetAddonByName(addonName, 1);
-        if (ptr == nint.Zero)
-            return false;
-
-        var addon = (AtkUnitBase*)ptr;
-        return addon->UldManager.LoadedState == AtkLoadState.Loaded;
     }
 
     public unsafe string GetToastNodeText(int index, params int[] nodeNumbers)

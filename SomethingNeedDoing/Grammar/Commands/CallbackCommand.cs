@@ -94,8 +94,16 @@ internal class CallbackCommand : MacroCommand
     {
         unsafe
         {
-            if (TryGetAddonByName<AtkUnitBase>(addon, out var addonArg) && IsAddonReady(addonArg))
-                Callback.Fire(addonArg, updateState, [.. valueArgs]);
+            if (TryGetAddonByName<AtkUnitBase>(addon, out var addonArg))
+            {
+                if (IsAddonReady(addonArg))
+                    Callback.Fire(addonArg, updateState, [.. valueArgs]);
+                else
+                {
+                    if (Service.Configuration.StopMacroIfAddonNotFound)
+                        throw new MacroCommandError($"Addon {addon} not ready.");
+                }
+            }
             else
             {
                 if (Service.Configuration.StopMacroIfAddonNotFound)
