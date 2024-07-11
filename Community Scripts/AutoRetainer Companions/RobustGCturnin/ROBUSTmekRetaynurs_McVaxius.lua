@@ -298,9 +298,14 @@ for laziest_bastard = 1, #intern_herder do
 	yield("/echo Loading Characters for creating fisher retainers in limsa -> "..intern_herder[laziest_bastard][1])
 	yield("/echo Processing Intern Herder --> "..laziest_bastard.."/"..#intern_herder)
 	yield("/ays relog " ..intern_herder[laziest_bastard][1])
-	--yield("/echo 15 second wait")
 	yield("/wait 2")
 	CharacterSafeWait()
+	yield("/li") --incase we aren't home
+	yield("/wait 1")
+	if GetCharacterCondition(27) == true then --we are going home ahahahaha
+		yield("/echo 15 second wait")
+		CharacterSafeWait()	
+	end
 	yield("Intern Herder --> "..intern_herder[laziest_bastard][1])
 	yield("/echo Processing Intern Herder --> "..laziest_bastard.."/"..#intern_herder)
 	--check if we are on the right char, if not we stop everything and fix names in our spreadsheet
