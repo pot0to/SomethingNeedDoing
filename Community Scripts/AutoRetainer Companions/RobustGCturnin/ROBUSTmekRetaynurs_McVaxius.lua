@@ -60,6 +60,9 @@ local intern_herder = {
   {"First Last@Server"},
   {"First Last@Server"}
 }
+
+stop_on_error = 1 --default setting. stop the script when you are on wrong char due to mispelling a name / server
+
 function CharacterSafeWait()
      yield("/echo 15 second wait for char swap")
 	 yield("/wait 15")
@@ -280,6 +283,15 @@ function trouble_my_adventure()
 	yield("/wait 10") -- give it some time to reach the retainer screen.
 end
 
+function lets_limsa()
+	if GetZoneID() > 129 or GetZoneID() < 129 then
+		yield("/tp Limsa")
+		yield("/wait 15") -- give it some time to TP
+		CharacterSafeWait()
+		visland_stop_moving()
+	end
+end
+
 --here is the entire script:
 
 for laziest_bastard = 1, #intern_herder do
@@ -291,6 +303,16 @@ for laziest_bastard = 1, #intern_herder do
 	CharacterSafeWait()
 	yield("Intern Herder --> "..intern_herder[laziest_bastard][1])
 	yield("/echo Processing Intern Herder --> "..laziest_bastard.."/"..#intern_herder)
+	--check if we are on the right char, if not we stop everything and fix names in our spreadsheet
+	if GetCharacterName(true) ~= intern_herder[laziest_bastard][1] then
+		yield("/echo We have a problem. You mispelled a name somewhere.  You are on "..GetCharacterName(true).." but you should be on "..intern_herder[laziest_bastard][1])
+		if stop_on_error == 1 then
+			yield("/echo the script stops here")
+			yield("/pcraft stop")
+		end
+	end
+	--check where we are. if not limsa lets limsa
+	lets_limsa()
 	buoy_too_rods()
 	get_to_vocate()
 	mekkitnaow() --retainer 1
