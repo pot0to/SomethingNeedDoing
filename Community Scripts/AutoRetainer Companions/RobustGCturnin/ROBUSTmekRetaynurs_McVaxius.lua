@@ -52,6 +52,19 @@ Load previously saved appearance data?
 /Save appearance data.*/
 ]]
 
+--enter in names of characters that will be responsible for triggering FC Buffs, no configs just names
+local intern_herder = {
+  {"First Last@Server"},
+  {"First Last@Server"},
+  {"First Last@Server"},
+  {"First Last@Server"},
+  {"First Last@Server"}
+}
+function CharacterSafeWait()
+     yield("/echo 15 second wait for char swap")
+	 yield("/wait 15")
+	 yield("/waitaddon NamePlate <maxwait.600> <wait.5>")
+end
 
 function visland_stop_moving()
  yield("/equipguud")
@@ -116,23 +129,28 @@ function truncate_to_19(s)
 end
 
 
---buy 2 rods
-yield("/vnavmesh moveto -246.67446899414 16.199998855591 41.268531799316")
-visland_stop_moving()
-yield("/target Syneyhil")
-yield("/wait 2")
-yield("/interact")
-yield("/wait 2")
-yield("/pcall SelectIconString true 1 <wait.2>")
-yield("/pcall SelectString true 0 <wait.2>")
-yield("/pcall Shop true 0 4 1 <wait.1.0>")  --the 1 on the end is quantity i thnk we can do 2, but i dont wanna mess with that
-yield("/pcall Shop true 0 4 1 <wait.1.0>")
-yield("/pcall Shop true -1 <wait.1.0>")
-visland_stop_moving()
+function buoy_too_rods()
+	--buy 2 rods
+	yield("/vnavmesh moveto -246.67446899414 16.199998855591 41.268531799316")
+	visland_stop_moving()
+	yield("/target Syneyhil")
+	yield("/wait 2")
+	yield("/interact")
+	yield("/wait 2")
+	yield("/pcall SelectIconString true 1 <wait.2>")
+	yield("/pcall SelectString true 0 <wait.2>")
+	yield("/pcall Shop true 0 4 1 <wait.1.0>")  --the 1 on the end is quantity i thnk we can do 2, but i dont wanna mess with that
+	yield("/pcall Shop true 0 4 1 <wait.1.0>")
+	yield("/pcall Shop true -1 <wait.1.0>")
+	visland_stop_moving()
+end
 
+function get_to_vocate()
 --get to vocate and mek 2 retainers.
 	yield("/vnavmesh moveto -146.021484375 18.212013244629 17.593742370605")
 	visland_stop_moving()
+end
+
 function mekkitnaow()
 	yield("/target Frydwyb")
 	yield("/wait 2")
@@ -193,204 +211,105 @@ function nemmitnaow()
 	yield("/pcall InputString true 0 "..nemmy.." ") -- Hire this retainer?
 end
 
-mekkitnaow() --retainer 1
-yield("/wait 5")
-while IsAddonVisible("InputString") do
-	nemmitnaow()
-	yield("/wait 10") -- give it some time to leave the naming screen
-end
-yield("/wait 5")
-mekkitnaow() --retainer 2
-yield("/wait 5")
-while IsAddonVisible("InputString") do
-	nemmitnaow()
-	yield("/wait 10") -- give it some time to leave the naming screen
-end
+function trouble_my_adventure()
+	--now we need to reach the troubled adventurer and hookup the retainer ventures quest
+	yield("/vnavmesh moveto -107.00193786621 18.000331878662 -0.36875337362289")
+	visland_stop_moving()
+	yield("/target Troubled Adventurer")
+	yield("/wait 2")
+	yield("/interact")
+	yield("/wait 10") -- give it some time to clean itself of filthy dialogue and such
 
+	yield("/tp Aleport")
+	yield("/wait 15") -- give it some time to TP
+	visland_stop_moving()
 
---now we need to reach the troubled adventurer and hookup the retainer ventures quest
-yield("/vnavmesh moveto -107.00193786621 18.000331878662 -0.36875337362289")
-visland_stop_moving()
-yield("/target Troubled Adventurer")
-yield("/wait 2")
-yield("/interact")
-yield("/wait 10") -- give it some time to clean itself of filthy dialogue and such
-
-yield("/tp Aleport")
-yield("/wait 15") -- give it some time to TP
-visland_stop_moving()
-
---fire up chocobo 
-if GetBuddyTimeRemaining() < 900 and GetItemCount(4868) > 0 then
-	yield("/visland stop")
-	yield("/vnavmesh stop")
-	yield("/item Gysahl Greens")
-	yield("/wait 3")
-end
-
-yield("/vnavmesh moveto 248.72131347656 -11.946593284607 98.499946594238")
-visland_stop_moving()
-yield("/rotation auto")
-yield("/target Murderous Mantis")
-yield("/wait 2")
-goatshart = 1
-floatblart = 0
-while goatshart == 1 do
-	if GetCharacterCondition(26) == false then
-		floatblart = floatblart + 1
-		if floatblart > 3 then
-			goatshart = 0
-		end
-		if GetCharacterCondition(26) == true then
-			floatblart = 0
-		end
+	--fire up chocobo 
+	if GetBuddyTimeRemaining() < 900 and GetItemCount(4868) > 0 then
+		yield("/visland stop")
+		yield("/vnavmesh stop")
+		yield("/item Gysahl Greens")
+		yield("/wait 3")
 	end
-	yield("/target dusk bat")
-	yield("/target hedgemole")
+
+	yield("/vnavmesh moveto 248.72131347656 -11.946593284607 98.499946594238")
+	visland_stop_moving()
+	yield("/rotation auto")
 	yield("/target Murderous Mantis")
-	yield("/wait 1") -- give it some time to process combat
-end
-yield("/rotation cancel")
+	yield("/wait 2")
+	goatshart = 1
+	floatblart = 0
+	while goatshart == 1 do
+		if GetCharacterCondition(26) == false then
+			floatblart = floatblart + 1
+			if floatblart > 3 then
+				goatshart = 0
+			end
+			if GetCharacterCondition(26) == true then
+				floatblart = 0
+			end
+		end
+		yield("/target dusk bat")
+		yield("/target hedgemole")
+		yield("/target Murderous Mantis")
+		yield("/wait 1") -- give it some time to process combat
+	end
+	yield("/rotation cancel")
 
---ok threat is gone
-visland_stop_moving()
-yield("/target Novice Retainer")
-yield("/wait 2")
-yield("/interact")
-visland_stop_moving()
-yield("/target Novice Retainer")
-yield("/wait 2")
-yield("/interact")
-yield("/wait 10")
-visland_stop_moving()
+	--ok threat is gone
+	visland_stop_moving()
+	yield("/target Novice Retainer")
+	yield("/wait 2")
+	yield("/interact")
+	visland_stop_moving()
+	yield("/target Novice Retainer")
+	yield("/wait 2")
+	yield("/interact")
+	yield("/wait 10")
+	visland_stop_moving()
 
-yield("/tp Limsa")
-yield("/wait 15") -- give it some time to TP
-visland_stop_moving()
---get back to the vocate and sortout the retainers
-yield("/vnavmesh moveto -146.021484375 18.212013244629 17.593742370605")
-visland_stop_moving()
-yield("/target Frydwyb")
-yield("/wait 2")
-yield("/interact")
-yield("/wait 10") -- give it some time to reach the retainer screen.
-
---[[
---for reference: ->
---SLURPE's original script:
-
-local retainerName = "-nine"
-local retainerNumber = 2
-local retainerNameText = ""
-function setup(retainerNumber,saveFileName,saveNumber,personality)
-
-retainerNameText = saveFileName .. retainerName
-yield("/e "..retainerNameText)
-
-yield("/target Frydwyb")
-yield("/wait 1")
-yield("/pinteract")
-yield("/wait 1")
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("SelectString") 
-
-yield("/pcall SelectString true 0") -- Hire a retainer
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("SelectYesno") 
-
-yield("/pcall SelectYesno true 0") -- Hire a retainer Yes/No
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("SelectYesno") 
-
-yield("/pcall SelectYesno true 0") -- Load char
-
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("CharaMakeDataImport") 
-yield("/pcall CharaMakeDataImport true 102 "..saveNumber.." false") -- select first file 0 first 1 second
-
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("_CharaMakeFeature") 
-
-yield("/pcall _CharaMakeFeature false 100") -- confirm to next step
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("CharaMakeDataExport") 
-
-yield("/pcall CharaMakeDataExport true 101 "..saveNumber.." ".. saveFileName) -- save to first file
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("SelectOk") 
-
-yield("/pcall SelectOk true 0") -- ok
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("SelectYesno") 
-
-yield("/pcall SelectYesno true 0") -- Finalize your retainer's appearance?
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("SelectString") 
-
-yield("/pcall SelectString true "..personality) -- select first one polite, Rough, Serious, Carefree, Independent, Lively, Nothing
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("SelectYesno") 
-
-yield("/pcall SelectYesno true 0") -- Hire this retainer?
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("InputString") 
-
-yield("/pcall InputString true 0 "..retainerNameText.." ") -- Hire this retainer?
-yield("/e "..retainerNameText)
-
-repeat
-  yield("/wait 0.1")
-until IsAddonVisible("SelectYesno") 
-
-yield("/pcall SelectYesno true 0")
-
+	yield("/tp Limsa")
+	yield("/wait 15") -- give it some time to TP
+	visland_stop_moving()
+	--get back to the vocate and sortout the retainers
+	yield("/vnavmesh moveto -146.021484375 18.212013244629 17.593742370605")
+	visland_stop_moving()
+	yield("/target Frydwyb")
+	yield("/wait 2")
+	yield("/interact")
+	yield("/wait 10") -- give it some time to reach the retainer screen.
 end
 
-function retainerOne()
+--here is the entire script:
 
-local saveFileName = "nameOfFirstRetainer"
-local saveNumber = 0  -- 0 (first file) 1 (second file) 2 (third file) 3 (fourth file)
-local personality = 0   -- 0 polite, 1 Rough, 2 Serious, 3 Carefree, 4 Independent, 5 Lively, 6 Nothing
-
-setup(retainerNumber,saveFileName,saveNumber,personality)
+for laziest_bastard = 1, #intern_herder do
+	yield("/echo Loading Characters for creating fisher retainers in limsa -> "..intern_herder[laziest_bastard][1])
+	yield("/echo Processing Intern Herder --> "..laziest_bastard.."/"..#intern_herder)
+	yield("/ays relog " ..intern_herder[laziest_bastard][1])
+	--yield("/echo 15 second wait")
+	yield("/wait 2")
+	CharacterSafeWait()
+	yield("Intern Herder --> "..intern_herder[laziest_bastard][1])
+	yield("/echo Processing Intern Herder --> "..laziest_bastard.."/"..#intern_herder)
+	buoy_too_rods()
+	get_to_vocate()
+	mekkitnaow() --retainer 1
+	yield("/wait 5")
+	while IsAddonVisible("InputString") do
+		nemmitnaow()
+		yield("/wait 10") -- give it some time to leave the naming screen
+	end
+	yield("/wait 5")
+	mekkitnaow() --retainer 2
+	yield("/wait 5")
+	while IsAddonVisible("InputString") do
+		nemmitnaow()
+		yield("/wait 10") -- give it some time to leave the naming screen
+	end
+	trouble_my_adventure()
+	yield("/wait 2") -- chill a sec before continuing
 end
 
-function retainerTwo()
-
-local saveFileName = "nameOfSecondRetainer"
-local saveNumber = 1  -- 0 (first file) 1 (second file) 2 (third file) 3 (fourth file)
-local personality = 1   -- 0 polite, 1 Rough, 2 Serious, 3 Carefree, 4 Independent, 5 Lively, 6 Nothing
-
-setup(retainerNumber,saveFileName,saveNumber,personality)
-
-end
-
-
-if retainerNumber == 1 then
-  retainerOne()
-elseif retainerNumber == 2 then
-  retainerTwo()
-end
-  ]]
+--turn on the taps again :~D
+yield("/ays multi e")
+yield("/pcraft stop")
