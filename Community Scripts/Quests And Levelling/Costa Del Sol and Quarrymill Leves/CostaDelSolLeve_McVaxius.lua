@@ -38,21 +38,22 @@ visland_stop_moving()
 fartingGoat = 1
 
 function turnin()
-	--turnin
-	yield("/target F'abodji")
-	yield("/wait 1")
-	yield("/interact")
-	yield("/wait 3")
+	hehehe = 1
+	yield("/echo Quest list -> "..GetNodeText("_ToDoList", 8, 13))
+	
+	while hehehe == 1 do
+		hehehe = 0
+		floob = GetNodeText("_ToDoList", 8, 13)
+		if floob == "A Recipe for Disaster" or floob == "Just Call Me Late for Dinner" or floob == "Kitchen Nightmares No More" then
+			hehehe = 1
+		end
+		floob = GetNodeText("_ToDoList", 8, 13)
+		yield("/target F'abodji")
+		yield("/wait 0.5")
+		yield("/interact")
+		yield("/wait 1")
+	end
 
-	yield("/target F'abodji")
-	yield("/wait 1")
-	yield("/interact")
-	yield("/wait 3")
-
-	yield("/target F'abodji")
-	yield("/wait 1")
-	yield("/interact")
-	yield("/wait 3")
 	yield("/send ESCAPE")
 	yield("/wait 0.5")
 end
