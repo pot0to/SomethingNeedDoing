@@ -92,7 +92,7 @@ while fartingGoat == 1 do
 		yield("/echo itsa done")
 		yield("/pcraft stop")
 	end
-	weew = 4
+	weew = 8
 	oldnode = "wow amazing"
 	while weew > 0 do
 		if oldnode == GetNodeText("GuildLeve", 11, 40, 4) then
@@ -100,7 +100,7 @@ while fartingGoat == 1 do
 		end
 		checkingu_node()
 		weew = weew - 1
-		yield("/wait 2")
+		yield("/wait 1")
 		if IsAddonVisible("GuildLeve") == false then
 			weeew = 0
 			fartwait()
