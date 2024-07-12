@@ -2,6 +2,39 @@
 --put the sea pickles into chocobo
 --turnoff addon errors
 
+function visland_stop_moving()
+ yield("/equipguud")
+ yield("/equiprecommended")
+ yield("/character")
+ yield("/pcall Character true 15")
+ yield("/wait 0.5")
+ yield("/pcall SelectYesno true 0")
+ yield("/character")
+ yield("/pcall Character true 15")
+ yield("/pcall SelectYesno true 0")
+ yield("/wait 3")
+ muuv = 1
+ muuvX = GetPlayerRawXPos()
+ muuvY = GetPlayerRawYPos()
+ muuvZ = GetPlayerRawZPos()
+ while muuv == 1 do
+	yield("/wait 1")
+	if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
+		muuv = 0
+	end
+	muuvX = GetPlayerRawXPos()
+	muuvY = GetPlayerRawYPos()
+	muuvZ = GetPlayerRawZPos()
+ end
+ yield("/echo movement stopped safely - script proceeding to next bit")
+ yield("/visland stop")
+ yield("/vnavmesh stop")
+ yield("/wait 3")
+end
+
+yield("/vnavmesh moveto 453.40570068359 17.503484725952 475.26538085938")
+visland_stop_moving()
+
 fartingGoat = 1
 
 function turnin()
