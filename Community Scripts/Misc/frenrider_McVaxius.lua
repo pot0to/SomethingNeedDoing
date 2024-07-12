@@ -17,7 +17,7 @@ RS/RSR (is RS still being updated?)
 
 ***Few annoying problems that still exist
 --*dont follow during combat unless non caster. will require bmr contemplation
---*sometimes on area changes it changes party order which can break things. have to think about this.  only happens when the leader isnt the one that made the group
+--*how do we change instances #s maybe custom chat commands? lifestream /li #
 ]]
 
 --*****************************************************************

@@ -71,7 +71,7 @@ visland_stop_moving()
 yield("/target Aethernet Shard")
 yield("/wait 2")
 yield("/interact")
-yield("/wait 6")
+yield("/wait 10")
 
 --go talk to roe @ ocean fishing docks
 yield("/vnavmesh moveto -411.98840332031 4.0 75.463768005371")
