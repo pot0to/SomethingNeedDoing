@@ -178,7 +178,8 @@ end
 
 if fulftype ~= "unchanged" then
 	yield("/fulf on")
-	yield("/wait 0.5")
+	yield("/echo turning FULF ON!")
+	yield("/wait 1")
 	yield("/fulf "..fulftype)
 end
 ----------------
