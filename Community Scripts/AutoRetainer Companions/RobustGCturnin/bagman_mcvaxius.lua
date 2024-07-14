@@ -172,7 +172,7 @@ get_to_the_choppa = 0 -- alternate exit var
 
 local function shake_hands()
 		get_to_the_choppa = 1 -- alternate exit var
-		while GetGil() > bagmans_take  or get_to_the_choppa = 0 do
+		while GetGil() > bagmans_take or get_to_the_choppa == 0 do
 		thebag = GetGil() - bagmans_take
 		if thebag < 0 then
 			thebag = GetGil()
