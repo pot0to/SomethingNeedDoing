@@ -117,7 +117,7 @@ end
 function are_we_there_yet_jimmy()
 	woah_bruv = 1
 	for i=1, #filled_bags do
-		if GetItemCount(filled_bags[i][1]] - filled_bags[i][2] > 0 then
+		if GetItemCount(filled_bags[i][1]) - filled_bags[i][2] > 0 then
 			woah_bruv = 0
 		end
 	end
