@@ -57,7 +57,11 @@ bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off 
 bagman_type = 0 --0 = pcalls (gil only, a bit sloppy too with no multi tony support), 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil
 tonyception = 0 --0 = dont be fancy, 1 = we have multiple fat tonies in the table and therefore we need to give 1 gil at the end of the trade so tony will leave and the next tony can come
 
---if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
+--[[
+if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
+get yourself x y z this way if you want
+yield("/echo "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos().."")
+]]
 tony_x = 42069420
 tony_y = 42069420
 tony_z = 42069420
