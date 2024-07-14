@@ -25,6 +25,24 @@ Known issues:
 Something i need to confirm and report -> Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a, if i use pcall method they will keep trying until they finish delivering gil.  however
 if i use the dropbox method I am 99% sure it will just kind of sit there thinking its processing a dropbox queue but in fact its just sitting there doing nothing if any of the trade windows are open
 while other clients are trying and failing to open one with the char from account A.
+
+
+EXCEL helper:
+="{"""&F2&"@"&P2&""""&", 0, 0},"
+
+
+in this case. this is for robust gc turnin.  F is your column with first name last name e.g.  "goat fucker"  and P is your column with servername e.g. "Marilith"  so it will create text that looks like
+{"Goat Fucker@Marilith", 0, 0},
+
+
+which you can copy paste en masse, just remove the last comma from last row
+
+for bagman its similar
+
+="{"""&F2&"@"&P2&""""&", 0, 0,"&""""&R2&""""&"},"
+
+
+New Variable is R which is Tonyname without the @ server
 ]]
 
 --Start because nobody read the instructions at the top <3
@@ -49,7 +67,6 @@ how do i get an xyz?
 run this:
 yield("/echo "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos().."")
 ]]
-
 
 --[[
 BAGMAN firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, TONY firstnamelastname  (no server this time)

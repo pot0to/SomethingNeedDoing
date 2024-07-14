@@ -148,6 +148,7 @@ rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use
 bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
 feedme = ini_check("feedme", 4650)							-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
 feedmeitem = ini_check("feedmeitem", "Boiled Egg")			-- eatfood, in this case the item name. for now this is how we'll do it. it isn't pretty but it will work.. for now..
+--feedmeitem = ini_check("feedmeitem", "Baked Eggplant<hq>")		-- eatfood, in this case the item name add a <hq> at the end if you want it to be hq. for now this is how we'll do it. it isn't pretty but it will work.. for now..
 timefriction = ini_check("timefriction", 0.1)				-- how long to wait between "tics" of the main loop? 0.1 second default. smaller values will have potential crashy / fps impacts.
 formation = ini_check("formation", false)					-- Follow in formation? If false, then it will "cling"
 						--[[
@@ -360,6 +361,7 @@ while weirdvar == 1 do
 			if type(GetItemCount(feedme)) == "number" then
 				if GetItemCount(feedme) > 0 and statoos < 300 then --refresh food if we are below 5 minutes left
 					yield("/item "..feedmeitem)
+					yield("/echo Attempting to eat "..feedmeitem)
 				end
 			end
 
