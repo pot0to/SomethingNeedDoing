@@ -110,6 +110,20 @@ local filled_bags = {
 {3,999999999}
 }
 
+for i=1, #filled_bags do
+	filled_bags[i][3] = 1
+end
+
+function are_we_there_yet_jimmy()
+	woah_bruv = 1
+	for i=1, #filled_bags do
+		if GetItemCount(filled_bags[i][1]] - filled_bags[i][2] > 0 then
+			woah_bruv = 0
+		end
+	end
+	return woah_bruv
+end
+
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
@@ -154,8 +168,11 @@ local function approach_entrance()
 	PathfindAndMoveTo(GetObjectRawXPos("Entrance"),GetObjectRawYPos("Entrance"),GetObjectRawZPos("Entrance"), false)
 end
 
+get_to_the_choppa = 0 -- alternate exit var
+
 local function shake_hands()
-	if GetGil() > bagmans_take then
+		get_to_the_choppa = 1 -- alternate exit var
+		while GetGil() > bagmans_take  or get_to_the_choppa = 0 do
 		thebag = GetGil() - bagmans_take
 		if thebag < 0 then
 			thebag = GetGil()
@@ -180,8 +197,7 @@ local function shake_hands()
 		--yield("/echo our return mode will be "..franchise_owners[1][2])
 		
 		--pcall way to transfer gil only. we can't pcall other methods
-		get_to_the_choppa = 1 -- alternate exit var
-		while GetGil() > bagmans_take  or get_to_the_choppa = 0 do
+		while GetGil() > bagmans_take or get_to_the_choppa = 0 do
 			yield("/target "..fat_tony)
 			yield("/echo here you go "..fat_tony..", another full bag, with respect")
 			if bagman_type == 0 then
@@ -212,6 +228,7 @@ local function shake_hands()
 				yield("/wait 1")
 				yield("/focustarget <t>")
 				yield("/wait 0.5")
+				are_we_there_yet_jimmy() --setup exit conditions
 				if bagman_type == 1 then
 					for i=1, #filled_bags do
 						--yield("/dbq "..filled_bags[i][1]..":"..filled_bags[i][2])  --kitchensync seems to immediately start trade would have to format this as a long concatenated string instead
@@ -244,9 +261,14 @@ local function shake_hands()
 					yield("/dbq 22506:*")  --  22506  Salvaged
 					yield("/dbq 22507:*")  --  22507  Salvaged
 					]]
+					if GetItemCount(22500) == 0 and GetItemCount(22501) == 0 and GetItemCount(22502) == 0 and GetItemCount(22503) == 0 and GetItemCount(22504) == 0 and GetItemCount(22505) == 0 and GetItemCount(22506) == 0 and GetItemCount(22507) == 0 then
+						if GetGil() == snaccman then
+							get_to_the_choppa = 1
+						end
+					end
 				end
 				
-				get_to_the_choppa = 1 --so the loop exits
+				--get_to_the_choppa = 1 --so the loop exits
 				yield("/wait 4")
 				DropboxStart()
 				yield("/wait 2")
