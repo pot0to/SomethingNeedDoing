@@ -197,7 +197,7 @@ local function shake_hands()
 		--yield("/echo our return mode will be "..franchise_owners[1][2])
 		
 		--pcall way to transfer gil only. we can't pcall other methods
-		while GetGil() > bagmans_take or get_to_the_choppa = 0 do
+		while GetGil() > bagmans_take or get_to_the_choppa == 0 do
 			yield("/target "..fat_tony)
 			yield("/echo here you go "..fat_tony..", another full bag, with respect")
 			if bagman_type == 0 then
