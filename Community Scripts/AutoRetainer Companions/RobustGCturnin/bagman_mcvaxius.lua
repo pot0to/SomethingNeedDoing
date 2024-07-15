@@ -134,7 +134,6 @@ DidWeLoadcorrectly()
 
 yield("/ays multi d")
 fat_tony = "Firstname Lastname" --this is just a placeholder you dont have to technically set it.
-snagmanstake = bagmanstake
 
 local function distance(x1, y1, z1, x2, y2, z2)
 	if type(x1) ~= "number" then x1 = 0 end
@@ -326,6 +325,8 @@ for i=1,#franchise_owners do
 	
 	--allright time for a road trip. let get that bag to Tony
 	road_trip = 0
+	yield("GetGil() -> "..GetGil())
+	yield("bagmans_take -> "..bagmans_take)
 	if GetGil() > bagmans_take then
 		road_trip = 1 --we took a road trip
 		--now we must head to fat_tony 
@@ -369,7 +370,6 @@ for i=1,#franchise_owners do
 			visland_stop_moving()
 		end
 		shake_hands() -- its a business doing pleasure with you tony as always
-		bagmans_take = snagmanstake
 	end
 	if road_trip == 1 then --we need to get home
 		--time to go home.. maybe?
