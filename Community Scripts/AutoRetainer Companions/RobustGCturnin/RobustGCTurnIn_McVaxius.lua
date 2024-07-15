@@ -4,7 +4,7 @@
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1190858719546835065
 
 for the below table templates,.. the 2nd var
-0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte
+0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
 ]]
 
 --enter in names of chars that can edit emblems are in same GC as the FC otherwise it will update the GC for 15k gil
@@ -295,14 +295,19 @@ function Final_GC_Cleaning()
 	if chars_fn[rcuck_count][2] == 0 or chars_fn[rcuck_count][2] == 1 then
 		return_to_fc()
 	end
+	
+	--option 5 or 6 personal home and bell near personal home
+	if chars_fn[rcuck_count][2] == 5 or chars_fn[rcuck_count][2] == 6 then
+		return_to_lair()
+	end
 
 	--normal small house shenanigans
-	if chars_fn[rcuck_count][2] == 0 then
+	if chars_fn[rcuck_count][2] == 0 or chars_fn[rcuck_count][2] == 5 then
 		return_fc_entrance()
 	end
 
 	--retainer bell nearby shenanigans
-	if chars_fn[rcuck_count][2] == 1 then
+	if chars_fn[rcuck_count][2] == 1 or chars_fn[rcuck_count][2] == 6 then
 		return_fc_near_bell()
 	end	
 	
