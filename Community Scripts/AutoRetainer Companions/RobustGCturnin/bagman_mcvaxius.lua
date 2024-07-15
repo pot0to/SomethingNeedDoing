@@ -21,11 +21,12 @@ Liza's plugin : Kitchen Sink if you want to use her queue method
 Simpletweaks -> enable auto equip recommended
 
 Known issues:
-"Race Condition with trade windows"
+1. "Race Condition with trade windows"
 Something i need to confirm and report -> Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a, if i use pcall method they will keep trying until they finish delivering gil.  however
 if i use the dropbox method I am 99% sure it will just kind of sit there thinking its processing a dropbox queue but in fact its just sitting there doing nothing if any of the trade windows are open
 while other clients are trying and failing to open one with the char from account A.
 
+2. if dropbox isnt on the item tab, nothing will work.
 
 EXCEL helper:
 ="{"""&F2&"@"&P2&""""&", 0, 0},"
