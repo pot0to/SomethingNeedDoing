@@ -31,16 +31,19 @@ local chars_FCBUFF = {
 names of chars to do turnins
 The last var is whether this char will attempt GC supply turnins and attempt rank promotions.
 this will take up to 15-20 seconds so dont enable it for every character unless you really need it (supply missions for leveling jobs basically)
+name, returntype, rankupGC, Expert Hack
+returntype		= 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
+process_gc_rank  = 0		--0=no,1=yes. do we try to rank up the GC and maybe do a supply delivery turnin?
+expert_hack      = 0	--0=no,1=yes. it will try in 15 second cycles. to do deliveries then turn them off and let it try to buy venture coins . up to 5 times. or when there is no increase in venture coins
 ]]
 local chars_fn = {
- {"First Last@Server", 0, 0},
- {"First Last@Server", 0, 0},
- {"First Last@Server", 0, 0},
- {"First Last@Server", 0, 0},
- {"First Last@Server", 0, 0},
- {"First Last@Server", 0, 0},
- {"First Last@Server", 0, 0},
- {"First Last@Server", 0, 0}
+ {"First Last@Server", 0, 0, 0},
+ {"First Last@Server", 0, 0, 0},
+ {"First Last@Server", 0, 0, 0},
+ {"First Last@Server", 0, 0, 0},
+ {"First Last@Server", 0, 0, 0},
+ {"First Last@Server", 0, 0, 0},
+ {"First Last@Server", 0, 0, 0}
 }
 
 -------------------------
@@ -181,6 +184,26 @@ function Final_GC_Cleaning()
 	
 	if nnl == 1 then
 		yield("/novicenetworkleave")
+	end
+	
+	--expert delivery hack. meant for printing venture tokens on early chars
+	if chars_fn[rcuck_count][4] == 1 then
+		dellycount = 0
+		yield("/echo Expert Delivery hack enabled")
+		yield("/wait 1")
+		benture = GetItemCount(21072)
+		while dellycount < 5 do --max of 5 loops
+			yield("/deliveroo enable")
+			yield("/wait 15")
+			yield("/deliveroo disable")
+			yield("/wait 2")
+			ungabunga() --get out of menus haha
+			dellycount = dellycount + 1
+			if benture == GetItemCount(21072) then --nothing changed since last time we did the round
+				dellycount = 999
+			end
+			benture = GetItemCount(21072)
+		end
 	end
 	
 	--try to turn in supply mission items and rankup before leaving if its set for that char
