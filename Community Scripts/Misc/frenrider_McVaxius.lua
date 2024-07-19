@@ -17,7 +17,9 @@ RS/RSR (is RS still being updated?)
 
 ***Few annoying problems that still exist
 --*dont follow during combat unless non caster. will require bmr contemplation
---*how do we change instances #s maybe custom chat commands? lifestream /li #
+--*how do we change instances #s maybe custom chat commands? lifestream /li # works. now to add nodetext scanning for group. also have to use target and lockon until lim fixes /li x without los
+--*it still doesnt follow in some weird cases
+--*it doesnt startup lazyloot unless you run it twice???  do we need a longer delay on that part ?
 ]]
 
 --*****************************************************************
@@ -140,7 +142,7 @@ fly_you_fools = ini_check("fly_you_fools", false)			--(fly and follow instead of
 fool_flier = ini_check("fool_flier", "Beast with 3 backs")	--if you have fly you fools as true, which beast shall you summon?
 fulftype = ini_check("fulftype", "unchanged")				-- If you have lazyloot installed can setup how loot is handled. Leave on "unchanged" if you don't want it to set your loot settings. Other settings include need, greed, pass and of course, off
 cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistance
-force_gyasahl = ini_check("force_gyasahl", false) 	    -- force gysahl green usage . maybe cause problems in towns with follow
+force_gyasahl = ini_check("force_gyasahl", false) 	   		-- force gysahl green usage . maybe cause problems in towns with follow
 clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr, 3 = automaton autofollow, 4 = vanilla game follow
 clingtypeduty = ini_check("clingtypeduty", 2)				-- do we need a diff clingtype in duties? use same numbering as above 
 maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
@@ -149,7 +151,7 @@ rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use
 bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
 feedme = ini_check("feedme", 4650)							-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
 feedmeitem = ini_check("feedmeitem", "Boiled Egg")			-- eatfood, in this case the item name. for now this is how we'll do it. it isn't pretty but it will work.. for now..
---feedmeitem = ini_check("feedmeitem", "Baked Eggplant<hq>")		-- eatfood, in this case the item name add a <hq> at the end if you want it to be hq. for now this is how we'll do it. it isn't pretty but it will work.. for now..
+--feedmeitem = ini_check("feedmeitem", "Baked Eggplant<hq>")-- eatfood, in this case the item name add a <hq> at the end if you want it to be hq. for now this is how we'll do it. it isn't pretty but it will work.. for now..
 timefriction = ini_check("timefriction", 0.1)				-- how long to wait between "tics" of the main loop? 0.1 second default. smaller values will have potential crashy / fps impacts.
 formation = ini_check("formation", false)					-- Follow in formation? If false, then it will "cling"
 						--[[
@@ -158,7 +160,15 @@ formation = ini_check("formation", false)					-- Follow in formation? If false, 
 						3		2
 						7	4	6
 						]]
+binstance = ini_check("binstance", "let us travel to instance")				--[[ group instance change prefix, it will take " x" where x is the instance number as an argument, so you can setup qolbar keys with lines like this presumable
+after changing instances, followers will /cl their chat windows
+exmample qolbar for telling group to go instance 2
+/mount
+/p let us travel to isntance 2
+/li 2
+]]
 -- mker = "cross" -- In case you want the other shapes. Valid shapes are triangle square circle attack1-8 bind1-3 ignore1-2
+
 -----------CONFIGURATION END-----------
 
 ----------------
