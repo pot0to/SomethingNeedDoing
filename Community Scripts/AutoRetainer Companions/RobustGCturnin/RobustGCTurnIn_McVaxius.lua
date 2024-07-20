@@ -33,6 +33,7 @@ The last var is whether this char will attempt GC supply turnins and attempt ran
 this will take up to 15-20 seconds so dont enable it for every character unless you really need it (supply missions for leveling jobs basically)
 name, returntype, rankupGC, Expert Hack
 returntype		= 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
+for the last 2, expert bypass from automaton is needed as setting the gc rank with SND seems to not limit you to the max you should normally have...
 process_gc_rank  = 0		--0=no,1=yes. do we try to rank up the GC and maybe do a supply delivery turnin?
 expert_hack      = 0	--0=no,1=yes. it will try in 15 second cycles. to do deliveries then turn them off and let it try to buy venture coins . up to 5 times. or when there is no increase in venture coins
 ]]
@@ -159,23 +160,25 @@ function Final_GC_Cleaning()
 	yield("/deliveroo enable")
 	yield("/wait 1")
 
-	--loop until deliveroo done
-	dellyroo = true
-	dellyroo = DeliverooIsTurnInRunning()
-	dellycount = 0
-	while dellyroo do
-		yield("/wait 5")
+	--loop until deliveroo done if we aren't using the hack.
+	if chars_fn[rcuck_count][4] == 0 then
+		dellyroo = true
 		dellyroo = DeliverooIsTurnInRunning()
-		dellycount = dellycount + 1
-		yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..#chars_fn)
-		if dellycount > 100 then
-			--this will solve getting stuck on deliveroo doing nothing while its enabled
-			yield("/deliveroo disable")
-			yield("/wait 2")
-			ungabunga()
-			yield("/deliveroo enable")
-			yield("/wait 3")
-			dellycount = 0
+		dellycount = 0
+		while dellyroo do
+			yield("/wait 5")
+			dellyroo = DeliverooIsTurnInRunning()
+			dellycount = dellycount + 1
+			yield("/echo Processing Retainer Abuser "..rcuck_count.."/"..#chars_fn)
+			if dellycount > 100 then
+				--this will solve getting stuck on deliveroo doing nothing while its enabled
+				yield("/deliveroo disable")
+				yield("/wait 2")
+				ungabunga()
+				yield("/deliveroo enable")
+				yield("/wait 3")
+				dellycount = 0
+			end
 		end
 	end
 
@@ -188,6 +191,18 @@ function Final_GC_Cleaning()
 	
 	--expert delivery hack. meant for printing venture tokens on early chars
 	if chars_fn[rcuck_count][4] == 1 then
+		--[[
+		GCrenk = GetFlamesGCRank()
+		if GetMaelstromGCRank() > GCrenk then
+			GCrenk = GetMaelstromGCRank()
+		end
+		if GetAddersGCRank() > GCrenk then
+			GCrenk = GetAddersGCRank()
+		end
+		SetFlamesGCRank(9)
+		SetAddersGCRank(9)
+		SetMaelstromGCRank(9)
+		]]
 		dellycount = 0
 		yield("/echo Expert Delivery hack enabled")
 		yield("/wait 1")
@@ -199,11 +214,16 @@ function Final_GC_Cleaning()
 			yield("/wait 2")
 			ungabunga() --get out of menus haha
 			dellycount = dellycount + 1
-			if benture == GetItemCount(21072) then --nothing changed since last time we did the round
-				dellycount = 999
+			if benture == GetItemCount(21072) then --nothing changed since last time we did the round. maybe we ned to exit but increase the cardinality just in case
+				dellycount = dellycount + 1
 			end
 			benture = GetItemCount(21072)
 		end
+		--[[
+		SetFlamesGCRank(GCrenk)
+		SetAddersGCRank(GCrenk)
+		SetMaelstromGCRank(GCrenk)
+		]]
 	end
 	
 	--try to turn in supply mission items and rankup before leaving if its set for that char
@@ -230,6 +250,7 @@ function Final_GC_Cleaning()
 		yield("/send ESCAPE <wait.1.5>")
 		yield("/send ESCAPE <wait.1.5>")
 		yield("/wait 3")
+		--[[
 		GCrenk = GetFlamesGCRank()
 		if GetMaelstromGCRank() > GCrenk then
 			GCrenk = GetMaelstromGCRank()
@@ -237,6 +258,9 @@ function Final_GC_Cleaning()
 		if GetAddersGCRank() > GCrenk then
 			GCrenk = GetAddersGCRank()
 		end
+		SetFlamesGCRank(9)
+		SetAddersGCRank(9)
+		SetMaelstromGCRank(9)]]
 		if GCrenk < 4 then --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D
 			--try to promote
 			yield("/wait 1")
@@ -279,14 +303,13 @@ function Final_GC_Cleaning()
 			end
 			yield("/wait 2")
 		end
+		--[[
+		SetFlamesGCRank(GCrenk)
+		SetAddersGCRank(GCrenk)
+		SetMaelstromGCRank(GCrenk)
+		]]
+		--[[
 		--output a log of the GC ranks and your current job level to a log file stored in the SND folder
-		GCrenk = GetFlamesGCRank()
-		if GetMaelstromGCRank() > GCrenk then
-			GCrenk = GetMaelstromGCRank()
-		end
-		if GetAddersGCRank() > GCrenk then
-			GCrenk = GetAddersGCRank()
-		end
 		local folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
 		local file = io.open(folderPath .. "GCrankLog.txt", "a")
 		if file then
@@ -300,6 +323,7 @@ function Final_GC_Cleaning()
 		else
 			yield("/echo Error: Unable to open file for writing")
 		end
+		]]
 	end
 	
 	--limsa aetheryte
