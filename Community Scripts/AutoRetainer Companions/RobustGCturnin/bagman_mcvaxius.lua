@@ -169,8 +169,11 @@ local function approach_entrance()
 end
 
 get_to_the_choppa = 0 -- alternate exit var
+horrible_counter_method = 0
 
 local function shake_hands()
+		get_to_the_choppa = 0
+		horrible_counter_method = 0
 		--get_to_the_choppa = 1 -- alternate exit var
 		while GetGil() > bagmans_take or get_to_the_choppa == 0 do
 		thebag = GetGil() - bagmans_take
@@ -234,8 +237,13 @@ local function shake_hands()
 						--yield("/dbq "..filled_bags[i][1]..":"..filled_bags[i][2])  --kitchensync seems to immediately start trade would have to format this as a long concatenated string instead
 						DropboxSetItemQuantity(filled_bags[i][1],false,filled_bags[i][2])
 						yield("/wait 0.5")
-				        get_to_the_choppa = 1 --get out
 					end
+					horrible_counter_method = horrible_counter_method + 1
+					yield("/echo DEBUG bagman type 1 processing....")
+ 				    if horrible_counter_method > 1 then
+						get_to_the_choppa = 1
+						yield("/echo DEBUG moving towards exiting bagman type 1....")
+					end -- get out
 				end
 				if bagman_type == 2 then
 					snaccman = GetGil() - bagmans_take
@@ -268,11 +276,18 @@ local function shake_hands()
 							get_to_the_choppa = 1
 						end
 					end
+					horrible_counter_method = horrible_counter_method + 1
+					yield("/echo DEBUG bagman type 2 processing....")
+ 				    if horrible_counter_method > 1 then
+						get_to_the_choppa = 1
+						yield("/echo DEBUG moving towards exiting bagman type 2....")
+					end -- get out
 				end
 				
 				--get_to_the_choppa = 1 --so the loop exits
 				yield("/wait 4")
 				DropboxStart()
+				yield("/echo DEBUG dropbox initiated")
 				yield("/wait 2")
  			    floo = DropboxIsBusy()
 				while floo == true do
@@ -293,7 +308,7 @@ local function shake_hands()
 					  yield("/wait 2")
 					  yield("/echo Trading happening!!")
 				  end
-				  get_to_the_choppa = 1 --get out
+				  --get_to_the_choppa = 1 --get out
 				  yield("/wait 5")
 				end
 			end
@@ -331,7 +346,7 @@ for i=1,#franchise_owners do
 	road_trip = 0
 	yield("GetGil() -> "..GetGil())
 	yield("bagmans_take -> "..bagmans_take)
---	if GetGil() > bagmans_take then
+	--if GetGil() > bagmans_take then
 		road_trip = 1 --we took a road trip
 		--now we must head to fat_tony 
 		--first we have to find his neighbourhood, this uber driver better not complain
@@ -374,7 +389,7 @@ for i=1,#franchise_owners do
 			visland_stop_moving()
 		end
 		shake_hands() -- its a business doing pleasure with you tony as always
---	end
+	--end
 	if road_trip == 1 then --we need to get home
 		--time to go home.. maybe?
 		if franchise_owners[i][2] == 0 then
