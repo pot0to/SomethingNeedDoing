@@ -7,9 +7,11 @@
     Author: UcanPatates  
 
     **********************
-    * Version  |  1.1.1  *
+    * Version  |  1.1.3  *
     **********************
 
+    -> 1.1.3  : Added a check for the Automaton Plugin.
+    -> 1.1.2  : Automaton Update for merging the stacks.
     -> 1.1.1  : Fixed a crash with the gc town teleportation.
     -> 1.1.0  : Configuration for the empty inv slots.
     -> 1.0.9  : Added the option to buy to the armory first to fill it up.
@@ -29,7 +31,7 @@
     * Description *
     ***************
 
-    This script will Automaticly turn in your Deltascape and Gordian parts.
+    This script will Automaticly turn in your Deltascape , Gordian and Alexandrian parts.
     
 
     *********************
@@ -42,6 +44,7 @@
     -> Deliveroo : https://plugins.carvel.li/
     -> vnavmesh : https://puni.sh/api/repository/veyn
     -> Pandora's Box : https://love.puni.sh/ment.json
+    -> Automaton : https://puni.sh/api/repository/croizat (you will need to enable auto merge.)
     
     **************
     *  SETTINGS  *
@@ -52,7 +55,7 @@ UseTicket = false
 -- do you want to use tickets to teleport.
 
 
-MaxItem = false 
+MaxItem = true 
 -- do you want your maximize the inventory you have and buy one of a single item? 
 -- true = buy one single item to fill up the inventory
 -- false = buy 1 of each item (Technically safer, but if you're already farming A4N... >.>
@@ -716,22 +719,22 @@ function GetOUT()
     repeat
         yield("/wait 0.1")
         if IsAddonVisible("SelectYesno") then
-            yield("/callback SelectYesno true 0")
+            yield("/pcall SelectYesno true 0")
         end
         if IsAddonVisible("SelectIconString") then
-            yield("/callback SelectIconString true -1")
+            yield("/pcall SelectIconString true -1")
         end
         if IsAddonVisible("SelectString") then
-            yield("/callback SelectString true -1")
+            yield("/pcall SelectString true -1")
         end
         if IsAddonVisible("ShopExchangeItem") then
-            yield("/callback ShopExchangeItem true -1")
+            yield("/pcall ShopExchangeItem true -1")
         end
         if IsAddonVisible("RetainerList") then
-            yield("/callback RetainerList true -1")
+            yield("/pcall RetainerList true -1")
         end
         if IsAddonVisible("InventoryRetainer") then
-            yield("/callback InventoryRetainer true -1")
+            yield("/pcall InventoryRetainer true -1")
         end
     until IsPlayerAvailable()
 end
@@ -742,6 +745,13 @@ function WhichArmoryItem(ItemToBuy)
 end
 
 function TurnIn(TableName,MaxArmoryValue)
+    if HasPlugin("Automaton") then
+        yield("/inventory")
+        yield("/wait 0.1")
+        yield("/inventory")
+        yield("/wait 0.1")
+        yield("/inventory")
+    end
     local lastShopType = nil
     local LastIconShopType = nil
     local NpcName = "Sabina"
@@ -754,7 +764,7 @@ function TurnIn(TableName,MaxArmoryValue)
 
     local function OpenShopMenu(SelectIconString,SelectString,Npc)
         while IsAddonVisible("ShopExchangeItem") do
-            yield("/callback ShopExchangeItem true -1")
+            yield("/pcall ShopExchangeItem true -1")
             yield("/wait 0.1")
         end
         while not IsAddonVisible("ShopExchangeItem") do
@@ -762,9 +772,9 @@ function TurnIn(TableName,MaxArmoryValue)
             if GetTargetName() ~= Npc then
                 yield("/target "..Npc)
             elseif IsAddonVisible("SelectIconString") then
-                yield("/callback SelectIconString true "..SelectIconString)
+                yield("/pcall SelectIconString true "..SelectIconString)
             elseif IsAddonVisible("SelectString") then
-                yield("/callback SelectString true " .. SelectString)
+                yield("/pcall SelectString true " .. SelectString)
             else
                 yield("/interact")
             end
@@ -794,15 +804,15 @@ function TurnIn(TableName,MaxArmoryValue)
             ItemCount = GetItemCount(ItemID)
 
             if IsAddonVisible("SelectYesno") then
-                yield("/callback SelectYesno true 0")
+                yield("/pcall SelectYesno true 0")
             elseif IsAddonVisible("Request") then
                 yield("/wait 0.3")
             elseif IsAddonVisible("ShopExchangeItemDialog") then
-                yield("/callback ShopExchangeItemDialog true 0")
+                yield("/pcall ShopExchangeItemDialog true 0")
             elseif ItemCount >= ExpectedItemCount then 
                 break
             elseif IsAddonVisible("ShopExchangeItem") then
-                yield("/callback ShopExchangeItem true 0 " .. List .. " " .. Amount)
+                yield("/pcall ShopExchangeItem true 0 " .. List .. " " .. Amount)
                 yield("/wait 0.6")
             end
 
@@ -811,7 +821,7 @@ function TurnIn(TableName,MaxArmoryValue)
                 Amount = newAmount
                 ExpectedItemCount = ItemCount + Amount
                 if IsAddonVisible("Request") then
-                    yield("/callback Request true -1")
+                    yield("/pcall Request true -1")
                 end
                 LogInfo("[Exchange] Adjusting amount to " .. Amount .. " for item ID " .. ItemID)
             end
@@ -973,9 +983,11 @@ if MaxArmory then
     while not IsAddonReady("ConfigCharacter") do
         yield("/wait 0.9")
     end
-    yield("/callback ConfigCharaItem true 18 286 1")
-    yield("/callback ConfigCharacter true 0")
-    yield("/callback ConfigCharacter true -1")
+    yield("/pcall ConfigCharacter true 10 0 20")
+    yield("/wait 0.1")
+    yield("/pcall ConfigCharaItem true 18 298 1")
+    yield("/pcall ConfigCharacter true 0")
+    yield("/pcall ConfigCharacter true -1")
 else
     if IsAddonReady("ConfigCharacter") then
     else
@@ -985,14 +997,16 @@ else
     while not IsAddonReady("ConfigCharacter") do
         yield("/wait 0.9")
     end
-    yield("/callback ConfigCharaItem true 18 286 0")
-    yield("/callback ConfigCharacter true 0")
-    yield("/callback ConfigCharacter true -1")
+    yield("/pcall ConfigCharacter true 10 0 20")
+    yield("/wait 0.1")
+    yield("/pcall ConfigCharaItem true 18 298 0")
+    yield("/pcall ConfigCharacter true 0")
+    yield("/pcall ConfigCharacter true -1")
 end
 
 while IsThereTradeItem() do
     yield("/wait 0.1")
-    if GordianTurnInCount >= 1 or AlexandrianTurnInCount >= 1 then
+    if (GordianTurnInCount >= 1 or AlexandrianTurnInCount >= 1) and GetInventoryFreeSlotCount() ~= 0 then
         TeleportToIdlishire()
         local DistanceToSabina = GetDistanceToPoint(-19.0, 211.0, -35.9)
         if DistanceToSabina > 2 then

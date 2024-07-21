@@ -21,10 +21,29 @@ Liza's plugin : Kitchen Sink if you want to use her queue method
 Simpletweaks -> enable auto equip recommended
 
 Known issues:
-"Race Condition with trade windows"
+1. "Race Condition with trade windows"
 Something i need to confirm and report -> Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a, if i use pcall method they will keep trying until they finish delivering gil.  however
 if i use the dropbox method I am 99% sure it will just kind of sit there thinking its processing a dropbox queue but in fact its just sitting there doing nothing if any of the trade windows are open
 while other clients are trying and failing to open one with the char from account A.
+
+2. if dropbox isnt on the item tab, nothing will work.
+
+EXCEL helper:
+="{"""&F2&"@"&P2&""""&", 0, 0},"
+
+
+in this case. this is for robust gc turnin.  F is your column with first name last name e.g.  "goat fucker"  and P is your column with servername e.g. "Marilith"  so it will create text that looks like
+{"Goat Fucker@Marilith", 0, 0},
+
+
+which you can copy paste en masse, just remove the last comma from last row
+
+for bagman its similar
+
+="{"""&F2&"@"&P2&""""&", 0, 0,"&""""&R2&""""&"},"
+
+
+New Variable is R which is Tonyname without the @ server
 ]]
 
 --Start because nobody read the instructions at the top <3
@@ -39,7 +58,11 @@ bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off 
 bagman_type = 0 --0 = pcalls (gil only, a bit sloppy too with no multi tony support), 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil
 tonyception = 0 --0 = dont be fancy, 1 = we have multiple fat tonies in the table and therefore we need to give 1 gil at the end of the trade so tony will leave and the next tony can come
 
---if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
+--[[
+if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
+get yourself x y z this way if you want
+yield("/echo "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos().."")
+]]
 tony_x = 42069420
 tony_y = 42069420
 tony_z = 42069420
@@ -49,7 +72,6 @@ how do i get an xyz?
 run this:
 yield("/echo "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZPos().."")
 ]]
-
 
 --[[
 BAGMAN firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, TONY firstnamelastname  (no server this time)
@@ -89,6 +111,20 @@ local filled_bags = {
 {3,999999999}
 }
 
+for i=1, #filled_bags do
+	filled_bags[i][3] = 1
+end
+
+function are_we_there_yet_jimmy()
+	woah_bruv = 1
+	for i=1, #filled_bags do
+		if GetItemCount(filled_bags[i][1]) - filled_bags[i][2] > 0 then
+			woah_bruv = 0
+		end
+	end
+	return woah_bruv
+end
+
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
@@ -99,7 +135,6 @@ DidWeLoadcorrectly()
 
 yield("/ays multi d")
 fat_tony = "Firstname Lastname" --this is just a placeholder you dont have to technically set it.
-snagmanstake = bagmanstake
 
 local function distance(x1, y1, z1, x2, y2, z2)
 	if type(x1) ~= "number" then x1 = 0 end
@@ -133,8 +168,11 @@ local function approach_entrance()
 	PathfindAndMoveTo(GetObjectRawXPos("Entrance"),GetObjectRawYPos("Entrance"),GetObjectRawZPos("Entrance"), false)
 end
 
+get_to_the_choppa = 0 -- alternate exit var
+
 local function shake_hands()
-	if GetGil() > bagmans_take then
+		get_to_the_choppa = 1 -- alternate exit var
+		while GetGil() > bagmans_take or get_to_the_choppa == 0 do
 		thebag = GetGil() - bagmans_take
 		if thebag < 0 then
 			thebag = GetGil()
@@ -159,7 +197,7 @@ local function shake_hands()
 		--yield("/echo our return mode will be "..franchise_owners[1][2])
 		
 		--pcall way to transfer gil only. we can't pcall other methods
-		while GetGil() > bagmans_take do
+		while GetGil() > bagmans_take or get_to_the_choppa == 0 do
 			yield("/target "..fat_tony)
 			yield("/echo here you go "..fat_tony..", another full bag, with respect")
 			if bagman_type == 0 then
@@ -190,6 +228,7 @@ local function shake_hands()
 				yield("/wait 1")
 				yield("/focustarget <t>")
 				yield("/wait 0.5")
+				are_we_there_yet_jimmy() --setup exit conditions
 				if bagman_type == 1 then
 					for i=1, #filled_bags do
 						--yield("/dbq "..filled_bags[i][1]..":"..filled_bags[i][2])  --kitchensync seems to immediately start trade would have to format this as a long concatenated string instead
@@ -222,9 +261,14 @@ local function shake_hands()
 					yield("/dbq 22506:*")  --  22506  Salvaged
 					yield("/dbq 22507:*")  --  22507  Salvaged
 					]]
+					if GetItemCount(22500) == 0 and GetItemCount(22501) == 0 and GetItemCount(22502) == 0 and GetItemCount(22503) == 0 and GetItemCount(22504) == 0 and GetItemCount(22505) == 0 and GetItemCount(22506) == 0 and GetItemCount(22507) == 0 then
+						if GetGil() == snaccman then
+							get_to_the_choppa = 1
+						end
+					end
 				end
 				
-				bagmans_take = 9999999999 --so the loop exits
+				--get_to_the_choppa = 1 --so the loop exits
 				yield("/wait 4")
 				DropboxStart()
 				yield("/wait 2")
@@ -282,6 +326,8 @@ for i=1,#franchise_owners do
 	
 	--allright time for a road trip. let get that bag to Tony
 	road_trip = 0
+	yield("GetGil() -> "..GetGil())
+	yield("bagmans_take -> "..bagmans_take)
 	if GetGil() > bagmans_take then
 		road_trip = 1 --we took a road trip
 		--now we must head to fat_tony 
@@ -325,7 +371,6 @@ for i=1,#franchise_owners do
 			visland_stop_moving()
 		end
 		shake_hands() -- its a business doing pleasure with you tony as always
-		bagmans_take = snagmanstake
 	end
 	if road_trip == 1 then --we need to get home
 		--time to go home.. maybe?

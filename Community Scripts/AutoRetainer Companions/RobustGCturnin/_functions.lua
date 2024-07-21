@@ -122,6 +122,7 @@ function CharacterSafeWait()
      yield("/echo 15 second wait for char swap")
 	 yield("/wait 15")
 	 yield("/waitaddon NamePlate <maxwait.600> <wait.5>")
+	 --ZoneTransition()
 end
 
 function visland_stop_moving()
@@ -185,7 +186,17 @@ function return_to_inn()
 end
 
 function return_to_fc()
-	yield("/tp Estate Hall")
+	--yield("/tp Estate Hall") --old way
+	yield("/tp Estate Hall (Free Company)") --new way notice the brackets
+	yield("/wait 1")
+	--yield("/waitaddon Nowloading <maxwait.15>")
+	yield("/wait 15")
+	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+end
+
+function return_to_lair()
+	--yield("/tp Estate Hall")
+	yield("/tp Estate Hall (Private)")
 	yield("/wait 1")
 	--yield("/waitaddon Nowloading <maxwait.15>")
 	yield("/wait 15")

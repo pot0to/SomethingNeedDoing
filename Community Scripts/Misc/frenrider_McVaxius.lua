@@ -17,6 +17,7 @@ RS/RSR (is RS still being updated?)
 
 ***Few annoying problems that still exist
 --*dont follow during combat unless non caster. will require bmr contemplation
+--*how do we change instances #s maybe custom chat commands? lifestream /li #
 ]]
 
 --*****************************************************************
@@ -141,12 +142,14 @@ fulftype = ini_check("fulftype", "unchanged")				-- If you have lazyloot install
 cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistance
 force_gyasahl = ini_check("force_gyasahl", false) 	    -- force gysahl green usage . maybe cause problems in towns with follow
 clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr, 3 = automaton autofollow, 4 = vanilla game follow
+clingtypeduty = ini_check("clingtypeduty", 2)				-- do we need a diff clingtype in duties? use same numbering as above 
 maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
 limitpct = ini_check("limitpct", -1)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap, -1 disables it
 rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
 bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
 feedme = ini_check("feedme", 4650)							-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
 feedmeitem = ini_check("feedmeitem", "Boiled Egg")			-- eatfood, in this case the item name. for now this is how we'll do it. it isn't pretty but it will work.. for now..
+--feedmeitem = ini_check("feedmeitem", "Baked Eggplant<hq>")		-- eatfood, in this case the item name add a <hq> at the end if you want it to be hq. for now this is how we'll do it. it isn't pretty but it will work.. for now..
 timefriction = ini_check("timefriction", 0.1)				-- how long to wait between "tics" of the main loop? 0.1 second default. smaller values will have potential crashy / fps impacts.
 formation = ini_check("formation", false)					-- Follow in formation? If false, then it will "cling"
 						--[[
@@ -159,11 +162,32 @@ formation = ini_check("formation", false)					-- Follow in formation? If false, 
 -----------CONFIGURATION END-----------
 
 ----------------
+--INIT SECTION--
+----------------
+yield("/echo Starting fren rider")
+--yield("/target \""..fren.."\"")
+yield("/wait 0.5")
+--yield("/mk cross <t>")
+
+yield("/vbmai "..bossmodAI)
+yield("/bmrai "..bossmodAI)
+
+if rotationtype ~= "none" then
+	yield("/rotation "..rotationtype)
+end
+
+if fulftype ~= "unchanged" then
+	yield("/fulf on")
+	yield("/echo turning FULF ON!")
+	yield("/wait 1")
+	yield("/fulf "..fulftype)
+end
+----------------
 ----INIT END----
 ----------------
 
 --why is this so complicated? well because sometimes we get bad values and we need to sanitize that so snd does not STB (shit the bed)
-local function distance(x1, y1, z1, x2, y2, z2)
+function distance(x1, y1, z1, x2, y2, z2)
 	if type(x1) ~= "number" then x1 = 0 end
 	if type(y1) ~= "number" then y1 = 0 end
 	if type(z1) ~= "number" then z1 = 0 end
@@ -188,8 +212,12 @@ function can_i_lb()
     return dpsJobs[joeb] or false
 end
 
+function am_i_ranged()
+	--*stub to be sorted out later to deal with known issue(s)
+end
+
 -- Function to calculate the offset based on follower index and leader's facing direction
-local function calculateOffset(followerIndex, leaderRotation)
+function calculateOffset(followerIndex, leaderRotation)
     -- Calculate offsetX and offsetY based on follower index and leader's facing direction
     -- Example: Adjust offsetX and offsetY based on formation layout and leader's facing direction
     local offsetX, offsetY = 0, 0
@@ -216,7 +244,7 @@ local function calculateOffset(followerIndex, leaderRotation)
     return rotatedOffsetX, rotatedOffsetY
 end
 
-local function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ, leaderRotation)
+function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ, leaderRotation)
     -- Calculate the formation position based on follower index and leader's facing direction
     local offsetX, offsetY = calculateOffset(followerIndex, leaderRotation)
     
@@ -229,16 +257,24 @@ local function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ,
 end
 
 function clingmove(nemm)
+	zclingtype = clingtype
+	if GetCharacterCondition(34) == true then
+		zclingtype = clingtypeduty --get diff clingtype in duties
+	end
 	--navmesh
-	if clingtype == 0 then
+	if zclingtype == 0 then
 		PathfindAndMoveTo(GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm), false)
 	end
 	--visland
-	if clingtype == 1 then
+	if zclingtype == 1 then
 		yield("/visland moveto "..GetObjectRawXPos(nemm).." "..GetObjectRawYPos(nemm).." "..GetObjectRawZPos(nemm)) --* verify this is correct later when we can load dalamud
 	end
+	--not bmr
+	if zclingtype > 2 or zclingtype < 2 then
+			yield("/bmrai follow "..GetCharacterName())
+	end
 	--bmr
-	if clingtype == 2 then
+	if zclingtype == 2 then
 		bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm))
 		if bistance < maxbistance then
 			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
@@ -250,13 +286,13 @@ function clingmove(nemm)
 			yield("/echo too far! stop following!")
 		end
 	end
-	if clingtype == 3 then
-		yield("/autofollow "..nemm) --* verify this is correct later when we can load dalamud
+	if zclingtype == 3 then
+		yield("/autofollow "..nemm)
 	end
-	if clingtype == 4 then
+	if zclingtype == 4 then
 		--we only doing this silly method out of combat
 		if GetCharacterCondition(26) == false then
-			yield("/target "..nemm) --* verify this is correct later when we can load dalamud
+			yield("/target "..nemm)
 			yield("/follow")
 		end
 		--if we in combat and target is nemm we will clear it becuase that may bork autotarget from RSR
@@ -271,7 +307,7 @@ end
 weirdvar = 1
 shartycardinality = 2 -- leader
 partycardinality = 2 -- me
-local fartycardinality = 2 --leader ui cardinality
+fartycardinality = 2 --leader ui cardinality
 autotosscount = 0
 we_are_in = GetZoneID()
 we_were_in = GetZoneID()
@@ -286,17 +322,22 @@ end
 partycardinality = partycardinality + 1
 --turns out the above is worthless and not what i wanted for pillion. but we keep it anyways in case we need the data for something.
 
-local countfartula = 2
-while countfartula < 9 do
-	yield("/target <"..countfartula..">")
-	yield("/wait 0.5")
-	yield("/echo is it "..GetTargetName().."?")
-	if GetTargetName() == fren then
-		fartycardinality = countfartula
-		countfartula = 9
+countfartula = 2
+function counting_fartula()
+countfartula = 2 --redeclare dont worry its fine.
+	while countfartula < 9 do
+		yield("/target <"..countfartula..">")
+		yield("/wait 0.5")
+		yield("/echo is it "..GetTargetName().."?")
+		if GetTargetName() == fren then
+			fartycardinality = countfartula
+			countfartula = 9
+			--yield("Aha... count fartula is -> "..fartycardinality)
+		end
+		countfartula = countfartula + 1
 	end
-	countfartula = countfartula + 1
 end
+counting_fartula() --we can call it before mounting because the order changes sometimes after a duty ends or after changing areas (AFTER a duty ends?) idk it was hard to recreate but this solves it.
 
 --yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
 yield("/echo Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality.." Fren Join order -> "..shartycardinality)
@@ -331,6 +372,7 @@ while weirdvar == 1 do
 			if type(GetItemCount(feedme)) == "number" then
 				if GetItemCount(feedme) > 0 and statoos < 300 then --refresh food if we are below 5 minutes left
 					yield("/item "..feedmeitem)
+					yield("/echo Attempting to eat "..feedmeitem)
 				end
 			end
 
@@ -480,6 +522,7 @@ while weirdvar == 1 do
 						if IsPartyMemberMounted(shartycardinality) == true and fly_you_fools == false then
 							--for i=1,7 do
 								--yield("/ridepillion <"..partycardinality.."> "..i)
+								counting_fartula()
 								yield("/ridepillion <"..fartycardinality.."> 2")
 							--end
 							yield("/echo Attempting to Mount Friend")

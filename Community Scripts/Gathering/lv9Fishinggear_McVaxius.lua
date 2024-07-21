@@ -67,11 +67,11 @@ visland_stop_moving()
 
 --go unlock fishing aetheryte
 yield("/vnavmesh moveto -334.74258422852 11.99923324585 54.69458770752")
+visland_stop_moving()
 yield("/target Aethernet Shard")
 yield("/wait 2")
 yield("/interact")
-yield("/wait 6")
-visland_stop_moving()
+yield("/wait 10")
 
 --go talk to roe @ ocean fishing docks
 yield("/vnavmesh moveto -411.98840332031 4.0 75.463768005371")
@@ -83,8 +83,9 @@ yield("/wait 3")
 visland_stop_moving()
 
 --auto equip and bait setup
+yield("/wait 5")
 yield("/ac bait")
-yield("/wait 1")
+yield("/wait 5")
 yield("/pcall Bait true 29717 false")
 yield("/wait 1")
 yield("/ac bait")
