@@ -19,6 +19,10 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-07-21",
+        "- Readded /click support for clicks that took arguments (e.g. RecipeNote Materials)\n");
+
+        DisplayChangelog(
         "2024-07-11",
         "- Fixed IsAddonReady erroneously returning true.\n");
 
