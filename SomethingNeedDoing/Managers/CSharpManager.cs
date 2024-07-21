@@ -13,7 +13,7 @@ public class CSharpManager
 {
     public static void RunSnippet(string code)
     {
-        string fullCode = @"
+        var fullCode = @"
             using System;
             using ECommons.DalamudServices;
             public class UserCodeExecutor
@@ -24,7 +24,7 @@ public class CSharpManager
                 }
             }";
 
-        SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fullCode);
+        var syntaxTree = CSharpSyntaxTree.ParseText(fullCode);
 
         var compilation = CSharpCompilation.Create("UserCode")
             .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
@@ -33,20 +33,20 @@ public class CSharpManager
             .AddSyntaxTrees(syntaxTree);
 
         using var ms = new MemoryStream();
-        EmitResult result = compilation.Emit(ms);
+        var result = compilation.Emit(ms);
 
         if (!result.Success)
-            foreach (Diagnostic diag in result.Diagnostics)
+            foreach (var diag in result.Diagnostics)
                 Svc.Log.Info(diag.ToString());
         else
         {
             ms.Seek(0, SeekOrigin.Begin);
-            if (DalamudReflector.TryGetDalamudPlugin(SomethingNeedDoingPlugin.Name, out var plugin, out AssemblyLoadContext alc))
+            if (DalamudReflector.TryGetDalamudPlugin(SomethingNeedDoingPlugin.Name, out var plugin, out var alc))
             {
-                Assembly assembly = alc.LoadFromStream(ms);
+                var assembly = alc.LoadFromStream(ms);
 
-                Type type = assembly.GetType("UserCodeExecutor")!;
-                MethodInfo executeMethod = type.GetMethod("Execute")!;
+                var type = assembly.GetType("UserCodeExecutor")!;
+                var executeMethod = type.GetMethod("Execute")!;
 
                 executeMethod.Invoke(null, null);
                 alc.Unload();

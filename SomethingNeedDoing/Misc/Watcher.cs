@@ -16,8 +16,8 @@ public class Watcher
     {
         try
         {
-            ushort serverId = MemoryHelper.Read<ushort>(a3);
-            ushort zoneId = MemoryHelper.Read<ushort>(a3 + 2);
+            var serverId = MemoryHelper.Read<ushort>(a3);
+            var zoneId = MemoryHelper.Read<ushort>(a3 + 2);
             WatchedValues.InstanceServerID = serverId;
             WatchedValues.InstanceZoneID = zoneId;
         }

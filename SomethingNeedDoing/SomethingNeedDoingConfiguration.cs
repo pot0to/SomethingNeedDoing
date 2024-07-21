@@ -117,9 +117,9 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
         var property = typeof(SomethingNeedDoingConfiguration).GetProperty(key);
         if (property != null && property.Name != "Version" && property.CanWrite && (property.PropertyType == typeof(int) || property.PropertyType == typeof(bool)))
         {
-            if (property.PropertyType == typeof(int) && int.TryParse(value, out int intValue))
+            if (property.PropertyType == typeof(int) && int.TryParse(value, out var intValue))
                 property.SetValue(this, intValue);
-            else if (property.PropertyType == typeof(bool) && bool.TryParse(value, out bool boolValue))
+            else if (property.PropertyType == typeof(bool) && bool.TryParse(value, out var boolValue))
                 property.SetValue(this, boolValue);
             else
                 Svc.Log.Error($"Value type does not match property type for {key}: {value.GetType()} != {property.PropertyType}");

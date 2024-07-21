@@ -9,7 +9,6 @@ using SomethingNeedDoing.Exceptions;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 namespace SomethingNeedDoing.Misc.Commands;
 
@@ -47,7 +46,7 @@ public class AddonCommands
         var baseAddress = *(nint*)((nint)agent + 6960);
         if (baseAddress == 0) return;
 
-        for (int i = 0; i < numDutiesLoaded; i++)
+        for (var i = 0; i < numDutiesLoaded; i++)
         {
             var dutyId = GetDutyId(baseAddress, i);
             if (dutyCode == dutyId)

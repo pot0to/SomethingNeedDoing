@@ -16,7 +16,6 @@ internal class Changelog
             if (separator)
                 ImGui.Separator();
         }
-
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
