@@ -17,6 +17,9 @@ internal class Changelog
                 ImGui.Separator();
         }
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+        DisplayChangelog(
+        "2024-07-22",
+        "- Added TerritorySupportsMounting()\n");
 
         DisplayChangelog(
         "2024-07-21",
