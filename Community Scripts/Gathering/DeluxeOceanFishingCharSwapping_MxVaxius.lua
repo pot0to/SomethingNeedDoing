@@ -330,9 +330,17 @@ function fishing()
 		yield("/target Entrance <wait.1>")
 		yield("/lockon on")
 		yield("/automove on <wait.2.5>")
+		yield("/interact")
 		yield("/automove off <wait.1.5>")
-		yield("/hold Q <wait.2.0>")
+		yield("/hold Q <wait.1.0>")
+		yield("/interact")
 		yield("/release Q")
+		yield("/interact")
+		yield("/hold Q <wait.1.0>")
+		yield("/interact")
+		yield("/release Q")
+		yield("/interact")
+		yield("/wait 1")
 	end
 
 	--retainer bell nearby shenanigans
