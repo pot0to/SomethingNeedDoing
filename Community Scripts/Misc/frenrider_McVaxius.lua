@@ -152,7 +152,7 @@ bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" 
 feedme = ini_check("feedme", 4650)							-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
 feedmeitem = ini_check("feedmeitem", "Boiled Egg")			-- eatfood, in this case the item name. for now this is how we'll do it. it isn't pretty but it will work.. for now..
 --feedmeitem = ini_check("feedmeitem", "Baked Eggplant<hq>")-- eatfood, in this case the item name add a <hq> at the end if you want it to be hq. for now this is how we'll do it. it isn't pretty but it will work.. for now..
-timefriction = ini_check("timefriction", 0.1)				-- how long to wait between "tics" of the main loop? 0.1 second default. smaller values will have potential crashy / fps impacts.
+timefriction = ini_check("timefriction", 1)					-- how long to wait between "tics" of the main loop? 1 second default. smaller values will have potential crashy / fps impacts.
 formation = ini_check("formation", false)					-- Follow in formation? If false, then it will "cling"
 						--[[
 						Like this -> . so that 1 is the main tank and the party will always kind of make this formation during combat
