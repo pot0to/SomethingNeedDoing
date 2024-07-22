@@ -21,7 +21,8 @@ firstname last name@server (obvious), ?
 ? = 0 or 1,
 0 means teleport to fc estate and try to get into FC entrance. 
 1 means teleport to fc estate and use a nearby retainer bell (navmesh)
-3 means teleport to gridania and go to the inn. make sure you have yesalerady setup for the list item you need for that.
+2 means teleport to limsa and go to the nearby bell
+3 means teleport to gridania and go to the inn. make sure you have yesalready setup for the list item you need for that.
 
 Required plogons
 vnavmesh
@@ -89,6 +90,14 @@ function ZoneTransition()
 			iswehehe = true
 		end
     until iswehehe
+end
+
+function return_to_limsa_bell()
+	yield("/tp Limsa Lominsa")
+	ZoneTransition()
+	yield("/wait 2")
+	PathfindAndMoveTo(-125.440284729, 18.0, 21.004405975342, false)
+	visland_stop_moving() --added so we don't accidentally end before we get to the inn person
 end
 
 function visland_stop_moving()
@@ -285,6 +294,12 @@ function fishing()
 	end
 
 	yield("/wait 30")
+	--if we are tp to limsa bell
+	if which_one[feesh_c][2] == 2 then
+		return_to_limsa_bell()
+		yield("/wait 8")
+	end
+	
 	--if we are tp to inn. we will go to gridania yo
 	if which_one[feesh_c][2] == 3 then
 		yield("/tp New Gridania")
