@@ -9,12 +9,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Numerics;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace SomethingNeedDoing.Misc.Commands;
 
 public class WorldStateCommands
 {
     internal static WorldStateCommands Instance { get; } = new();
+
+    private readonly List<uint> specialNodeIds = new([60432, 60433, 60437, 60438, 60445, 60461, 60462, 60463, 60464, 60465, 60466]);
 
     public List<string> ListAllFunctions()
     {
@@ -118,4 +121,37 @@ public class WorldStateCommands
             .ToList();
 
     private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.IGameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position);
+
+    public unsafe Vector2? GetActiveMiniMapGatheringMarker(int level = 0)
+    {
+        AgentMap* map = AgentMap.Instance();
+        if (map == null || map->CurrentMapId == 0)
+        {
+            return null;
+        }
+
+        foreach (MiniMapGatheringMarker marker in map->MiniMapGatheringMarkers)
+        {
+            if (!specialNodeIds.Contains(marker.MapMarker.IconId))
+            {
+                continue;
+            }
+
+            if (level > 0)
+            {
+                var nodeLevel = int.Parse(Regex.Match(marker.TooltipText.ToString(), @"\d+").Value);
+                if (nodeLevel != level)
+                {
+                    continue;
+                }
+            }
+
+            return new Vector2(
+                marker.MapMarker.X / 16,
+                marker.MapMarker.Y / 16
+            );
+        }
+
+        return null;
+    }
 }
