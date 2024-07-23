@@ -106,8 +106,8 @@ for i=1,#franchise_owners do
 	--update tony's name
 	fat_tony = franchise_owners[i][4]
 	
-	yield("/echo Loading tony to recieve protection payments Fat Tony -> "..fat_tony..".  Bagman -> "..franchise_owners[i][1])
-	yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
+	yield("/echo Loading tony to recieve protection payments Fat Tony -> "..fat_tony..".  Tony -> "..franchise_owners[i][1])
+	yield("/echo Processing Tony "..i.."/"..#franchise_owners)
 
 	--only switch chars if the bagman is changing. in some cases we are delivering to same tony or different tonies. we dont care about the numbers
 	if GetCharacterName(true) ~= franchise_owners[i][1] then
@@ -120,7 +120,7 @@ for i=1,#franchise_owners do
 
 	--allright time for a road trip. tony needs that bag
 	road_trip = 1 --we took a road trip
-	--now we must head to fat_tony 
+	--now we must head to the place we are meeting this filthy animal 
 	--first we have to find his neighbourhood, this uber driver better not complain
 	--are we on the right server already?
 	yield("/li "..tonys_turf)
@@ -205,4 +205,5 @@ for i=1,#franchise_owners do
 end
 
 --what you thought your job was done you ugly mug? get back to work you gotta pay up that gil again next month!
+--boss please i just collected the stuff be nice
 yield("/ays multi e")
