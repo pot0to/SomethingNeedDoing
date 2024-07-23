@@ -18,8 +18,11 @@ internal class Changelog
         }
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
         DisplayChangelog(
-        "2024-07-22",
-        "- Added TerritorySupportsMounting()\n");
+        "2024-07-23",
+        "- Added TerritorySupportsMounting()\n" +
+        "- Added GetActiveMiniMapGatheringMarker()\n" +
+        "- Added missing modifiers to the help menu\n" +
+        "- Updated clicks help menu to be accurate (again)\n");
 
         DisplayChangelog(
         "2024-07-21",

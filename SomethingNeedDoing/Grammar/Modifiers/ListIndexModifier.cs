@@ -3,23 +3,18 @@ using System.Text.RegularExpressions;
 
 namespace SomethingNeedDoing.Grammar.Modifiers;
 
-/// <summary>
-/// The &lt;list index&gt; modifier.
-/// </summary>
 internal class ListIndexModifier : MacroModifier
 {
+    public static string Modifier => "<list>";
+    public static string Description => "For supported commands, specify the index to check. For example, when there are multiple targets with the same name.";
+    public static string[] Examples => ["/target abc <list.5>"];
+
     private static readonly Regex Regex = new(@"(?<modifier><list\.(?<listIndex>\d+(?:\.\d+)?)>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private ListIndexModifier(int listIndex) => ListIndex = listIndex;
 
     public int ListIndex { get; }
 
-    /// <summary>
-    /// Parse the text as a modifier.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <param name="command">A parsed modifier.</param>
-    /// <returns>A value indicating whether the modifier matched.</returns>
     public static bool TryParse(ref string text, out ListIndexModifier command)
     {
         var match = Regex.Match(text);

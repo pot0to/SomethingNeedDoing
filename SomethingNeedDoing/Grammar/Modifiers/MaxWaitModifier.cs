@@ -3,11 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace SomethingNeedDoing.Grammar.Modifiers;
 
-/// <summary>
-/// The &lt;maxwait&gt; modifier.
-/// </summary>
 internal class MaxWaitModifier : MacroModifier
 {
+    public static string Modifier => "<maxwait>";
+    public static string Description => "For certain commands, the maximum time to wait for a certain state to be achieved. By default, this is 5 seconds.";
+    public static string[] Examples => ["/waitaddon RecipeNote <maxwait.10>"];
+
     private static readonly Regex Regex = new(@"(?<modifier><maxwait\.(?<wait>\d+(?:\.\d+)?)>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private MaxWaitModifier(int wait) => Wait = wait;
@@ -17,12 +18,6 @@ internal class MaxWaitModifier : MacroModifier
     /// </summary>
     public int Wait { get; }
 
-    /// <summary>
-    /// Parse the text as a modifier.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <param name="command">A parsed modifier.</param>
-    /// <returns>A value indicating whether the modifier matched.</returns>
     public static bool TryParse(ref string text, out MaxWaitModifier command)
     {
         var match = Regex.Match(text);
@@ -40,9 +35,7 @@ internal class MaxWaitModifier : MacroModifier
             command = new MaxWaitModifier(wait);
         }
         else
-        {
             command = new MaxWaitModifier(0);
-        }
 
         return success;
     }

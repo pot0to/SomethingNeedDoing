@@ -4,11 +4,12 @@ using System.Text.RegularExpressions;
 
 namespace SomethingNeedDoing.Grammar.Modifiers;
 
-/// <summary>
-/// The &lt;wait&gt; modifier.
-/// </summary>
 internal class WaitModifier : MacroModifier
 {
+    public static string Modifier => "<wait>";
+    public static string Description => "Wait a certain amount of time, or a random time within a range.";
+    public static string[] Examples => ["/ac Groundwork <wait.3>       # Wait 3 seconds", "/ac Groundwork <wait.3.5>     # Wait 3.5 seconds", "/ac Groundwork <wait.1-5>     # Wait between 1 and 5 seconds", "/ac Groundwork <wait.1.5-5.5> # Wait between 1.5 and 5.5 seconds"];
+
     private static readonly Regex Regex = new(@"(?<modifier><wait\.(?<wait>\d+(?:\.\d+)?)(?:-(?<until>\d+(?:\.\d+)?))?>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private WaitModifier(int wait, int until)
@@ -27,12 +28,6 @@ internal class WaitModifier : MacroModifier
     /// </summary>
     public int Until { get; }
 
-    /// <summary>
-    /// Parse the text as a modifier.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <param name="command">A parsed modifier.</param>
-    /// <returns>A value indicating whether the modifier matched.</returns>
     public static bool TryParse(ref string text, out WaitModifier command)
     {
         var match = Regex.Match(text);

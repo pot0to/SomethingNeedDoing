@@ -27,15 +27,6 @@ internal class ItemCommand : MacroCommand
     {
         this.itemName = itemName.ToLowerInvariant();
         this.itemQualityMod = itemQualityMod;
-        //if (!Service.Configuration.UseItemStructsVersion)
-        //{
-        //    try
-        //    {
-        //        UseItemSig = Marshal.GetDelegateForFunctionPointer<UseItemDelegate>(Svc.SigScanner.ScanText("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 89 7C 24 38"));
-        //        unsafe { itemContextMenuAgent = (nint)Framework.Instance()->GetUIModule()->GetAgentModule()->GetAgentByInternalId(AgentId.InventoryContext); }
-        //    }
-        //    catch { Svc.Log.Error($"Failed to load {nameof(UseItemSig)}"); }
-        //}
     }
 
     public static ItemCommand Parse(string text)

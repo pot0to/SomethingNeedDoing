@@ -2,26 +2,18 @@
 
 namespace SomethingNeedDoing.Grammar.Modifiers;
 
-/// <summary>
-/// The &lt;itemquality&gt; modifier.
-/// </summary>
 internal class ItemQualityModifier : MacroModifier
 {
+    public static string Modifier => "<hq>";
+    public static string Description => "For supported commands, specifiy whether or not to use the HQ version of an item.";
+    public static string[] Examples => ["/item Calamari Ripieni <hq> <wait.3>"];
+
     private static readonly Regex Regex = new(@"(?<modifier><hq>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private ItemQualityModifier(bool isHQ) => IsHq = isHQ;
 
-    /// <summary>
-    /// Gets a value indicating whether the hq item is used.
-    /// </summary>
     public bool IsHq { get; }
 
-    /// <summary>
-    /// Parse the text as a modifier.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <param name="command">A parsed modifier.</param>
-    /// <returns>A value indicating whether the modifier matched.</returns>
     public static bool TryParse(ref string text, out ItemQualityModifier command)
     {
         var match = Regex.Match(text);

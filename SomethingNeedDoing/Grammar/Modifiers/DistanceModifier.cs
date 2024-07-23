@@ -8,21 +8,16 @@ namespace SomethingNeedDoing.Grammar.Modifiers;
 /// </summary>
 internal class DistanceModifier : MacroModifier
 {
+    public static string Modifier => "<distance>";
+    public static string Description => "For supported commands, specifiy the max distance to check against.";
+    public static string[] Examples => ["/target Alexander <distance.10>"];
+
     private static readonly Regex Regex = new(@"(?<modifier><distance\.(?<distance>\d+(?:\.\d+)?)>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private DistanceModifier(int distance) => Distance = distance;
 
-    /// <summary>
-    /// Gets the objectIndex of the specified Target.
-    /// </summary>
     public int Distance { get; }
 
-    /// <summary>
-    /// Parse the text as a modifier.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <param name="command">A parsed modifier.</param>
-    /// <returns>A value indicating whether the modifier matched.</returns>
     public static bool TryParse(ref string text, out DistanceModifier command)
     {
         var match = Regex.Match(text);

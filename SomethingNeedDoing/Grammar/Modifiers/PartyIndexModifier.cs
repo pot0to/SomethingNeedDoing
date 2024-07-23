@@ -3,26 +3,18 @@ using System.Text.RegularExpressions;
 
 namespace SomethingNeedDoing.Grammar.Modifiers;
 
-/// <summary>
-/// The party &lt;index&gt; modifier.
-/// </summary>
 internal class PartyIndexModifier : MacroModifier
 {
+    public static string Modifier => "<1-9>";
+    public static string Description => "For supported commands, specify the index of party members to check against.";
+    public static string[] Examples => ["/target <1>"];
+
     private static readonly Regex Regex = new(@"(?<modifier><(?<index>\d+)>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private PartyIndexModifier(int index) => PartyIndex = index;
 
-    /// <summary>
-    /// Gets the objectIndex of the specified Target.
-    /// </summary>
     public int PartyIndex { get; }
 
-    /// <summary>
-    /// Parse the text as a modifier.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <param name="command">A parsed modifier.</param>
-    /// <returns>A value indicating whether the modifier matched.</returns>
     public static bool TryParse(ref string text, out PartyIndexModifier command)
     {
         var match = Regex.Match(text);

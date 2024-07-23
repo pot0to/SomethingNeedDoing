@@ -10,6 +10,7 @@ using System;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace SomethingNeedDoing.Interface;
 
@@ -460,8 +461,7 @@ internal class MacroWindow : ConfigWindow
 
         ImGui.PushItemWidth(-1);
         var useMono = !Service.Configuration.DisableMonospaced;
-        if (useMono)
-            ImGui.PushFont(UiBuilder.MonoFont);
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont, useMono);
 
         var contents = node.Contents;
         if (ImGui.InputTextMultiline($"##{node.Name}-editor", ref contents, 100_000, new Vector2(-1, -1)))
@@ -469,9 +469,6 @@ internal class MacroWindow : ConfigWindow
             node.Contents = contents;
             Service.Configuration.Save();
         }
-
-        if (useMono)
-            ImGui.PopFont();
 
         ImGui.PopItemWidth();
     }

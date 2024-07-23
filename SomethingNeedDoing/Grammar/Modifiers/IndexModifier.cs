@@ -3,26 +3,18 @@ using System.Text.RegularExpressions;
 
 namespace SomethingNeedDoing.Grammar.Modifiers;
 
-/// <summary>
-/// The &lt;index&gt; modifier.
-/// </summary>
 internal class IndexModifier : MacroModifier
 {
+    public static string Modifier => "<index>";
+    public static string Description => "For supported commands, specify the object index. For example, when there are multiple targets with the same name.";
+    public static string[] Examples => ["/target abc <index.5>"];
+
     private static readonly Regex Regex = new(@"(?<modifier><index\.(?<objectId>\d+(?:\.\d+)?)>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private IndexModifier(int objectId) => ObjectId = objectId;
 
-    /// <summary>
-    /// Gets the objectIndex of the specified Target.
-    /// </summary>
     public int ObjectId { get; }
 
-    /// <summary>
-    /// Parse the text as a modifier.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <param name="command">A parsed modifier.</param>
-    /// <returns>A value indicating whether the modifier matched.</returns>
     public static bool TryParse(ref string text, out IndexModifier command)
     {
         var match = Regex.Match(text);

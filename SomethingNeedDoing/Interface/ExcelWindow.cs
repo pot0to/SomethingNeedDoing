@@ -149,7 +149,7 @@ public class ExcelWindow : Window
         ImGui.SetNextItemWidth(width);
 
         var shouldOrange = fullTextSearch;
-        if (shouldOrange) ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(1f, 0.5f, 0f, 0.5f));
+        using var colour = ImRaii.PushColor(ImGuiCol.FrameBg, new Vector4(1f, 0.5f, 0f, 0.5f), shouldOrange);
 
         var flags = fullTextSearch ? ImGuiInputTextFlags.EnterReturnsTrue : ImGuiInputTextFlags.None;
         if (ImGui.InputText("##ExcelFilter", ref sidebarFilter, 1024, flags))
@@ -159,21 +159,17 @@ public class ExcelWindow : Window
 
         if (ImGui.IsItemHovered())
         {
-            ImGui.BeginTooltip();
-            var filterMode = fullTextSearch ? "Full text search" : "Name search";
-            ImGui.TextUnformatted(
-                $"Current filter mode: {filterMode}\n"
-                + "Right click to change the filter mode.");
-
-            if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+            using (ImRaii.Tooltip())
             {
-                fullTextSearch = !fullTextSearch;
+                var filterMode = fullTextSearch ? "Full text search" : "Name search";
+                ImGui.TextUnformatted(
+                    $"Current filter mode: {filterMode}\n"
+                    + "Right click to change the filter mode.");
+
+                if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                    fullTextSearch = !fullTextSearch;
             }
-
-            ImGui.EndTooltip();
         }
-
-        if (shouldOrange) ImGui.PopStyleColor();
     }
 
     private void DrawContentFilter(float width)
@@ -540,7 +536,7 @@ public class ExcelWindow : Window
         scriptError = null;
 
         // picked a random type for this, doesn't really matter
-        var luminaTypes = Assembly.GetAssembly(typeof(Lumina.Excel.GeneratedSheets.Addon))?.GetTypes();
+        var luminaTypes = Assembly.GetAssembly(typeof(Sheets.Addon))?.GetTypes();
         var sheets = luminaTypes?
             .Where(t => t.GetCustomAttributes(typeof(SheetAttribute), false).Length > 0)
             .ToDictionary(t => ((SheetAttribute)t.GetCustomAttributes(typeof(SheetAttribute), false)[0]).Name);

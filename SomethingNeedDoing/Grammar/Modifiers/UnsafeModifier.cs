@@ -2,26 +2,18 @@
 
 namespace SomethingNeedDoing.Grammar.Modifiers;
 
-/// <summary>
-/// The &lt;unsafe&gt; modifier.
-/// </summary>
 internal class UnsafeModifier : MacroModifier
 {
+    public static string Modifier => "<unsafe>";
+    public static string Description => "Prevent the /action command from waiting for a positive server response and attempting to execute the command anyways.";
+    public static string[] Examples => ["/ac \"Tricks of the Trade\" <unsafe>"];
+
     private static readonly Regex Regex = new(@"(?<modifier><unsafe>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private UnsafeModifier(bool isUnsafe) => IsUnsafe = isUnsafe;
 
-    /// <summary>
-    /// Gets a value indicating whether the modifier was present.
-    /// </summary>
     public bool IsUnsafe { get; }
 
-    /// <summary>
-    /// Parse the text as a modifier.
-    /// </summary>
-    /// <param name="text">Text to parse.</param>
-    /// <param name="command">A parsed modifier.</param>
-    /// <returns>A value indicating whether the modifier matched.</returns>
     public static bool TryParse(ref string text, out UnsafeModifier command)
     {
         var match = Regex.Match(text);

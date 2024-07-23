@@ -7,9 +7,11 @@ using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ECommons.Automation.UIInput;
+using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
 using SomethingNeedDoing.Grammar.Commands;
+using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
 using SomethingNeedDoing.Misc.Commands;
 using System;
@@ -22,65 +24,6 @@ namespace SomethingNeedDoing.Interface;
 internal class HelpWindow : Window
 {
     public static new readonly string WindowName = "Something Need Doing Help";
-
-    private readonly (string Name, string Description, string[] Examples)[] modifierData =
-    [
-        (
-            "wait",
-            "Wait a certain amount of time, or a random time within a range.",
-            new[]
-            {
-                "/ac Groundwork <wait.3>       # Wait 3 seconds",
-                "/ac Groundwork <wait.3.5>     # Wait 3.5 seconds",
-                "/ac Groundwork <wait.1-5>     # Wait between 1 and 5 seconds",
-                "/ac Groundwork <wait.1.5-5.5> # Wait between 1.5 and 5.5 seconds",
-            }),
-        (
-            "maxwait",
-            "For certain commands, the maximum time to wait for a certain state to be achieved. By default, this is 5 seconds.",
-            new[]
-            {
-                "/waitaddon RecipeNote <maxwait.10>",
-            }),
-        (
-            "condition",
-            "Require a crafting condition to perform the action specified. This is taken from the Synthesis window and may be localized to your client language.",
-            new[]
-            {
-                "/ac Observe <condition.poor>",
-                "/ac \"Precise Touch\" <condition.good,excellent>",
-                "/ac \"Byregot's Blessing\" <condition.not.poor>",
-                "/ac \"Byregot's Blessing\" <condition.!poor>",
-            }),
-        (
-            "unsafe",
-            "Prevent the /action command from waiting for a positive server response and attempting to execute the command anyways.",
-            new[]
-            {
-                "/ac \"Tricks of the Trade\" <unsafe>",
-            }),
-        (
-            "echo",
-            "Echo the amount of loops remaining after executing a /loop command.",
-            new[]
-            {
-                "/loop 5 <echo>",
-            }),
-        (
-            "index",
-            "For supported commands, specify the object index. For example, when there are multiple targets with the same name.",
-            new[]
-            {
-                "/target abc <index.5>",
-            }),
-        (
-            "list",
-            "For supported commands, specify the index to check. For example, when there are multiple targets with the same name.",
-            new[]
-            {
-                "/target abc <list.5>",
-            }),
-    ];
 
     private readonly (string Name, string Description, string? Example)[] cliData =
     [
@@ -110,41 +53,43 @@ internal class HelpWindow : Window
     /// <inheritdoc/>
     public override void Draw()
     {
-        if (ImGui.BeginTabBar("HelpTab"))
+        using var tabs = ImRaii.TabBar("GameDataTab");
+        if (tabs)
         {
-            var tabs = new (string Title, System.Action Dele)[]
-            {
-                ("Changelog", Changelog.Draw),
-                ("Options", DrawOptions),
-                ("Commands", DrawCommands),
-                ("Modifiers", DrawModifiers),
-                ("Lua", DrawLua),
-                ("CLI", DrawCli),
-                ("Clicks", DrawClicks),
-                ("Sends", DrawVirtualKeys),
-                ("Conditions", DrawAllConditions),
-                ("Game Data", DrawGameData),
-                ("Debug", DrawDebug),
-            };
-
-            foreach (var (title, dele) in tabs)
-            {
-                if (ImGui.BeginTabItem(title))
-                {
-                    ImGui.BeginChild("scrolling", new Vector2(0, -1), false);
-
-                    dele();
-
-                    ImGui.EndChild();
-
-                    ImGui.EndTabItem();
-                }
-            }
-
-            ImGui.EndTabBar();
+            using (var tab = ImRaii.TabItem("Changelog"))
+                if (tab)
+                    Changelog.Draw();
+            using (var tab = ImRaii.TabItem("Options"))
+                if (tab)
+                    DrawOptions();
+            using (var tab = ImRaii.TabItem("Commands"))
+                if (tab)
+                    DrawCommands();
+            using (var tab = ImRaii.TabItem("Modifiers"))
+                if (tab)
+                    DrawModifiers();
+            using (var tab = ImRaii.TabItem("Lua"))
+                if (tab)
+                    DrawLua();
+            using (var tab = ImRaii.TabItem("CLI"))
+                if (tab)
+                    DrawCli();
+            using (var tab = ImRaii.TabItem("Clicks"))
+                if (tab)
+                    DrawClicks();
+            using (var tab = ImRaii.TabItem("Sends"))
+                if (tab)
+                    DrawVirtualKeys();
+            using (var tab = ImRaii.TabItem("Conditions"))
+                if (tab)
+                    DrawAllConditions();
+            using (var tab = ImRaii.TabItem("Game Data"))
+                if (tab)
+                    DrawGameData();
+            using (var tab = ImRaii.TabItem("Debug"))
+                if (tab)
+                    DrawDebug();
         }
-
-        ImGui.EndChild();
     }
 
     private void DrawOptions()
@@ -394,15 +339,6 @@ internal class HelpWindow : Window
 
         if (ImGui.CollapsingHeader("/item"))
         {
-            //var defaultUseItem = Service.Configuration.UseItemStructsVersion;
-            //if (ImGui.Checkbox("Use SND's /useitem system", ref defaultUseItem))
-            //{
-            //    Service.Configuration.UseItemStructsVersion = defaultUseItem;
-            //    Service.Configuration.Save();
-            //}
-
-            //DisplayOption("- Does not support stopping the macro if any error occurs.");
-
             var stopMacroNotFound = Service.Configuration.StopMacroIfItemNotFound;
             if (ImGui.Checkbox("Stop macro if the item to use is not found", ref stopMacroNotFound))
             {
@@ -531,15 +467,25 @@ internal class HelpWindow : Window
     private void DrawModifiers()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
-
-        foreach (var (name, desc, examples) in modifierData)
+        var modifierTypes = typeof(MacroModifier).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(MacroModifier)));
+        foreach (var type in modifierTypes)
         {
-            ImGui.TextUnformatted($"<{name}>");
+            var modifierProp = type.GetProperty("Modifier", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+            var descriptionProp = type.GetProperty("Description", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+            var examplesProp = type.GetProperty("Examples", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+
+            ImGui.TextUnformatted($"{(modifierProp != null ? (string)modifierProp.GetValue(null)! : string.Empty)}");
+
             using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
-            ImGui.TextWrapped($"- Description: {desc}");
-            ImGui.TextUnformatted("- Examples:");
-            foreach (var example in examples)
-                ImGui.TextUnformatted($"  - {example}");
+
+            ImGui.TextUnformatted($"- Description: {(descriptionProp != null ? (string)descriptionProp.GetValue(null)! : string.Empty)}");
+            ImGui.TextUnformatted($"- Examples:");
+            foreach (var example in (string[])examplesProp.GetValue(null) ?? [])
+            {
+                ImGui.TextUnformatted("  - ");
+                ImGui.SameLine();
+                ImGuiUtils.ClickToCopyText(example);
+            }
             ImGui.Separator();
         }
     }
@@ -611,15 +557,29 @@ yield(""/echo done!"")
         }
     }
 
-    private void DrawClicks()
+    private unsafe void DrawClicks()
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
-        ImGui.TextWrapped("Refer to https://github.com/NightmareXIV/ECommons/tree/master/ECommons/UIHelpers/AddonMasterImplementations for any details.");
+        ImGui.TextWrapped("Refer to https://github.com/NightmareXIV/ECommons/tree/master/ECommons/UIHelpers/AddonMasterImplementations for any details.\nClicks in red are not callable as-is stated. They are click properties that themselves have methods.");
         ImGui.Separator();
 
-        foreach (var name in clickNames)
-            ImGuiUtils.ClickToCopyText($"/click {name}");
+        //var clicks = typeof(AddonMaster).Assembly.GetTypes()
+        //    .Where(type => type.FullName!.StartsWith($"{typeof(AddonMaster).FullName}+") && type.DeclaringType == typeof(AddonMaster))
+        //    .SelectMany(type => type.GetMethods()
+        //        .Where(m => m.DeclaringType != typeof(object) && !m.IsSpecialName)
+        //        .Select(method => $"{type.Name} {method.Name}"));
+        var clicks = typeof(AddonMaster).Assembly.GetTypes()
+            .Where(type => type.FullName!.StartsWith($"{typeof(AddonMaster).FullName}+") && type.DeclaringType == typeof(AddonMaster))
+            .SelectMany(type => type.GetMembers()
+                .Where(m => (m is MethodInfo info && !info.IsSpecialName && info.DeclaringType != typeof(object)) || (m is PropertyInfo prop && prop.GetAccessors().Length > 0 && prop.PropertyType.IsClass && prop.PropertyType.Namespace == type.Namespace))
+                .Select(member => $"{(member is MethodInfo ? "m" : "p")}{type.Name} {member.Name}"));
+
+        foreach (var name in clicks)
+        {
+            var colour = name.StartsWith('p') ? ImGuiColors.DalamudRed : *ImGui.GetStyleColorVec4(ImGuiCol.Text);
+            ImGuiUtils.ClickToCopyText($"/click {name[1..]}", colour);
+        }
     }
 
     private void DrawVirtualKeys()
@@ -644,13 +604,8 @@ yield(""/echo done!"")
 
             var isActive = Svc.KeyState[vkCode];
 
-            if (isActive)
-                ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.HealerGreen);
-
+            using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.HealerGreen, isActive);
             ImGui.TextUnformatted($"/send {name}");
-
-            if (isActive)
-                ImGui.PopStyleColor();
         }
     }
 
@@ -664,42 +619,23 @@ yield(""/echo done!"")
                                          let isActive = Svc.Condition[flag]
                                          select (flag, isActive))
         {
-            if (isActive)
-                ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.HealerGreen);
+            using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.HealerGreen, isActive);
             ImGui.TextUnformatted($"ID: {(int)flag} Enum: {flag}");
-            if (isActive)
-                ImGui.PopStyleColor();
         }
     }
 
     private void DrawGameData()
     {
-        if (ImGui.BeginTabBar("GameDataTab"))
+        using var tabs = ImRaii.TabBar("GameDataTab");
+        if (tabs)
         {
-            var tabs = new (string Title, System.Action Dele)[]
-            {
-                ("ObjectKinds", DrawEnum<ObjectKind>),
-                ("InventoryTypes", DrawEnum<InventoryType>),
-            };
-
-            foreach (var (title, dele) in tabs)
-            {
-                if (ImGui.BeginTabItem(title))
-                {
-                    ImGui.BeginChild("scrolling", new Vector2(0, -1), false);
-
-                    dele();
-
-                    ImGui.EndChild();
-
-                    ImGui.EndTabItem();
-                }
-            }
-
-            ImGui.EndTabBar();
+            using (var tab = ImRaii.TabItem("ObjectKinds"))
+                if (tab)
+                    DrawEnum<ObjectKind>();
+            using (var tab = ImRaii.TabItem("InventoryTypes"))
+                if (tab)
+                    DrawEnum<InventoryType>();
         }
-
-        ImGui.EndChild();
     }
 
     private void DrawDebug()

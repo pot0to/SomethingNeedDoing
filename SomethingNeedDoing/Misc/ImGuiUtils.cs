@@ -47,10 +47,11 @@ internal static class ImGuiUtils
         }
     }
 
-    public static void ClickToCopyText(string text, string? textCopy = null)
+    public static unsafe void ClickToCopyText(string text, Vector4 colour = default, string? textCopy = null)
     {
         textCopy ??= text;
-        ImGui.TextUnformatted($"{text}");
+        if (colour == default) colour = *ImGui.GetStyleColorVec4(ImGuiCol.Text);
+        ImGui.TextColored(colour, text);
         if (ImGui.IsItemHovered())
         {
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
