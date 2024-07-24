@@ -24,8 +24,9 @@ Liza's plugin : Kitchen Sink if you want to use her queue method
 
 tonys_turf = "Maduin" --what server will our tonies run to
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
+tony_zoneID = 132 --this is the zone id for where the aetheryte is, if its anything other than 0, it will be evaluated to see if your already in teh zone for cases of multi transfer from or to same
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
-tony_type = 1 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
+tony_type = 0 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
 
 --if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
 tony_x = 42069420
@@ -91,11 +92,18 @@ geel = 0
 local function shake_hands()
 	geel = GetGil()
 	gilxit = 0
+	bababobo = 0
 	while gilxit == 0 do
+		bababobo = bababobo + 1
 		yield("/wait 1")
+		if bababobo > 15 then
+			yield("/echo where is this bagman, im gonna teach them a lesson....")
+			bababobo = 0
+		end
 		if GetGil() > geel then
 			if (GetGil() - geel) == 1 then
 				gilxit = 1 --we are done, get out next tony time
+				yield("/echo allright time to deliver this to the boss")
 			end
 		end
 		geel = GetGil()
@@ -104,7 +112,7 @@ end
 
 for i=1,#franchise_owners do
 	--update tony's name
-	fat_tony = franchise_owners[i][4]
+	fat_tony = franchise_owners[i][1]
 	
 	yield("/echo Loading tony to recieve protection payments Fat Tony -> "..fat_tony..".  Tony -> "..franchise_owners[i][1])
 	yield("/echo Processing Tony "..i.."/"..#franchise_owners)
@@ -116,7 +124,7 @@ for i=1,#franchise_owners do
 		CharacterSafeWait()
 	end	
 
-    yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
+    yield("/echo Processing Tony "..i.."/"..#franchise_owners)
 
 	--allright time for a road trip. tony needs that bag
 	road_trip = 1 --we took a road trip
@@ -126,13 +134,15 @@ for i=1,#franchise_owners do
 	yield("/li "..tonys_turf)
 	yield("/wait 15")
 	CharacterSafeWait()
-	yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
+	yield("/echo Processing Tony "..i.."/"..#franchise_owners)
 	
 	--now we have to walk or teleport?!!?!? to fat tony, where is he waiting this time?
 	if tony_type == 0 then
 		yield("/echo "..fat_tony.." is meeting us in the alleyways.. watch your back")
-		yield("/tp "..tonys_spot)
-		ZoneTransition()
+			if tony_zoneID ~= GetZoneID() then --we are teleporting to Tony's spot
+				yield("/tp "..tonys_spot)
+				ZoneTransition()
+			end
 	end
 	if tony_type > 0 then
 		yield("/echo "..fat_tony.." is meeting us at the estate, we will approach with respect")
@@ -173,13 +183,13 @@ for i=1,#franchise_owners do
 			CharacterSafeWait()
 			--added 5 second wait here because sometimes they get stuck.
 			yield("/wait 5")
-			yield("/tp Estate Hall")
-			yield("/wait 1")
-			--yield("/waitaddon Nowloading <maxwait.15>")
-			yield("/wait 15")
-			yield("/waitaddon NamePlate <maxwait.600><wait.5>")
-			--normal small house shenanigans
 			if franchise_owners[i][3] == 0 then
+				yield("/tp Estate Hall")
+				yield("/wait 1")
+				--yield("/waitaddon Nowloading <maxwait.15>")
+				yield("/wait 15")
+				yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+				--normal small house shenanigans
 				yield("/hold W <wait.1.0>")
 				yield("/release W")
 				yield("/target Entrance <wait.1>")
@@ -198,6 +208,7 @@ for i=1,#franchise_owners do
 			end
 			--limsa bell
 			if franchise_owners[i][3] == 2 then
+				yield("/echo returning to limsa bell")
 				return_to_limsa_bell()
 			end
 		end

@@ -52,6 +52,7 @@ PandoraSetFeatureState("Auto-Fill Numeric Dialogs", false)
 
 tonys_turf = "Maduin" --what server is tony on
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
+tony_zoneID = 132 --this is the zone id for where the aetheryte is, if its anything other than 0, it will be evaluated to see if your already in teh zone for cases of multi transfer from or to same
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
 tony_type = 0 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
 bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
@@ -110,6 +111,8 @@ local filled_bags = {
 {2,999999999},
 {3,999999999}
 }
+
+DropboxSetItemQuantity(1,false,0) --because we need to do this or shit breaks
 
 for i=1, #filled_bags do
 	filled_bags[i][3] = 1
@@ -172,147 +175,161 @@ get_to_the_choppa = 0 -- alternate exit var
 horrible_counter_method = 0
 
 local function shake_hands()
-		get_to_the_choppa = 0
-		horrible_counter_method = 0
-		--get_to_the_choppa = 1 -- alternate exit var
-		while GetGil() > bagmans_take or get_to_the_choppa == 0 do
-		thebag = GetGil() - bagmans_take
-		if thebag < 0 then
-			thebag = GetGil()
-		end
+	get_to_the_choppa = 0
+	horrible_counter_method = 0
+	--get_to_the_choppa = 1 -- alternate exit var
+	while GetGil() > bagmans_take or get_to_the_choppa == 0 do
+	thebag = GetGil() - bagmans_take
+	if thebag < 0 then
+		thebag = GetGil()
+	end
 
-		--loop until we have tony targeted
+	--loop until we have tony targeted
+	yield("/target "..fat_tony)
+	yield("/wait 1")
+	while string.len(GetTargetName()) == 0 do
 		yield("/target "..fat_tony)
 		yield("/wait 1")
-		while string.len(GetTargetName()) == 0 do
-			yield("/target "..fat_tony)
-			yield("/wait 1")
-		end
-		
-		--we got fat tony.  we just need to make sure he is within targeting distance. say <1 yalms before we continue
-		while distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)) > 1.5 do
-			yield("/echo this fat bastard better hurry up he is  "..distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)).." away!")
-			yield("/target "..fat_tony)   --just in case we had wrong "tony" targeted
-			yield("/wait 1")
-		end
-		
-		--DEBUG
-		--yield("/echo our return mode will be "..franchise_owners[1][2])
-		
-		--pcall way to transfer gil only. we can't pcall other methods
-		while GetGil() > bagmans_take or get_to_the_choppa == 0 do
-			yield("/target "..fat_tony)
-			yield("/echo here you go "..fat_tony..", another full bag, with respect")
-			if bagman_type == 0 then
-				yield("/trade")
-				yield("/wait 0.5")
-				yield("/wait 0.5")
-				yield("/pcall Trade true 2")
-				--verification of target before doing the following. otherwise hit escape!
-				tradename = GetNodeText("Trade", 20)
-				if tradename ~= fat_tony then
-					--we got someone with their hand in the till. we'll send them a fish wrapped in newspaper later
-					ungabunga()
+	end
+	
+	--we got fat tony.  we just need to make sure he is within targeting distance. say <1 yalms before we continue
+	while distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)) > 1.5 do
+		yield("/echo this fat bastard better hurry up he is  "..distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)).." away!")
+		yield("/target "..fat_tony)   --just in case we had wrong "tony" targeted
+		yield("/wait 1")
+	end
+	
+	--DEBUG
+	--yield("/echo our return mode will be "..franchise_owners[1][2])
+	
+	--pcall way to transfer gil only. we can't pcall other methods
+	while GetGil() > bagmans_take or get_to_the_choppa == 0 do
+		yield("/target "..fat_tony)
+		yield("/echo here you go "..fat_tony..", another full bag, with respect")
+		if bagman_type == 0 then
+			yield("/trade")
+			yield("/wait 0.5")
+			yield("/wait 0.5")
+			yield("/pcall Trade true 2")
+			--verification of target before doing the following. otherwise hit escape!
+			tradename = GetNodeText("Trade", 20)
+			if tradename ~= fat_tony then
+				--we got someone with their hand in the till. we'll send them a fish wrapped in newspaper later
+				ungabunga()
+			end
+			if tradename == fat_tony then
+				if GetGil() > 999999 then
+					yield("/pcall InputNumeric true 1000000 <wait.1>") --this is just in case we want to specify/calculate the amount
 				end
-				if tradename == fat_tony then
-					if GetGil() > 999999 then
-						yield("/pcall InputNumeric true 1000000 <wait.1>") --this is just in case we want to specify/calculate the amount
+				if GetGil() < 1000000 then
+					snaccman = GetGil() - bagmans_take
+					yield("/pcall InputNumeric true ".. snaccman .." <wait.1>") --this is just in case we want to specify/calculate the amount
+				end
+				yield("/pcall Trade true 0")
+				yield("/wait 4")
+			end
+		end
+		if bagman_type > 0 then 
+			yield("/dropbox")
+			yield("/wait 1")
+			yield("/focustarget <t>")
+			yield("/wait 0.5")
+			--are_we_there_yet_jimmy() --setup exit conditions
+			if bagman_type == 1 then
+				for i=1, #filled_bags do
+					yield("/echo attempting to add stuff to the bag....")
+					DropboxSetItemQuantity(filled_bags[i][1],false,filled_bags[i][2])
+					DropboxSetItemQuantity(filled_bags[i][1],true,filled_bags[i][2])
+					yield("/wait 0.5")
+				end
+				horrible_counter_method = horrible_counter_method + 1
+				yield("/echo DEBUG bagman type 1 processing....")
+				if horrible_counter_method > 1 then
+					get_to_the_choppa = 1
+					yield("/echo DEBUG moving towards exiting bagman type 1....")
+				end -- get out
+			end
+			if bagman_type == 2 then
+				snaccman = GetGil() - bagmans_take
+				if snaccman < 0 then
+					snaccman = 0
+				end
+				yield("/dropbox")
+				yield("/wait 0.5")
+				if snaccman > 0 then
+					--yield("/dbq 1:"..snaccman) -- we can't rob tony.. yet
+					DropboxSetItemQuantity(1,false,snaccman)
+				end					
+				DropboxSetItemQuantity(22500,false,999999)
+				DropboxSetItemQuantity(22501,false,999999)
+				DropboxSetItemQuantity(22502,false,999999)
+				DropboxSetItemQuantity(22503,false,999999)
+				DropboxSetItemQuantity(22504,false,999999)
+				DropboxSetItemQuantity(22505,false,999999)
+				DropboxSetItemQuantity(22506,false,999999)
+				DropboxSetItemQuantity(22507,false,999999)
+				--[[
+				yield("/dbq 22500:*")  --  22500  Salvaged
+				yield("/dbq 22501:*")  --  22501  Salvaged
+				yield("/dbq 22502:*")  --  22502  Salvaged
+				yield("/dbq 22503:*")  --  22503  Salvaged
+				yield("/dbq 22504:*")  --  22504  Salvaged
+				yield("/dbq 22505:*")  --  22505  Salvaged
+				yield("/dbq 22506:*")  --  22506  Salvaged
+				yield("/dbq 22507:*")  --  22507  Salvaged
+				]]
+				if GetItemCount(22500) == 0 and GetItemCount(22501) == 0 and GetItemCount(22502) == 0 and GetItemCount(22503) == 0 and GetItemCount(22504) == 0 and GetItemCount(22505) == 0 and GetItemCount(22506) == 0 and GetItemCount(22507) == 0 then
+					if GetGil() == snaccman then
+						get_to_the_choppa = 1
 					end
-					if GetGil() < 1000000 then
-						snaccman = GetGil() - bagmans_take
-						yield("/pcall InputNumeric true ".. snaccman .." <wait.1>") --this is just in case we want to specify/calculate the amount
-					end
-					yield("/pcall Trade true 0")
-					yield("/wait 4")
+				end
+				horrible_counter_method = horrible_counter_method + 1
+				yield("/echo DEBUG bagman type 2 processing....")
+				if horrible_counter_method > 1 then
+					get_to_the_choppa = 1
+					yield("/echo DEBUG moving towards exiting bagman type 2....")
+				end -- get out
+			end
+			
+			end
+		end
+		yield("/wait 1")
+	end
+	if bagman_type > 0 then
+	--get_to_the_choppa = 1 --so the loop exits
+		yield("/wait 4")
+		DropboxStart()
+		yield("/echo DEBUG dropbox initiated")
+		yield("/wait 2")
+		floo = DropboxIsBusy()
+		while floo == true do
+		  floo = DropboxIsBusy()
+		  yield("/wait 2")
+		  yield("/echo Trading happening!")
+		end
+		yield("/wait 5")
+		if tonyception == 1 then
+			if bagman_type == 1 then
+				for i=1, #filled_bags do
+					yield("/echo cleaning this list out to 0 so we dont send multiple packages to same tony")
+					DropboxSetItemQuantity(filled_bags[i][1],false,0)
+					DropboxSetItemQuantity(filled_bags[i][1],true,0)
+					yield("/wait 0.5")
 				end
 			end
-			if bagman_type > 0 then 
-				yield("/dropbox")
-				yield("/wait 1")
-				yield("/focustarget <t>")
-				yield("/wait 0.5")
-				--are_we_there_yet_jimmy() --setup exit conditions
-				if bagman_type == 1 then
-					for i=1, #filled_bags do
-						--yield("/dbq "..filled_bags[i][1]..":"..filled_bags[i][2])  --kitchensync seems to immediately start trade would have to format this as a long concatenated string instead
-						DropboxSetItemQuantity(filled_bags[i][1],false,filled_bags[i][2])
-						yield("/wait 0.5")
-					end
-					horrible_counter_method = horrible_counter_method + 1
-					yield("/echo DEBUG bagman type 1 processing....")
- 				    if horrible_counter_method > 1 then
-						get_to_the_choppa = 1
-						yield("/echo DEBUG moving towards exiting bagman type 1....")
-					end -- get out
-				end
-				if bagman_type == 2 then
-					snaccman = GetGil() - bagmans_take
-					yield("/dropbox")
-					yield("/wait 0.5")
-					if snaccman > 0 then
-						--yield("/dbq 1:"..snaccman) -- we can't rob tony.. yet
-						DropboxSetItemQuantity(1,false,snaccman)
-					end					
-					DropboxSetItemQuantity(22500,false,999999)
-					DropboxSetItemQuantity(22501,false,999999)
-					DropboxSetItemQuantity(22502,false,999999)
-					DropboxSetItemQuantity(22503,false,999999)
-					DropboxSetItemQuantity(22504,false,999999)
-					DropboxSetItemQuantity(22505,false,999999)
-					DropboxSetItemQuantity(22506,false,999999)
-					DropboxSetItemQuantity(22507,false,999999)
-					--[[
-					yield("/dbq 22500:*")  --  22500  Salvaged
-					yield("/dbq 22501:*")  --  22501  Salvaged
-					yield("/dbq 22502:*")  --  22502  Salvaged
-					yield("/dbq 22503:*")  --  22503  Salvaged
-					yield("/dbq 22504:*")  --  22504  Salvaged
-					yield("/dbq 22505:*")  --  22505  Salvaged
-					yield("/dbq 22506:*")  --  22506  Salvaged
-					yield("/dbq 22507:*")  --  22507  Salvaged
-					]]
-					if GetItemCount(22500) == 0 and GetItemCount(22501) == 0 and GetItemCount(22502) == 0 and GetItemCount(22503) == 0 and GetItemCount(22504) == 0 and GetItemCount(22505) == 0 and GetItemCount(22506) == 0 and GetItemCount(22507) == 0 then
-						if GetGil() == snaccman then
-							get_to_the_choppa = 1
-						end
-					end
-					horrible_counter_method = horrible_counter_method + 1
-					yield("/echo DEBUG bagman type 2 processing....")
- 				    if horrible_counter_method > 1 then
-						get_to_the_choppa = 1
-						yield("/echo DEBUG moving towards exiting bagman type 2....")
-					end -- get out
-				end
-				
-				--get_to_the_choppa = 1 --so the loop exits
-				yield("/wait 4")
-				DropboxStart()
-				yield("/echo DEBUG dropbox initiated")
-				yield("/wait 2")
- 			    floo = DropboxIsBusy()
-				while floo == true do
+			  yield("/echo Woah we need another tony out here im not giving you this next bag you mook")
+			  --yield("/dbq 1:1") 
+			  DropboxSetItemQuantity(1,false,1)
+			  DropboxStart()
+			  yield("/wait 2")
+			  floo = DropboxIsBusy()
+			  while floo == true do
 				  floo = DropboxIsBusy()
 				  yield("/wait 2")
-				  yield("/echo Trading happening!")
-				end
-				yield("/wait 5")
-				if tonyception == 1 then
-				  yield("/echo Woah we need another tony out here im not giving you this next bag you mook")
-				  --yield("/dbq 1:1") 
-				  DropboxSetItemQuantity(1,false,1)
-  				  DropboxStart()
-				  yield("/wait 2")
- 			      floo = DropboxIsBusy()
-				  while floo == true do
-					  floo = DropboxIsBusy()
-					  yield("/wait 2")
-					  yield("/echo Trading happening!!")
-				  end
-				  --get_to_the_choppa = 1 --get out
-				  yield("/wait 5")
-				end
-			end
-			yield("/wait 1")
+				  yield("/echo Trading happening!!")
+			  end
+			  --get_to_the_choppa = 1 --get out
+			  yield("/wait 5")
 		end
 	end
 end
@@ -332,6 +349,7 @@ for i=1,#franchise_owners do
 	end	
 
     yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
+	DropboxSetItemQuantity(1,false,0) --because we need to do this or shit breaks
 
 	--AGP. always get paid.
 	--don't deliver if we can't pay ourselves. Tony is too lazy and stupid to come check our franchise anyways.
@@ -359,8 +377,10 @@ for i=1,#franchise_owners do
 		--now we have to walk or teleport?!!?!? to fat tony, where is he waiting this time?
 		if tony_type == 0 then
 			yield("/echo "..fat_tony.." is meeting us in the alleyways.. watch your back")
-			yield("/tp "..tonys_spot)
-			ZoneTransition()
+				if tony_zoneID ~= GetZoneID() then --we are teleporting to Tony's spot
+					yield("/tp "..tonys_spot)
+					ZoneTransition()
+				end
 		end
 		if tony_type > 0 then
 			yield("/echo "..fat_tony.." is meeting us at the estate, we will approach with respect")
