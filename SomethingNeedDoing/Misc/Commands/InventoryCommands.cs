@@ -19,25 +19,23 @@ public class InventoryCommands
         }
         return list;
     }
+
     public unsafe int GetItemCount(int itemID, bool includeHQ = true)
        => includeHQ ? InventoryManager.Instance()->GetInventoryItemCount((uint)itemID, true) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000)
        : InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000);
 
+    public unsafe uint GetItemCountInContainer(uint itemID, uint container) => GetItemInInventory(itemID, (InventoryType)container)->Quantity;
+
     public unsafe int GetInventoryFreeSlotCount()
     {
         InventoryType[] types = [InventoryType.Inventory1, InventoryType.Inventory2, InventoryType.Inventory3, InventoryType.Inventory4];
-        var c = InventoryManager.Instance();
         var slots = 0;
         foreach (var x in types)
         {
-            var inv = c->GetInventoryContainer(x);
-            for (var i = 0; i < inv->Size; i++)
-            {
-                if (inv->Items[i].ItemId == 0)
-                {
+            var cont = InventoryManager.Instance()->GetInventoryContainer(x);
+            for (var i = 0; i < cont->Size; i++)
+                if (cont->Items[i].ItemId == 0)
                     slots++;
-                }
-            }
         }
         return slots;
     }
@@ -48,10 +46,29 @@ public class InventoryCommands
         var cont = inv->GetInventoryContainer((InventoryType)container);
         var slots = 0;
         for (var i = 0; i < cont->Size; i++)
-        {
             if (cont->Items[i].ItemId == 0)
                 slots++;
-        }
         return slots;
+    }
+
+    public unsafe void MoveItemToContainer(uint itemID, uint srcContainer, uint dstContainer)
+        => InventoryManager.Instance()->MoveItemSlot((InventoryType)srcContainer, (ushort)GetItemInInventory(itemID, (InventoryType)srcContainer)->Slot, (InventoryType)dstContainer, GetFirstAvailableSlot((InventoryType)dstContainer));
+
+    private static unsafe InventoryItem* GetItemInInventory(uint itemId, InventoryType inv, bool mustBeHQ = false)
+    {
+        var cont = InventoryManager.Instance()->GetInventoryContainer(inv);
+        for (var i = 0; i < cont->Size; ++i)
+            if (cont->GetInventorySlot(i)->ItemId == itemId && (!mustBeHQ || cont->GetInventorySlot(i)->Flags == InventoryItem.ItemFlags.HighQuality))
+                return cont->GetInventorySlot(i);
+        return null;
+    }
+
+    private static unsafe ushort GetFirstAvailableSlot(InventoryType container)
+    {
+        var cont = InventoryManager.Instance()->GetInventoryContainer(container);
+        for (var i = 0; i < cont->Size; i++)
+            if (cont->Items[i].ItemId == 0)
+                return (ushort)i;
+        return 0;
     }
 }

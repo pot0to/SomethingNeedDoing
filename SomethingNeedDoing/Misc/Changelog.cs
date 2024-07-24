@@ -17,6 +17,12 @@ internal class Changelog
                 ImGui.Separator();
         }
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+        "2024-07-24",
+        "- Added MoveItemToContainer()\n" +
+        "- Added GetItemCountInContainer()\n");
+
         DisplayChangelog(
         "2024-07-23",
         "- Added TerritorySupportsMounting()\n" +
