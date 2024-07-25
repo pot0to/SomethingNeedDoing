@@ -168,6 +168,8 @@ function return_to_limsa_bell()
 	yield("/tp Limsa Lominsa")
 	ZoneTransition()
 	yield("/wait 2")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
 	PathfindAndMoveTo(-125.440284729, 18.0, 21.004405975342, false)
 	visland_stop_moving() --added so we don't accidentally end before we get to the inn person
 end

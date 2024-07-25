@@ -90,7 +90,6 @@ end
 
 geel = 0
 local function shake_hands()
-	geel = GetGil()
 	gilxit = 0
 	bababobo = 0
 	while gilxit == 0 do
@@ -141,6 +140,8 @@ for i=1,#franchise_owners do
 		yield("/echo "..fat_tony.." is meeting us in the alleyways.. watch your back")
 			if tony_zoneID ~= GetZoneID() then --we are teleporting to Tony's spot
 				yield("/tp "..tonys_spot)
+				yield("/wait 2")
+				yield("/pcall SelectYesno true 0")  --this doesnt work. just use yesalready. putting it here for later in case someone else sorts it out i can update.
 				ZoneTransition()
 			end
 	end
@@ -153,6 +154,7 @@ for i=1,#franchise_owners do
 		yield("/pcall TeleportHousingFriend true "..tonys_house)
 		ZoneTransition()
 	end
+	geel = GetGil() --get the initial geel value
 	
 	--ok this filthy animal is nearby. let's approach this guy, weapons sheathed, we are just doing business
 	if tony_type == 0 then
