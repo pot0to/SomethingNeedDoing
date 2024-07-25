@@ -37,6 +37,9 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
     public bool UseSNDTargeting { get; set; } = true;
     public bool UseItemStructsVersion { get; set; } = true;
 
+    public MacroNode? ARCharacterPostProcessMacro { get; set; }
+    public List<ulong> ARCharacterPostProcessExcludedCharacters { get; set; } = [];
+
     public bool StopMacroIfActionTimeout { get; set; } = true;
     public bool StopMacroIfItemNotFound { get; set; } = true;
     public bool StopMacroIfCantUseItem { get; set; } = true;

@@ -1,4 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.Game;
+using Lumina.Excel.GeneratedSheets;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -7,6 +8,15 @@ namespace SomethingNeedDoing.Misc.Commands;
 public class InventoryCommands
 {
     internal static InventoryCommands Instance { get; } = new();
+
+    private enum ItemRarity : byte
+    {
+        White = 1,
+        Pink = 7,
+        Green = 2,
+        Blue = 3,
+        Purple = 4
+    }
 
     public List<string> ListAllFunctions()
     {
@@ -71,4 +81,6 @@ public class InventoryCommands
                 return (ushort)i;
         return 0;
     }
+
+    public List<uint> GetTradeableWhiteItemIDs() => Svc.Data.GetExcelSheet<Item>()!.Where(x => !x.IsUntradable && x.Rarity == (byte)ItemRarity.White).Select(x => x.RowId).ToList();
 }
