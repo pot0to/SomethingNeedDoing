@@ -17,6 +17,17 @@ internal class Changelog
                 ImGui.Separator();
         }
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
+
+        DisplayChangelog(
+        "2024-07-25",
+        "- Added options to run a macro after auto retainer's character post process\n");
+
+        DisplayChangelog(
+        "2024-07-24",
+        "- Added MoveItemToContainer()\n" +
+        "- Added GetItemCountInContainer()\n" +
+        "- Added GetTradeableWhiteItemIDs()\n");
+
         DisplayChangelog(
         "2024-07-23",
         "- Added TerritorySupportsMounting()\n" +

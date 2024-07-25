@@ -1,4 +1,6 @@
+using AutoRetainerAPI;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
 using ECommons;
 using ECommons.SimpleGui;
 using SomethingNeedDoing.Interface;
@@ -14,6 +16,8 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
     public static string Prefix => "SND";
     private const string Command = "/somethingneeddoing";
     private static string[] Aliases => ["/pcraft", "/snd"];
+
+    private readonly AutoRetainerApi _autoRetainerApi;
 
     public SomethingNeedDoingPlugin(IDalamudPluginInterface pluginInterface)
     {
@@ -37,10 +41,52 @@ public sealed class SomethingNeedDoingPlugin : IDalamudPlugin
         Aliases.ToList().ForEach(a => EzCmd.Add(a, OnChatCommand, $"{Command} Alias"));
 
         _ = new Watcher();
+        _autoRetainerApi = new();
+
+        _autoRetainerApi.OnCharacterPostprocessStep += CheckCharacterPostProcess;
+        _autoRetainerApi.OnCharacterReadyToPostProcess += DoCharacterPostProcess;
+        Svc.Framework.Update += CheckForMacroCompletion;
+    }
+
+    private void CheckCharacterPostProcess()
+    {
+        if (Service.Configuration.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
+            Svc.Log.Info("Skipping post process macro for current character.");
+        else
+            _autoRetainerApi.RequestCharacterPostprocess();
+    }
+
+    private bool RunningPostProcess;
+    private void DoCharacterPostProcess()
+    {
+        if (Service.Configuration.ARCharacterPostProcessMacro != null)
+        {
+            RunningPostProcess = true;
+            Service.MacroManager.EnqueueMacro(Service.Configuration.ARCharacterPostProcessMacro);
+        }
+        else
+        {
+            RunningPostProcess = false;
+            _autoRetainerApi.FinishCharacterPostProcess();
+        }
+    }
+
+    private void CheckForMacroCompletion(IFramework framework)
+    {
+        if (!RunningPostProcess) return;
+        if (Service.MacroManager.State != LoopState.Running)
+        {
+            RunningPostProcess = false;
+            _autoRetainerApi.FinishCharacterPostProcess();
+        }
     }
 
     public void Dispose()
     {
+        _autoRetainerApi.OnCharacterPostprocessStep -= CheckCharacterPostProcess;
+        _autoRetainerApi.OnCharacterReadyToPostProcess -= DoCharacterPostProcess;
+        Svc.Framework.Update -= CheckForMacroCompletion;
+
         Service.MacroManager?.Dispose();
         Service.GameEventManager?.Dispose();
         Service.ChatManager?.Dispose();
