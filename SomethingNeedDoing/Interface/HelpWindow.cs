@@ -481,9 +481,9 @@ internal class HelpWindow : Window
         {
             ImGui.Text("Lua Required Paths:");
 
-            // We need to pas Imgui a reference and we can't do that with lists, so temporarily demote our list to an array
+            // We need to pass Imgui a reference and we can't do that with lists, so temporarily demote our list to an array
             string[] paths = [.. luaRequirePathsBuffer];
-            for (int index = 0; index < luaRequirePathsBuffer.Count; index++)
+            for (var index = 0; index < luaRequirePathsBuffer.Count; index++)
             {
                 if (ImGuiEx.IconButton(FontAwesomeIcon.Trash, "Delete Path " + index))
                 {
