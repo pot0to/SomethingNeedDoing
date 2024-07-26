@@ -19,6 +19,10 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-07-26",
+        "- Added lua options for requiring paths (thanks OhKannaDuh)\n");
+
+        DisplayChangelog(
         "2024-07-25",
         "- Added options to run a macro after auto retainer's character post process\n");
 
