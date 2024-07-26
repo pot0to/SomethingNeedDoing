@@ -64,6 +64,11 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
     public XivChatType ErrorChatType { get; set; } = XivChatType.Urgent;
 
     /// <summary>
+    /// Gets or sets the paths that lua macros will use when requiring files
+    /// </summary>
+    public string[] LuaRequirePaths { get; set; } = [];
+
+    /// <summary>
     /// Loads the configuration.
     /// </summary>
     /// <param name="configDirectory">Configuration directory.</param>

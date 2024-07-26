@@ -39,6 +39,8 @@ internal class HelpWindow : Window
 
     private readonly List<string> clickNames;
 
+    private List<string> luaRequirePathsBuffer = [];
+
     public HelpWindow() : base(WindowName)
     {
         Flags |= ImGuiWindowFlags.NoScrollbar;
@@ -48,6 +50,8 @@ internal class HelpWindow : Window
         RespectCloseHotkey = false;
 
         clickNames = [.. ClickHelper.GetAvailableClicks()];
+
+        luaRequirePathsBuffer = new(Service.Configuration.LuaRequirePaths);
     }
 
     /// <inheritdoc/>
@@ -470,6 +474,40 @@ internal class HelpWindow : Window
                     Service.Configuration.ARCharacterPostProcessExcludedCharacters.Add(Svc.ClientState.LocalContentId);
                     Service.Configuration.Save();
                 }
+            }
+        }
+
+        if (ImGui.CollapsingHeader("Lua"))
+        {
+            ImGui.Text("Lua Required Paths:");
+
+            // We need to pas Imgui a reference and we can't do that with lists, so temporarily demote our list to an array
+            string[] paths = [.. luaRequirePathsBuffer];
+            for (int index = 0; index < luaRequirePathsBuffer.Count; index++)
+            {
+                if (ImGuiEx.IconButton(FontAwesomeIcon.Trash, "Delete Path " + index))
+                {
+                    luaRequirePathsBuffer.RemoveAt(index);
+
+                    Service.Configuration.LuaRequirePaths = [.. luaRequirePathsBuffer];
+                    Service.Configuration.Save();
+                }
+
+                ImGui.SameLine();
+                if (ImGui.InputText("Path " + index, ref paths[index], 100_000))
+                {
+                    luaRequirePathsBuffer = new(paths);
+                    // Remove blank lines from the list
+                    luaRequirePathsBuffer = luaRequirePathsBuffer.Where(str => !string.IsNullOrEmpty(str)).ToList();
+
+                    Service.Configuration.LuaRequirePaths = [.. luaRequirePathsBuffer];
+                    Service.Configuration.Save();
+                }
+            }
+
+            if (ImGuiEx.IconButton(FontAwesomeIcon.Plus, "Add Path"))
+            {
+                luaRequirePathsBuffer.Add(string.Empty);
             }
         }
     }
