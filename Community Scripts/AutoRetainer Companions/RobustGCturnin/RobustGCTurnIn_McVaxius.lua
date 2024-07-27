@@ -207,7 +207,7 @@ function Final_GC_Cleaning()
 		yield("/echo Expert Delivery hack enabled")
 		yield("/wait 1")
 		benture = GetItemCount(21072)
-		while dellycount < 5 do --max of 5 loops
+		while dellycount < 12 do --max of 12 loops
 			yield("/deliveroo enable")
 			yield("/wait 15")
 			yield("/deliveroo disable")
@@ -215,7 +215,7 @@ function Final_GC_Cleaning()
 			ungabunga() --get out of menus haha
 			dellycount = dellycount + 1
 			if benture == GetItemCount(21072) then --nothing changed since last time we did the round. maybe we ned to exit but increase the cardinality just in case
-				dellycount = dellycount + 1
+				dellycount = dellycount + 5
 			end
 			benture = GetItemCount(21072)
 		end
