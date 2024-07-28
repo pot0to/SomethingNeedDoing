@@ -178,7 +178,7 @@ local function shake_hands()
 	get_to_the_choppa = 0
 	horrible_counter_method = 0
 	--get_to_the_choppa = 1 -- alternate exit var
-	while GetGil() > bagmans_take or get_to_the_choppa == 0 do
+--	while GetGil() > bagmans_take or get_to_the_choppa == 0 do
 	thebag = GetGil() - bagmans_take
 	if thebag < 0 then
 		thebag = GetGil()
@@ -292,12 +292,11 @@ local function shake_hands()
 					get_to_the_choppa = 1
 					yield("/echo DEBUG moving towards exiting bagman type 2....")
 				end -- get out
-			end
-			
-			end
+			end		
 		end
-		yield("/wait 1")
 	end
+		yield("/wait 1")
+	--end
 	if bagman_type > 0 then
 	--get_to_the_choppa = 1 --so the loop exits
 		yield("/wait 4")
