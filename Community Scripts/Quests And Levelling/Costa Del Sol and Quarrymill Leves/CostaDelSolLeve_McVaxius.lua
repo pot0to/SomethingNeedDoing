@@ -1,6 +1,7 @@
 --needs bunch of stuff ill document later maybe
 --put the sea pickles into chocobo
 --turnoff addon errors
+--cancel out blue menu wahtever leve so it snot in displayed list
 
 function visland_stop_moving()
  yield("/equipguud")
