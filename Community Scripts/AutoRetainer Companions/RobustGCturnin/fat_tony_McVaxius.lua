@@ -131,7 +131,9 @@ for i=1,#franchise_owners do
 	--first we have to find his neighbourhood, this uber driver better not complain
 	--are we on the right server already?
 	yield("/li "..tonys_turf)
-	yield("/wait 15")
+	yield("/wait 2")
+	yield("/pcall SelectYesno true 0")
+	yield("/wait 2")
 	CharacterSafeWait()
 	yield("/echo Processing Tony "..i.."/"..#franchise_owners)
 	
@@ -141,7 +143,7 @@ for i=1,#franchise_owners do
 			if tony_zoneID ~= GetZoneID() then --we are teleporting to Tony's spot
 				yield("/tp "..tonys_spot)
 				yield("/wait 2")
-				yield("/pcall SelectYesno true 0")  --this doesnt work. just use yesalready. putting it here for later in case someone else sorts it out i can update.
+				yield("/pcall SelectYesno true 0")
 				ZoneTransition()
 			end
 	end
@@ -166,7 +168,7 @@ for i=1,#franchise_owners do
 		visland_stop_moving()
 		if tony_type == 2 then
 			yield("/interact")
-			yield("/pcall SelectYesNo true 0")  --this doesnt work. just use yesalready. putting it here for later in case someone else sorts it out i can update.
+			yield("/pcall SelectYesno true 0")
 			yield("/wait 5")
 		end
 		approach_tony()
