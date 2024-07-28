@@ -204,7 +204,7 @@ local function shake_hands()
 	
 	--pcall way to transfer gil only. we can't pcall other methods
 	while get_to_the_choppa == 0 do
-		if GetGil() < (bagmans_take + 1) then
+		if (GetGil() < (bagmans_take + 1)) and (tony_type == 1 or tony_type == 3) then
 			get_to_the_choppa = 1
 		end
 		yield("/target "..fat_tony)
