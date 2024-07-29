@@ -39,6 +39,7 @@ internal class ClickCommand : MacroCommand
         var modsText = mods.Success ? mods.Value : string.Empty;
         _ = WaitModifier.TryParse(ref modsText, out var waitModifier);
 
+        text = !modsText.IsNullOrEmpty() ? text.Replace(modsText, string.Empty).Trim() : text.Trim();
         var match = Regex.Match(text.Replace(modsText, string.Empty).Trim());
         if (!match.Success)
             throw new MacroSyntaxError(text);
