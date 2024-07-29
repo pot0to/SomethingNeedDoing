@@ -40,10 +40,14 @@ fartingGoat = 1
 function turnin()
 	hehehe = 1
 	yield("/echo Quest list -> "..GetNodeText("_ToDoList", 8, 13))
-	
+	--check first two quests to see if they are the turnin ones. we can finally ignore blue menu now
 	while hehehe == 1 do
 		hehehe = 0
 		floob = GetNodeText("_ToDoList", 8, 13)
+		if floob == "A Recipe for Disaster" or floob == "Just Call Me Late for Dinner" or floob == "Kitchen Nightmares No More" then
+			hehehe = 1
+		end
+		floob = GetNodeText("_ToDoList", 9, 13)
 		if floob == "A Recipe for Disaster" or floob == "Just Call Me Late for Dinner" or floob == "Kitchen Nightmares No More" then
 			hehehe = 1
 		end

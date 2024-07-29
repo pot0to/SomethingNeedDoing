@@ -178,7 +178,7 @@ local function shake_hands()
 	get_to_the_choppa = 0
 	horrible_counter_method = 0
 	--get_to_the_choppa = 1 -- alternate exit var
-	while GetGil() > bagmans_take or get_to_the_choppa == 0 do
+--	while GetGil() > bagmans_take or get_to_the_choppa == 0 do
 	thebag = GetGil() - bagmans_take
 	if thebag < 0 then
 		thebag = GetGil()
@@ -203,7 +203,10 @@ local function shake_hands()
 	--yield("/echo our return mode will be "..franchise_owners[1][2])
 	
 	--pcall way to transfer gil only. we can't pcall other methods
-	while GetGil() > bagmans_take or get_to_the_choppa == 0 do
+	while get_to_the_choppa == 0 do
+		if (GetGil() < (bagmans_take + 1)) and (tony_type == 0 or tony_type == 2) then
+			get_to_the_choppa = 1
+		end
 		yield("/target "..fat_tony)
 		yield("/echo here you go "..fat_tony..", another full bag, with respect")
 		if bagman_type == 0 then
@@ -289,12 +292,11 @@ local function shake_hands()
 					get_to_the_choppa = 1
 					yield("/echo DEBUG moving towards exiting bagman type 2....")
 				end -- get out
-			end
-			
-			end
+			end		
 		end
-		yield("/wait 1")
 	end
+		yield("/wait 1")
+	--end
 	if bagman_type > 0 then
 	--get_to_the_choppa = 1 --so the loop exits
 		yield("/wait 4")
@@ -360,56 +362,56 @@ for i=1,#franchise_owners do
 		yield("/wait 5")
 	end
 	
-	--allright time for a road trip. tony needs that bag
-	road_trip = 1 --we took a road trip
-	--now we must head to the place we are meeting this filthy animal 
-	--first we have to find his neighbourhood, this uber driver better not complain
-	--are we on the right server already?
-	yield("/li "..tonys_turf)
-	yield("/wait 2")
-	yield("/pcall SelectYesno true 0")
-	yield("/wait 2")
-	CharacterSafeWait()
-	yield("/echo Processing Tony "..i.."/"..#franchise_owners)
-	
-	--now we have to walk or teleport?!!?!? to fat tony, where is he waiting this time?
-	if tony_type == 0 then
-		yield("/echo "..fat_tony.." is meeting us in the alleyways.. watch your back")
-			if tony_zoneID ~= GetZoneID() then --we are teleporting to Tony's spot
-				yield("/tp "..tonys_spot)
-				yield("/wait 2")
-				yield("/pcall SelectYesno true 0")
-				ZoneTransition()
-			end
-	end
-	if tony_type > 0 then
-		yield("/echo "..fat_tony.." is meeting us at the estate, we will approach with respect")
-		yield("/estatelist "..fat_tony)
-		yield("/wait 0.5")
-		--very interesting discovery
-		--1= personal, 0 = fc, 2 = apartment
-		yield("/pcall TeleportHousingFriend true "..tonys_house)
-		ZoneTransition()
-	end
-	geel = GetGil() --get the initial geel value
-	
-	--ok this filthy animal is nearby. let's approach this guy, weapons sheathed, we are just doing business
-	if tony_type == 0 then
-		approach_tony()
-		visland_stop_moving()
-	end
-	if tony_type == 1 then
-		approach_entrance()
-		visland_stop_moving()
-		if tony_type == 2 then
-			yield("/interact")
-			yield("/pcall SelectYesno true 0")
-			yield("/wait 5")
+	--allright time for a road trip. let get that bag to Tony
+	road_trip = 0
+	yield("GetGil() -> "..GetGil())
+	yield("bagmans_take -> "..bagmans_take)
+	--if GetGil() > bagmans_take then
+		road_trip = 1 --we took a road trip
+		--now we must head to fat_tony 
+		--first we have to find his neighbourhood, this uber driver better not complain
+		--are we on the right server already?
+		yield("/li "..tonys_turf)
+		yield("/wait 15")
+		CharacterSafeWait()
+		yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
+		
+		--now we have to walk or teleport?!!?!? to fat tony, where is he waiting this time?
+		if tony_type == 0 then
+			yield("/echo "..fat_tony.." is meeting us in the alleyways.. watch your back")
+				if tony_zoneID ~= GetZoneID() then --we are teleporting to Tony's spot
+					yield("/tp "..tonys_spot)
+					ZoneTransition()
+				end
 		end
-		approach_tony()
-		visland_stop_moving()
-	end
-	shake_hands() -- its a business doing pleasure with you tony as always
+		if tony_type > 0 then
+			yield("/echo "..fat_tony.." is meeting us at the estate, we will approach with respect")
+			yield("/estatelist "..fat_tony)
+			yield("/wait 0.5")
+			--very interesting discovery
+			--1= personal, 0 = fc, 2 = apartment
+			yield("/pcall TeleportHousingFriend true "..tonys_house)
+			ZoneTransition()
+		end
+		
+		--ok tony is nearby. let's approach this guy, weapons sheathed, we are just doing business
+		if tony_type == 0 then
+			approach_tony()
+			visland_stop_moving()
+		end
+		if tony_type == 1 then
+			approach_entrance()
+			visland_stop_moving()
+			if tony_type == 2 then
+				yield("/interact")
+				yield("/pcall SelectYesNo true 0")  --this doesnt work. just use yesalready. putting it here for later in case someone else sorts it out i can update.
+				yield("/wait 5")
+			end
+			approach_tony()
+			visland_stop_moving()
+		end
+		shake_hands() -- its a business doing pleasure with you tony as always
+	--end
 	if road_trip == 1 then --we need to get home
 		--time to go home.. maybe?
 		if franchise_owners[i][2] == 0 then
@@ -422,13 +424,13 @@ for i=1,#franchise_owners do
 			CharacterSafeWait()
 			--added 5 second wait here because sometimes they get stuck.
 			yield("/wait 5")
+			yield("/tp Estate Hall")
+			yield("/wait 1")
+			--yield("/waitaddon Nowloading <maxwait.15>")
+			yield("/wait 15")
+			yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+			--normal small house shenanigans
 			if franchise_owners[i][3] == 0 then
-				yield("/tp Estate Hall")
-				yield("/wait 1")
-				--yield("/waitaddon Nowloading <maxwait.15>")
-				yield("/wait 15")
-				yield("/waitaddon NamePlate <maxwait.600><wait.5>")
-				--normal small house shenanigans
 				yield("/hold W <wait.1.0>")
 				yield("/release W")
 				yield("/target Entrance <wait.1>")
@@ -447,7 +449,6 @@ for i=1,#franchise_owners do
 			end
 			--limsa bell
 			if franchise_owners[i][3] == 2 then
-				yield("/echo returning to limsa bell")
 				return_to_limsa_bell()
 			end
 		end
@@ -455,5 +456,4 @@ for i=1,#franchise_owners do
 end
 
 --what you thought your job was done you ugly mug? get back to work you gotta pay up that gil again next month!
---boss please i just collected the stuff be nice
 yield("/ays multi e")
