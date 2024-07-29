@@ -26,7 +26,7 @@ internal class ClickCommand : MacroCommand
     private string methodName;
     private readonly string[] values = [];
 
-    private ClickCommand(string text, string addon, string method, string[] mParams, WaitModifier wait) : base(text, wait)
+    private ClickCommand(string text, string addon, string method, string[] mParams) : base(text)
     {
         addonName = addon;
         methodName = method;
@@ -35,12 +35,7 @@ internal class ClickCommand : MacroCommand
 
     public static unsafe ClickCommand Parse(string text)
     {
-        var mods = Regex.Match(text, @"<[^>]*>");
-        var modsText = mods.Success ? mods.Value : string.Empty;
-        _ = WaitModifier.TryParse(ref modsText, out var waitModifier);
-
-        text = !modsText.IsNullOrEmpty() ? text.Replace(modsText, string.Empty).Trim() : text.Trim();
-        var match = Regex.Match(text.Replace(modsText, string.Empty).Trim());
+        var match = Regex.Match(text);
         if (!match.Success)
             throw new MacroSyntaxError(text);
 
@@ -49,7 +44,7 @@ internal class ClickCommand : MacroCommand
         var methodName = clickValue[1];
         var values = clickValue.Skip(2).ToArray();
 
-        return new ClickCommand(text, addonName, methodName, values, waitModifier);
+        return new ClickCommand(text, addonName, methodName, values);
     }
 
     public override async Task Execute(ActiveMacro macro, CancellationToken token)
