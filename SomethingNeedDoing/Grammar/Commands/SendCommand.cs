@@ -1,5 +1,4 @@
 using Dalamud.Game.ClientState.Keys;
-using ECommons.Automation;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;

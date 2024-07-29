@@ -592,7 +592,7 @@ internal class HelpWindow : Window
     {
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
-        var text = @"
+        var text = @$"
 Lua scripts work by yielding commands back to the macro engine.
 
 For example:
@@ -600,18 +600,15 @@ For example:
 yield(""/ac Muscle memory <wait.3>"")
 yield(""/ac Precise touch <wait.2>"")
 yield(""/echo done!"")
-...and so on.".Trim();
+...and so on.
 
-        //Every script is able to access these global variables:
-        //Interface, IClientState, IGameGui, IDataManager, IBuddyList, IChatGui, ICommandManager, ICondition, IFateTable, IFlyTextGui, IFramework, IGameNetwork, IJobGauges, IKeyState, ILibcFunction, IObjectTable, IPartyFinderGui, IPartyList, ISigScanner, ITargetManager, IToastGui, IGameConfig, IGameLifecycle, IGamepadState, IDtrBar, IDutyState, IGameInteropProvider, ITextureProvider, IPluginLog, IAddonLifecycle, IAetheryteList, IAddonEventManager, ITextureSubstitution, ITitleScreenMenu,
+Every script has access to these global variables:
+{string.Join(", ", typeof(Svc).GetProperties().Select(p => p.Name))}
+
+They are Dalamud services, whose code is available here
+https://github.com/goatcorp/Dalamud/tree/master/Dalamud/Plugin/Services".Trim();
 
         //ActionManager, AgentMap, EnvManager, EventFramework, FateManager, Framework, InventoryManager, LimitBreakController, PlayerState, QuestManager, RouletteController, UIState
-
-        //They are Dalamud services, whose code is available here
-        //https://github.com/goatcorp/Dalamud/tree/master/Dalamud/Plugin/Services.
-
-        //Many custom functions in SND are simple wrappers around these, but with the global variables
-        //you can get many properties and functions directly without them needing wrappers added to SND itself.
 
         ImGui.TextWrapped(text);
         ImGui.Separator();

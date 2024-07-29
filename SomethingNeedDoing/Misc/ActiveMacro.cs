@@ -267,9 +267,11 @@ internal partial class ActiveMacro : IDisposable
         lua.DoString(FStringSnippet);
         lua.DoString(PackageSearchersSnippet);
 
-        foreach (string path in Service.Configuration.LuaRequirePaths) {
+        foreach (var p in typeof(Svc).GetProperties())
+            lua[p.Name] = p.GetValue(typeof(Svc));
+
+        foreach (var path in Service.Configuration.LuaRequirePaths)
             lua.DoString($"table.insert(snd.require.paths, '{path}')");
-        }
 
         var results = lua.DoString(script);
 

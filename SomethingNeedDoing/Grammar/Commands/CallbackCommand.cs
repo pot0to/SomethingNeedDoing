@@ -17,7 +17,7 @@ internal class CallbackCommand : MacroCommand
     public static string Description => "Send arbitrary inputs to most addons in the game.";
     public static string[] Examples => ["/callback AddonName UpdateState [AtkValues]", "/callback FashionCheck true -1"];
 
-    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<addon>\b\w+\b)\s+(?<updateState>true|false)\s+(?<values>(true|false|\b\w+\b|-?\d+|""[^""]+"")(\s+(true|false|\b\w+\b|-?\d+|""[^""]+""))*)\s*$", RegexOptions.Compiled);
+    private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<addon>\b\w+\b)\s+(?<updateState>true|false)\s+(?<values>(true|false|\b\w+\b|-?\d+|""[^""]+"")(\s+(true|false|\b\w+\b|-?\d+|""[^""]+""))*).*$", RegexOptions.Compiled);
     private readonly unsafe string addon;
     private readonly bool updateState;
     private readonly List<object> valueArgs = [];

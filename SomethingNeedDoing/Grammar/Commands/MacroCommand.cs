@@ -1,4 +1,3 @@
-using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
 using System;

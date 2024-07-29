@@ -35,9 +35,11 @@ internal class ClickCommand : MacroCommand
 
     public static unsafe ClickCommand Parse(string text)
     {
-        _ = WaitModifier.TryParse(ref text, out var waitModifier);
+        var mods = Regex.Match(text, @"<[^>]*>");
+        var modsText = mods.Success ? mods.Value : string.Empty;
+        _ = WaitModifier.TryParse(ref modsText, out var waitModifier);
 
-        var match = Regex.Match(text);
+        var match = Regex.Match(text.Replace(modsText, string.Empty).Trim());
         if (!match.Success)
             throw new MacroSyntaxError(text);
 
