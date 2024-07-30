@@ -10,16 +10,18 @@ visland
 
 *optional:
 bring some gysahl greens
+bring some food and configure it properly
 discardhelper
 lazyloot plugin (if your doing anything other than fates)
 VBM/BMR (bmr has slash commands for following)
-RS/RSR (is RS still being updated?)
+RSR (is RS still being updated?)
 
 ***Few annoying problems that still exist
---*dont follow during combat unless non caster. will require bmr contemplation
---*how do we change instances #s maybe custom chat commands? lifestream /li # works. now to add nodetext scanning for group. also have to use target and lockon until lim fixes /li x without los
---*it still doesnt follow in some weird cases
---*it doesnt startup lazyloot unless you run it twice???  do we need a longer delay on that part ?
+*dont follow during combat unless non caster. will require bmr contemplation - seems bmr has contemplated it with distance command will consider adding new setting for this :~D
+*how do we change instances #s maybe custom chat commands? lifestream /li # works. now to add nodetext scanning for group. also have to use target and lockon until lim fixes /li x without los
+	this is insanely buggy and perhaps crashy.. nodetext scanning too fast will break things
+*it still doesnt follow in some weird cases
+*lazyloot is a toggle not on or off so you have to turn it on yourself
 ]]
 
 --*****************************************************************
@@ -143,7 +145,7 @@ fool_flier = ini_check("fool_flier", "Beast with 3 backs")	--if you have fly you
 fulftype = ini_check("fulftype", "unchanged")				-- If you have lazyloot installed AND enabled (has to be done manually as it only has a toggle atm) can setup how loot is handled. Leave on "unchanged" if you don't want it to set your loot settings. Other settings include need, greed, pass
 cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistance
 force_gyasahl = ini_check("force_gyasahl", false) 	   		-- force gysahl green usage . maybe cause problems in towns with follow
-clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr, 3 = automaton autofollow, 4 = vanilla game follow
+clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr follow leader, 3 = automaton autofollow, 4 = vanilla game follow
 clingtypeduty = ini_check("clingtypeduty", 2)				-- do we need a diff clingtype in duties? use same numbering as above 
 maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
 limitpct = ini_check("limitpct", -1)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap, -1 disables it
@@ -160,6 +162,8 @@ formation = ini_check("formation", false)					-- Follow in formation? If false, 
 						3		2
 						7	4	6
 						]]
+--this next setting is a dud for now until i figure out how to do it
+--seems like we will need to use puppetmaster.... ill carefully test this https://github.com/Aspher0/PuppetMaster_Fork
 binstance = ini_check("binstance", "let us travel to instance")				--[[ group instance change prefix, it will take " x" where x is the instance number as an argument, so you can setup qolbar keys with lines like this presumable
 after changing instances, followers will /cl their chat windows
 exmample qolbar for telling group to go instance 2
