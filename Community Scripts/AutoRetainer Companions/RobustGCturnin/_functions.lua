@@ -1,7 +1,16 @@
 function become_feesher()
 	yield("/equipjob fsh")
+	yield("/wait 0.5")
 	yield("/equipitem 2571") --weathered fishing rod
-	yield("/equipitem 35393") --weathered fishing rod
+	yield("/wait 0.5")
+	yield("/equipitem 35393") --integral fishing rod
+	yield("/wait 0.5")
+	yield("/equipjob fsh")
+	yield("/wait 0.5")
+	yield("/equipitem 2571") --weathered fishing rod
+	yield("/wait 0.5")
+	yield("/equipitem 35393") --integral fishing rod
+	yield("/wait 0.5")
 end
 
 function ungabunga()

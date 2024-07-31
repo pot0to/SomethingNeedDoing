@@ -223,8 +223,10 @@ function fishing()
 		   yield("/wait 5")
 		end
 		if GetCharacterCondition(43)==false then
-			yield("/ac cast")
-			yield("/wait 1")
+			if GetZoneID() ~= 132 then
+				yield("/ac cast")
+				yield("/wait 1")
+			end
 		end
 		--try to exit the completion window faster
 		if IsAddonVisible("IKDResult") then
@@ -242,8 +244,11 @@ function fishing()
 		end
 		yield("/wait 1")
 	end
+	visland_stop_moving()
 	yield("/wait 30")
 	ungabungabunga()
+	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+	
 	--if we are tp to limsa bell
 	if which_one[feesh_c][2] == 2 then
 		return_to_limsa_bell()
@@ -267,6 +272,7 @@ function fishing()
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
 	if which_one[feesh_c][2] == 0 or which_one[feesh_c][2] == 1 then
 		--yield("/tp Estate Hall (Free Company)")
+		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 		yield("/li fc")
 		yield("/wait 1")
 		--yield("/waitaddon Nowloading <maxwait.15>")
