@@ -1,3 +1,9 @@
+function become_feesher()
+	yield("/equipjob fsh")
+	yield("/equipitem 2571") --weathered fishing rod
+	yield("/equipitem 35393") --weathered fishing rod
+end
+
 function ungabunga()
 	yield("/send ESCAPE <wait.1.5>")
 	yield("/send ESCAPE <wait.1.5>")

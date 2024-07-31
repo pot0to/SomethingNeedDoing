@@ -128,7 +128,7 @@ function fishing()
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 
-	yield("/equipjob fsh")
+	become_feesher()
 	yield("/lockon on")
 	yield("/automove on")
 	yield("/send D")
@@ -142,7 +142,7 @@ function fishing()
 	yield("/wait 10")
 
 	yield("/ac sprint")
-	yield("/equipjob fsh")
+	become_feesher()
 		
 	--repair catte if we are at 99% durability or lower and have at least 5000 gil
 	while NeedsRepair(99) and  GetItemCount(1) > 4999 do
@@ -242,8 +242,8 @@ function fishing()
 		end
 		yield("/wait 1")
 	end
-
 	yield("/wait 30")
+	ungabungabunga()
 	--if we are tp to limsa bell
 	if which_one[feesh_c][2] == 2 then
 		return_to_limsa_bell()
@@ -266,7 +266,8 @@ function fishing()
 	
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
 	if which_one[feesh_c][2] == 0 or which_one[feesh_c][2] == 1 then
-		yield("/tp Estate Hall (Free Company)")
+		--yield("/tp Estate Hall (Free Company)")
+		yield("/li fc")
 		yield("/wait 1")
 		--yield("/waitaddon Nowloading <maxwait.15>")
 		yield("/wait 15")
