@@ -45,10 +45,14 @@ Yesalready configs
 "Bothers"
 	[x] Contents Finder Confirm  (auto confirm queueing)
 
+Required script:
+https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/AutoRetainer%20Companions/RobustGCturnin/_functions.lua
+
+place into %AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 ---------
 ---TODO
 ---------
---add in a (self generating) tracking file that checks levels of chars. if they are under 90 (for now, 100 in DT) they will be considered. and lowest level one will be selected
+--add in a (self generating) tracking file that checks levels of chars. if they are under 100 in DT they will be considered. and lowest level one will be selected
 
 ------------------------------------------------
 ------------------------------------------------
