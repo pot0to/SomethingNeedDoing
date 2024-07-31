@@ -6,6 +6,20 @@ function ungabunga()
 	yield("/wait 3")
 end
 
+function ungabungabunga()
+	tobungaorunga = 0
+	while tobungaorunga == 0 do
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1>")
+		yield("/wait 3")
+		if IsPlayerAvailable() == true then
+			tobungaorunga = 1
+		end
+	end
+end
+
 function generateRandomLetter(cappy)
     local uppercase = math.random(65, 90) -- ASCII codes for uppercase letters
     local lowercase = math.random(97, 122) -- ASCII codes for lowercase letters

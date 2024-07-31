@@ -68,57 +68,10 @@ pre fishing condition 1
 33 34 while looking at leave menu, 35 is off _> this is what we use
 ]]--
 
-function ZoneTransition()
-	iswehehe = IsPlayerAvailable() 
-	iswoah = 0
-    repeat 
-        yield("/wait 0.5")
-        yield("/echo Are we ready? -> "..iswoah.."/20")
-		iswehehe = IsPlayerAvailable() 
-		iswoah = iswoah + 1
-		if 	iswoah == 20 then
-			iswehehe = false
-		end
-    until not iswehehe
-	iswoah = 0
-    repeat 
-        yield("/wait 0.5")
-        yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
-		iswehehe = IsPlayerAvailable() 
-		iswoah = iswoah + 1
-		if 	iswoah == 20 then
-			iswehehe = true
-		end
-    until iswehehe
-end
-
-function return_to_limsa_bell()
-	yield("/tp Limsa Lominsa")
-	ZoneTransition()
-	yield("/wait 2")
-	PathfindAndMoveTo(-125.440284729, 18.0, 21.004405975342, false)
-	visland_stop_moving() --added so we don't accidentally end before we get to the inn person
-end
-
-function visland_stop_moving()
- yield("/wait 3")
- muuv = 1
- muuvX = GetPlayerRawXPos()
- muuvY = GetPlayerRawYPos()
- muuvZ = GetPlayerRawZPos()
- while muuv == 1 do
-	yield("/wait 1")
-	if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
-		muuv = 0
-	end
-	muuvX = GetPlayerRawXPos()
-	muuvY = GetPlayerRawYPos()
-	muuvZ = GetPlayerRawZPos()
- end
- yield("/echo movement stopped - time for GC turn ins or whatever")
- yield("/visland stop")
- yield("/wait 3")
-end
+loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
+functionsToLoad = loadfile(loadfiyel)
+functionsToLoad()
+DidWeLoadcorrectly()
 
 -- random number function
 function getRandomNumber(min, max)
@@ -203,11 +156,7 @@ function fishing()
 		yield("/wait 1")
 		yield("/pcall Repair true 1")
 		yield("/wait 1")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1>")
-		yield("/wait 3")
+		ungabunga()
 	end
 
 	--dryskthota
@@ -221,10 +170,7 @@ function fishing()
 		yield("/target Dryskthota")
 		yield("/pinteract <wait.2>")
 		yield("/wait 1")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1>")
+		ungabunga()
 		yield("/wait 10")
 		fishqtest = GetCharacterCondition(91)
 		toolong = toolong  + 1
@@ -379,9 +325,7 @@ while true do
 		if GetCharacterCondition(32)==false then
 			 --yield("/ays multi")
 			 yield("/ays multi d")
-		 	 yield("/send ESCAPE <wait.1.5>")
-			 yield("/send ESCAPE <wait.1.5>")
-			 yield("/send ESCAPE <wait.1.5>")
+		 	 ungabungabunga() -- we really really try hard to be safe here
 			 yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 			 fishing()
 			 --drop a log file entry on the charname + Level
