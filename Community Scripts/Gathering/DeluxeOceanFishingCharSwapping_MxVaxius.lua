@@ -124,11 +124,11 @@ function fishing()
 	yield("/tp Limsa Lominsa Lower Decks <wait.5>")
 	yield("/waitaddon _ActionBar <maxwait.600><wait.10>")
 	
+	--[[
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 
-	--[[
 	become_feesher()
 	yield("/lockon on")
 	yield("/automove on")
