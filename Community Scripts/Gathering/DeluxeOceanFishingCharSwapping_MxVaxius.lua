@@ -27,7 +27,7 @@ firstname last name@server (obvious), ?
 Required plogons
 vnavmesh
 visland
-Autohook -> just setup a autocast thing. and get your versatile lure selected as bait :P the 10 free ones will take you to 90
+Autohook -> just setup a autocast thing. and get your versatile lure selected as bait :P the 10 free ones will take you to 100
 autoretainer -> you need to NOT use "wait in lobby" in autoretainer, also turn multi on before starting the script or it wont get turned on until after the first ocean fishign happens.
 liza's discard helper (make your own fish list)
 something need doing (to run this script)
