@@ -17,8 +17,8 @@ local which_one = {
 
 --[[
 the above table works like this:
-firstname last name@server (obvious), ?
-? = 0 or 1,
+firstname last name@server, ?
+? = 0, 1, 2, 3
 0 means teleport to fc estate and try to get into FC entrance. 
 1 means teleport to fc estate and use a nearby retainer bell (navmesh)
 2 means teleport to limsa and go to the nearby bell
