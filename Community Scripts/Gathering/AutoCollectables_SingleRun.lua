@@ -124,6 +124,8 @@ function collect_all()
     if (current_coll() == 0) then return end
 
     while((actions_left() > 0) and IsAddonReady("GatheringMasterpiece")) do
+        if actions_left() == max_actions() and current_coll() == 0 then return end
+        
         gain_more_action()
 
         Id_Print("Actions left: "..actions_left())
@@ -305,6 +307,7 @@ function ephemeral()
 end
 
 function main()
+    ::REVISIT::
     while(not IsAddonReady("GatheringMasterpiece")) do
         Id_Print("Waiting for node...")
         yield("/wait "..interval_rate)
@@ -331,6 +334,8 @@ function main()
     else
         ephemeral()
     end
+
+    if actions_left() == max_actions() and current_coll() == 0 then goto REVISIT end
 
     Id_Print("Done gathering!")
     yield("/wait "..time_to_wait_after_gather)
