@@ -1,6 +1,6 @@
 --log path - change this to a valid path. foreward slashes are actually backslashes, don't use backslashes unless you know how to escape them properly.
 local folderPath = "F:/FF14/!gil/"
--- first char cardinality and variable declaration
+-- first char cardinality and variable declaration . useful for resuming at a later point in the list if you have to break the script for some reason such as reloading game or.. playing it haha
 local feesh_c = 1
 
 --define the fisherpeople here
