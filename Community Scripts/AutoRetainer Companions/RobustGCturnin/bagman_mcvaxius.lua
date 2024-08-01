@@ -259,6 +259,7 @@ local function shake_hands()
 				end
 				if snaccman > 0 then
 					DropboxSetItemQuantity(1,false,snaccman)
+					yield("/echo here you go, all ... of...the...gil!")
 				end
 			end
 			if bagman_type == 2 then
