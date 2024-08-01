@@ -245,16 +245,6 @@ local function shake_hands()
 					DropboxSetItemQuantity(filled_bags[i][1],true,filled_bags[i][2])
 					yield("/wait 0.5")
 				end
-				if bagman_type == 3 then
-					snaccman = GetGil() - bagmans_take
-					if snaccman < 0 then
-						snaccman = 0
-					end
-					if snaccman > 0 then
-						DropboxSetItemQuantity(1,false,snaccman)
-					end
-				end
-				end
 				horrible_counter_method = horrible_counter_method + 1
 				yield("/echo DEBUG bagman type 1 processing....")
 				if horrible_counter_method > 1 then
@@ -262,17 +252,18 @@ local function shake_hands()
 					yield("/echo DEBUG moving towards exiting bagman type 1....")
 				end -- get out
 			end
-			if bagman_type == 2 then
+			if bagman_type == 2 or bagman_type == 3 then
 				snaccman = GetGil() - bagmans_take
 				if snaccman < 0 then
 					snaccman = 0
 				end
+				if snaccman > 0 then
+					DropboxSetItemQuantity(1,false,snaccman)
+				end
+			end
+			if bagman_type == 2 then
 				yield("/dropbox")
 				yield("/wait 0.5")
-				if snaccman > 0 then
-					--yield("/dbq 1:"..snaccman) -- we can't rob tony.. yet
-					DropboxSetItemQuantity(1,false,snaccman)
-				end					
 				DropboxSetItemQuantity(22500,false,999999)
 				DropboxSetItemQuantity(22501,false,999999)
 				DropboxSetItemQuantity(22502,false,999999)
@@ -281,16 +272,7 @@ local function shake_hands()
 				DropboxSetItemQuantity(22505,false,999999)
 				DropboxSetItemQuantity(22506,false,999999)
 				DropboxSetItemQuantity(22507,false,999999)
-				--[[
-				yield("/dbq 22500:*")  --  22500  Salvaged
-				yield("/dbq 22501:*")  --  22501  Salvaged
-				yield("/dbq 22502:*")  --  22502  Salvaged
-				yield("/dbq 22503:*")  --  22503  Salvaged
-				yield("/dbq 22504:*")  --  22504  Salvaged
-				yield("/dbq 22505:*")  --  22505  Salvaged
-				yield("/dbq 22506:*")  --  22506  Salvaged
-				yield("/dbq 22507:*")  --  22507  Salvaged
-				]]
+
 				if GetItemCount(22500) == 0 and GetItemCount(22501) == 0 and GetItemCount(22502) == 0 and GetItemCount(22503) == 0 and GetItemCount(22504) == 0 and GetItemCount(22505) == 0 and GetItemCount(22506) == 0 and GetItemCount(22507) == 0 then
 					if GetGil() == snaccman then
 						get_to_the_choppa = 1
