@@ -1,9 +1,61 @@
+function become_feesher()
+	yield("/equipitem 2571") --weathered fishing rod
+	yield("/wait 0.5")
+	yield("/equipitem 35393") --integral fishing rod
+	yield("/wait 0.5")
+	yield("/equipjob fsh")
+	yield("/wait 0.5")
+	--check if we can become fisher
+	if GetItemCount(35393) == 0 and GetItemCount(2571) == 0 and GetClassJobId() ~= 18 then
+		visland_stop_moving()
+		yield("/vnavmesh moveto -246.67446899414 16.199998855591 41.268531799316")
+		visland_stop_moving()
+		yield("/echo No rod so we buy one and equip it!")
+		yield("/target Syneyhil")
+		yield("/wait 2")
+		yield("/interact")
+		yield("/wait 2")
+		yield("/pcall SelectIconString true 1 <wait.2>")
+		yield("/pcall SelectString true 0 <wait.2>")
+		yield("/pcall Shop true 0 4 1 <wait.1.0>")
+		yield("/pcall Shop true -1 <wait.1.0>")
+		visland_stop_moving()
+		ungabunga()
+		yield("/equipitem 2571") --weathered fishing rod
+		yield("/wait 0.5")
+		yield("/equipitem 35393") --integral fishing rod
+		yield("/wait 0.5")
+		yield("/equipjob fsh")
+		yield("/wait 0.5")
+		yield("/equipitem 2571") --weathered fishing rod
+		yield("/wait 0.5")
+		yield("/equipitem 35393") --integral fishing rod
+		yield("/wait 0.5")
+		yield("/equipjob fsh")
+		yield("/wait 0.5")
+	end
+end
+
 function ungabunga()
 	yield("/send ESCAPE <wait.1.5>")
 	yield("/send ESCAPE <wait.1.5>")
 	yield("/send ESCAPE <wait.1.5>")
 	yield("/send ESCAPE <wait.1>")
 	yield("/wait 3")
+end
+
+function ungabungabunga()
+	tobungaorunga = 0
+	while tobungaorunga == 0 do
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1.5>")
+		yield("/send ESCAPE <wait.1>")
+		yield("/wait 3")
+		if IsPlayerAvailable() == true then
+			tobungaorunga = 1
+		end
+	end
 end
 
 function generateRandomLetter(cappy)

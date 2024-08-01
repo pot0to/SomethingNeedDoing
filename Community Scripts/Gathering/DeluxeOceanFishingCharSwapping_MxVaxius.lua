@@ -45,10 +45,14 @@ Yesalready configs
 "Bothers"
 	[x] Contents Finder Confirm  (auto confirm queueing)
 
+Required script:
+https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/AutoRetainer%20Companions/RobustGCturnin/_functions.lua
+
+place into %AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 ---------
 ---TODO
 ---------
---add in a (self generating) tracking file that checks levels of chars. if they are under 90 (for now, 100 in DT) they will be considered. and lowest level one will be selected
+--add in a (self generating) tracking file that checks levels of chars. if they are under 100 in DT they will be considered. and lowest level one will be selected
 
 ------------------------------------------------
 ------------------------------------------------
@@ -68,57 +72,10 @@ pre fishing condition 1
 33 34 while looking at leave menu, 35 is off _> this is what we use
 ]]--
 
-function ZoneTransition()
-	iswehehe = IsPlayerAvailable() 
-	iswoah = 0
-    repeat 
-        yield("/wait 0.5")
-        yield("/echo Are we ready? -> "..iswoah.."/20")
-		iswehehe = IsPlayerAvailable() 
-		iswoah = iswoah + 1
-		if 	iswoah == 20 then
-			iswehehe = false
-		end
-    until not iswehehe
-	iswoah = 0
-    repeat 
-        yield("/wait 0.5")
-        yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
-		iswehehe = IsPlayerAvailable() 
-		iswoah = iswoah + 1
-		if 	iswoah == 20 then
-			iswehehe = true
-		end
-    until iswehehe
-end
-
-function return_to_limsa_bell()
-	yield("/tp Limsa Lominsa")
-	ZoneTransition()
-	yield("/wait 2")
-	PathfindAndMoveTo(-125.440284729, 18.0, 21.004405975342, false)
-	visland_stop_moving() --added so we don't accidentally end before we get to the inn person
-end
-
-function visland_stop_moving()
- yield("/wait 3")
- muuv = 1
- muuvX = GetPlayerRawXPos()
- muuvY = GetPlayerRawYPos()
- muuvZ = GetPlayerRawZPos()
- while muuv == 1 do
-	yield("/wait 1")
-	if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
-		muuv = 0
-	end
-	muuvX = GetPlayerRawXPos()
-	muuvY = GetPlayerRawYPos()
-	muuvZ = GetPlayerRawZPos()
- end
- yield("/echo movement stopped - time for GC turn ins or whatever")
- yield("/visland stop")
- yield("/wait 3")
-end
+loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
+functionsToLoad = loadfile(loadfiyel)
+functionsToLoad()
+DidWeLoadcorrectly()
 
 -- random number function
 function getRandomNumber(min, max)
@@ -171,7 +128,8 @@ function fishing()
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 
-	yield("/equipjob fsh")
+	--[[
+	become_feesher()
 	yield("/lockon on")
 	yield("/automove on")
 	yield("/send D")
@@ -183,9 +141,11 @@ function fishing()
 	yield("/pcall TelepotTown false 11 3u <wait.1>") -- Arcanists' Guild
 	yield("/pcall TelepotTown false 11 3u <wait.1>")
 	yield("/wait 10")
+	]]
 
 	yield("/ac sprint")
-	yield("/equipjob fsh")
+	become_feesher()
+	--if all good then we move on to next part automagically
 		
 	--repair catte if we are at 99% durability or lower and have at least 5000 gil
 	while NeedsRepair(99) and  GetItemCount(1) > 4999 do
@@ -203,11 +163,7 @@ function fishing()
 		yield("/wait 1")
 		yield("/pcall Repair true 1")
 		yield("/wait 1")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1>")
-		yield("/wait 3")
+		ungabunga()
 	end
 
 	--dryskthota
@@ -221,10 +177,7 @@ function fishing()
 		yield("/target Dryskthota")
 		yield("/pinteract <wait.2>")
 		yield("/wait 1")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1>")
+		ungabunga()
 		yield("/wait 10")
 		fishqtest = GetCharacterCondition(91)
 		toolong = toolong  + 1
@@ -273,8 +226,10 @@ function fishing()
 		   yield("/wait 5")
 		end
 		if GetCharacterCondition(43)==false then
-			yield("/ac cast")
-			yield("/wait 1")
+			if GetZoneID() ~= 132 then
+				yield("/ac cast")
+				yield("/wait 1")
+			end
 		end
 		--try to exit the completion window faster
 		if IsAddonVisible("IKDResult") then
@@ -292,8 +247,11 @@ function fishing()
 		end
 		yield("/wait 1")
 	end
-
+	visland_stop_moving()
 	yield("/wait 30")
+	ungabungabunga()
+	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+	
 	--if we are tp to limsa bell
 	if which_one[feesh_c][2] == 2 then
 		return_to_limsa_bell()
@@ -316,7 +274,9 @@ function fishing()
 	
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
 	if which_one[feesh_c][2] == 0 or which_one[feesh_c][2] == 1 then
-		yield("/tp Estate Hall (Free Company)")
+		--yield("/tp Estate Hall (Free Company)")
+		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+		yield("/li fc")
 		yield("/wait 1")
 		--yield("/waitaddon Nowloading <maxwait.15>")
 		yield("/wait 15")
@@ -379,9 +339,7 @@ while true do
 		if GetCharacterCondition(32)==false then
 			 --yield("/ays multi")
 			 yield("/ays multi d")
-		 	 yield("/send ESCAPE <wait.1.5>")
-			 yield("/send ESCAPE <wait.1.5>")
-			 yield("/send ESCAPE <wait.1.5>")
+		 	 ungabungabunga() -- we really really try hard to be safe here
 			 yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 			 fishing()
 			 --drop a log file entry on the charname + Level

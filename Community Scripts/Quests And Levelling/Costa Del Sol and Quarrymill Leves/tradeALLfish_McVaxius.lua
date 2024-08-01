@@ -9,6 +9,7 @@ DropboxSetItemQuantity(4894,false,999999)
 DropboxSetItemQuantity(4895,false,999999)
 DropboxSetItemQuantity(4892,false,999999)
 --quarrymill fish
+DropboxSetItemQuantity(4943,false,999999)
 DropboxSetItemQuantity(4945,false,999999)
 DropboxSetItemQuantity(4967,false,999999)
 DropboxSetItemQuantity(4964,false,999999)
