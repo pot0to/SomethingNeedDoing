@@ -56,7 +56,7 @@ tony_zoneID = 132 --this is the zone id for where the aetheryte is, if its anyth
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
 tony_type = 0 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
 bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
-bagman_type = 0 --0 = pcalls (gil only, a bit sloppy too with no multi tony support), 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil
+bagman_type = 0 --0 = pcalls (gil only, a bit sloppy too with no multi tony support), 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil, 3 = table config w bagman cut
 tonyception = 0 --0 = dont be fancy, 1 = we have multiple fat tonies in the table and therefore we need to give 1 gil at the end of the trade so tony will leave and the next tony can come
 
 --[[
@@ -238,12 +238,22 @@ local function shake_hands()
 			yield("/focustarget <t>")
 			yield("/wait 0.5")
 			--are_we_there_yet_jimmy() --setup exit conditions
-			if bagman_type == 1 then
+			if bagman_type == 1 or bagman_type == 3 then
 				for i=1, #filled_bags do
 					yield("/echo attempting to add stuff to the bag....")
 					DropboxSetItemQuantity(filled_bags[i][1],false,filled_bags[i][2])
 					DropboxSetItemQuantity(filled_bags[i][1],true,filled_bags[i][2])
 					yield("/wait 0.5")
+				end
+				if bagman_type == 3 then
+					snaccman = GetGil() - bagmans_take
+					if snaccman < 0 then
+						snaccman = 0
+					end
+					if snaccman > 0 then
+						DropboxSetItemQuantity(1,false,snaccman)
+					end
+				end
 				end
 				horrible_counter_method = horrible_counter_method + 1
 				yield("/echo DEBUG bagman type 1 processing....")

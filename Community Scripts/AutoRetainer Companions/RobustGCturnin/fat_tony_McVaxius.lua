@@ -39,7 +39,7 @@ tony firstname, lastname, meeting locationtype, returnhome 1 = yes 0 = no, 0 = f
 
 local franchise_owners = {
 {"Firstname Lastname@Server", 1, 2},  --return to limsa
-{"Firstname Lastname@Server", 1, 0},  --return to fc entrance
+{"Firstname Lastname@Server", 0, 0},  --dont return home because next line a diff bagman is giving me stuff !
 {"Firstname Lastname@Server", 1, 0},  --return to fc entrance
 {"Firstname Lastname@Server", 1, 0},  --return to fc entrance
 {"Firstname Lastname@Server", 1, 0}  --return to fc entrance
