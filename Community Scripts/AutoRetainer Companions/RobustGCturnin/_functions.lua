@@ -1,4 +1,22 @@
 function become_feesher()
+	--check if we can become fisher
+	--get to second vendor
+	 if GetItemCount(35393) == 0 and GetItemCount(2571) == 0 then
+		visland_stop_moving()
+		yield("/vnavmesh moveto -246.67446899414 16.199998855591 41.268531799316")
+		visland_stop_moving()
+		yield("/echo No rod so we buy one and equip it!")
+		yield("/target Syneyhil")
+		yield("/wait 2")
+		yield("/interact")
+		yield("/wait 2")
+		yield("/pcall SelectIconString true 1 <wait.2>")
+		yield("/pcall SelectString true 0 <wait.2>")
+		yield("/pcall Shop true 0 4 1 <wait.1.0>")
+		yield("/pcall Shop true -1 <wait.1.0>")
+		visland_stop_moving()
+		ungabunga()
+	end
 	yield("/equipjob fsh")
 	yield("/wait 0.5")
 	yield("/equipitem 2571") --weathered fishing rod

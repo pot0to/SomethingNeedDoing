@@ -128,6 +128,7 @@ function fishing()
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 
+	--[[
 	become_feesher()
 	yield("/lockon on")
 	yield("/automove on")
@@ -140,9 +141,11 @@ function fishing()
 	yield("/pcall TelepotTown false 11 3u <wait.1>") -- Arcanists' Guild
 	yield("/pcall TelepotTown false 11 3u <wait.1>")
 	yield("/wait 10")
+	]]
 
 	yield("/ac sprint")
 	become_feesher()
+	--if all good then we move on to next part automagically
 		
 	--repair catte if we are at 99% durability or lower and have at least 5000 gil
 	while NeedsRepair(99) and  GetItemCount(1) > 4999 do
