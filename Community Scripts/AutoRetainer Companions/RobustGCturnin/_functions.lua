@@ -1,7 +1,12 @@
 function become_feesher()
+	yield("/equipjob fsh")
+	yield("/wait 0.5")
+	yield("/equipitem 2571") --weathered fishing rod
+	yield("/wait 0.5")
+	yield("/equipitem 35393") --integral fishing rod
+	yield("/wait 0.5")
 	--check if we can become fisher
-	--get to second vendor
-	 if GetItemCount(35393) == 0 and GetItemCount(2571) == 0 then
+	if GetItemCount(35393) == 0 and GetItemCount(2571) == 0 and GetClassJobId() ~= 18 then
 		visland_stop_moving()
 		yield("/vnavmesh moveto -246.67446899414 16.199998855591 41.268531799316")
 		visland_stop_moving()
