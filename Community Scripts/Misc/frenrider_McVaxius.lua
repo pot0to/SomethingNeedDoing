@@ -2,6 +2,15 @@
 --meant to use when your ahh botting treasure maps or fates with alts, but playing main char manually :~D
 
 --[[
+*repos sorted by length of string.
+https://plugins.carvel.li
+https://love.puni.sh/ment.json
+https://puni.sh/api/repository/veyn
+https://puni.sh/api/repository/croizat
+https://puni.sh/api/repository/taurenkey
+https://raw.githubusercontent.com/SubZero0/Dalamud.SkipCutscene/dist/repo.json
+https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/pluginmaster.json
+
 *requirements:
 croizats SND - disable SND targeting in config
 simpletweaks with targeting fix enabled
@@ -12,8 +21,9 @@ visland
 bring some gysahl greens
 bring some food and configure it properly
 discardhelper
+cutscene skipper (MSQ roullette cutscenes)
 lazyloot plugin (if your doing anything other than fates)
-VBM/BMR (bmr has slash commands for following)
+VBM/BMR (bmr has slash commands for following and more modules)
 RSR (is RS still being updated?)
 
 ***Few annoying problems that still exist
@@ -164,7 +174,8 @@ formation = ini_check("formation", false)					-- Follow in formation? If false, 
 						]]
 --this next setting is a dud for now until i figure out how to do it
 --seems like we will need to use puppetmaster.... ill carefully test this https://github.com/Aspher0/PuppetMaster_Fork
-binstance = ini_check("binstance", "let us travel to instance")				--[[ group instance change prefix, it will take " x" where x is the instance number as an argument, so you can setup qolbar keys with lines like this presumable
+--binstance = ini_check("binstance", "let us travel to instance")
+				--[[ group instance change prefix, it will take " x" where x is the instance number as an argument, so you can setup qolbar keys with lines like this presumable
 after changing instances, followers will /cl their chat windows
 exmample qolbar for telling group to go instance 2
 /mount

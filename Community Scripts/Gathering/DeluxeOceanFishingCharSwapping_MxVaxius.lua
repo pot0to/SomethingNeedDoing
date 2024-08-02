@@ -1,6 +1,6 @@
 --log path - change this to a valid path. foreward slashes are actually backslashes, don't use backslashes unless you know how to escape them properly.
 local folderPath = "F:/FF14/!gil/"
--- first char cardinality and variable declaration
+-- first char cardinality and variable declaration . useful for resuming at a later point in the list if you have to break the script for some reason such as reloading game or.. playing it haha
 local feesh_c = 1
 
 --define the fisherpeople here
@@ -17,8 +17,8 @@ local which_one = {
 
 --[[
 the above table works like this:
-firstname last name@server (obvious), ?
-? = 0 or 1,
+firstname last name@server, ?
+? = 0, 1, 2, 3
 0 means teleport to fc estate and try to get into FC entrance. 
 1 means teleport to fc estate and use a nearby retainer bell (navmesh)
 2 means teleport to limsa and go to the nearby bell
@@ -27,7 +27,7 @@ firstname last name@server (obvious), ?
 Required plogons
 vnavmesh
 visland
-Autohook -> just setup a autocast thing. and get your versatile lure selected as bait :P the 10 free ones will take you to 90
+Autohook -> just setup a autocast thing. and get your versatile lure selected as bait :P the 10 free ones will take you to 100
 autoretainer -> you need to NOT use "wait in lobby" in autoretainer, also turn multi on before starting the script or it wont get turned on until after the first ocean fishign happens.
 liza's discard helper (make your own fish list)
 something need doing (to run this script)
@@ -124,11 +124,11 @@ function fishing()
 	yield("/tp Limsa Lominsa Lower Decks <wait.5>")
 	yield("/waitaddon _ActionBar <maxwait.600><wait.10>")
 	
+	--[[
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 
-	--[[
 	become_feesher()
 	yield("/lockon on")
 	yield("/automove on")
@@ -147,8 +147,8 @@ function fishing()
 	become_feesher()
 	--if all good then we move on to next part automagically
 		
-	--repair catte if we are at 99% durability or lower and have at least 5000 gil
-	while NeedsRepair(99) and  GetItemCount(1) > 4999 do
+	--repair catte if we are at 50% durability or lower and have at least 5000 gil
+	while NeedsRepair(50) and GetItemCount(1) > 4999 do
 		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
 		visland_stop_moving()
 		yield("/target Merchant & Mender")
@@ -165,7 +165,26 @@ function fishing()
 		yield("/wait 1")
 		ungabunga()
 	end
-
+	 yield("/bait Versatile Lure")
+	 
+	--check if we have less than 3 versatile lures and more than 20000 gil if not we buy 20 of them!
+	while GetItemCount(29717) < 3 and GetItemCount(1) > 20000 do
+		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
+		visland_stop_moving()
+		yield("/target Merchant & Mender")
+		yield("/wait 1")
+		yield("/lockon on")
+		yield("/wait 1")
+		yield("/pinteract")
+		yield("/wait 1")
+		yield("/callback SelectIconString true 0")
+		yield("/wait 1")
+		yield("/callback Shop true 0 3 20")
+		ungabunga()
+	end
+	
+	yield("/bait Versatile Lure")
+	 
 	--dryskthota
 	PathfindAndMoveTo(-409.42459106445,3.9999997615814,74.483444213867,false) 
 	visland_stop_moving()
@@ -186,6 +205,8 @@ function fishing()
 		end
 	end
 
+	yield("/bait Versatile Lure")
+ 
 	--get current area
 	yield("/echo Current area"..GetZoneID())
 	zown = GetZoneID()
@@ -218,9 +239,14 @@ function fishing()
 		yield("/visland moveto 7.451 6.750 "..randomNum)
 	--keep checking for that original area - once it is back. turn /ays multi back on
 	--also spam fishing
-
+	omadamkhoneh = 0 --counter to stop trying to move to edge since it will do bad stuff outside of instance after
 	while (zown ~= fzown) do
+		omadamkhoneh = omadamkhoneh + 1
 		fzown = GetZoneID()
+		if omadamkhoneh > 100 then
+			visland_stop_moving()
+			omadamkhoneh = -200  --we dont want this to trigger again
+		end
 		if GetCharacterCondition(43)==false then
 		   yield("/discardall")
 		   yield("/wait 5")
@@ -354,7 +380,7 @@ while true do
 				--file:write("Hello, this is some text written to a file using Lua!\n")
 				currentTime = os.date("*t")
 				formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
-				file:write(formattedTime.." - "..feesh_char.." - Fisher Lv - "..GetLevel().."\n")
+				file:write(formattedTime.." - ".."["..feesh_c.."]"..feesh_char.." - Fisher Lv - "..GetLevel().."\n")
 				--file:write("Writing to files in Lua is straightforward.\n")
 				-- Close the file handle
 				file:close()

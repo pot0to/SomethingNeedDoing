@@ -56,7 +56,7 @@ tony_zoneID = 132 --this is the zone id for where the aetheryte is, if its anyth
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
 tony_type = 0 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
 bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
-bagman_type = 0 --0 = pcalls (gil only, a bit sloppy too with no multi tony support), 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil
+bagman_type = 0 --0 = pcalls (gil only, a bit sloppy too with no multi tony support), 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil, 3 = table config w bagman cut
 tonyception = 0 --0 = dont be fancy, 1 = we have multiple fat tonies in the table and therefore we need to give 1 gil at the end of the trade so tony will leave and the next tony can come
 
 --[[
@@ -238,7 +238,7 @@ local function shake_hands()
 			yield("/focustarget <t>")
 			yield("/wait 0.5")
 			--are_we_there_yet_jimmy() --setup exit conditions
-			if bagman_type == 1 then
+			if bagman_type == 1 or bagman_type == 3 then
 				for i=1, #filled_bags do
 					yield("/echo attempting to add stuff to the bag....")
 					DropboxSetItemQuantity(filled_bags[i][1],false,filled_bags[i][2])
@@ -252,17 +252,19 @@ local function shake_hands()
 					yield("/echo DEBUG moving towards exiting bagman type 1....")
 				end -- get out
 			end
-			if bagman_type == 2 then
+			if bagman_type == 2 or bagman_type == 3 then
 				snaccman = GetGil() - bagmans_take
 				if snaccman < 0 then
 					snaccman = 0
 				end
+				if snaccman > 0 then
+					DropboxSetItemQuantity(1,false,snaccman)
+					yield("/echo here you go, all ... of...the...gil!")
+				end
+			end
+			if bagman_type == 2 then
 				yield("/dropbox")
 				yield("/wait 0.5")
-				if snaccman > 0 then
-					--yield("/dbq 1:"..snaccman) -- we can't rob tony.. yet
-					DropboxSetItemQuantity(1,false,snaccman)
-				end					
 				DropboxSetItemQuantity(22500,false,999999)
 				DropboxSetItemQuantity(22501,false,999999)
 				DropboxSetItemQuantity(22502,false,999999)
@@ -271,16 +273,7 @@ local function shake_hands()
 				DropboxSetItemQuantity(22505,false,999999)
 				DropboxSetItemQuantity(22506,false,999999)
 				DropboxSetItemQuantity(22507,false,999999)
-				--[[
-				yield("/dbq 22500:*")  --  22500  Salvaged
-				yield("/dbq 22501:*")  --  22501  Salvaged
-				yield("/dbq 22502:*")  --  22502  Salvaged
-				yield("/dbq 22503:*")  --  22503  Salvaged
-				yield("/dbq 22504:*")  --  22504  Salvaged
-				yield("/dbq 22505:*")  --  22505  Salvaged
-				yield("/dbq 22506:*")  --  22506  Salvaged
-				yield("/dbq 22507:*")  --  22507  Salvaged
-				]]
+
 				if GetItemCount(22500) == 0 and GetItemCount(22501) == 0 and GetItemCount(22502) == 0 and GetItemCount(22503) == 0 and GetItemCount(22504) == 0 and GetItemCount(22505) == 0 and GetItemCount(22506) == 0 and GetItemCount(22507) == 0 then
 					if GetGil() == snaccman then
 						get_to_the_choppa = 1
