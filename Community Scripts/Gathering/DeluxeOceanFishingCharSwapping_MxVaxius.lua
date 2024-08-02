@@ -178,8 +178,11 @@ function fishing()
 		yield("/pinteract")
 		yield("/wait 1")
 		yield("/callback SelectIconString true 0")
+		yield("/wait 3")
+		yield("/callback Shop true 0 3 10")
 		yield("/wait 1")
-		yield("/callback Shop true 0 3 20")
+		yield("/callback Shop true 0 3 10")
+		yield("/wait 1")
 		ungabunga()
 	end
 	
