@@ -48,8 +48,11 @@ function ungabungabunga()
 	tobungaorunga = 0
 	while tobungaorunga == 0 do
 		yield("/send ESCAPE <wait.1.5>")
+		yield("/pcall SelectYesno true 0")
 		yield("/send ESCAPE <wait.1.5>")
+		yield("/pcall SelectYesno true 0")
 		yield("/send ESCAPE <wait.1.5>")
+		yield("/pcall SelectYesno true 0")
 		yield("/send ESCAPE <wait.1>")
 		yield("/wait 3")
 		if IsPlayerAvailable() == true then
@@ -372,6 +375,11 @@ function job_short(which_cj)
 end
 
 function try_to_buy_fuel(restock_amt)
+	--[[ for later
+	yield("/freecompanycmd")
+	yield("/wait 1")
+	fcPoints = string.gsub(GetNodeText("FreeCompany", 15),"",""):gsub(",", "")
+	--]]
 	--enter house
 	yield("/wait 0.5")
 	yield("/interact")
