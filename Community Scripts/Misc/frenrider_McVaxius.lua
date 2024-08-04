@@ -185,8 +185,22 @@ formation = ini_check("formation", false)					-- Follow in formation? If false, 
 						3		2
 						7	4	6
 						]]
---this next setting is a dud for now until i figure out how to do it
---seems like we will need to use puppetmaster.... ill carefully test this https://github.com/Aspher0/PuppetMaster_Fork
+--[[
+this next setting is a dud for now until i figure out how to do it
+seems like we will need to use puppetmaster.... 
+repo
+https://github.com/Aspher0/PuppetMaster_Fork
+pluginmaster
+https://raw.githubusercontent.com/Aspher0/PuppetMaster_Fork/main/PuppetMaster.json
+
+you can go to "Default settings"
+
+Default Trigger (use regex)  (in this case "weeehehe")
+(?i)\b(?:weeehehe)\s+(?:\((.*?)\)|(\w+))
+Replacement
+/li $1$2
+
+--]]
 --binstance = ini_check("binstance", "let us travel to instance")
 				--[[ group instance change prefix, it will take " x" where x is the instance number as an argument, so you can setup qolbar keys with lines like this presumable
 after changing instances, followers will /cl their chat windows
