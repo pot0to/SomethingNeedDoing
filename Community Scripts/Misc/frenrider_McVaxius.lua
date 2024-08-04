@@ -39,6 +39,10 @@ number = string.match(text, "%u%u%u%s*(.-)%s*EXP")
 yield("/echo "..number)
 
 reason is i wanted to smartly auto equip xp gear based on your current synced level.... :(
+
+I will do it a bit later once i uhh. make a lookup table for this trash here:
+0123456789
+
 ]]
 
 --*****************************************************************
@@ -405,7 +409,7 @@ while weirdvar == 1 do
 				yield("/wait 0.5")
 			end
 			xp_item_equip = xp_item_equip + 1
-			if xp_item_equip > ((1/timefriction)*10) and xp_item > 0 then -- every 10 time seconds try to equip xp item(s)
+			if xp_item_equip > ((1/timefriction)) * 5 and xpitem > 0 and GetItemCountInContainer(xpitem,1000) ~= 1 then -- every 5 seconds try to equip xp item(s) if they aren't already equipped
 					yield("/equipitem "..xpitem)
 					xp_item_equip = 0
 			end
