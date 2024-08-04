@@ -327,6 +327,8 @@ function clingmove(nemm)
 	--not bmr
 	if zclingtype > 2 or zclingtype < 2 then
 			yield("/bmrai follow "..GetCharacterName())
+			yield("/bmrai followoutofcombat on")
+			yield("/bmrai maxdistancetarget 2.6")
 	end
 	--bmr
 	if zclingtype == 2 then
