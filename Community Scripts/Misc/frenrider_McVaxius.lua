@@ -32,6 +32,13 @@ RSR (is RS still being updated?)
 	this is insanely buggy and perhaps crashy.. nodetext scanning too fast will break things
 *it still doesnt follow in some weird cases
 *lazyloot is a toggle not on or off so you have to turn it on yourself
+
+*we can't get synced level (yet) I managed to isolate the part with nodetext but its using weird special characters i dont know how to convert to real numbers
+text = GetNodeText("_Exp", 3)
+number = string.match(text, "%u%u%u%s*(.-)%s*EXP")
+yield("/echo "..number)
+
+reason is i wanted to smartly auto equip xp gear based on your current synced level.... :(
 ]]
 
 --*****************************************************************
@@ -39,6 +46,7 @@ RSR (is RS still being updated?)
 --*****************************************************************
 -- Purpose: to have default .ini values and version control on configs
 -- Personal ini file
+-- if you want to use my ini file serializer just copy form start of inizer to end of inizer and look at how i implemented settings and go nuts :~D
 filename_prefix = "frenrider_" -- Script name
 open_on_next_load = 0          -- Set this to 1 if you want the next time the script loads, to open the explorer folder with all of the .ini files
 
@@ -161,6 +169,7 @@ maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that w
 limitpct = ini_check("limitpct", -1)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap, -1 disables it
 rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
 bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
+xpitem = ini_check("xpitem", 0)								-- xp item - attemp to equip whenever possible azyma_earring = 41081 btw, if this value is 0 it won't do anything
 feedme = ini_check("feedme", 4650)							-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
 feedmeitem = ini_check("feedmeitem", "Boiled Egg")			-- eatfood, in this case the item name. for now this is how we'll do it. it isn't pretty but it will work.. for now..
 --feedmeitem = ini_check("feedmeitem", "Baked Eggplant<hq>")-- eatfood, in this case the item name add a <hq> at the end if you want it to be hq. for now this is how we'll do it. it isn't pretty but it will work.. for now..
@@ -376,6 +385,8 @@ ClearTarget()
 yield("/bmrai follow slot1")
 yield("/echo Beginning fren rider main loop")
 
+xp_item_equip = 0 --counter
+
 while weirdvar == 1 do
 	--catch if character is ready before doing anything
 	if IsPlayerAvailable() then
@@ -393,7 +404,11 @@ while weirdvar == 1 do
 				yield("/ac dismount")
 				yield("/wait 0.5")
 			end
-
+			xp_item_equip = xp_item_equip + 1
+			if xp_item_equip > ((1/timefriction)*10) and xp_item > 0 then -- every 10 time seconds try to equip xp item(s)
+					yield("/equipitem "..xpitem)
+					xp_item_equip = 0
+			end
 			--Food check!
 			statoos = GetStatusTimeRemaining(48)
 			---yield("/echo "..statoos)
