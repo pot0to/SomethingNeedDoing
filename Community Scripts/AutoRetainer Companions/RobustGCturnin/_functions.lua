@@ -46,18 +46,24 @@ function ungabunga()
 end
 
 function ungabungabunga()
-	tobungaorunga = 0
-	while tobungaorunga == 0 do
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/pcall SelectYesno true 0")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/pcall SelectYesno true 0")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/pcall SelectYesno true 0")
-		yield("/send ESCAPE <wait.1>")
-		yield("/wait 3")
-		if IsPlayerAvailable() == true then
-			tobungaorunga = 1
+	--don't bunga bunga if we are not ingame.. it breaks logging in
+	while GetCharacterCondition(1) == false then
+		("/wait 5") --wait 5 seconds to see if char condition 1 comes back.
+	end
+	if GetCharacterCondition(1) == true then
+		tobungaorunga = 0
+		while tobungaorunga == 0 do
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/pcall SelectYesno true 0")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/pcall SelectYesno true 0")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/pcall SelectYesno true 0")
+			yield("/send ESCAPE <wait.1>")
+			yield("/wait 3")
+			if IsPlayerAvailable() == true then
+				tobungaorunga = 1
+			end
 		end
 	end
 end
