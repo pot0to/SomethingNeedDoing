@@ -335,10 +335,12 @@ function clingmove(nemm)
 		bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm))
 		if bistance < maxbistance then
 			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
+			yield("/bmrai followoutofcombat on")
 			yield("/bmrai follow "..nemm) 	  --* verify this is correct later when we can load dalamud
 		end
 		if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
 			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
+			yield("/bmrai followoutofcombat on")
 			yield("/bmrai follow "..GetCharacterName()) 	  --* verify this is correct later when we can load dalamud
 			yield("/echo too far! stop following!")
 		end
