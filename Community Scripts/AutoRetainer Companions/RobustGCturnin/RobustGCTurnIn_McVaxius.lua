@@ -403,7 +403,7 @@ GetPlayerGC(), 1 = Maelstrom, 2 = Adder?, 3 = ImmortalFlames
 GetFCGrandCompany(), text instead of enum of above
 ]]
 if process_emblem == 1 or process_tags > 0 then
-	for i=rcuck_count, #chars_EMBLEM do
+	for i=1, #chars_EMBLEM do
 		yield("/echo "..chars_EMBLEM[i][1])
 		yield("/ays relog " ..chars_EMBLEM[i][1])
    	    yield("/echo 15 second wait")
@@ -555,7 +555,7 @@ end
 
 --gc turn in
 if process_players == 1 then
-	for i=1, #chars_fn do
+	for i=rcuck_count, #chars_fn do
 		yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
 		yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
 		yield("/ays relog " ..chars_fn[i][1])
