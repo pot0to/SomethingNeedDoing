@@ -385,7 +385,7 @@ GetPlayerGC(), 1 = Maelstrom, 2 = Adder?, 3 = ImmortalFlames
 GetFCGrandCompany(), text instead of enum of above
 ]]
 if process_emblem == 1 or process_tags > 0 then
-	for i=1, #chars_EMBLEM do
+	for i=rcuck_count, #chars_EMBLEM do
 		yield("/echo "..chars_EMBLEM[i][1])
 		yield("/ays relog " ..chars_EMBLEM[i][1])
    	    yield("/echo 15 second wait")
