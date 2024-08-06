@@ -47,8 +47,8 @@ end
 
 function ungabungabunga()
 	--don't bunga bunga if we are not ingame.. it breaks logging in
-	while GetCharacterCondition(1) == false then
-		("/wait 5") --wait 5 seconds to see if char condition 1 comes back.
+	while GetCharacterCondition(1) == false do
+		yield("/wait 5") --wait 5 seconds to see if char condition 1 comes back.
 	end
 	if GetCharacterCondition(1) == true then
 		tobungaorunga = 0
