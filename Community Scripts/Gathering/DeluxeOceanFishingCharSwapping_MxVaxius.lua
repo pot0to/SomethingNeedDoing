@@ -388,7 +388,9 @@ while true do
 				--file:write("Hello, this is some text written to a file using Lua!\n")
 				currentTime = os.date("*t")
 				formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
-				file:write(formattedTime.." - ".."["..feesh_c.."]"..feesh_char.." - Fisher Lv - "..GetLevel().."\n")
+				feesh_c = feesh_c - 1
+				file:write(formattedTime.." - ".."["..feesh_c.."] - "..feesh_char.." - Fisher Lv - "..GetLevel().."\n")
+				feesh_c = feesh_c + 1
 				--file:write("Writing to files in Lua is straightforward.\n")
 				-- Close the file handle
 				file:close()
