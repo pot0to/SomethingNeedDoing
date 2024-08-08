@@ -571,6 +571,7 @@ if process_players == 1 then
 					yield("/wait 4")
 				end
 			end
+			yield("/wait 4")
 		end
 		--before we dump gear lets check to see if we are on the right job or if we care about it.
 		if config_sell == 1 then
