@@ -60,6 +60,7 @@ auto_eqweep   = 0	--0=no, 1=yes + job change.  Basically this will check to see 
 config_sell   = 0	--0=dont do anything,1=change char setting to not give dialog for non tradeables etc selling to npc, 2=reset setting back to yes check for non tradeables etc selling to npc. usecase for 1 and 2 are one time things for a cleaning run so that they can subsequently handle selling or not selling. this feature will be stripped out once limiana updaptes AR
 nnl			  = 1   --leave the novicenetwork
 movementtype  = 0   --0 = vnavmesh, 1 = visland. many things wont work with visland mode. its there as emergency for cleaning only.
+open_coffers  = 0	--0=no,1=yes. do we try to open coffers before doing a turnin round. (will iterate through the list of items).
 ----------------------
 --Refueling Configs --
 ----------------------
@@ -73,6 +74,23 @@ buy_fc_buffs     = 1 	--0=no,1=yes. do we refresh the buffs on this run?  turnin
 process_players  = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
 process_emblem   = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks. remember this has to be the FC leader
 process_tags	 = 0	--0=no, 1=full randomize, 2=lowercase only, 3=uppercase only, 4=randomly full upper OR lowercase, 5=pick from emblem configuration list. remember this has to be the FC leader
+--------------------
+----Coffer Table----
+--------------------
+koffers = {
+{38467,"Gladiator's Plundered Arms (Lv. 15)"},
+{38469,"Gladiator's Doctore Arms (Lv. 20)"},
+{38470,"Gladiator's Frostbite Arms (Lv. 24)"},
+{38471,"Gladiator's Inquisitor Arms (Lv. 28)"},
+{44107,"Black Mage's Verdant Arms (Lv. 47)"},
+{38475,"Paladin's Ancient Arms (Lv. 41)"},
+{38474,"Paladin's Crier Arms (Lv. 38)"},
+{38476,"Paladin's Dzemael Arms (Lv. 44)"},
+{38473,"Paladin's Flametongue Arms (Lv. 35)"},
+{38472,"Paladin's Longstop Arms (Lv. 32)"},
+{38477,"Paladin's Templar Arms (Lv. 47)"}
+}
+
 --[[
 ------------------------
 --SCRIPT REQUIREMENTS --
@@ -537,7 +555,7 @@ end
 
 --gc turn in
 if process_players == 1 then
-	for i=1, #chars_fn do
+	for i=rcuck_count, #chars_fn do
 		yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
 		yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
 		yield("/ays relog " ..chars_fn[i][1])
@@ -545,6 +563,15 @@ if process_players == 1 then
 		yield("/wait 2")
 		CharacterSafeWait()
 		 yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
+		--before we dump gear lets check if we are opening coffers
+		if open_coffers == 1 then
+			for i=1,#koffers do
+				if GetItemCount(koffers[i][1]) > 0 then
+					yield("/item "..koffers[i][2])
+					yield("/wait 4")
+				end
+			end
+		end
 		--before we dump gear lets check to see if we are on the right job or if we care about it.
 		if config_sell == 1 then
 			yield("/maincommand Item Settings")

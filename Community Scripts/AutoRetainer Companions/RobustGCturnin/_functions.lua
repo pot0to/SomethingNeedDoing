@@ -21,19 +21,20 @@ function become_feesher()
 		yield("/pcall Shop true -1 <wait.1.0>")
 		visland_stop_moving()
 		ungabunga()
-		yield("/equipitem 2571") --weathered fishing rod
-		yield("/wait 0.5")
-		yield("/equipitem 35393") --integral fishing rod
-		yield("/wait 0.5")
-		yield("/equipjob fsh")
-		yield("/wait 0.5")
-		yield("/equipitem 2571") --weathered fishing rod
-		yield("/wait 0.5")
-		yield("/equipitem 35393") --integral fishing rod
-		yield("/wait 0.5")
-		yield("/equipjob fsh")
-		yield("/wait 0.5")
 	end
+	yield("/equipitem 2571") --weathered fishing rod
+	yield("/wait 0.5")
+	yield("/equipitem 35393") --integral fishing rod
+	yield("/wait 0.5")
+	yield("/equipjob fsh")
+	yield("/wait 0.5")
+	ungabunga()
+	yield("/equipitem 2571") --weathered fishing rod
+	yield("/wait 0.5")
+	yield("/equipitem 35393") --integral fishing rod
+	yield("/wait 0.5")
+	yield("/equipjob fsh")
+	yield("/wait 0.5")
 end
 
 function ungabunga()
@@ -45,15 +46,24 @@ function ungabunga()
 end
 
 function ungabungabunga()
-	tobungaorunga = 0
-	while tobungaorunga == 0 do
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1>")
-		yield("/wait 3")
-		if IsPlayerAvailable() == true then
-			tobungaorunga = 1
+	--don't bunga bunga if we are not ingame.. it breaks logging in
+	while GetCharacterCondition(1) == false do
+		yield("/wait 5") --wait 5 seconds to see if char condition 1 comes back.
+	end
+	if GetCharacterCondition(1) == true then
+		tobungaorunga = 0
+		while tobungaorunga == 0 do
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/pcall SelectYesno true 0")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/pcall SelectYesno true 0")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/pcall SelectYesno true 0")
+			yield("/send ESCAPE <wait.1>")
+			yield("/wait 3")
+			if IsPlayerAvailable() == true then
+				tobungaorunga = 1
+			end
 		end
 	end
 end
@@ -372,6 +382,11 @@ function job_short(which_cj)
 end
 
 function try_to_buy_fuel(restock_amt)
+	--[[ for later
+	yield("/freecompanycmd")
+	yield("/wait 1")
+	fcPoints = string.gsub(GetNodeText("FreeCompany", 15),"",""):gsub(",", "")
+	--]]
 	--enter house
 	yield("/wait 0.5")
 	yield("/interact")

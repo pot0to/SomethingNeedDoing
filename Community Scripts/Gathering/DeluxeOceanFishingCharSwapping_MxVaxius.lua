@@ -188,6 +188,11 @@ function fishing()
 	
 	yield("/bait Versatile Lure")
 	 
+
+	yield("/echo Current area"..GetZoneID())
+	zown = GetZoneID()
+	fzown = GetZoneID()
+
 	--dryskthota
 	PathfindAndMoveTo(-409.42459106445,3.9999997615814,74.483444213867,false) 
 	visland_stop_moving()
@@ -203,6 +208,9 @@ function fishing()
 		yield("/wait 10")
 		fishqtest = GetCharacterCondition(91)
 		toolong = toolong  + 1
+		if GetCharacterCondition(34) == true then  --sometimes we queue instantly. dont wanna get stuck!
+			fishqtest = true
+		end
 		if toolong > 30 then
 			fishqtest = true
 		end
@@ -211,9 +219,6 @@ function fishing()
 	yield("/bait Versatile Lure")
  
 	--get current area
-	yield("/echo Current area"..GetZoneID())
-	zown = GetZoneID()
-	fzown = GetZoneID()
 	--check if area has changed every 5 seconds.
 	while (zown == fzown) and (toolong < 30) do
 		fzown = GetZoneID()	
@@ -383,7 +388,9 @@ while true do
 				--file:write("Hello, this is some text written to a file using Lua!\n")
 				currentTime = os.date("*t")
 				formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
-				file:write(formattedTime.." - ".."["..feesh_c.."]"..feesh_char.." - Fisher Lv - "..GetLevel().."\n")
+				feesh_c = feesh_c - 1
+				file:write(formattedTime.." - ".."["..feesh_c.."] - "..feesh_char.." - Fisher Lv - "..GetLevel().."\n")
+				feesh_c = feesh_c + 1
 				--file:write("Writing to files in Lua is straightforward.\n")
 				-- Close the file handle
 				file:close()

@@ -56,8 +56,18 @@ tony_zoneID = 132 --this is the zone id for where the aetheryte is, if its anyth
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
 tony_type = 0 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
 bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
-bagman_type = 0 --0 = pcalls (gil only, a bit sloppy too with no multi tony support), 1 = dropbox with table config, 2 = dropbox but all salvage and all but bagmans take of gil, 3 = table config w bagman cut
 tonyception = 0 --0 = dont be fancy, 1 = we have multiple fat tonies in the table and therefore we need to give 1 gil at the end of the trade so tony will leave and the next tony can come
+bagman_type = 0 --[[
+0 = pcalls (gil only, a bit sloppy too with no multi tony support), 
+1 = dropbox with table config, 
+2 = dropbox but all salvage and all but bagmans take of gil, 
+3 = table config w bagman cut, 
+4 = items are in the table itself instead of the item table. normal way is  
+firstname lastname@server, x, x, tony name
+now will be
+firstname lastname@server, x, x, tony name, itemID, quantity
+in this case it won't use the table at all
+--]]
 
 --[[
 if all of these are not 42069420, then we will try to go there at the very end of the process otherwise we will go directly to fat tony himself
@@ -173,6 +183,7 @@ end
 
 get_to_the_choppa = 0 -- alternate exit var
 horrible_counter_method = 0
+windex = 1 --bagman index
 
 local function shake_hands()
 	get_to_the_choppa = 0
@@ -262,6 +273,17 @@ local function shake_hands()
 					yield("/echo here you go, all ... of...the...gil!")
 				end
 			end
+			if bagman_type == 4 then
+				yield("/echo attempting to add stuff to the bag....")
+				DropboxSetItemQuantity(franchise_owners[windex][5],false,franchise_owners[windex][6])
+				yield("/wait 0.5")
+				horrible_counter_method = horrible_counter_method + 1
+				yield("/echo DEBUG bagman type 4 processing....")
+				if horrible_counter_method > 1 then
+					get_to_the_choppa = 1
+					yield("/echo DEBUG moving towards exiting bagman type 4....")
+				end -- get out
+			end
 			if bagman_type == 2 then
 				yield("/dropbox")
 				yield("/wait 0.5")
@@ -332,6 +354,7 @@ end
 for i=1,#franchise_owners do
 	--update tony's name
 	fat_tony = franchise_owners[i][4]
+	windex = i
 	
 	yield("/echo Loading bagman to deliver protection payments Fat Tony -> "..fat_tony..".  Bagman -> "..franchise_owners[i][1])
 	yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
