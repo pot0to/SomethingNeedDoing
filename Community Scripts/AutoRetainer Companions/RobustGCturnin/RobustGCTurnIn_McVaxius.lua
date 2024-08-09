@@ -326,7 +326,6 @@ function Final_GC_Cleaning()
 		SetAddersGCRank(GCrenk)
 		SetMaelstromGCRank(GCrenk)
 		]]
-		--[[
 		--output a log of the GC ranks and your current job level to a log file stored in the SND folder
 		local folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
 		local file = io.open(folderPath .. "GCrankLog.txt", "a")
@@ -334,14 +333,13 @@ function Final_GC_Cleaning()
 			-- Write text to the file
 			currentTime = os.date("*t")
 			formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
-			file:write(formattedTime.." - "..chars_fn[rcuck_count][1].." - Job Lv - "..GetLevel().." - GC Rank - "..GCrenk.."\n")
+			file:write(formattedTime.." - "..chars_fn[rcuck_count][1].." - Adders - "..GetAddersGCRank().." - Maelstrom - "..GetMaelstromGCRank().." - Flames - "..GetFlamesGCRank().."\n")
 			-- Close the file handle
 			file:close()
 			yield("/echo Text has been written to '" .. folderPath .. "GCrankLog.txt'")
 		else
 			yield("/echo Error: Unable to open file for writing")
 		end
-		]]
 	end
 	
 	--limsa aetheryte
