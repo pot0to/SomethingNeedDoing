@@ -218,6 +218,8 @@ function Final_GC_Cleaning()
 		if GetAddersGCRank() > GCrenk then
 			GCrenk = GetAddersGCRank()
 		end
+		SealCap = 9000
+		if GCrenk > 4 then SealCap = 19000 end
 		SetFlamesGCRank(9)
 		SetAddersGCRank(9)
 		SetMaelstromGCRank(9)
@@ -227,7 +229,13 @@ function Final_GC_Cleaning()
 		benture = GetItemCount(21072)
 		while dellycount < 12 do --max of 12 loops
 			yield("/deliveroo enable")
-			yield("/wait 15")
+			yield("/wait 6")
+			--20 = storm, 21 = serpent, 22 = flame
+			maxcheck = 0
+			while (GetItemCount(20) + GetItemCount(21) + GetItemCount(22)) < SealCap and maxcheck < 15 do
+				yield("/wait 1")
+				maxcheck = maxcheck + 1
+			end
 			yield("/deliveroo disable")
 			yield("/wait 2")
 			ungabunga() --get out of menus haha
@@ -268,17 +276,9 @@ function Final_GC_Cleaning()
 		yield("/send ESCAPE <wait.1.5>")
 		yield("/send ESCAPE <wait.1.5>")
 		yield("/wait 3")
-		GCrenk = GetFlamesGCRank()
-		if GetMaelstromGCRank() > GCrenk then
-			GCrenk = GetMaelstromGCRank()
-		end
-		if GetAddersGCRank() > GCrenk then
-			GCrenk = GetAddersGCRank()
-		end
-		SetFlamesGCRank(9)
-		SetAddersGCRank(9)
-		SetMaelstromGCRank(9)
-		if GCrenk < 4 then --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D
+
+		floop = 0
+		if floop < 3 then --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D
 			--try to promote
 			yield("/wait 1")
 			yield("/target Personnel Officer")
@@ -298,31 +298,8 @@ function Final_GC_Cleaning()
 				yield("/wait 1")
 			end
 			yield("/wait 2")
+			floop = floop + 1
 		end
-		if GCrenk < 7 and GCrenk > 4 then --if we are above 4 and below 7 we can go up to 7
-			--try to promote
-			yield("/wait 1")
-			yield("/target Personnel Officer")
-			yield("/wait 1")
-			yield("/send NUMPAD0")
-			yield("/wait 1")
-			yield("/send NUMPAD2")
-			yield("/wait 0.5")
-			yield("/send NUMPAD0")
-			yield("/wait 0.5")
-			yield("/send NUMPAD0")
-			yield("/send ESCAPE <wait.1.5>")
-			yield("/send ESCAPE <wait.1.5>")
-			yield("/wait 3")
-			--wait for char condition 1
-			while GetCharacterCondition(32) == true and GetCharacterCondition(35) == true do
-				yield("/wait 1")
-			end
-			yield("/wait 2")
-		end
-		SetFlamesGCRank(GCrenk)
-		SetAddersGCRank(GCrenk)
-		SetMaelstromGCRank(GCrenk)
 
 		--output a log of the GC ranks and your current job level to a log file stored in the SND folder
 		--yield("/echo Log output debug line 1")
