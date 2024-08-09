@@ -209,7 +209,8 @@ function Final_GC_Cleaning()
 	
 	--expert delivery hack. meant for printing venture tokens on early chars
 	if chars_fn[rcuck_count][4] == 1 then
-		--[[
+	PauseYesAlready()
+	yield("/wait 2")
 		GCrenk = GetFlamesGCRank()
 		if GetMaelstromGCRank() > GCrenk then
 			GCrenk = GetMaelstromGCRank()
@@ -220,7 +221,6 @@ function Final_GC_Cleaning()
 		SetFlamesGCRank(9)
 		SetAddersGCRank(9)
 		SetMaelstromGCRank(9)
-		]]
 		dellycount = 0
 		yield("/echo Expert Delivery hack enabled")
 		yield("/wait 1")
@@ -237,11 +237,11 @@ function Final_GC_Cleaning()
 			end
 			benture = GetItemCount(21072)
 		end
-		--[[
 		SetFlamesGCRank(GCrenk)
 		SetAddersGCRank(GCrenk)
 		SetMaelstromGCRank(GCrenk)
-		]]
+		RestoreYesAlready()
+		yield("/wait 2")
 	end
 	
 	--try to turn in supply mission items and rankup before leaving if its set for that char
@@ -278,9 +278,7 @@ function Final_GC_Cleaning()
 		SetFlamesGCRank(9)
 		SetAddersGCRank(9)
 		SetMaelstromGCRank(9)
-		GCcheck = 4
-		if chars_fn[rcuck_count][4] == 1 then GCcheck = 10 end --if we are using delivery hack
-		if GCrenk < GCcheck then --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D
+		if GCrenk < 4 then --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D
 			--try to promote
 			yield("/wait 1")
 			yield("/target Personnel Officer")
@@ -301,11 +299,7 @@ function Final_GC_Cleaning()
 			end
 			yield("/wait 2")
 		end
-		GCcheck  = 7
-		GCcheck2 = 4
-		if chars_fn[rcuck_count][4] == 1 then GCcheck = 10 end --if we are using delivery hack
-		if chars_fn[rcuck_count][4] == 1 then GCcheck2 = 0 end --if we are using delivery hack
-		if GCrenk < GCcheck and GCrenk > GCcheck2 then --if we are above 4 and below 7 we can go up to 7
+		if GCrenk < 7 and GCrenk > 4 then --if we are above 4 and below 7 we can go up to 7
 			--try to promote
 			yield("/wait 1")
 			yield("/target Personnel Officer")
@@ -326,11 +320,10 @@ function Final_GC_Cleaning()
 			end
 			yield("/wait 2")
 		end
-		--[[
 		SetFlamesGCRank(GCrenk)
 		SetAddersGCRank(GCrenk)
 		SetMaelstromGCRank(GCrenk)
-		]]
+
 		--output a log of the GC ranks and your current job level to a log file stored in the SND folder
 		--yield("/echo Log output debug line 1")
 		local folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
