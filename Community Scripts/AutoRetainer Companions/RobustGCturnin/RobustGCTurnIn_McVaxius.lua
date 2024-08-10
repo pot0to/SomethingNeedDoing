@@ -218,8 +218,16 @@ function Final_GC_Cleaning()
 		if GetAddersGCRank() > GCrenk then
 			GCrenk = GetAddersGCRank()
 		end
-		SealCap = 9000
-		if GCrenk > 4 then SealCap = 19000 end
+		SealCap = 9000	
+		if GCrenk == 2 then SealCap = 14000 end
+		if GCrenk == 3 then SealCap = 19000 end
+		if GCrenk == 4 then SealCap = 24000 end
+		if GCrenk == 5 then SealCap = 29000 end
+		if GCrenk == 6 then SealCap = 34000 end
+		if GCrenk == 7 then SealCap = 39000 end
+		if GCrenk == 8 then SealCap = 44000 end
+		if GCrenk == 9 then SealCap = 49000 end
+		yield("/echo Seal Cap is -> "..SealCap)
 		SetFlamesGCRank(9)
 		SetAddersGCRank(9)
 		SetMaelstromGCRank(9)
