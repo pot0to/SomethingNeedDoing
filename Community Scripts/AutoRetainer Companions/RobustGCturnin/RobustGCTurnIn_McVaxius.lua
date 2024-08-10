@@ -35,7 +35,7 @@ name, returntype, rankupGC, Expert Hack
 returntype		= 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
 for the last 2, expert bypass from automaton is needed as setting the gc rank with SND seems to not limit you to the max you should normally have...
 process_gc_rank  = 0		--0=no,1=yes. do we try to rank up the GC and maybe do a supply delivery turnin?
-expert_hack      = 0	--0=no,1=yes. it will try in 15 second cycles. to do deliveries then turn them off and let it try to buy venture coins . up to 5 times. or when there is no increase in venture coins
+expert_hack      = 0	--0=no,1=yes. it will try in 15 second cycles. to do deliveries then turn them off and let it try to buy venture coins . up to 12 times. or when there is no increase in venture coins
 ]]
 local chars_fn = {
  {"First Last@Server", 0, 0, 0},
