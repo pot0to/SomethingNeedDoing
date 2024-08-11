@@ -69,7 +69,7 @@ for i=1,#franchise_owners do
 		CharacterSafeWait()
 		--added 5 second wait here because sometimes they get stuck.
 		yield("/wait 5")
-		if franchise_owners[i][3] == 0 then
+		if franchise_owners[i][2] == 0 then
 			yield("/tp Estate Hall")
 			yield("/wait 1")
 			--yield("/waitaddon Nowloading <maxwait.15>")
@@ -86,14 +86,14 @@ for i=1,#franchise_owners do
 			yield("/release Q")
 		end
 		--retainer bell nearby shenanigans
-		if franchise_owners[i][3] == 1 then
+		if franchise_owners[i][2] == 1 then
 			yield("/target \"Summoning Bell\"")
 			yield("/wait 2")
 			PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
 			visland_stop_moving() --added so we don't accidentally end before we get to the bell
 		end
 		--limsa bell
-		if franchise_owners[i][3] == 2 then
+		if franchise_owners[i][2] == 2 then
 			yield("/echo returning to limsa bell")
 			return_to_limsa_bell()
 		end
