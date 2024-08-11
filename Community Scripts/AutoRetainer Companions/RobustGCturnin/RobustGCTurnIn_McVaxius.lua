@@ -609,14 +609,12 @@ if process_players > 0 then
 			workshop_entered = 1
 		end
 		if weclean == 1 then
-			if workshop_entered == 0 then
+			--only if we are parked outside of fc house
+			if workshop_entered == 0 and chars_fn[rcuck_count][2] == 0 then
 				enter_workshop()
-				clean_inventory()
 			end
-			if workshop_entered == 1 then
-				ungabunga()
-				clean_inventory()
-			end
+			ungabunga()
+			clean_inventory() --default behaviour. it will just work if we are near a bell
 		end
 	end
 end
