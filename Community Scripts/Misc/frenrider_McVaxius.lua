@@ -452,6 +452,14 @@ while weirdvar == 1 do
 				--yield("/bmrai follow "..fren)
 				--we will use clingmove not bmrai follow as it breaks pathing from that point onwards
 				clingmove(fren)
+				--allright im getting sick of pratorium. its time to do something.
+				if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
+					--if string.len(GetTargetName()) == 0 then
+					TargetClosestEnemy()
+					--end
+					yield("/send KEY_2")
+					yield("/wait 0.5")
+				end
 			end
 			if GetCharacterCondition(34) == false then  --not in duty  
 				--SAFETY CHECKS DONE, can do whatever you want now with characterconditions etc			
