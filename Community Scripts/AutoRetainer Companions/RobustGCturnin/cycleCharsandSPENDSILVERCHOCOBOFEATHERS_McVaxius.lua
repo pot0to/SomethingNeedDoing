@@ -63,7 +63,6 @@ for i=1,#franchise_owners do
 			yield("/wait 3")
 		end
 		ungabunga()
-	end	
 		--return home after getting the goodies
 		yield("/li")
 		yield("/echo See ya "..fat_tony..", a pleasure.")
