@@ -1,4 +1,7 @@
 --[[
+2024-08-10
+small update. SND can now run scripts after AR so we can do this even easier than ever.
+
 What is this ?
 A vague idea for now.... of a kind of manager script that does various things based on certain rules, continually so you can just fire and forget it.
 *you fire up the script and hope it doesnt fail and sit there idle somewhere with a LUA error :(
@@ -18,7 +21,9 @@ Stuff I think is possible now
 I'm not sure if its possible or needs some slash commands?
 ************************************************************
 *run TT for x hours a day or x matches a day at a specific time y on a specific char
+		*confirmed possible
 *attempts to buys 5 stack of fuel @ any FC that is below x value. checks every 12 hours
+		*confirmed possible
 
 ****************************************************************************************************
 Stuff that would be nice but technically annoying to do since we need more stuff for it to "happen"

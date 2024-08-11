@@ -1,4 +1,8 @@
 --[[
+Does this still work?
+--*
+flagging this as for followup. since i wanna run maps soon
+
 script to fire up a map and go to it
 
 requires
