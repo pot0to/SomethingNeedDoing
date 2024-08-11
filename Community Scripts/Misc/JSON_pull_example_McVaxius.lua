@@ -1,4 +1,6 @@
--- Function to extract first and last names from JSON string
+-- Function to extract first and last names from JSON string using a free WEB API. usecase is generating names
+-- Mekretayners uses it for retainer names :~debug.debug
+
 local function extractNames(jsonString)
     local first_name = jsonString:match('"first"%s*:%s*"([^"]+)"')
     local last_name = jsonString:match('"last"%s*:%s*"([^"]+)"')

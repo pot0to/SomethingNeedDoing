@@ -1,5 +1,11 @@
+--Please read this stuff its not hard the default config will die if you just copy paste so your gonna have to pass the test of reading. and uncommenting one of the two paths or modifying them
+
 --log path - change this to a valid path. foreward slashes are actually backslashes, don't use backslashes unless you know how to escape them properly.
-local folderPath = "F:/FF14/!gil/"
+
+--UNCOMMENT ONE OF THESE TWO and or modify to your hearts content
+--local folderPath = "F:/FF14/!gil/"
+--local folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
+
 -- first char cardinality and variable declaration . useful for resuming at a later point in the list if you have to break the script for some reason such as reloading game or.. playing it haha
 local feesh_c = 1
 

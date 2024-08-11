@@ -1,14 +1,16 @@
 --[[
 mek retaynurs
 
-What does it do?
+-------What does it do?-------------
 assuming you have all the plogons and did the yesalready configs.
 it will magically buy 2 lv1 fishing rods, make 2 retainers with a name API for the names. do the retainer venture unlock quest and then run back to the vocate to finish and be ready for you to 1 click and add weapons.
+---------------------
 
 config. 
 you need navmesh, pandora, teleporter, lifestream, somethingeeddoing, textadvance, yesalready, simpletweaks, rotation solver reborn
 and yesalready. setup yesalready to auto accept any purchases from npcs ;o
 also assumes limsa start and quests.
+please have aleport teleport unlocked you lazy bum
 
 tested pretty hard :~D it is 6 minutes run time from start to finish
 

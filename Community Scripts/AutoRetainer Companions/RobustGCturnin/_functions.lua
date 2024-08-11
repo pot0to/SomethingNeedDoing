@@ -381,7 +381,7 @@ function job_short(which_cj)
 	return shortjob
 end
 
-function try_to_buy_fuel(restock_amt)
+function enter_workshop()
 	--[[ for later
 	yield("/freecompanycmd")
 	yield("/wait 1")
@@ -401,7 +401,19 @@ function try_to_buy_fuel(restock_amt)
 	yield("/wait 1")
 	yield("/pcall SelectString true 0")
 	yield("/wait 5")
+end
+
+function clean_inventory()
+	--oh yeah you'll need this. and asking about it on punish will result in right click -> block.
+	--https://raw.githubusercontent.com/ffxivcode/DalamudPlugins/main/repo.json
+	--*start cleaning??? need slash command
+	--*loop every 5 seconds and check if we have the right char condition to resume whatever we were doing.
+	ungabunga()
+end
+
+function try_to_buy_fuel(restock_amt)
 	--target mammet
+	yield("/wait 5")
 	yield("/target mammet")
 	yield("/wait 0.5")
 	yield("/lockon")

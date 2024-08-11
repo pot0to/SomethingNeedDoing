@@ -33,18 +33,18 @@ The last var is whether this char will attempt GC supply turnins and attempt ran
 this will take up to 15-20 seconds so dont enable it for every character unless you really need it (supply missions for leveling jobs basically)
 name, returntype, rankupGC, Expert Hack
 returntype		= 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
-for the last 2, expert bypass from automaton is needed as setting the gc rank with SND seems to not limit you to the max you should normally have...
-process_gc_rank  = 0		--0=no,1=yes. do we try to rank up the GC and maybe do a supply delivery turnin?
-expert_hack      = 0	--0=no,1=yes. it will try in 15 second cycles. to do deliveries then turn them off and let it try to buy venture coins . up to 5 times. or when there is no increase in venture coins
+process_gc_rank  = 0	--0=no,1=yes. do we try to rank up the GC and maybe do a supply delivery turnin?
+expert_hack      = 0	--0=no,1=yes. it will try in 15 second cycles. to do deliveries then turn them off and let it try to buy venture coins . up to 12 times. or when there is no increase in venture coins
+clean_inventory	 = 0    --0=no, >0 check inventory slots free and try to clean out inventory . leave it at 0 if you dont know how to use it. and don't ask me for help on punish or i will block you.  the answer is in _functions.lua
 ]]
 local chars_fn = {
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0}
+ {"First Last@Server", 0, 0, 0, 0},
+ {"First Last@Server", 0, 0, 0, 50},  --clean inventory when under 50 slots free
+ {"First Last@Server", 0, 0, 0, 0},
+ {"First Last@Server", 0, 0, 0, 0},
+ {"First Last@Server", 0, 0, 0, 0},
+ {"First Last@Server", 0, 0, 0, 0},
+ {"First Last@Server", 0, 0, 0, 0}
 }
 
 -------------------------
@@ -71,7 +71,7 @@ restock_amt   = 66666 --n>0 minimum amount of total fuel to reach, when restocki
 --------------------
 process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
 buy_fc_buffs     = 1 	--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
-process_players  = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
+process_players  = 1	--0=no,1=yes+cleaning. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup, 2=cleaning only
 process_emblem   = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks. remember this has to be the FC leader
 process_tags	 = 0	--0=no, 1=full randomize, 2=lowercase only, 3=uppercase only, 4=randomly full upper OR lowercase, 5=pick from emblem configuration list. remember this has to be the FC leader
 --------------------
@@ -209,7 +209,8 @@ function Final_GC_Cleaning()
 	
 	--expert delivery hack. meant for printing venture tokens on early chars
 	if chars_fn[rcuck_count][4] == 1 then
-		--[[
+	PauseYesAlready()
+	yield("/wait 2")
 		GCrenk = GetFlamesGCRank()
 		if GetMaelstromGCRank() > GCrenk then
 			GCrenk = GetMaelstromGCRank()
@@ -217,17 +218,32 @@ function Final_GC_Cleaning()
 		if GetAddersGCRank() > GCrenk then
 			GCrenk = GetAddersGCRank()
 		end
+		SealCap = 9000	
+		if GCrenk == 2 then SealCap = 14000 end
+		if GCrenk == 3 then SealCap = 19000 end
+		if GCrenk == 4 then SealCap = 24000 end
+		if GCrenk == 5 then SealCap = 29000 end  --requires R1 Hunting Log done
+		if GCrenk == 6 then SealCap = 34000 end
+		if GCrenk == 7 then SealCap = 39000 end
+		if GCrenk == 8 then SealCap = 44000 end  --requires R1 Hunting Log done + Aurum Vale
+		if GCrenk == 9 then SealCap = 49000 end  --requires Dzemael Darkhold
+		yield("/echo Seal Cap is -> "..SealCap)
 		SetFlamesGCRank(9)
 		SetAddersGCRank(9)
 		SetMaelstromGCRank(9)
-		]]
 		dellycount = 0
 		yield("/echo Expert Delivery hack enabled")
 		yield("/wait 1")
 		benture = GetItemCount(21072)
 		while dellycount < 12 do --max of 12 loops
 			yield("/deliveroo enable")
-			yield("/wait 15")
+			yield("/wait 6")
+			--20 = storm, 21 = serpent, 22 = flame
+			maxcheck = 0
+			while (GetItemCount(20) + GetItemCount(21) + GetItemCount(22)) < SealCap and maxcheck < 15 do
+				yield("/wait 1")
+				maxcheck = maxcheck + 1
+			end
 			yield("/deliveroo disable")
 			yield("/wait 2")
 			ungabunga() --get out of menus haha
@@ -237,11 +253,11 @@ function Final_GC_Cleaning()
 			end
 			benture = GetItemCount(21072)
 		end
-		--[[
 		SetFlamesGCRank(GCrenk)
 		SetAddersGCRank(GCrenk)
 		SetMaelstromGCRank(GCrenk)
-		]]
+		RestoreYesAlready()
+		yield("/wait 2")
 	end
 	
 	--try to turn in supply mission items and rankup before leaving if its set for that char
@@ -268,29 +284,21 @@ function Final_GC_Cleaning()
 		yield("/send ESCAPE <wait.1.5>")
 		yield("/send ESCAPE <wait.1.5>")
 		yield("/wait 3")
-		--[[
-		GCrenk = GetFlamesGCRank()
-		if GetMaelstromGCRank() > GCrenk then
-			GCrenk = GetMaelstromGCRank()
-		end
-		if GetAddersGCRank() > GCrenk then
-			GCrenk = GetAddersGCRank()
-		end
-		SetFlamesGCRank(9)
-		SetAddersGCRank(9)
-		SetMaelstromGCRank(9)]]
-		if GCrenk < 4 then --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D
+
+		floop = 0
+		while floop < 3 do --we can go up to 4 safely if we are below it. if you put in the effort to finish GC log 1, go pop rank 5 :~D
 			--try to promote
 			yield("/wait 1")
 			yield("/target Personnel Officer")
 			yield("/wait 1")
-			yield("/send NUMPAD0")
+			yield("/interact")
+			yield("/wait 2")
+			yield("/pcall SelectString true 1")
+			yield("/wait 3")
+			yield("/pcall GrandCompanyRankUp true 0")
 			yield("/wait 1")
-			yield("/send NUMPAD2")
-			yield("/wait 0.5")
-			yield("/send NUMPAD0")
-			yield("/wait 0.5")
-			yield("/send NUMPAD0")
+			yield("/send ESCAPE <wait.1.5>")
+			yield("/send ESCAPE <wait.1.5>")
 			yield("/send ESCAPE <wait.1.5>")
 			yield("/send ESCAPE <wait.1.5>")
 			yield("/wait 3")
@@ -299,49 +307,24 @@ function Final_GC_Cleaning()
 				yield("/wait 1")
 			end
 			yield("/wait 2")
+			floop = floop + 1
 		end
-		if GCrenk < 7 and GCrenk > 4 then --if we are above 4 and below 7 we can go up to 7
-			--try to promote
-			yield("/wait 1")
-			yield("/target Personnel Officer")
-			yield("/wait 1")
-			yield("/send NUMPAD0")
-			yield("/wait 1")
-			yield("/send NUMPAD2")
-			yield("/wait 0.5")
-			yield("/send NUMPAD0")
-			yield("/wait 0.5")
-			yield("/send NUMPAD0")
-			yield("/send ESCAPE <wait.1.5>")
-			yield("/send ESCAPE <wait.1.5>")
-			yield("/wait 3")
-			--wait for char condition 1
-			while GetCharacterCondition(32) == true and GetCharacterCondition(35) == true do
-				yield("/wait 1")
-			end
-			yield("/wait 2")
-		end
-		--[[
-		SetFlamesGCRank(GCrenk)
-		SetAddersGCRank(GCrenk)
-		SetMaelstromGCRank(GCrenk)
-		]]
-		--[[
+
 		--output a log of the GC ranks and your current job level to a log file stored in the SND folder
+		--yield("/echo Log output debug line 1")
 		local folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
 		local file = io.open(folderPath .. "GCrankLog.txt", "a")
 		if file then
 			-- Write text to the file
 			currentTime = os.date("*t")
 			formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
-			file:write(formattedTime.." - "..chars_fn[rcuck_count][1].." - Job Lv - "..GetLevel().." - GC Rank - "..GCrenk.."\n")
+			file:write(formattedTime.." - "..chars_fn[rcuck_count][1].." - Adders - "..GetAddersGCRank().." - Maelstrom - "..GetMaelstromGCRank().." - Flames - "..GetFlamesGCRank().."\n")
 			-- Close the file handle
 			file:close()
 			yield("/echo Text has been written to '" .. folderPath .. "GCrankLog.txt'")
 		else
 			yield("/echo Error: Unable to open file for writing")
 		end
-		]]
 	end
 	
 	--limsa aetheryte
@@ -554,7 +537,7 @@ if process_fc_buffs == 1 then
 end
 
 --gc turn in
-if process_players == 1 then
+if process_players > 0 then
 	for i=rcuck_count, #chars_fn do
 		yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
 		yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
@@ -571,6 +554,7 @@ if process_players == 1 then
 					yield("/wait 4")
 				end
 			end
+			yield("/wait 4")
 		end
 		--before we dump gear lets check to see if we are on the right job or if we care about it.
 		if config_sell == 1 then
@@ -596,22 +580,41 @@ if process_players == 1 then
 				yield("/wait 3")
 			end
 		end
-		TeleportToGCTown()
-		ZoneTransition()
-		yield("/echo Walk to GC attempt 1")
-		yield("/wait 2")
-		WalkToGC()
-		yield("/echo Walk to GC attempt 2")
-		yield("/wait 2")
-		WalkToGC()
-		yield("/echo Walk to GC attempt 3?")
-		yield("/wait 2")
-		WalkToGC()
 		rcuck_count = i
-		yield("/wait 2")
-		Final_GC_Cleaning()
+		weclean = 0
+		if chars_fn[rcuck_count][5] > 0 then
+			if GetInventoryFreeSlotCount() < chars_fn[rcuck_count][5] then
+				weclean = 1  --we are under thresshold. we gonna clean this char!
+			end
+		end
+		if process_players == 1  then
+			TeleportToGCTown()
+			ZoneTransition()
+			yield("/echo Walk to GC attempt 1")
+			yield("/wait 2")
+			WalkToGC()
+			yield("/echo Walk to GC attempt 2")
+			yield("/wait 2")
+			WalkToGC()
+			yield("/echo Walk to GC attempt 3?")
+			yield("/wait 2")
+			WalkToGC()
+			yield("/wait 2")
+			Final_GC_Cleaning()
+		end
+		workshop_entered = 0
 		if restock_fuel > 0 and GetItemCount(10373) > 0 and GetItemCount(10155) <= restock_fuel then
+			enter_workshop()
 			try_to_buy_fuel(restock_amt)
+			workshop_entered = 1
+		end
+		if weclean == 1 then
+			--only if we are parked outside of fc house
+			if workshop_entered == 0 and chars_fn[rcuck_count][2] == 0 then
+				enter_workshop()
+			end
+			ungabunga()
+			clean_inventory() --default behaviour. it will just work if we are near a bell
 		end
 	end
 end
