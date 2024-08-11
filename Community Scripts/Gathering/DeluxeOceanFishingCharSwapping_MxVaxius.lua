@@ -1,4 +1,4 @@
---please read this stuff its not hard the default config will die if you just copy paste so your gonna have to pass the test of reading. and uncommenting one of the two paths or modifying them
+--Please read this stuff its not hard the default config will die if you just copy paste so your gonna have to pass the test of reading. and uncommenting one of the two paths or modifying them
 
 --log path - change this to a valid path. foreward slashes are actually backslashes, don't use backslashes unless you know how to escape them properly.
 

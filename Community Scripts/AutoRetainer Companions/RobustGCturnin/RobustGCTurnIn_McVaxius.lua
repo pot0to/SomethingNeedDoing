@@ -71,7 +71,7 @@ restock_amt   = 66666 --n>0 minimum amount of total fuel to reach, when restocki
 --------------------
 process_fc_buffs = 1	--0=no,1=yes. do we bother with fc buffs? turning this on will run the chars from chars_FCBUFF to turn on FC buffs
 buy_fc_buffs     = 1 	--0=no,1=yes. do we refresh the buffs on this run?  turning this on will run the chars from chars_FCBUFF to buy FC buffs and it will attempt to buy "Seal Sweetener II" 15 times
-process_players  = 1	--0=no,1=yes. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup
+process_players  = 1	--0=no,1=yes+cleaning. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup, 2=cleaning only
 process_emblem   = 0	--0=no,1=yes. do we randomize the emblem on this run? turning this on will process the chars from chars_EMBLEM and go randomize their FC emblems. btw rank 7 FC gets additional crest unlocks. remember this has to be the FC leader
 process_tags	 = 0	--0=no, 1=full randomize, 2=lowercase only, 3=uppercase only, 4=randomly full upper OR lowercase, 5=pick from emblem configuration list. remember this has to be the FC leader
 --------------------
@@ -537,7 +537,7 @@ if process_fc_buffs == 1 then
 end
 
 --gc turn in
-if process_players == 1 then
+if process_players > 0 then
 	for i=rcuck_count, #chars_fn do
 		yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
 		yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
@@ -580,27 +580,35 @@ if process_players == 1 then
 				yield("/wait 3")
 			end
 		end
-		TeleportToGCTown()
-		ZoneTransition()
-		yield("/echo Walk to GC attempt 1")
-		yield("/wait 2")
-		WalkToGC()
-		yield("/echo Walk to GC attempt 2")
-		yield("/wait 2")
-		WalkToGC()
-		yield("/echo Walk to GC attempt 3?")
-		yield("/wait 2")
-		WalkToGC()
 		rcuck_count = i
-		yield("/wait 2")
-		Final_GC_Cleaning()
+		weclean = 0
+		if chars_fn[rcuck_count][5] > 0 then
+			if GetInventoryFreeSlotCount() < chars_fn[rcuck_count][5] then
+				weclean = 1  --we are under thresshold. we gonna clean this char!
+			end
+		end
+		if process_players == 1  then
+			TeleportToGCTown()
+			ZoneTransition()
+			yield("/echo Walk to GC attempt 1")
+			yield("/wait 2")
+			WalkToGC()
+			yield("/echo Walk to GC attempt 2")
+			yield("/wait 2")
+			WalkToGC()
+			yield("/echo Walk to GC attempt 3?")
+			yield("/wait 2")
+			WalkToGC()
+			yield("/wait 2")
+			Final_GC_Cleaning()
+		end
 		workshop_entered = 0
 		if restock_fuel > 0 and GetItemCount(10373) > 0 and GetItemCount(10155) <= restock_fuel then
 			enter_workshop()
 			try_to_buy_fuel(restock_amt)
 			workshop_entered = 1
 		end
-		if chars_fn[rcuck_count][5] == 1 then
+		if weclean == 1 then
 			if workshop_entered == 0 then
 				enter_workshop()
 				clean_inventory()
