@@ -33,18 +33,18 @@ The last var is whether this char will attempt GC supply turnins and attempt ran
 this will take up to 15-20 seconds so dont enable it for every character unless you really need it (supply missions for leveling jobs basically)
 name, returntype, rankupGC, Expert Hack
 returntype		= 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
-for the last 2, expert bypass from automaton is needed as setting the gc rank with SND seems to not limit you to the max you should normally have...
-process_gc_rank  = 0		--0=no,1=yes. do we try to rank up the GC and maybe do a supply delivery turnin?
+process_gc_rank  = 0	--0=no,1=yes. do we try to rank up the GC and maybe do a supply delivery turnin?
 expert_hack      = 0	--0=no,1=yes. it will try in 15 second cycles. to do deliveries then turn them off and let it try to buy venture coins . up to 12 times. or when there is no increase in venture coins
+clean_inventory	 = 0    --0=no, >0 check inventory slots free and try to clean out inventory . leave it at 0 if you dont know how to use it. and don't ask me for help on punish or i will block you.  the answer is in _functions.lua
 ]]
 local chars_fn = {
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0},
- {"First Last@Server", 0, 0, 0}
+ {"First Last@Server", 0, 0, 0, 0},
+ {"First Last@Server", 0, 0, 0, 50},  --clean inventory when under 50 slots free
+ {"First Last@Server", 0, 0, 0, 0},
+ {"First Last@Server", 0, 0, 0, 0},
+ {"First Last@Server", 0, 0, 0, 0},
+ {"First Last@Server", 0, 0, 0, 0},
+ {"First Last@Server", 0, 0, 0, 0}
 }
 
 -------------------------
@@ -313,21 +313,14 @@ function Final_GC_Cleaning()
 		--output a log of the GC ranks and your current job level to a log file stored in the SND folder
 		--yield("/echo Log output debug line 1")
 		local folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
-		--yield("/echo Log output debug line 2")
 		local file = io.open(folderPath .. "GCrankLog.txt", "a")
-		--yield("/echo Log output debug line 3")
 		if file then
 			-- Write text to the file
-		--yield("/echo Log output debug line 4")
 			currentTime = os.date("*t")
-		--yield("/echo Log output debug line 5")
 			formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
-		--yield("/echo Log output debug line 6")
 			file:write(formattedTime.." - "..chars_fn[rcuck_count][1].." - Adders - "..GetAddersGCRank().." - Maelstrom - "..GetMaelstromGCRank().." - Flames - "..GetFlamesGCRank().."\n")
 			-- Close the file handle
-		--yield("/echo Log output debug line 7")
 			file:close()
-		--yield("/echo Log output debug line 8")
 			yield("/echo Text has been written to '" .. folderPath .. "GCrankLog.txt'")
 		else
 			yield("/echo Error: Unable to open file for writing")
@@ -601,8 +594,21 @@ if process_players == 1 then
 		rcuck_count = i
 		yield("/wait 2")
 		Final_GC_Cleaning()
+		workshop_entered = 0
 		if restock_fuel > 0 and GetItemCount(10373) > 0 and GetItemCount(10155) <= restock_fuel then
+			enter_workshop()
 			try_to_buy_fuel(restock_amt)
+			workshop_entered = 1
+		end
+		if chars_fn[rcuck_count][5] == 1 then
+			if workshop_entered == 0 then
+				enter_workshop()
+				clean_inventory()
+			end
+			if workshop_entered == 1 then
+				ungabunga()
+				clean_inventory()
+			end
 		end
 	end
 end

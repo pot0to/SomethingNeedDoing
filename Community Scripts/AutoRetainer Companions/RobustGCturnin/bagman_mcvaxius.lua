@@ -41,9 +41,6 @@ which you can copy paste en masse, just remove the last comma from last row
 for bagman its similar
 
 ="{"""&F2&"@"&P2&""""&", 0, 0,"&""""&R2&""""&"},"
-
-
-New Variable is R which is Tonyname without the @ server
 ]]
 
 --Start because nobody read the instructions at the top <3
