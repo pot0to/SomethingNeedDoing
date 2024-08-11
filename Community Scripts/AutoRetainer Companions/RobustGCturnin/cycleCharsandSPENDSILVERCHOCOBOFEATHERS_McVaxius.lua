@@ -65,7 +65,6 @@ for i=1,#franchise_owners do
 		ungabunga()
 		--return home after getting the goodies
 		yield("/li")
-		yield("/echo See ya "..fat_tony..", a pleasure.")
 		yield("/wait 5")
 		CharacterSafeWait()
 		--added 5 second wait here because sometimes they get stuck.
