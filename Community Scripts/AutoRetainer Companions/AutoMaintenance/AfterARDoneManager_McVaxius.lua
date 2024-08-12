@@ -40,9 +40,10 @@ folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedD
 
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 functionsToLoad = loadfile(loadfiyel)
+functionsToLoad()
 AADM_processors = {}							--initialize variable
 
---3D Table
+--3D Table   {}[i][j][k]
 AADM_defaults=
 {
 	{	"Firstname Lastname@Server", 0				------{}[i][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
@@ -82,9 +83,10 @@ end
 
 --check if any table data is missing and put in a default value
 for i=1,#AADM_processors do
-	for j=1,#AADM_defaults[1] do
-		if AADM_processors[i][j] == nil then
-			AADM_processors[i][j] = AADM_defaults[1][j]
+	for j=3,#AADM_defaults[1] do
+		for k=1,#AADM_defaults[1][j]
+		if AADM_processors[i][j][k] == nil then
+			AADM_processors[i][j][k] = AADM_defaults[1][j][k]
 		end
 	end
 end

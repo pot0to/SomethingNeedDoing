@@ -1,3 +1,97 @@
+
+--*****************************************************************
+--************************* START INIZER **************************
+--*****************************************************************
+-- Purpose: to have default .ini values and version control on configs
+-- Personal ini file
+-- if you want to use my ini file serializer just copy form start of inizer to end of inizer and look at how i implemented settings and go nuts :~D
+
+-- Function to open a folder in Explorer
+function openFolderInExplorer(folderPath)
+    if folderPath then
+        folderPath = '"' .. folderPath .. '"'
+        os.execute('explorer ' .. folderPath)
+    else
+        yield("/echo Error: Folder path not provided.")
+    end
+end
+
+function serialize(value)
+    if type(value) == "boolean" then
+        return tostring(value)
+    elseif type(value) == "number" then
+        return tostring(value)
+    else -- Default to string
+        return '"' .. tostring(value) .. '"'
+    end
+end
+
+function deserialize(value)
+    if value == "true" then
+        return true
+    elseif value == "false" then
+        return false
+    elseif tonumber(value) then
+        return tonumber(value)
+    else
+        return value:gsub('^"(.*)"$', "%1")
+    end
+end
+
+function read_ini_file()
+    local variables = {}
+    local file = io.open(filename, "r")
+    if not file then
+        return variables
+    end
+
+    for line in file:lines() do
+        local name, val = line:match("([^=]+)=(.*)")
+        if name and val then
+            variables[name] = deserialize(val)
+        end
+    end
+    file:close()
+    return variables
+end
+
+function write_ini_file(variables)
+    local file = io.open(filename, "w")
+    if not file then
+        yield("/echo Error: Unable to open file for writing: " .. filename)
+        return
+    end
+
+    for name, value in pairs(variables) do
+        file:write(name .. "=" .. serialize(value) .. "\n")
+    end
+    file:close()
+end
+
+function ini_check(varname, varvalue)
+    local variables = read_ini_file()
+
+    if variables["version"] and tonumber(variables["version"]) ~= vershun then
+        yield("/echo Version mismatch. Recreating file.")
+        variables = {version = vershun}
+    end
+
+    if variables[varname] == nil then
+        variables[varname] = varvalue
+        yield("/echo Initialized " .. varname .. " -> " .. tostring(varvalue))
+    else
+        yield("/echo Loaded " .. varname .. " -> " .. tostring(variables[varname]))
+    end
+
+    write_ini_file(variables)
+    return variables[varname]
+end
+
+--*****************************************************************
+--************************** END INIZER ***************************
+--*****************************************************************
+
+
 function become_feesher()
 	yield("/equipitem 2571") --weathered fishing rod
 	yield("/wait 0.5")
