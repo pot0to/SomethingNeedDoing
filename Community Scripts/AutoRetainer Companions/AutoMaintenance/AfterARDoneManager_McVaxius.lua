@@ -52,6 +52,9 @@ AADM_processors = {
 {"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
 {"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0}
 }
+AADM_defaults={
+{"Firstname Lastname@Server", 0, 100, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  0, 0}
+}
 loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\AADMconfig_McVaxius.lua"
 functionsToLoad = loadfile(loadfiyel2)
 
@@ -61,7 +64,7 @@ end
 
 ungabungabunga()  --get out of anything safely.
 
-hoo_arr_weeeeee = 1 -- who are we
+hoo_arr_weeeeee = -1 -- who are we
 
 for i=1,#AADM_processors do
 	if GetCharacterName(true) == AADM_processors[i][1] then
@@ -69,6 +72,23 @@ for i=1,#AADM_processors do
 	end
 end
 
+if hoo_arr_weeeeee == -1 then
+	--we have a new char to add to the table!
+	AADM_processors[#AADM_processors+1] = GetCharacterName(true)
+	end
+end
+
+--check if any table data is missing and put in a default value
+for i=1,#AADM_processors do
+	for j=1,#AADM_defaults[1] do
+		if AADM_processors[i][j] == nil then
+			AADM_processors[i][j] = AADM_defaults[1][j]
+		end
+	end
+end
+
+--write the table just in case we crash or whatevre
+tablebunga("AADMconfig_McVaxius.lua","AADM_processors")
 --begin to do stuff
 ------------------------------------
 
