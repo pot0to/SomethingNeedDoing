@@ -11,11 +11,16 @@ https://puni.sh/api/repository/taurenkey
 https://raw.githubusercontent.com/SubZero0/Dalamud.SkipCutscene/dist/repo.json
 https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/pluginmaster.json
 
+*recommendation:
+delete all the comments before the vars once you get it working properly
+
 *requirements:
 croizats SND - disable SND targeting in config
 simpletweaks with targeting fix enabled
 vnavmesh
 visland
+_functions.lua into your SND folder in %AppData%\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions
+you can find it here https://raw.githubusercontent.com/Jaksuhn/SomethingNeedDoing/master/Community%20Scripts/AutoRetainer%20Companions/RobustGCturnin/_functions.lua
 
 *optional:
 bring some gysahl greens
@@ -24,7 +29,7 @@ discardhelper
 cutscene skipper (MSQ roullette cutscenes)
 lazyloot plugin (if your doing anything other than fates)
 VBM/BMR (bmr has slash commands for following and more modules)
-RSR (is RS still being updated?)
+RSR
 
 ***Few annoying problems that still exist
 *dont follow during combat unless non caster. will require bmr contemplation - seems bmr has contemplated it with distance command will consider adding new setting for this :~D
@@ -56,98 +61,12 @@ I will do it a bit later once i uhh. make a lookup table for this trash here:
 -- Purpose: to have default .ini values and version control on configs
 -- Personal ini file
 -- if you want to use my ini file serializer just copy form start of inizer to end of inizer and look at how i implemented settings and go nuts :~D
-filename_prefix = "frenrider_" -- Script name
-open_on_next_load = 0          -- Set this to 1 if you want the next time the script loads, to open the explorer folder with all of the .ini files
-
--- Function to open a folder in Explorer
-function openFolderInExplorer(folderPath)
-    if folderPath then
-        folderPath = '"' .. folderPath .. '"'
-        os.execute('explorer ' .. folderPath)
-    else
-        yield("/echo Error: Folder path not provided.")
-    end
-end
-
 tempchar = GetCharacterName()
 tempchar = tempchar:gsub("%s", "")  -- Remove all spaces
 tempchar = tempchar:gsub("'", "")   -- Remove all apostrophes
-local filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..filename_prefix..tempchar..".ini"
-
-if open_on_next_load == 1 then
-    openFolderInExplorer(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\")
-end
-
-function serialize(value)
-    if type(value) == "boolean" then
-        return tostring(value)
-    elseif type(value) == "number" then
-        return tostring(value)
-    else -- Default to string
-        return '"' .. tostring(value) .. '"'
-    end
-end
-
-function deserialize(value)
-    if value == "true" then
-        return true
-    elseif value == "false" then
-        return false
-    elseif tonumber(value) then
-        return tonumber(value)
-    else
-        return value:gsub('^"(.*)"$', "%1")
-    end
-end
-
-function read_ini_file()
-    local variables = {}
-    local file = io.open(filename, "r")
-    if not file then
-        return variables
-    end
-
-    for line in file:lines() do
-        local name, val = line:match("([^=]+)=(.*)")
-        if name and val then
-            variables[name] = deserialize(val)
-        end
-    end
-    file:close()
-    return variables
-end
-
-function write_ini_file(variables)
-    local file = io.open(filename, "w")
-    if not file then
-        yield("/echo Error: Unable to open file for writing: " .. filename)
-        return
-    end
-
-    for name, value in pairs(variables) do
-        file:write(name .. "=" .. serialize(value) .. "\n")
-    end
-    file:close()
-end
-
-function ini_check(varname, varvalue)
-    local variables = read_ini_file()
-
-    if variables["version"] and tonumber(variables["version"]) ~= vershun then
-        yield("/echo Version mismatch. Recreating file.")
-        variables = {version = vershun}
-    end
-
-    if variables[varname] == nil then
-        variables[varname] = varvalue
-        yield("/echo Initialized " .. varname .. " -> " .. tostring(varvalue))
-    else
-        yield("/echo Loaded " .. varname .. " -> " .. tostring(variables[varname]))
-    end
-
-    write_ini_file(variables)
-    return variables[varname]
-end
+filename_prefix = "frenrider_" -- Script name
+filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..filename_prefix..tempchar..".ini"
+open_on_next_load = 0          -- Set this to 1 if you want the next time the script loads, to open the explorer folder with all of the .ini files
 
 -- Ensure the version is always written to the file
 -- VERSION VAR --
@@ -160,6 +79,10 @@ ini_check("version", vershun)
 -- VERSION VAR --
 -- VERSION VAR --
 -- VERSION VAR --
+loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
+functionsToLoad = loadfile(loadfiyel)
+functionsToLoad()
+ini_check("version", vershun)
 
 --*****************************************************************
 --************************** END INIZER ***************************
@@ -217,7 +140,9 @@ exmample qolbar for telling group to go instance 2
 -- mker = "cross" -- In case you want the other shapes. Valid shapes are triangle square circle attack1-8 bind1-3 ignore1-2
 
 -----------CONFIGURATION END-----------
-
+if open_on_next_load == 1 then
+    openFolderInExplorer(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\")
+end
 ----------------
 --INIT SECTION--
 ----------------
