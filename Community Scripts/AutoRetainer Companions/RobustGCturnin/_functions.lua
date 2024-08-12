@@ -546,31 +546,92 @@ function try_to_buy_fuel(restock_amt)
 	ungabunga()
 end
 
--- Function to serialize a table
-function serializeTable(val, name, depth)
-    local serializedTable = string.rep(" ", depth) .. name .. " = {\n"
-    for i, v in ipairs(val) do
-        serializedTable = serializedTable .. string.rep(" ", depth + 2) .. "{"
-        for j, field in ipairs(v) do
-            if type(field) == "string" then
-                serializedTable = serializedTable .. string.format("%q", field)
-            else
-                serializedTable = serializedTable .. tostring(field)
-            end
-            if j < #v then
-                serializedTable = serializedTable .. ", "
-            end
+
+function serializeTable(t, indent)
+    indent = indent or ""
+    local result = "{\n"
+    local innerIndent = indent .. "  "
+
+    for k, v in pairs(t) do
+        result = result .. innerIndent
+        if type(k) == "number" then
+            result = result .. "[" .. k .. "] = "
+        else
+            result = result .. "[" .. tostring(k) .. "] = "
         end
-        serializedTable = serializedTable .. "},\n"
+
+        if type(v) == "table" then
+            result = result .. serializeTable(v, innerIndent)
+        elseif type(v) == "string" then
+            result = result .. "\"" .. v .. "\""
+        else
+            result = result .. tostring(v)
+        end
+
+        result = result .. ",\n"
     end
-    serializedTable = serializedTable .. string.rep(" ", depth) .. "}\n"
-    return serializedTable
+
+    result = result .. indent:sub(1, -3) .. "}" -- Remove last comma and add closing brace
+    return result
 end
 
---write table data to file
-function tablebunga(vun, twooo)
-	file = io.open(vun, "w")
-	file:write(twooo.." = ")
-	file:write(serializeTable(AADM_processors, twooo, 0))
-	file:close()
+
+-- Function to deserialize a table
+function deserializeTable(str)
+    local func = load("return " .. str)
+    return func()
+end
+
+function readSerializedData(filePath)
+    local file, err = io.open(filePath, "r")
+    if not file then
+        yield("/echo Error opening file for reading: " .. err)
+        return nil
+    end
+    local data = file:read("*all")
+    file:close()
+    return data
+end
+
+-- Function to print table contents
+function printTable(t, indent)
+    indent = indent or ""
+    if type(t) ~= "table" then
+        yield("/echo " .. indent .. tostring(t))
+        return
+    end
+    
+    for k, v in pairs(t) do
+        local key = tostring(k)
+        if type(v) == "table" then
+            yield("/echo " .. indent .. key .. " =>")
+            printTable(v, indent .. "  ") -- Recursive call with increased indent
+        else
+            yield("/echo " .. indent .. key .. " => " .. tostring(v))
+        end
+    end
+end
+
+function tablebunga(filename, tablename, path)
+    local fullPath = path .. filename
+    yield("/echo Debug: Full file path = " .. fullPath)
+    
+    local file, err = io.open(fullPath, "w")
+    if not file then
+        yield("/echo Error opening file for writing: " .. err)
+        return
+    end
+
+    local tableToSerialize = _G[tablename]
+    yield("/echo Debug: Table to serialize = " .. tostring(tableToSerialize))
+
+    if type(tableToSerialize) == "table" then
+        local serializedData = serializeTable(tableToSerialize)
+        yield("/echo Debug: Serialized data:\n" .. serializedData)
+        file:write(serializedData)
+        file:close()
+        yield("/echo Successfully wrote table to " .. fullPath)
+    else
+        yield("/echo Error: Table '" .. tablename .. "' not found or is not a table.")
+    end
 end
