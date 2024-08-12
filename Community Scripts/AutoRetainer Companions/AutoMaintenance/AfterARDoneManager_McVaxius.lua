@@ -3,7 +3,7 @@ After AR Done Manager
 What does it do?
 
 configure AR to run a script after AR is done and it have it run THIS script.
-This script will, aftre AR is done, do various things based on a set of rules you will configure in a separate file (AADMconfig_McVaxius.lua)
+This script will, after AR is done, do various things based on a set of rules you will configure in a separate file (AADMconfig_McVaxius.lua)
 
 It could be ocean fishing, triple triad, inventory cleaning, going for a jog around the housing ward, delivering something to specific person, crafting. or whatever!
 
@@ -27,27 +27,30 @@ from first ?, to last starting cardinality of 1
 10 = FC buff 1 to refresh if its down
 11 = FC buff 2 to refresh if its down
 12 = fisher level. if its >0 and <100 (for now unless level cap changes) it will assume you want this char to go ocean fishing.  it will iterate through the list at certain time of day and do ocean fishing on the lowest level char, and it will also update the table and output it
+13 = personal house visit, every 100 times AR is checked it will visit the personal house of the char in question. resetting back to 1 once it visits and enters.  set it to 0 to not visit a personal house
 --]]
 
 
 --some actual vars
 force_fishing = 0 --set to 1 if you want the default indexed char to fish whenever possible
 gc_cleaning_safetystock = 50 -- how many inventory units before we do a cleaning
+folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
+--local folderPath = "F:/FF14/!gil/"
 
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 functionsToLoad = loadfile(loadfiyel)
 AADM_processors = {
-{"Firstname Lastname@Server", 0, 10, 2, 60, 20, 666, 6666, 50, "Helping Hand II", "Make it Rain II", 100},   --your main char for example, 1 hour of manservant every refresh, 15 magitek repair kits every refresh, restock fuel to 6666 at 666 fuel remaining.
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing", 92},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing", 92},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing", 92},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing", 32},    --this char will be picked next for ocean fishing
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing", 92},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing", 92},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing", 92},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing", 92},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing", 92},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing", 92}
+{"Firstname Lastname@Server", 0, 10, 2, 60, 20, 666, 6666, 50, "Helping Hand II", "Make it Rain II", 100, 1},   --your main char for example, 1 hour of manservant every refresh, 15 magitek repair kits every refresh, restock fuel to 6666 at 666 fuel remaining.
+{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
+{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
+{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
+{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  32, 0},    --this char will be picked next for ocean fishing
+{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
+{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
+{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
+{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
+{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
+{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0}
 }
 loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\AADMconfig_McVaxius.lua"
 functionsToLoad = loadfile(loadfiyel2)
@@ -103,7 +106,8 @@ if wheeequeheeheheheheheehhhee == 1 then
 		if GetCharacterCondition(32)==false then
 		 	 ungabungabunga() -- we really really try hard to be safe here
 			 
-			 --*load fishing functions
+			 loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\AADM_fishing.lua"
+		     functionsToLoad = loadfile(loadfiyel2)
 			 
 			 yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 			 fishing()
@@ -115,13 +119,15 @@ if wheeequeheeheheheheheehhhee == 1 then
 				-- Write text to the file
 				currentTime = os.date("*t")
 				formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
-				file:write(formattedTime.." - ".."["..lowestID.."] - "..feesh_char.." - Fisher Lv - "..GetLevel().."\n")
+				AADM_processors[lowestID][12] = GetLevel()
+				file:write(formattedTime.." - ".."["..lowestID.."] - "..AADM_processors[lowestID][1].." - Fisher Lv - "..AADM_processors[lowestID][12].."\n")
 				-- Close the file handle
 				file:close()
 				yield("/echo Text has been written to '" .. folderPath .. "FeeshLevels.txt'")
 			else
 				yield("/echo Error: Unable to open file for writing")
 			end
+				tablebunga("AADMconfig_McVaxius.lua","AADM_processors")
 		end
 	end
 end
@@ -134,6 +140,10 @@ if wheeequeheeheheheheheehhhee == 0 then
 			clean_inventory()
 			ungabungabunga()
 			--*if [3] was 100, we set it back down to 10 becuase 100 means a onetime guaranteed cleaning. sometimes we want to do this for whatever reason.
+			if AADM_processors[hoo_arr_weeeeee][3] == 100 then
+				AADM_processors[hoo_arr_weeeeee][3] = 10
+				tablebunga("AADMconfig_McVaxius.lua","AADM_processors")
+			end
 		end
 	end
 	--* if inventory < whatever then we do gc cleaning

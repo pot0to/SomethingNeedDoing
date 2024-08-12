@@ -408,7 +408,12 @@ function clean_inventory()
 	--https://raw.githubusercontent.com/ffxivcode/DalamudPlugins/main/repo.json
 	--*start cleaning??? need slash command
 	--*loop every 5 seconds and check if we have the right char condition to resume whatever we were doing.
+	--/automarket start|stop
 	ungabunga()
+	yield("/automarket start")
+	CharacterSafeWait()
+	ungabunga()
+	yield("/automarket stop")
 end
 
 function try_to_buy_fuel(restock_amt)
@@ -445,4 +450,33 @@ function try_to_buy_fuel(restock_amt)
 	end
 	yield("/echo We now have "..GetItemCount(10155).." Ceruelum Fuel Tanks")
 	ungabunga()
+end
+
+-- Function to serialize a table
+function serializeTable(val, name, depth)
+    local serializedTable = string.rep(" ", depth) .. name .. " = {\n"
+    for i, v in ipairs(val) do
+        serializedTable = serializedTable .. string.rep(" ", depth + 2) .. "{"
+        for j, field in ipairs(v) do
+            if type(field) == "string" then
+                serializedTable = serializedTable .. string.format("%q", field)
+            else
+                serializedTable = serializedTable .. tostring(field)
+            end
+            if j < #v then
+                serializedTable = serializedTable .. ", "
+            end
+        end
+        serializedTable = serializedTable .. "},\n"
+    end
+    serializedTable = serializedTable .. string.rep(" ", depth) .. "}\n"
+    return serializedTable
+end
+
+--write table data to file
+function tablebunga(vun, twooo)
+	file = io.open(vun, "w")
+	file:write(twooo.." = ")
+	file:write(serializeTable(AADM_processors, twooo, 0))
+	file:close()
 end
