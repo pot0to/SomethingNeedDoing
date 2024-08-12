@@ -12,11 +12,12 @@ and maybe more - let's see where we go with it
 
 {"Firstname Lastname@Server", 0},
 
-order of configs
-from first ?, to last starting cardinality of 1
-
+configs
+1D = table Cardinality
+2D=
 1 = full char name with @server, it is case sensitive and spelling sensitive please have a spreadsheet for this stuff folks
 2 = return location for any operations that require teleporting and returning. standard locations from robust turnin apply. 0 = fc, 1 = near fc but bell, etc ill document later --*
+3D=
 3 = chance to clean inventory (check _functions.lua for details) - don't ask about this in the punish disc i wont respond and at best ill just block you. you can ask in liza disc if you want
 4 = number of minutes of TT to run from 0 to whatever
 5 = TT location to run, 1=arena roe, 2=manservant
@@ -39,21 +40,21 @@ folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedD
 
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 functionsToLoad = loadfile(loadfiyel)
-AADM_processors = {
-{"Firstname Lastname@Server", 0, 10, 2, 60, 20, 666, 6666, 50, "Helping Hand II", "Make it Rain II", 100, 1},   --your main char for example, 1 hour of manservant every refresh, 15 magitek repair kits every refresh, restock fuel to 6666 at 666 fuel remaining.
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  32, 0},    --this char will be picked next for ocean fishing
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0},
-{"Firstname Lastname@Server", 0, 10, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  92, 0}
-}
-AADM_defaults={
-{"Firstname Lastname@Server", 0, 100, 0,  0,  0,   0,    0,  0,         "nothing",         "nothing",  0, 0}
+AADM_processors = {}							--initialize variable
+
+--3D Table
+AADM_defaults=
+{
+	{	"Firstname Lastname@Server", 0			--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
+		{"Fishing", 0},							--level, 0 = doont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
+		{"Cleaning", 100, 0, 0, 0},				--chance to do random cleaning/100 if 100 it will be changed to 10 after 1 run, process_gc_rank = 0=no,1=yes. expert_hack = 0=no,1=yes. clean_inventory = 0=no, >0 check inventory slots free and try to clean out inventory.
+		{"Fuel", 0, 0},							--fuel safety stock trigger, fuel to buy up to
+		{"TT", 0, 0},							--minutes of TT, npc to play 1= roe 2= manservant
+		{"Cuffed", 0},						    --minutes of cufffacur to run . assumes in front of an "entrance"
+		{"MRK", 0},								--number of magitek repair kits to quick synth after each AR check
+		{"FCB", "nothing", "nothing"},			--refresh FC buffs if they have 1 or less hours remaining on them. (remove and re-assign)
+		{"PHV", 0, 100}							--0 = no personal house 1 = has a personal house, personal house visit counter, once it reaches {}[][][2] it will reset to 1 after a visit, each ar completion will +1 it
+	}
 }
 loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\AADMconfig_McVaxius.lua"
 functionsToLoad = loadfile(loadfiyel2)
@@ -64,7 +65,7 @@ end
 
 ungabungabunga()  --get out of anything safely.
 
-hoo_arr_weeeeee = -1 -- who are we
+hoo_arr_weeeeee = -1 -- who are we default to -1 for figuring out if new char or not
 
 for i=1,#AADM_processors do
 	if GetCharacterName(true) == AADM_processors[i][1] then
@@ -159,7 +160,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 		if getRandomNumber(0,99) < AADM_processors[hoo_arr_weeeeee][3] then
 			clean_inventory()
 			ungabungabunga()
-			--*if [3] was 100, we set it back down to 10 becuase 100 means a onetime guaranteed cleaning. sometimes we want to do this for whatever reason.
+			--if [3] was 100, we set it back down to 10 becuase 100 means a onetime guaranteed cleaning. sometimes we want to do this for whatever reason perhaps after loading bunch of chars with items for gc seals?
 			if AADM_processors[hoo_arr_weeeeee][3] == 100 then
 				AADM_processors[hoo_arr_weeeeee][3] = 10
 				tablebunga("AADMconfig_McVaxius.lua","AADM_processors")
