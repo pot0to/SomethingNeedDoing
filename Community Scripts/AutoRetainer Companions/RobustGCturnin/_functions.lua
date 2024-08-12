@@ -623,11 +623,11 @@ function tablebunga(filename, tablename, path)
     end
 
     local tableToSerialize = _G[tablename]
-    yield("/echo Debug: Table to serialize = " .. tostring(tableToSerialize))
+    --yield("/echo Debug: Table to serialize = " .. tostring(tableToSerialize))
 
     if type(tableToSerialize) == "table" then
         local serializedData = serializeTable(tableToSerialize)
-        yield("/echo Debug: Serialized data:\n" .. serializedData)
+        --yield("/echo Debug: Serialized data:\n" .. serializedData)
         file:write(serializedData)
         file:close()
         yield("/echo Successfully wrote table to " .. fullPath)

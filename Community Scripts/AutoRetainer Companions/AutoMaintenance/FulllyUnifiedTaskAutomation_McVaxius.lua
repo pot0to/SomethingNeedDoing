@@ -37,7 +37,7 @@ if serializedData then
     FUTA_processors = deserializedTable
 
     -- Check the deserialized table
-    yield("/echo Deserialized table:")
+    --yield("/echo Deserialized table:")
     --printTable(FUTA_processors)
 else
     yield("/echo Error: Serialized data is nil.")
@@ -79,11 +79,11 @@ end
 
 -- Check if any table data is missing and put in a default value
 for i = 1, #FUTA_processors do
-    yield("/echo Type of FUTA_processors["..i.."]:" .. type(FUTA_processors[i]))
+    --yield("/echo Type of FUTA_processors["..i.."]:" .. type(FUTA_processors[i]))
     for j = 2, #FUTA_defaults[1] do
-        yield("/echo Type of FUTA_processors["..i.."]["..j.."]:" .. type(FUTA_processors[i][j]))
+        --yield("/echo Type of FUTA_processors["..i.."]["..j.."]:" .. type(FUTA_processors[i][j]))
         for k = 1, #FUTA_defaults[1][j] do
-            yield("/echo Type of FUTA_processors["..i.."]["..j.."]["..k.."]:" .. type(FUTA_processors[i][j][k]))
+            --yield("/echo Type of FUTA_processors["..i.."]["..j.."]["..k.."]:" .. type(FUTA_processors[i][j][k]))
             if FUTA_processors[i][j][k] == nil then
                 FUTA_processors[i][j][k] = FUTA_defaults[1][j][k]
             end
