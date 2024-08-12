@@ -30,6 +30,10 @@ from first ?, to last starting cardinality of 1
 --]]
 
 
+--some actual vars
+force_fishing = 0 --set to 1 if you want the default indexed char to fish whenever possible
+gc_cleaning_safetystock = 50 -- how many inventory units before we do a cleaning
+
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 functionsToLoad = loadfile(loadfiyel)
 AADM_processors = {
@@ -65,15 +69,78 @@ end
 --begin to do stuff
 ------------------------------------
 
-if AADM_processors[hoo_arr_weeeeee][2] > 0 then
-	if getRandomNumber(0,99) < AADM_processors[hoo_arr_weeeeee][2] then
-		clean_inventory()
-		ungabungabunga()
-		--*gc cleaning
+--fishing - always check first since it takes some time sometimes to get it going
+--dont do anything else if we are fishing. just return home and resume AR after
+--secret variable
+wheeequeheeheheheheheehhhee = 0
+--The next 2 lines of code copied from https://raw.githubusercontent.com/plottingCreeper/FFXIV-scripts-and-macros/main/SND/FishingRaid.lua
+--line 319 to line 320
+--thanks botting creeper!
+if os.date("!*t").hour%2==0 and os.date("!*t").min<15 then
+  if os.date("!*t").min>=1 then
+	wheeequeheeheheheheheehhhee = 1
+  end
+end
+
+--determine who is the lowest level fisher of them all.
+--set this to the cardinality you want to force fishing on if thats what you want to do.
+lowestID = 1
+for i=1,#AADM_processors do
+	if AADM_processors[i][12] > 0 and AADM_processors[i][12] < AADM_processors[lowestID][12] then
+		lowestID = i
 	end
 end
 
+--if the lowest guy is max level we aren't fishing yo
+if AADM_processors[lowestID] == 100 and force_fishing == 0 then
+	wheeequeheeheheheheheehhhee = 0
+	yield("/echo Lowest char is max level so we arent fishing")
+end
 
+--its fishinging time
+if wheeequeheeheheheheheehhhee == 1 then
+	if GetCharacterCondition(31)==false then
+		if GetCharacterCondition(32)==false then
+		 	 ungabungabunga() -- we really really try hard to be safe here
+			 
+			 --*load fishing functions
+			 
+			 yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
+			 fishing()
+			 --drop a log file entry on the charname + Level
+			-- Open a file in write mode within the specified folder
+			local file = io.open(folderPath .. "FeeshLevels.txt", "a")
+
+			if file then
+				-- Write text to the file
+				currentTime = os.date("*t")
+				formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
+				file:write(formattedTime.." - ".."["..lowestID.."] - "..feesh_char.." - Fisher Lv - "..GetLevel().."\n")
+				-- Close the file handle
+				file:close()
+				yield("/echo Text has been written to '" .. folderPath .. "FeeshLevels.txt'")
+			else
+				yield("/echo Error: Unable to open file for writing")
+			end
+		end
+	end
+end
+
+if wheeequeheeheheheheheehhhee == 0 then
+-----start of processing things when there is no fishing
+	--inventory cleaning
+	if AADM_processors[hoo_arr_weeeeee][3] > 0 then
+		if getRandomNumber(0,99) < AADM_processors[hoo_arr_weeeeee][3] then
+			clean_inventory()
+			ungabungabunga()
+			--*if [3] was 100, we set it back down to 10 becuase 100 means a onetime guaranteed cleaning. sometimes we want to do this for whatever reason.
+		end
+	end
+	--* if inventory < whatever then we do gc cleaning
+		--*gc cleaning if inventory is under ?? units free even after the "cleaning"
+
+-----end of processing things when there is no fishing
+end
 ------------------------------------
 --stop beginning to do stuff
 	ungabungabunga()
