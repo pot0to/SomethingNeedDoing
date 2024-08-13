@@ -523,9 +523,9 @@ function clean_inventory()
 	end
 	exit_cleaning = 0
 	while GetCharacterCondition(50) == true do
-		yield("/wait 5")
+		yield("/wait 1")
 		exit_cleaning = exit_cleaning + 1
-		yield("/echo Waiting for repricer to end -> "..exit_cleaning*5.." seconds duration so far")
+		yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far")
 	end
 	CharacterSafeWait()
 	zungazunga()
