@@ -1,9 +1,9 @@
 function fishing()  
-	yield("/echo Load -> "..AADM_processors[1])
+	yield("/echo Load -> "..FUTA_processors[lowestID][1][1])
 	
 	--now we have to keep trying until we are on the right character.... just in case we are not.
-	while AADM_processors[lowestID][1] ~= GetCharacterName(true) do
-		yield("/ays relog " ..AADM_processors[lowestID][1])
+	while FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) do
+		yield("/ays relog " ..FUTA_processors[lowestID][1][1])
 		yield("/wait 3")
 
 		yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
@@ -144,13 +144,13 @@ function fishing()
 	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 	
 	--if we are tp to limsa bell
-	if AADM_processors[lowestID][2] == 2 then
+	if FUTA_processors[lowestID][1][2] == 2 then
 		return_to_limsa_bell()
 		yield("/wait 8")
 	end
 	
 	--if we are tp to inn. we will go to gridania yo
-	if AADM_processors[lowestID][2] == 3 then
+	if FUTA_processors[lowestID][1][2] == 3 then
 		yield("/tp New Gridania")
 		ZoneTransition()
 		yield("/wait 2")
@@ -164,7 +164,7 @@ function fishing()
 	end
 	
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
-	if AADM_processors[lowestID][2] == 0 or AADM_processors[lowestID][2] == 1 then
+	if FUTA_processors[lowestID][1][2] == 0 or FUTA_processors[lowestID][1][2] == 1 then
 		--yield("/tp Estate Hall (Free Company)")
 		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 		yield("/li fc")
@@ -175,7 +175,7 @@ function fishing()
 	end
 
 	--normal small house shenanigans
-	if AADM_processors[lowestID][2] == 0 then
+	if FUTA_processors[lowestID][1][2] == 0 then
 		yield("/hold W <wait.1.0>")
 		yield("/release W")
 		yield("/target Entrance <wait.1>")
@@ -195,7 +195,7 @@ function fishing()
 	end
 
 	--retainer bell nearby shenanigans
-	if AADM_processors[lowestID][2] == 1 then
+	if FUTA_processors[lowestID][1][2] == 1 then
 		yield("/target \"Summoning Bell\"")
 		yield("/wait 2")
 		PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)

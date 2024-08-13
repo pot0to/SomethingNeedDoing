@@ -11,11 +11,13 @@ It could be ocean fishing, triple triad, inventory cleaning, going for a jog aro
 Requirements : SND
 and maybe more - let's see where we go with it
 --]]
+FUTA_config_file = "FUTAconfig_McVaxius.lua"
 force_fishing = 0 -- Set to 1 if you want the default indexed char to fish whenever possible
 gc_cleaning_safetystock = 50 -- How many inventory units before we do a cleaning
 folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
 
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
+fullPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\" .. FUTA_config_file
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
 
@@ -36,9 +38,6 @@ FUTA_defaults = {
         {"DUTY", "Teaspoon Dropping Closet", -5, 0} -- {}[i][10][1..4] -- Duty details
     }
 }
-
--- Define the file path where serialized data is stored
-fullPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTAconfig_McVaxius.lua"
 
 -- Read and deserialize the data
 serializedData = readSerializedData(fullPath)
@@ -79,7 +78,6 @@ if hoo_arr_weeeeee == -1 then
     -- Initialize all levels with defaults
     for j = 1, #FUTA_defaults[1] do
         FUTA_processors[#FUTA_processors][j] = {}
-
         for k = 1, #FUTA_defaults[1][j] do
             FUTA_processors[#FUTA_processors][j][k] = FUTA_defaults[1][j][k]
         end
@@ -139,7 +137,7 @@ end
 --]]
 
 -- After tablebunga() call
-tablebunga("FUTAconfig_McVaxius.lua", "FUTA_processors", folderPath)
+tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
 yield("/echo tablebunga() completed successfully")
 
 -- Begin to do stuff
@@ -150,6 +148,22 @@ yield("/echo Debug: Beginning to do stuff")
 ---------------------------------------------------------------------------------
 ------------------------------FISHING  START-------------------------------------
 ---------------------------------------------------------------------------------
+if FUTA_processors[hoo_arr_weeeeee][2][2] == 0 then
+	--we dont have a fishing level setup
+    yield("/echo Let's see if fishing is even a thing on this char and update the database")
+	yield("/wait 0.5")	
+	if tonumber(GetLevel(17)) > 0 then
+		FUTA_processors[hoo_arr_weeeeee][2][2] = tonumber(GetLevel(17))
+		tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
+		yield("/echo tablebunga() completed successfully w new fishing data")
+	end
+	if tonumber(GetLevel(17)) == 0 then
+		FUTA_processors[hoo_arr_weeeeee][2][2] = -1  --fishing is disabled don't check it again
+		tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
+		yield("/echo this char is not a fisher")
+	end
+end
+
 --fishing - always check first since it takes some time sometimes to get it going
 --dont do anything else if we are fishing. just return home and resume AR after
 if os.date("!*t").hour % 2 == 0 and os.date("!*t").min < 15 then
@@ -161,6 +175,13 @@ yield("/echo Debug: Time check completed")
 
 -- Determine who is the lowest level fisher of them all.
 lowestID = 1
+--first get a non 0 value
+for i = 1, #FUTA_processors do
+    if FUTA_processors[i][2][2] > 0 then
+        lowestID = i
+    end
+end
+--now look for a smaller one
 for i = 1, #FUTA_processors do
     if FUTA_processors[i][2][2] > 0 and FUTA_processors[i][2][2] < FUTA_processors[lowestID][2][2] then
         lowestID = i
@@ -169,14 +190,9 @@ end
 yield("/echo Debug: Lowest ID determined as " .. lowestID)
 
 -- If the lowest guy is max level, we aren't fishing
-if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 then
+if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_processors[lowestID][2][2] == -1 then
     wheeequeheeheheheheheehhhee = 0
-    yield("/echo Lowest char is max level so we aren't fishing")
-end
-
-if FUTA_processors[lowestID][2][2] == 0 and force_fishing == 0 then
-    wheeequeheeheheheheheehhhee = 0
-    yield("/echo Lowest char has fishing disabled so we aren't fishing")
+    yield("/echo Lowest char is max level or no chars have fishing so we aren't fishing")
 end
 
 -- It's fishing time
@@ -188,7 +204,8 @@ if wheeequeheeheheheheheehhhee == 1 then
             
             loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_fishing.lua"
             functionsToLoad = loadfile(loadfiyel2)
-            
+            functionsToLoad()
+			
             yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
             fishing()
             yield("/echo Debug: Fishing completed")
@@ -205,7 +222,7 @@ if wheeequeheeheheheheheehhhee == 1 then
             else
                 yield("/echo Error: Unable to open file for writing")
             end
-            tablebunga("FUTAconfig_McVaxius.lua", "FUTA_processors", folderPath)
+            tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
             yield("/echo Debug: Log file entry completed")
         end
     end
@@ -223,7 +240,7 @@ else
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
             if FUTA_processors[hoo_arr_weeeeee][3][2] == 100 then
                 FUTA_processors[hoo_arr_weeeeee][3][2] = 10
-                tablebunga("FUTAconfig_McVaxius.lua", "FUTA_processors", folderPath)
+                tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
                 yield("/echo Debug: Inventory cleaning adjustment completed")
             end
         end
