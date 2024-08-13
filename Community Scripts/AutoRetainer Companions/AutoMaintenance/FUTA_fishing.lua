@@ -102,7 +102,6 @@ function fishing()
 	randomNum = (randomNum * -1) / 1000
 	yield("/visland moveto 7.451 6.750 "..randomNum)
 
-	--keep checking for that original area - once it is back. turn /ays multi back on
 	--also spam fishing
 	omadamkhoneh = 0 --counter to stop trying to move to edge since it will do bad stuff outside of instance after
 	while (zown ~= fzown) do

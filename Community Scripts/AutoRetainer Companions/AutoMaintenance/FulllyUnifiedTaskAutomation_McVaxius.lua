@@ -15,27 +15,33 @@ FUTA_config_file = "FUTAconfig_McVaxius.lua"
 force_fishing = 0 -- Set to 1 if you want the default indexed char to fish whenever possible
 gc_cleaning_safetystock = 50 -- How many inventory units before we do a cleaning
 folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
-
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 fullPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\" .. FUTA_config_file
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
 
-FUTA_processors = {} -- Initialize variable
+------------------------------------------
+--Config and change back after done!------
+------------------------------------------
+re_organize_return_locations = 0 -- only set this one time and run the script so it can clean up the return locations, 0 magitek fuel = limsa bell, +fuel = fc entrance
+------------------------------------------
+------------------------------------------
+------------------------------------------
 
+FUTA_processors = {} -- Initialize variable
 -- 3D Table   {}[i][j][k]
 FUTA_defaults = {
     {
-        {"Firstname Lastname@Server", 0}, -- {}[i][1..2] -- Name@server and return type
-        {"FISH", 0},                      -- {}[i][2][1..2] -- Level
-        {"CLEAN", 100, 0, 0, 0},          -- {}[i][3][1..5] -- Chance to do random cleaning
-        {"FUEL", 0, 0},                   -- {}[i][4][1..3] -- Fuel safety stock trigger
-        {"TT", 0, 0},                     -- {}[i][5][1..3] -- Minutes of TT, NPC to play
-        {"CUFF", 0},                      -- {}[i][6][1..2] -- Minutes of Cuff a Cur
-        {"MRK", 0},                       -- {}[i][7][1..2] -- Number of Magitek Repair Kits
-        {"FCB", "nothing", "nothing"},    -- {}[i][8][1..3] -- Refresh FC buffs
-        {"PHV", 0, 100},                  -- {}[i][9][1..3] -- Personal house visit
-        {"DUTY", "Teaspoon Dropping Closet", -5, 0} -- {}[i][10][1..4] -- Duty details
+        {"Firstname Lastname@Server", 0}, 			------{}[i][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
+        {"FISH", 0},								---{}[i][3][1..2]--level, 0 = doont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
+		{"CLEAN", 100, 0, 0, 0},					---{}[i][4][1..5]--chance to do random cleaning/100 if 100 it will be changed to 10 after 1 run, process_gc_rank = 0=no,1=yes. expert_hack = 0=no,1=yes. clean_inventory = 0=no, >0 check inventory slots free and try to clean out inventory.
+		{"FUEL", 0, 0},								---{}[i][5][1..3]--fuel safety stock trigger, fuel to buy up to
+		{"TT", 0, 0},								---{}[i][6][1..3]--minutes of TT, npc to play 1= roe 2= manservant
+		{"CUFF", 0},						    	---{}[i][7][1..2]--minutes of cufffacur to run . assumes in front of an "entrance"
+		{"MRK", 0},									---{}[i][8][1..2]--number of magitek repair kits to quick synth after each AR check
+		{"FCB", "nothing", "nothing"},				---{}[i][9][1..3]--refresh FC buffs if they have 1 or less hours remaining on them. (remove and re-assign)
+		{"PHV", 0, 100},							--{}[i][10][1..3]--0 = no personal house 1 = has a personal house, personal house visit counter, once it reaches {}[][][2] it will reset to 1 after a visit, each ar completion will +1 it
+		{"DUTY", "Teaspoon Dropping Closet", -5, 0}	--{}[i][11][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1
     }
 }
 
@@ -135,6 +141,13 @@ else
     end
 end
 --]]
+
+--one-off-hackeries
+if re_organize_return_locations == 1 then
+	if GetItemCount(10155) >  0 then
+		FUTA_processors[hoo_arr_weeeeee][1][2] = 0  --configure for return to fc house if we have repair kits
+	end
+end
 
 -- After tablebunga() call
 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
@@ -250,4 +263,5 @@ end
 
 -- Stop beginning to do stuff
 zungazunga()
+--yield("/ays multi e") --turn AR back on if we were testing out the script
 yield("/echo Debug: Finished all processing")
