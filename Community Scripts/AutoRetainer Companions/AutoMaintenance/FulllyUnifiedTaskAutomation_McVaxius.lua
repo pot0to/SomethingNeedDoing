@@ -75,6 +75,7 @@ if hoo_arr_weeeeee == -1 then
 
     -- Assign the character name
     FUTA_processors[#FUTA_processors][1][1] = GetCharacterName(true)
+	hoo_arr_weeeeee = #FUTA_processors --we added it, lets cardinality it
 end
 
 -- Check if any table data is missing and put in a default value
@@ -153,6 +154,11 @@ yield("/echo Debug: Lowest ID determined as " .. lowestID)
 if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 then
     wheeequeheeheheheheheehhhee = 0
     yield("/echo Lowest char is max level so we aren't fishing")
+end
+
+if FUTA_processors[lowestID][2][2] == 0 and force_fishing == 0 then
+    wheeequeheeheheheheheehhhee = 0
+    yield("/echo Lowest char has fishing disabled so we aren't fishing")
 end
 
 -- It's fishing time
