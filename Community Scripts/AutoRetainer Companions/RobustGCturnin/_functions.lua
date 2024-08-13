@@ -516,7 +516,7 @@ function clean_inventory()
 	yield("/automarket start")
 	yield("/wait 5")
 	exit_cleaning = 0
-	while GetCharacterCondition(50) == false or exit_cleaning < 20 do
+	while GetCharacterCondition(50) == false and exit_cleaning < 20 do
 		yield("/wait 1")
 		exit_cleaning = exit_cleaning + 1
 		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
