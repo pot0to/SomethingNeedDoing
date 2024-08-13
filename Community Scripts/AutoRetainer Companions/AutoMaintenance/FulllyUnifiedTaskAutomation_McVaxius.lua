@@ -1,4 +1,16 @@
--- Some actual vars
+--[[
+Fully Unified Task Automation (F.U.T.A.)
+
+What does it do?
+
+configure AR to run a script after AR is done and it have it run THIS script.
+This script will, after AR is done, do various things based on a set of rules you will configure in a separate file (FUTAconfig_McVaxius.lua)
+
+It could be ocean fishing, triple triad, inventory cleaning, going for a jog around the housing ward, delivering something to specific person, crafting. or whatever!
+
+Requirements : SND
+and maybe more - let's see where we go with it
+--]]
 force_fishing = 0 -- Set to 1 if you want the default indexed char to fish whenever possible
 gc_cleaning_safetystock = 50 -- How many inventory units before we do a cleaning
 folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
@@ -51,7 +63,7 @@ function getRandomNumber(min, max)
     return math.random(min, max)
 end
 
-ungabungabunga() -- Get out of anything safely.
+zungazunga() -- Get out of anything quickly
 
 hoo_arr_weeeeee = -1 -- Who are we? Default to -1 for figuring out if new char or not
 
@@ -134,6 +146,12 @@ yield("/echo tablebunga() completed successfully")
 wheeequeheeheheheheheehhhee = 0 -- Secret variable
 yield("/echo Debug: Beginning to do stuff")
 
+
+---------------------------------------------------------------------------------
+------------------------------FISHING  START-------------------------------------
+---------------------------------------------------------------------------------
+--fishing - always check first since it takes some time sometimes to get it going
+--dont do anything else if we are fishing. just return home and resume AR after
 if os.date("!*t").hour % 2 == 0 and os.date("!*t").min < 15 then
     if os.date("!*t").min >= 1 then
         wheeequeheeheheheheheehhhee = 1
@@ -180,8 +198,8 @@ if wheeequeheeheheheheheehhhee == 1 then
             if file then
                 currentTime = os.date("*t")
                 formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
-                FUTA_processors[lowestID][3][2] = GetLevel()
-                file:write(formattedTime.." - ".."["..lowestID.."] - "..FUTA_processors[lowestID][3][1].." - Fisher Lv - "..FUTA_processors[lowestID][3][2].."\n")
+                FUTA_processors[lowestID][2][2] = GetLevel()
+                file:write(formattedTime.." - ".."["..lowestID.."] - "..FUTA_processors[lowestID][1][1].." - Fisher Lv - "..FUTA_processors[lowestID][2][2].."\n")
                 file:close()
                 yield("/echo Text has been written to '" .. folderPath .. "FeeshLevels.txt'")
             else
@@ -192,12 +210,16 @@ if wheeequeheeheheheheheehhhee == 1 then
         end
     end
 else
+---------------------------------------------------------------------------------
+------------------------------FISHING END----------------------------------------
+---------------------------------------------------------------------------------
+
     -- Start of processing things when there is no fishing
     if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
         if getRandomNumber(0, 99) < FUTA_processors[hoo_arr_weeeeee][3][2] then
             yield("/echo Debug: Inventory cleaning adjustment started")
             clean_inventory()
-            ungabungabunga()
+            zungazunga()
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
             if FUTA_processors[hoo_arr_weeeeee][3][2] == 100 then
                 FUTA_processors[hoo_arr_weeeeee][3][2] = 10
@@ -210,5 +232,5 @@ else
 end
 
 -- Stop beginning to do stuff
-ungabungabunga()
+zungazunga()
 yield("/echo Debug: Finished all processing")

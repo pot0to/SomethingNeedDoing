@@ -139,6 +139,15 @@ function ungabunga()
 	yield("/wait 3")
 end
 
+function zungazunga()
+	yield("/send ESCAPE")
+	yield("/wait 0.5")
+	yield("/send ESCAPE")
+	yield("/wait 0.5")
+	yield("/send ESCAPE")
+	yield("/wait 0.5")
+end
+
 function ungabungabunga()
 	--don't bunga bunga if we are not ingame.. it breaks logging in
 	while GetCharacterCondition(1) == false do
