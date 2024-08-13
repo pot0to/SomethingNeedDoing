@@ -512,10 +512,23 @@ function clean_inventory()
 	--*start cleaning??? need slash command
 	--*loop every 5 seconds and check if we have the right char condition to resume whatever we were doing.
 	--/automarket start|stop
-	ungabunga()
+	zungazunga()
 	yield("/automarket start")
+	yield("/wait 5")
+	exit_cleaning = 0
+	while GetCharacterCondition(50) == false or exit_cleaning < 20 do
+		yield("/wait 1")
+		exit_cleaning = exit_cleaning + 1
+		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
+	end
+	exit_cleaning = 0
+	while GetCharacterCondition(50) == true do
+		yield("/wait 5")
+		exit_cleaning = exit_cleaning + 1
+		yield("/echo Waiting for repricer to end -> "..exit_cleaning*5.." seconds duration so far")
+	end
 	CharacterSafeWait()
-	ungabunga()
+	zungazunga()
 	yield("/automarket stop")
 end
 
