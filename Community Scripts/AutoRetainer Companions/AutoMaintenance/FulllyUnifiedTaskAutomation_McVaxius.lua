@@ -10,6 +10,15 @@ It could be ocean fishing, triple triad, inventory cleaning, going for a jog aro
 
 Requirements : SND
 and maybe more - let's see where we go with it
+
+
+Problems/annoyances
+ocean fishing. we cant ays relog ... hmmm 
+hacky time
+install AHK
+install wintitle plugin
+
+
 --]]
 FUTA_config_file = "FUTAconfig_McVaxius.lua"
 force_fishing = 0 -- Set to 1 if you want the default indexed char to fish whenever possible
@@ -28,6 +37,9 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 ------------------------------------------
 ------------------------------------------
 
+yield("/wintitle Final Fantasy XIV")
+yield("/wait 5")
+yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 FUTA_processors = {} -- Initialize variable
 -- 3D Table   {}[i][j][k]
 FUTA_defaults = {
@@ -69,6 +81,7 @@ function getRandomNumber(min, max)
 end
 
 zungazunga() -- Get out of anything quickly
+
 
 hoo_arr_weeeeee = -1 -- Who are we? Default to -1 for figuring out if new char or not
 
@@ -208,6 +221,7 @@ if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_process
     yield("/echo Lowest char is max level or no chars have fishing so we aren't fishing")
 end
 
+wheeequeheeheheheheheehhhee = 0 --meh we cant do this safely
 -- It's fishing time
 if wheeequeheeheheheheheehhhee == 1 then
     if GetCharacterCondition(31) == false then
@@ -220,6 +234,34 @@ if wheeequeheeheheheheheehhhee == 1 then
             functionsToLoad()
 			
             yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
+			
+			if FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) then
+				--if we are on wrong char. we gotta kill AR And let AHK fire up the right char in a sec ;o
+				yield("/echo Hacky whacky")
+				yield("/ays multi d")
+				yield("/wait 3")
+				--do sheet
+				yield("/echo Hacky AHK shit")
+				-- make a ahk file from scratch
+				local file = io.open(folderPath .. "not_a_key_logger.ahk", "w")
+                file:write("WinActivate, Flantasy\n")
+                file:write("Sleep, 5000\n")
+                --file:write("Send, {ENTER}/ays relog "..string.match(FUTA_processors[lowestID][1][1], "([^@]+)").." {ENTER}\n")
+                file:write("Send, {ENTER}/ays relog "..FUTA_processors[lowestID][1][1].." {ENTER}\n")
+                file:write("Sleep, 45000\n")
+                file:write("Send, {ENTER}/pcraft run FUTA {ENTER}\n")
+                file:close()
+				-- Call a batch file using its full path
+				--os.execute("cmd /c start \"\" \ "..os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
+				os.execute('cmd /c start "" "' .. os.getenv("appdata") .. '\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk"')
+				yield("/wintitle Flantasy")
+				--end the script here
+				yield("/pcraft stop")				--os.execute(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
+				yield("/wintitle Flantasy")
+				--end the script here
+				yield("/pcraft stop")
+			end
+			
             fishing()
             yield("/echo Debug: Fishing completed")
 
@@ -251,7 +293,7 @@ else
             clean_inventory()
             zungazunga()
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
-            if FUTA_processors[hoo_arr_weeeeee][3][2] == 100 then
+            if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
                 FUTA_processors[hoo_arr_weeeeee][3][2] = 10
                 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
                 yield("/echo Debug: Inventory cleaning adjustment completed")
@@ -263,5 +305,7 @@ end
 
 -- Stop beginning to do stuff
 zungazunga()
---yield("/ays multi e") --turn AR back on if we were testing out the script
+if wheeequeheeheheheheheehhhee == 1 then
+	yield("/ays multi e") --if we had to toggle AR
+end
 yield("/echo Debug: Finished all processing")
