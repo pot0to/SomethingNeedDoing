@@ -522,13 +522,16 @@ function clean_inventory()
 		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
 	end
 	exit_cleaning = 0
-	while GetCharacterCondition(50) == true do
+	while GetCharacterCondition(50) == true and exit_cleaning < 300 do
 		yield("/wait 1")
 		exit_cleaning = exit_cleaning + 1
 		yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far")
 	end
 	CharacterSafeWait()
 	zungazunga()
+	if exit_cleaning > 250 then
+		ungabungabunga()
+	end
 	yield("/automarket stop")
 end
 
@@ -656,4 +659,57 @@ function tablebunga(filename, tablename, path)
     else
         yield("/echo Error: Table '" .. tablename .. "' not found or is not a table.")
     end
+end
+
+function FUTA_return()
+		--limsa aetheryte
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 4 then
+		return_to_limsa_bell()
+		yield("/wait 8")
+	end
+	
+	--if we are tp to inn. we will go to gridania yo
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 3 then
+		return_to_inn()
+		yield("/wait 8")
+	end
+	
+	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 1 then
+		return_to_fc()
+	end
+	
+	--option 5 or 6 personal home and bell near personal home
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 5 or FUTA_processors[hoo_arr_weeeeee][1][2] == 6 then
+		return_to_lair()
+	end
+
+	--normal small house shenanigans
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 5 then
+		return_fc_entrance()
+	end
+
+	--retainer bell nearby shenanigans
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 1 or FUTA_processors[hoo_arr_weeeeee][1][2] == 6 then
+		return_fc_near_bell()
+	end	
+	
+end
+
+function loggabunga(filename, texty)
+	local file = io.open(folderPath .. filename .. "_log.txt", "a")
+	if file then
+		currentTime = os.date("*t")
+		formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
+		file:write(formattedTime..texty.."\n")
+		file:close()
+	end
+end
+
+function check_ro_helm()
+	--check for red onion helms and report in to a log file if there is one
+	if GetItemCount(2820) > 0 then
+		yield("/echo RED ONION HELM DETECTED")
+		loggabunga("FUTA_"," - Red Onion Helm detected on -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+	end
 end

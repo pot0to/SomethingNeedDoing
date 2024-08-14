@@ -38,22 +38,22 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 ------------------------------------------
 
 yield("/wintitle Final Fantasy XIV")
-yield("/wait 5")
-yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
+--yield("/wait 5")
+--yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 FUTA_processors = {} -- Initialize variable
 -- 3D Table   {}[i][j][k]
 FUTA_defaults = {
     {
-        {"Firstname Lastname@Server", 0}, 			------{}[i][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
-        {"FISH", 0},								---{}[i][3][1..2]--level, 0 = doont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
-		{"CLEAN", 100, 0, 0, 0},					---{}[i][4][1..5]--chance to do random cleaning/100 if 100 it will be changed to 10 after 1 run, process_gc_rank = 0=no,1=yes. expert_hack = 0=no,1=yes. clean_inventory = 0=no, >0 check inventory slots free and try to clean out inventory.
-		{"FUEL", 0, 0},								---{}[i][5][1..3]--fuel safety stock trigger, fuel to buy up to
-		{"TT", 0, 0},								---{}[i][6][1..3]--minutes of TT, npc to play 1= roe 2= manservant
-		{"CUFF", 0},						    	---{}[i][7][1..2]--minutes of cufffacur to run . assumes in front of an "entrance"
-		{"MRK", 0},									---{}[i][8][1..2]--number of magitek repair kits to quick synth after each AR check
-		{"FCB", "nothing", "nothing"},				---{}[i][9][1..3]--refresh FC buffs if they have 1 or less hours remaining on them. (remove and re-assign)
-		{"PHV", 0, 100},							--{}[i][10][1..3]--0 = no personal house 1 = has a personal house, personal house visit counter, once it reaches {}[][][2] it will reset to 1 after a visit, each ar completion will +1 it
-		{"DUTY", "Teaspoon Dropping Closet", -5, 0}	--{}[i][11][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1
+        {"Firstname Lastname@Server", 0}, 			---{}[i][1][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
+        {"FISH", 0},								---{}[i][2][1..2]--level, 0 = doont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
+		{"CLEAN", 100, 0, 0, 50},					---{}[i][3][1..5]--chance to do random cleaning/100 if 100 it will be changed to 10 after 1 run, process_gc_rank = 0=no,1=yes. expert_hack = 0=no,1=yes. clean_inventory = 0=no, >0 check inventory slots free and try to clean out inventory.
+		{"FUEL", 0, 0},								---{}[i][4][1..3]--fuel safety stock trigger, fuel to buy up to
+		{"TT", 0, 0},								---{}[i][5][1..3]--minutes of TT, npc to play 1= roe 2= manservant
+		{"CUFF", 0},						    	---{}[i][6][1..2]--minutes of cufffacur to run . assumes in front of an "entrance"
+		{"MRK", 0},									---{}[i][7][1..2]--number of magitek repair kits to quick synth after each AR check
+		{"FCB", "nothing", "nothing"},				---{}[i][8][1..3]--refresh FC buffs if they have 1 or less hours remaining on them. (remove and re-assign)
+		{"PHV", 0, 100},							---{}[i][9][1..3]--0 = no personal house 1 = has a personal house, personal house visit counter, once it reaches {}[][][2] it will reset to 1 after a visit, each ar completion will +1 it
+		{"DUTY", "Teaspoon Dropping Closet", -5, 0}	--{}[i][10][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1
     }
 }
 
@@ -170,6 +170,8 @@ yield("/echo tablebunga() completed successfully")
 wheeequeheeheheheheheehhhee = 0 -- Secret variable
 yield("/echo Debug: Beginning to do stuff")
 
+--check for red onion helm
+check_ro_helm()
 
 ---------------------------------------------------------------------------------
 ------------------------------FISHING  START-------------------------------------
@@ -281,11 +283,14 @@ if wheeequeheeheheheheheehhhee == 1 then
             yield("/echo Debug: Log file entry completed")
         end
     end
-else
+end
 ---------------------------------------------------------------------------------
 ------------------------------FISHING END----------------------------------------
 ---------------------------------------------------------------------------------
-
+if wheeequeheeheheheheheehhhee == 0 then
+	----------------------------
+	--CLEAN--
+	----------------------------
     -- Start of processing things when there is no fishing
     if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
         if getRandomNumber(0, 99) < FUTA_processors[hoo_arr_weeeeee][3][2] then
@@ -293,14 +298,46 @@ else
             clean_inventory()
             zungazunga()
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
+			yield("/echo rolling dice to see if we do a repricing !")
             if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
                 FUTA_processors[hoo_arr_weeeeee][3][2] = 10
                 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
                 yield("/echo Debug: Inventory cleaning adjustment completed")
             end
         end
-		--*check inventory size and do gcturnin shit 
     end
+	----------------------------
+	--CLEAN2 Electric boogaloo--
+	----------------------------
+	--check inventory size and do gcturnin shit 
+	yield("/echo Do we need to clear inventory?")
+	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 then
+		yield("/echo Yes we need to clean inventory and turnin GC stuff! 1/5 debug")
+		loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
+		yield("/echo Yes we need to clean inventory and turnin GC stuff! 2/5 debug")
+		functionsToLoad = loadfile(loadfiyel2)
+		yield("/echo Yes we need to clean inventory and turnin GC stuff! 3/5 debug")
+		functionsToLoad()
+		yield("/echo Yes we need to clean inventory and turnin GC stuff! 4/5 debug")
+		FUTA_robust_gc()
+		yield("/echo Yes we need to clean inventory and turnin GC stuff! 5/5 debug")
+	end
+	----------------------------
+	--PHV Personal House Visit--
+	----------------------------
+	if FUTA_processors[hoo_arr_weeeeee][9][2] > 0 then
+		FUTA_processors[hoo_arr_weeeeee][9][2] = 1 + FUTA_processors[hoo_arr_weeeeee][9][2]
+		if FUTA_processors[hoo_arr_weeeeee][9][2] > FUTA_processors[hoo_arr_weeeeee][9][3] then
+			FUTA_processors[hoo_arr_weeeeee][9][2] = 1
+			yield("/li home")
+			CharacterSafeWait()
+			return_fc_entrance() --does the same thing just enters target
+			CharacterSafeWait()
+			loggabunga("FUTA_", " - Home Visit Executed by -> "..FUTA_processors[lowestID][1][1])
+			zungazunga()
+			FUTA_return() --return to configured location
+		end
+	end
 end
 
 -- Stop beginning to do stuff
