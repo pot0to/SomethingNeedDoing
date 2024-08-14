@@ -1,3 +1,97 @@
+
+--*****************************************************************
+--************************* START INIZER **************************
+--*****************************************************************
+-- Purpose: to have default .ini values and version control on configs
+-- Personal ini file
+-- if you want to use my ini file serializer just copy form start of inizer to end of inizer and look at how i implemented settings and go nuts :~D
+
+-- Function to open a folder in Explorer
+function openFolderInExplorer(folderPath)
+    if folderPath then
+        folderPath = '"' .. folderPath .. '"'
+        os.execute('explorer ' .. folderPath)
+    else
+        yield("/echo Error: Folder path not provided.")
+    end
+end
+
+function serialize(value)
+    if type(value) == "boolean" then
+        return tostring(value)
+    elseif type(value) == "number" then
+        return tostring(value)
+    else -- Default to string
+        return '"' .. tostring(value) .. '"'
+    end
+end
+
+function deserialize(value)
+    if value == "true" then
+        return true
+    elseif value == "false" then
+        return false
+    elseif tonumber(value) then
+        return tonumber(value)
+    else
+        return value:gsub('^"(.*)"$', "%1")
+    end
+end
+
+function read_ini_file()
+    local variables = {}
+    local file = io.open(filename, "r")
+    if not file then
+        return variables
+    end
+
+    for line in file:lines() do
+        local name, val = line:match("([^=]+)=(.*)")
+        if name and val then
+            variables[name] = deserialize(val)
+        end
+    end
+    file:close()
+    return variables
+end
+
+function write_ini_file(variables)
+    local file = io.open(filename, "w")
+    if not file then
+        yield("/echo Error: Unable to open file for writing: " .. filename)
+        return
+    end
+
+    for name, value in pairs(variables) do
+        file:write(name .. "=" .. serialize(value) .. "\n")
+    end
+    file:close()
+end
+
+function ini_check(varname, varvalue)
+    local variables = read_ini_file()
+
+    if variables["version"] and tonumber(variables["version"]) ~= vershun then
+        yield("/echo Version mismatch. Recreating file.")
+        variables = {version = vershun}
+    end
+
+    if variables[varname] == nil then
+        variables[varname] = varvalue
+        yield("/echo Initialized " .. varname .. " -> " .. tostring(varvalue))
+    else
+        yield("/echo Loaded " .. varname .. " -> " .. tostring(variables[varname]))
+    end
+
+    write_ini_file(variables)
+    return variables[varname]
+end
+
+--*****************************************************************
+--************************** END INIZER ***************************
+--*****************************************************************
+
+
 function become_feesher()
 	yield("/equipitem 2571") --weathered fishing rod
 	yield("/wait 0.5")
@@ -43,6 +137,15 @@ function ungabunga()
 	yield("/send ESCAPE <wait.1.5>")
 	yield("/send ESCAPE <wait.1>")
 	yield("/wait 3")
+end
+
+function zungazunga()
+	yield("/send ESCAPE")
+	yield("/wait 0.5")
+	yield("/send ESCAPE")
+	yield("/wait 0.5")
+	yield("/send ESCAPE")
+	yield("/wait 0.5")
 end
 
 function ungabungabunga()
@@ -408,7 +511,28 @@ function clean_inventory()
 	--https://raw.githubusercontent.com/ffxivcode/DalamudPlugins/main/repo.json
 	--*start cleaning??? need slash command
 	--*loop every 5 seconds and check if we have the right char condition to resume whatever we were doing.
-	ungabunga()
+	--/automarket start|stop
+	zungazunga()
+	yield("/automarket start")
+	yield("/wait 5")
+	exit_cleaning = 0
+	while GetCharacterCondition(50) == false and exit_cleaning < 20 do
+		yield("/wait 1")
+		exit_cleaning = exit_cleaning + 1
+		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
+	end
+	exit_cleaning = 0
+	while GetCharacterCondition(50) == true and exit_cleaning < 300 do
+		yield("/wait 1")
+		exit_cleaning = exit_cleaning + 1
+		yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far")
+	end
+	CharacterSafeWait()
+	zungazunga()
+	if exit_cleaning > 250 then
+		ungabungabunga()
+	end
+	yield("/automarket stop")
 end
 
 function try_to_buy_fuel(restock_amt)
@@ -445,4 +569,147 @@ function try_to_buy_fuel(restock_amt)
 	end
 	yield("/echo We now have "..GetItemCount(10155).." Ceruelum Fuel Tanks")
 	ungabunga()
+end
+
+
+function serializeTable(t, indent)
+    indent = indent or ""
+    local result = "{\n"
+    local innerIndent = indent .. "  "
+
+    for k, v in pairs(t) do
+        result = result .. innerIndent
+        if type(k) == "number" then
+            result = result .. "[" .. k .. "] = "
+        else
+            result = result .. "[" .. tostring(k) .. "] = "
+        end
+
+        if type(v) == "table" then
+            result = result .. serializeTable(v, innerIndent)
+        elseif type(v) == "string" then
+            result = result .. "\"" .. v .. "\""
+        else
+            result = result .. tostring(v)
+        end
+
+        result = result .. ",\n"
+    end
+
+    result = result .. indent:sub(1, -3) .. "}" -- Remove last comma and add closing brace
+    return result
+end
+
+
+-- Function to deserialize a table
+function deserializeTable(str)
+    local func = load("return " .. str)
+    return func()
+end
+
+function readSerializedData(filePath)
+    local file, err = io.open(filePath, "r")
+    if not file then
+        yield("/echo Error opening file for reading: " .. err)
+        return nil
+    end
+    local data = file:read("*all")
+    file:close()
+    return data
+end
+
+-- Function to print table contents
+function printTable(t, indent)
+    indent = indent or ""
+    if type(t) ~= "table" then
+        yield("/echo " .. indent .. tostring(t))
+        return
+    end
+    
+    for k, v in pairs(t) do
+        local key = tostring(k)
+        if type(v) == "table" then
+            yield("/echo " .. indent .. key .. " =>")
+            printTable(v, indent .. "  ") -- Recursive call with increased indent
+        else
+            yield("/echo " .. indent .. key .. " => " .. tostring(v))
+        end
+    end
+end
+
+function tablebunga(filename, tablename, path)
+    local fullPath = path .. filename
+    yield("/echo Debug: Full file path = " .. fullPath)
+    
+    local file, err = io.open(fullPath, "w")
+    if not file then
+        yield("/echo Error opening file for writing: " .. err)
+        return
+    end
+
+    local tableToSerialize = _G[tablename]
+    --yield("/echo Debug: Table to serialize = " .. tostring(tableToSerialize))
+
+    if type(tableToSerialize) == "table" then
+        local serializedData = serializeTable(tableToSerialize)
+        --yield("/echo Debug: Serialized data:\n" .. serializedData)
+        file:write(serializedData)
+        file:close()
+        yield("/echo Successfully wrote table to " .. fullPath)
+    else
+        yield("/echo Error: Table '" .. tablename .. "' not found or is not a table.")
+    end
+end
+
+function FUTA_return()
+		--limsa aetheryte
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 4 then
+		return_to_limsa_bell()
+		yield("/wait 8")
+	end
+	
+	--if we are tp to inn. we will go to gridania yo
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 3 then
+		return_to_inn()
+		yield("/wait 8")
+	end
+	
+	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 1 then
+		return_to_fc()
+	end
+	
+	--option 5 or 6 personal home and bell near personal home
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 5 or FUTA_processors[hoo_arr_weeeeee][1][2] == 6 then
+		return_to_lair()
+	end
+
+	--normal small house shenanigans
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 5 then
+		return_fc_entrance()
+	end
+
+	--retainer bell nearby shenanigans
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 1 or FUTA_processors[hoo_arr_weeeeee][1][2] == 6 then
+		return_fc_near_bell()
+	end	
+	
+end
+
+function loggabunga(filename, texty)
+	local file = io.open(folderPath .. filename .. "_log.txt", "a")
+	if file then
+		currentTime = os.date("*t")
+		formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
+		file:write(formattedTime..texty.."\n")
+		file:close()
+	end
+end
+
+function check_ro_helm()
+	--check for red onion helms and report in to a log file if there is one
+	if GetItemCount(2820) > 0 then
+		yield("/echo RED ONION HELM DETECTED")
+		loggabunga("FUTA_"," - Red Onion Helm detected on -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+	end
 end
