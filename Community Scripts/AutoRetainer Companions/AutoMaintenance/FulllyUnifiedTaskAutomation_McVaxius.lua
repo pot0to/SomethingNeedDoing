@@ -12,12 +12,16 @@ Requirements : SND
 and maybe more - let's see where we go with it
 
 
-Problems/annoyances
-ocean fishing. we cant ays relog ... hmmm 
-hacky time
-install AHK
-install wintitle plugin
+What is working?
+	Geting Fisher Levels and determining who is the lowest level fisher
+	Outputting to log file if Red Onion Helm Detected
+	Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently.
+	Doing GC Turnins when configured inventory slots free is below a certain amount
+	Visiting personal houses when we reach specified number of retainer cleanings
 
+What is almost working
+	Ocean fishing would work if i could bypass the post AR lock on ays relog. thats coming soon. purposefully locked it out for
+	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its mesmsy and i dont recommend it
 
 --]]
 FUTA_config_file = "FUTAconfig_McVaxius.lua"
