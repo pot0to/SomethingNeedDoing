@@ -526,6 +526,15 @@ function clean_inventory()
 		yield("/wait 1")
 		exit_cleaning = exit_cleaning + 1
 		yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far")
+		foced_am = 0
+		if math.random(1,20) == 1 and exit_cleaning > 50 and forced_am = 0 then
+			forced_am = 1
+			yield("/wait 5")
+			yield("/automarket start")
+			yield("Giving Automarket a little push to get it moving and waiting 20 seconds")
+			yield("/wait 20")
+			exit_cleaning = exit_cleaning + 25
+		end
 	end
 	CharacterSafeWait()
 	zungazunga()

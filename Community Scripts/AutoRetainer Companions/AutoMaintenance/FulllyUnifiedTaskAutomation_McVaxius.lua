@@ -16,7 +16,7 @@ and https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Script
 throw everything into %AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 
 What is working?
-	Geting Fisher Levels and determining who is the lowest level fisher
+	Geting Fisher Levels and determining who is the lowest level fisher - we cant safely AYS RELOG yet..
 	Outputting to log file if Red Onion Helm Detected
 	Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently.
 	Doing GC Turnins when configured inventory slots free is below a certain amount
@@ -24,7 +24,7 @@ What is working?
 
 What is almost working
 	Ocean fishing would work if i could bypass the post AR lock on ays relog. thats coming soon. purposefully locked it out for
-	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its mesmsy and i dont recommend it
+	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its messy and i dont recommend it
 
 --]]
 FUTA_config_file = "FUTAconfig_McVaxius.lua"
@@ -333,6 +333,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	--PHV Personal House Visit--
 	----------------------------
 	if FUTA_processors[hoo_arr_weeeeee][9][2] > 0 then
+		yield("/echo Personal House Visit counter Incremented by 1")
 		FUTA_processors[hoo_arr_weeeeee][9][2] = 1 + FUTA_processors[hoo_arr_weeeeee][9][2]
 		if FUTA_processors[hoo_arr_weeeeee][9][2] > FUTA_processors[hoo_arr_weeeeee][9][3] then
 			FUTA_processors[hoo_arr_weeeeee][9][2] = 1
@@ -353,3 +354,4 @@ if wheeequeheeheheheheheehhhee == 1 then
 	yield("/ays multi e") --if we had to toggle AR
 end
 yield("/echo Debug: Finished all processing")
+tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
