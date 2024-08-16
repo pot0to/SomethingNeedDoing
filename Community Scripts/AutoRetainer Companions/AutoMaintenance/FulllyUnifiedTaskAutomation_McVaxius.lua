@@ -355,3 +355,7 @@ if wheeequeheeheheheheheehhhee == 1 then
 end
 yield("/echo Debug: Finished all processing")
 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
+--update atools w fc and inventory
+yield("/freecompanycmd")
+yield("/inventory")
+yield("/saddlebag")
