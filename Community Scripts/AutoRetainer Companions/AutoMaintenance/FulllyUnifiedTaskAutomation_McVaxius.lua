@@ -27,6 +27,10 @@ What is almost working
 	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its messy and i dont recommend it
 
 --]]
+
+------------------------------------------------------------
+----------------------GLOBAL VARIABLES----------------------
+------------------------------------------------------------
 FUTA_config_file = "FUTAconfig_McVaxius.lua"
 force_fishing = 0 -- Set to 1 if you want the default indexed char to fish whenever possible
 venture_cleaning = 20 -- How many venture coins do we need to have left we do a cleaning - useful for leveling new retainer abusers 21072 is item id
@@ -35,7 +39,6 @@ loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDo
 fullPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\" .. FUTA_config_file
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
-
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -44,7 +47,7 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 ------------------------------------------
 ------------------------------------------
 
-yield("/wintitle Final Fantasy XIV")
+--yield("/wintitle Final Fantasy XIV")   --FOR HACKY FISHIN SWITCHER WITH AHK
 --yield("/wait 5")
 --yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 FUTA_processors = {} -- Initialize variable
@@ -230,7 +233,7 @@ if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_process
     yield("/echo Lowest char is max level or no chars have fishing so we aren't fishing")
 end
 
-wheeequeheeheheheheheehhhee = 0 --meh we cant do this safely
+wheeequeheeheheheheheehhhee = 0 --meh we cant do this safely 			--FOR HACKY FISHIN SWITCHER WITH AHK --- REMOVE IF YOU WANT TO USE IT
 -- It's fishing time
 if wheeequeheeheheheheheehhhee == 1 then
     if GetCharacterCondition(31) == false then
@@ -244,6 +247,7 @@ if wheeequeheeheheheheheehhhee == 1 then
 			
             yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 			
+			--FOR HACKY FISHIN SWITCHER WITH AHK --- START
 			if FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) then
 				--if we are on wrong char. we gotta kill AR And let AHK fire up the right char in a sec ;o
 				yield("/echo Hacky whacky")
@@ -270,6 +274,7 @@ if wheeequeheeheheheheheehhhee == 1 then
 				--end the script here
 				yield("/pcraft stop")
 			end
+			--FOR HACKY FISHIN SWITCHER WITH AHK --- END
 			
             fishing()
             yield("/echo Debug: Fishing completed")
