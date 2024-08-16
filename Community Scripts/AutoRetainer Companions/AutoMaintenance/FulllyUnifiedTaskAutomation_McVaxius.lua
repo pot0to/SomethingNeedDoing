@@ -18,6 +18,7 @@ throw everything into %AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 What is working?
 	Geting Fisher Levels and determining who is the lowest level fisher - we cant safely AYS RELOG yet..
 	Outputting to log file if Red Onion Helm Detected
+	Updating Inventories, FC, Chocobo saddlebags for Atools by opening them.
 	Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently.
 	Doing GC Turnins when configured inventory slots free is below a certain amount
 	Visiting personal houses when we reach specified number of retainer cleanings
@@ -63,7 +64,7 @@ FUTA_defaults = {
 		{"MRK", 0},									---{}[i][7][1..2]--number of magitek repair kits to quick synth after each AR check
 		{"FCB", "nothing", "nothing"},				---{}[i][8][1..3]--refresh FC buffs if they have 1 or less hours remaining on them. (remove and re-assign)
 		{"PHV", 0, 100},							---{}[i][9][1..3]--0 = no personal house 1 = has a personal house, personal house visit counter, once it reaches {}[][][2] it will reset to 1 after a visit, each ar completion will +1 it
-		{"DUTY", "Teaspoon Dropping Closet", -5, 0}	--{}[i][10][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1
+		{"DUTY", "Teaspoon Dropping Closet", -5, 0}	--{}[i][10][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1    				https://www.youtube.com/watch?v=TsFGJqXnqBE
     }
 }
 
