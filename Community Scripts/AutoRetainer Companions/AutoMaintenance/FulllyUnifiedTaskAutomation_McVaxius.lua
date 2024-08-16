@@ -19,7 +19,7 @@ What is working?
 	Geting Fisher Levels and determining who is the lowest level fisher - we cant safely AYS RELOG yet..
 	Outputting to log file if Red Onion Helm Detected
 	Updating Inventories, FC, Chocobo saddlebags for Atools by opening them.
-	Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently.
+	Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently. DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
 	Doing GC Turnins when configured inventory slots free is below a certain amount
 	Visiting personal houses when we reach specified number of retainer cleanings
 
