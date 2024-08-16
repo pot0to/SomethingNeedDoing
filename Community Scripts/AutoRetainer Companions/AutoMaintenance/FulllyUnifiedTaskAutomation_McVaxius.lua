@@ -29,7 +29,7 @@ What is almost working
 --]]
 FUTA_config_file = "FUTAconfig_McVaxius.lua"
 force_fishing = 0 -- Set to 1 if you want the default indexed char to fish whenever possible
-gc_cleaning_safetystock = 50 -- How many inventory units before we do a cleaning
+venture_cleaning = 20 -- How many venture coins do we need to have left we do a cleaning - useful for leveling new retainer abusers 21072 is item id
 folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 fullPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\" .. FUTA_config_file
@@ -318,7 +318,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
 	--check inventory size and do gcturnin shit 
 	yield("/echo Do we need to clear inventory?")
-	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 then
+	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) > 0 and GetItemCount(21072) < venture_cleaning then
 		yield("/echo Yes we need to clean inventory and turnin GC stuff! 1/5 debug")
 		loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
 		yield("/echo Yes we need to clean inventory and turnin GC stuff! 2/5 debug")
