@@ -1,6 +1,12 @@
+--Please read this stuff its not hard the default config will die if you just copy paste so your gonna have to pass the test of reading. and uncommenting one of the two paths or modifying them
+
 --log path - change this to a valid path. foreward slashes are actually backslashes, don't use backslashes unless you know how to escape them properly.
-local folderPath = "F:/FF14/!gil/"
--- first char cardinality and variable declaration
+
+--UNCOMMENT ONE OF THESE TWO and or modify to your hearts content
+--local folderPath = "F:/FF14/!gil/"
+--local folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
+
+-- first char cardinality and variable declaration . useful for resuming at a later point in the list if you have to break the script for some reason such as reloading game or.. playing it haha
 local feesh_c = 1
 
 --define the fisherpeople here
@@ -17,8 +23,8 @@ local which_one = {
 
 --[[
 the above table works like this:
-firstname last name@server (obvious), ?
-? = 0 or 1,
+firstname last name@server, ?
+? = 0, 1, 2, 3
 0 means teleport to fc estate and try to get into FC entrance. 
 1 means teleport to fc estate and use a nearby retainer bell (navmesh)
 2 means teleport to limsa and go to the nearby bell
@@ -27,7 +33,7 @@ firstname last name@server (obvious), ?
 Required plogons
 vnavmesh
 visland
-Autohook -> just setup a autocast thing. and get your versatile lure selected as bait :P the 10 free ones will take you to 90
+Autohook -> just setup a autocast thing. and get your versatile lure selected as bait :P the 10 free ones will take you to 100
 autoretainer -> you need to NOT use "wait in lobby" in autoretainer, also turn multi on before starting the script or it wont get turned on until after the first ocean fishign happens.
 liza's discard helper (make your own fish list)
 something need doing (to run this script)
@@ -45,10 +51,14 @@ Yesalready configs
 "Bothers"
 	[x] Contents Finder Confirm  (auto confirm queueing)
 
+Required script:
+https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/AutoRetainer%20Companions/RobustGCturnin/_functions.lua
+
+place into %AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 ---------
 ---TODO
 ---------
---add in a (self generating) tracking file that checks levels of chars. if they are under 90 (for now, 100 in DT) they will be considered. and lowest level one will be selected
+--add in a (self generating) tracking file that checks levels of chars. if they are under 100 in DT they will be considered. and lowest level one will be selected
 
 ------------------------------------------------
 ------------------------------------------------
@@ -68,57 +78,10 @@ pre fishing condition 1
 33 34 while looking at leave menu, 35 is off _> this is what we use
 ]]--
 
-function ZoneTransition()
-	iswehehe = IsPlayerAvailable() 
-	iswoah = 0
-    repeat 
-        yield("/wait 0.5")
-        yield("/echo Are we ready? -> "..iswoah.."/20")
-		iswehehe = IsPlayerAvailable() 
-		iswoah = iswoah + 1
-		if 	iswoah == 20 then
-			iswehehe = false
-		end
-    until not iswehehe
-	iswoah = 0
-    repeat 
-        yield("/wait 0.5")
-        yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
-		iswehehe = IsPlayerAvailable() 
-		iswoah = iswoah + 1
-		if 	iswoah == 20 then
-			iswehehe = true
-		end
-    until iswehehe
-end
-
-function return_to_limsa_bell()
-	yield("/tp Limsa Lominsa")
-	ZoneTransition()
-	yield("/wait 2")
-	PathfindAndMoveTo(-125.440284729, 18.0, 21.004405975342, false)
-	visland_stop_moving() --added so we don't accidentally end before we get to the inn person
-end
-
-function visland_stop_moving()
- yield("/wait 3")
- muuv = 1
- muuvX = GetPlayerRawXPos()
- muuvY = GetPlayerRawYPos()
- muuvZ = GetPlayerRawZPos()
- while muuv == 1 do
-	yield("/wait 1")
-	if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
-		muuv = 0
-	end
-	muuvX = GetPlayerRawXPos()
-	muuvY = GetPlayerRawYPos()
-	muuvZ = GetPlayerRawZPos()
- end
- yield("/echo movement stopped - time for GC turn ins or whatever")
- yield("/visland stop")
- yield("/wait 3")
-end
+loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
+functionsToLoad = loadfile(loadfiyel)
+functionsToLoad()
+DidWeLoadcorrectly()
 
 -- random number function
 function getRandomNumber(min, max)
@@ -167,11 +130,12 @@ function fishing()
 	yield("/tp Limsa Lominsa Lower Decks <wait.5>")
 	yield("/waitaddon _ActionBar <maxwait.600><wait.10>")
 	
+	--[[
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 	yield("/target Aetheryte <wait.2>")
 
-	yield("/equipjob fsh")
+	become_feesher()
 	yield("/lockon on")
 	yield("/automove on")
 	yield("/send D")
@@ -183,12 +147,14 @@ function fishing()
 	yield("/pcall TelepotTown false 11 3u <wait.1>") -- Arcanists' Guild
 	yield("/pcall TelepotTown false 11 3u <wait.1>")
 	yield("/wait 10")
+	]]
 
 	yield("/ac sprint")
-	yield("/equipjob fsh")
+	become_feesher()
+	--if all good then we move on to next part automagically
 		
-	--repair catte if we are at 99% durability or lower and have at least 5000 gil
-	while NeedsRepair(99) and  GetItemCount(1) > 4999 do
+	--repair catte if we are at 50% durability or lower and have at least 5000 gil
+	while NeedsRepair(50) and GetItemCount(1) > 4999 do
 		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
 		visland_stop_moving()
 		yield("/target Merchant & Mender")
@@ -203,12 +169,35 @@ function fishing()
 		yield("/wait 1")
 		yield("/pcall Repair true 1")
 		yield("/wait 1")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1>")
-		yield("/wait 3")
+		ungabunga()
 	end
+	 yield("/bait Versatile Lure")
+	 
+	--check if we have less than 3 versatile lures and more than 20000 gil if not we buy 20 of them!
+	while GetItemCount(29717) < 3 and GetItemCount(1) > 20000 do
+		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
+		visland_stop_moving()
+		yield("/target Merchant & Mender")
+		yield("/wait 1")
+		yield("/lockon on")
+		yield("/wait 1")
+		yield("/pinteract")
+		yield("/wait 1")
+		yield("/callback SelectIconString true 0")
+		yield("/wait 3")
+		yield("/callback Shop true 0 3 10")
+		yield("/wait 1")
+		yield("/callback Shop true 0 3 10")
+		yield("/wait 1")
+		ungabunga()
+	end
+	
+	yield("/bait Versatile Lure")
+	 
+
+	yield("/echo Current area"..GetZoneID())
+	zown = GetZoneID()
+	fzown = GetZoneID()
 
 	--dryskthota
 	PathfindAndMoveTo(-409.42459106445,3.9999997615814,74.483444213867,false) 
@@ -221,22 +210,21 @@ function fishing()
 		yield("/target Dryskthota")
 		yield("/pinteract <wait.2>")
 		yield("/wait 1")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1.5>")
-		yield("/send ESCAPE <wait.1>")
+		ungabunga()
 		yield("/wait 10")
 		fishqtest = GetCharacterCondition(91)
 		toolong = toolong  + 1
+		if GetCharacterCondition(34) == true then  --sometimes we queue instantly. dont wanna get stuck!
+			fishqtest = true
+		end
 		if toolong > 30 then
 			fishqtest = true
 		end
 	end
 
+	yield("/bait Versatile Lure")
+ 
 	--get current area
-	yield("/echo Current area"..GetZoneID())
-	zown = GetZoneID()
-	fzown = GetZoneID()
 	--check if area has changed every 5 seconds.
 	while (zown == fzown) and (toolong < 30) do
 		fzown = GetZoneID()	
@@ -265,16 +253,23 @@ function fishing()
 		yield("/visland moveto 7.451 6.750 "..randomNum)
 	--keep checking for that original area - once it is back. turn /ays multi back on
 	--also spam fishing
-
+	omadamkhoneh = 0 --counter to stop trying to move to edge since it will do bad stuff outside of instance after
 	while (zown ~= fzown) do
+		omadamkhoneh = omadamkhoneh + 1
 		fzown = GetZoneID()
+		if omadamkhoneh > 100 then
+			visland_stop_moving()
+			omadamkhoneh = -200  --we dont want this to trigger again
+		end
 		if GetCharacterCondition(43)==false then
 		   yield("/discardall")
 		   yield("/wait 5")
 		end
 		if GetCharacterCondition(43)==false then
-			yield("/ac cast")
-			yield("/wait 1")
+			if GetZoneID() ~= 132 then
+				yield("/ac cast")
+				yield("/wait 1")
+			end
 		end
 		--try to exit the completion window faster
 		if IsAddonVisible("IKDResult") then
@@ -292,8 +287,11 @@ function fishing()
 		end
 		yield("/wait 1")
 	end
-
+	visland_stop_moving()
 	yield("/wait 30")
+	ungabungabunga()
+	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+	
 	--if we are tp to limsa bell
 	if which_one[feesh_c][2] == 2 then
 		return_to_limsa_bell()
@@ -316,7 +314,9 @@ function fishing()
 	
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
 	if which_one[feesh_c][2] == 0 or which_one[feesh_c][2] == 1 then
-		yield("/tp Estate Hall (Free Company)")
+		--yield("/tp Estate Hall (Free Company)")
+		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+		yield("/li fc")
 		yield("/wait 1")
 		--yield("/waitaddon Nowloading <maxwait.15>")
 		yield("/wait 15")
@@ -379,9 +379,7 @@ while true do
 		if GetCharacterCondition(32)==false then
 			 --yield("/ays multi")
 			 yield("/ays multi d")
-		 	 yield("/send ESCAPE <wait.1.5>")
-			 yield("/send ESCAPE <wait.1.5>")
-			 yield("/send ESCAPE <wait.1.5>")
+		 	 ungabungabunga() -- we really really try hard to be safe here
 			 yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 			 fishing()
 			 --drop a log file entry on the charname + Level
@@ -396,7 +394,9 @@ while true do
 				--file:write("Hello, this is some text written to a file using Lua!\n")
 				currentTime = os.date("*t")
 				formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
-				file:write(formattedTime.." - "..feesh_char.." - Fisher Lv - "..GetLevel().."\n")
+				feesh_c = feesh_c - 1
+				file:write(formattedTime.." - ".."["..feesh_c.."] - "..feesh_char.." - Fisher Lv - "..GetLevel().."\n")
+				feesh_c = feesh_c + 1
 				--file:write("Writing to files in Lua is straightforward.\n")
 				-- Close the file handle
 				file:close()

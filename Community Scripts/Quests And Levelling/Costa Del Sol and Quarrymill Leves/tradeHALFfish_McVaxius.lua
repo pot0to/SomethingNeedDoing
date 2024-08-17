@@ -9,6 +9,7 @@ DropboxSetItemQuantity(4894,false,GetItemCount(4894)/2)
 DropboxSetItemQuantity(4895,false,GetItemCount(4895)/2)
 DropboxSetItemQuantity(4892,false,GetItemCount(4892)/2)
 --quarrymill fish
+DropboxSetItemQuantity(4943,false,GetItemCount(4945)/2)
 DropboxSetItemQuantity(4945,false,GetItemCount(4945)/2)
 DropboxSetItemQuantity(4967,false,GetItemCount(4967)/2)
 DropboxSetItemQuantity(4964,false,GetItemCount(4964)/2)

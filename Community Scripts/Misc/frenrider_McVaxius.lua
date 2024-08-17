@@ -2,24 +2,57 @@
 --meant to use when your ahh botting treasure maps or fates with alts, but playing main char manually :~D
 
 --[[
+*repos sorted by length of string.
+https://plugins.carvel.li
+https://love.puni.sh/ment.json
+https://puni.sh/api/repository/veyn
+https://puni.sh/api/repository/croizat
+https://puni.sh/api/repository/taurenkey
+https://raw.githubusercontent.com/SubZero0/Dalamud.SkipCutscene/dist/repo.json
+https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/pluginmaster.json
+
+*recommendation:
+delete all the comments before the vars once you get it working properly
+
 *requirements:
 croizats SND - disable SND targeting in config
 simpletweaks with targeting fix enabled
 vnavmesh
 visland
+_functions.lua into your SND folder in %AppData%\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions
+you can find it here https://raw.githubusercontent.com/Jaksuhn/SomethingNeedDoing/master/Community%20Scripts/AutoRetainer%20Companions/RobustGCturnin/_functions.lua
 
 *optional:
 bring some gysahl greens
+bring some food and configure it properly
 discardhelper
+cutscene skipper (MSQ roullette cutscenes)
 lazyloot plugin (if your doing anything other than fates)
-VBM/BMR (bmr has slash commands for following)
-RS/RSR (is RS still being updated?)
+VBM/BMR (bmr has slash commands for following and more modules)
+RSR
 
 ***Few annoying problems that still exist
---*dont follow during combat unless non caster. will require bmr contemplation
---*how do we change instances #s maybe custom chat commands? lifestream /li # works. now to add nodetext scanning for group. also have to use target and lockon until lim fixes /li x without los
---*it still doesnt follow in some weird cases
---*it doesnt startup lazyloot unless you run it twice???  do we need a longer delay on that part ?
+*dont follow during combat unless non caster. will require bmr contemplation - seems bmr has contemplated it with distance command will consider adding new setting for this :~D
+
+*how do we change instances #s maybe custom chat commands? lifestream /li # works. now to add nodetext scanning for group. also have to use target and lockon until lim fixes /li x without los
+	this is insanely buggy and perhaps crashy.. nodetext scanning too fast will break things
+
+*it still doesnt follow in some weird cases
+
+*lazyloot is a toggle not on or off so you have to turn it on yourself
+
+*we can't get synced level (yet) I managed to isolate the part with nodetext but its using weird special characters i dont know how to convert to real numbers
+text = GetNodeText("_Exp", 3)
+number = string.match(text, "%u%u%u%s*(.-)%s*EXP")
+yield("/echo "..number)
+
+reason is i wanted to smartly auto equip xp gear based on your current synced level.... :(
+
+I will do it a bit later once i uhh. make a lookup table for this trash here:
+0123456789
+
+
+*some people have incorrect auto interaction settings in pandora.. next time im playing actively ill add a new config option for that to set or not set the interaction settings.
 ]]
 
 --*****************************************************************
@@ -27,98 +60,13 @@ RS/RSR (is RS still being updated?)
 --*****************************************************************
 -- Purpose: to have default .ini values and version control on configs
 -- Personal ini file
-filename_prefix = "frenrider_" -- Script name
-open_on_next_load = 0          -- Set this to 1 if you want the next time the script loads, to open the explorer folder with all of the .ini files
-
--- Function to open a folder in Explorer
-function openFolderInExplorer(folderPath)
-    if folderPath then
-        folderPath = '"' .. folderPath .. '"'
-        os.execute('explorer ' .. folderPath)
-    else
-        yield("/echo Error: Folder path not provided.")
-    end
-end
-
+-- if you want to use my ini file serializer just copy form start of inizer to end of inizer and look at how i implemented settings and go nuts :~D
 tempchar = GetCharacterName()
 tempchar = tempchar:gsub("%s", "")  -- Remove all spaces
 tempchar = tempchar:gsub("'", "")   -- Remove all apostrophes
-local filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..filename_prefix..tempchar..".ini"
-
-if open_on_next_load == 1 then
-    openFolderInExplorer(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\")
-end
-
-function serialize(value)
-    if type(value) == "boolean" then
-        return tostring(value)
-    elseif type(value) == "number" then
-        return tostring(value)
-    else -- Default to string
-        return '"' .. tostring(value) .. '"'
-    end
-end
-
-function deserialize(value)
-    if value == "true" then
-        return true
-    elseif value == "false" then
-        return false
-    elseif tonumber(value) then
-        return tonumber(value)
-    else
-        return value:gsub('^"(.*)"$', "%1")
-    end
-end
-
-function read_ini_file()
-    local variables = {}
-    local file = io.open(filename, "r")
-    if not file then
-        return variables
-    end
-
-    for line in file:lines() do
-        local name, val = line:match("([^=]+)=(.*)")
-        if name and val then
-            variables[name] = deserialize(val)
-        end
-    end
-    file:close()
-    return variables
-end
-
-function write_ini_file(variables)
-    local file = io.open(filename, "w")
-    if not file then
-        yield("/echo Error: Unable to open file for writing: " .. filename)
-        return
-    end
-
-    for name, value in pairs(variables) do
-        file:write(name .. "=" .. serialize(value) .. "\n")
-    end
-    file:close()
-end
-
-function ini_check(varname, varvalue)
-    local variables = read_ini_file()
-
-    if variables["version"] and tonumber(variables["version"]) ~= vershun then
-        yield("/echo Version mismatch. Recreating file.")
-        variables = {version = vershun}
-    end
-
-    if variables[varname] == nil then
-        variables[varname] = varvalue
-        yield("/echo Initialized " .. varname .. " -> " .. tostring(varvalue))
-    else
-        yield("/echo Loaded " .. varname .. " -> " .. tostring(variables[varname]))
-    end
-
-    write_ini_file(variables)
-    return variables[varname]
-end
+filename_prefix = "frenrider_" -- Script name
+filename = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"..filename_prefix..tempchar..".ini"
+open_on_next_load = 0          -- Set this to 1 if you want the next time the script loads, to open the explorer folder with all of the .ini files
 
 -- Ensure the version is always written to the file
 -- VERSION VAR --
@@ -131,6 +79,10 @@ ini_check("version", vershun)
 -- VERSION VAR --
 -- VERSION VAR --
 -- VERSION VAR --
+loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
+functionsToLoad = loadfile(loadfiyel)
+functionsToLoad()
+ini_check("version", vershun)
 
 --*****************************************************************
 --************************** END INIZER ***************************
@@ -143,12 +95,13 @@ fool_flier = ini_check("fool_flier", "Beast with 3 backs")	--if you have fly you
 fulftype = ini_check("fulftype", "unchanged")				-- If you have lazyloot installed AND enabled (has to be done manually as it only has a toggle atm) can setup how loot is handled. Leave on "unchanged" if you don't want it to set your loot settings. Other settings include need, greed, pass
 cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistance
 force_gyasahl = ini_check("force_gyasahl", false) 	   		-- force gysahl green usage . maybe cause problems in towns with follow
-clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr, 3 = automaton autofollow, 4 = vanilla game follow
+clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr follow leader, 3 = automaton autofollow, 4 = vanilla game follow
 clingtypeduty = ini_check("clingtypeduty", 2)				-- do we need a diff clingtype in duties? use same numbering as above 
 maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
 limitpct = ini_check("limitpct", -1)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap, -1 disables it
 rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
 bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
+xpitem = ini_check("xpitem", 0)								-- xp item - attemp to equip whenever possible azyma_earring = 41081 btw, if this value is 0 it won't do anything
 feedme = ini_check("feedme", 4650)							-- eatfood, in this case itemID 4650 which is "Boiled Egg", use simpletweaks to show item IDs it won't try to eat if you have 0 of said food item
 feedmeitem = ini_check("feedmeitem", "Boiled Egg")			-- eatfood, in this case the item name. for now this is how we'll do it. it isn't pretty but it will work.. for now..
 --feedmeitem = ini_check("feedmeitem", "Baked Eggplant<hq>")-- eatfood, in this case the item name add a <hq> at the end if you want it to be hq. for now this is how we'll do it. it isn't pretty but it will work.. for now..
@@ -160,7 +113,24 @@ formation = ini_check("formation", false)					-- Follow in formation? If false, 
 						3		2
 						7	4	6
 						]]
-binstance = ini_check("binstance", "let us travel to instance")				--[[ group instance change prefix, it will take " x" where x is the instance number as an argument, so you can setup qolbar keys with lines like this presumable
+--[[
+this next setting is a dud for now until i figure out how to do it
+seems like we will need to use puppetmaster.... 
+repo
+https://github.com/Aspher0/PuppetMaster_Fork
+pluginmaster
+https://raw.githubusercontent.com/Aspher0/PuppetMaster_Fork/main/PuppetMaster.json
+
+you can go to "Default settings"
+
+Default Trigger (use regex)  (in this case "weeehehe")
+(?i)\b(?:weeehehe)\s+(?:\((.*?)\)|(\w+))
+Replacement
+/li $1$2
+
+--]]
+--binstance = ini_check("binstance", "let us travel to instance")
+				--[[ group instance change prefix, it will take " x" where x is the instance number as an argument, so you can setup qolbar keys with lines like this presumable
 after changing instances, followers will /cl their chat windows
 exmample qolbar for telling group to go instance 2
 /mount
@@ -170,7 +140,9 @@ exmample qolbar for telling group to go instance 2
 -- mker = "cross" -- In case you want the other shapes. Valid shapes are triangle square circle attack1-8 bind1-3 ignore1-2
 
 -----------CONFIGURATION END-----------
-
+if open_on_next_load == 1 then
+    openFolderInExplorer(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\")
+end
 ----------------
 --INIT SECTION--
 ----------------
@@ -285,16 +257,20 @@ function clingmove(nemm)
 	--not bmr
 	if zclingtype > 2 or zclingtype < 2 then
 			yield("/bmrai follow "..GetCharacterName())
+			yield("/bmrai followoutofcombat on")
+			yield("/bmrai maxdistancetarget 2.6")
 	end
 	--bmr
 	if zclingtype == 2 then
 		bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm))
 		if bistance < maxbistance then
 			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
+			yield("/bmrai followoutofcombat on")
 			yield("/bmrai follow "..nemm) 	  --* verify this is correct later when we can load dalamud
 		end
 		if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
 			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
+			yield("/bmrai followoutofcombat on")
 			yield("/bmrai follow "..GetCharacterName()) 	  --* verify this is correct later when we can load dalamud
 			yield("/echo too far! stop following!")
 		end
@@ -361,6 +337,8 @@ ClearTarget()
 yield("/bmrai follow slot1")
 yield("/echo Beginning fren rider main loop")
 
+xp_item_equip = 0 --counter
+
 while weirdvar == 1 do
 	--catch if character is ready before doing anything
 	if IsPlayerAvailable() then
@@ -378,7 +356,11 @@ while weirdvar == 1 do
 				yield("/ac dismount")
 				yield("/wait 0.5")
 			end
-
+			xp_item_equip = xp_item_equip + 1
+			if xp_item_equip > ((1/timefriction)) * 5 and xpitem > 0 and GetItemCountInContainer(xpitem,1000) ~= 1 then -- every 5 seconds try to equip xp item(s) if they aren't already equipped
+					yield("/equipitem "..xpitem)
+					xp_item_equip = 0
+			end
 			--Food check!
 			statoos = GetStatusTimeRemaining(48)
 			---yield("/echo "..statoos)
@@ -395,6 +377,14 @@ while weirdvar == 1 do
 				--yield("/bmrai follow "..fren)
 				--we will use clingmove not bmrai follow as it breaks pathing from that point onwards
 				clingmove(fren)
+				--allright im getting sick of pratorium. its time to do something.
+				if type(GetZoneID()) == "number" and GetZoneID() == 1044 and GetCharacterCondition(4) then --Praetorium
+					--if string.len(GetTargetName()) == 0 then
+					TargetClosestEnemy()
+					--end
+					yield("/send KEY_2")
+					yield("/wait 0.5")
+				end
 			end
 			if GetCharacterCondition(34) == false then  --not in duty  
 				--SAFETY CHECKS DONE, can do whatever you want now with characterconditions etc			

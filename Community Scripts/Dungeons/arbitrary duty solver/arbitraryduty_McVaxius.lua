@@ -3,6 +3,12 @@
   Author: McVaxius
 ]]
 
+--dont use this script its hot garbage and autoduty exists. im only updating it for personal use so just a reminder
+--dont use this script its hot garbage and autoduty exists. im only updating it for personal use so just a reminder
+--dont use this script its hot garbage and autoduty exists. im only updating it for personal use so just a reminder
+--dont use this script its hot garbage and autoduty exists. im only updating it for personal use so just a reminder
+--dont use this script its hot garbage and autoduty exists. im only updating it for personal use so just a reminder
+
 
 --if you see --*
 --this is a todo for some logic ill add sooner or later

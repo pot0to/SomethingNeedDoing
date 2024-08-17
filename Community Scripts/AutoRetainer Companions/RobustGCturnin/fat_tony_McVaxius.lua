@@ -2,7 +2,7 @@
 Fat Tony script
 
 This is a pair script for the bagman script. basically it will load x chars go to location to wait for deliveries. when it receives a 1 gil trade, it knows its time to switch to next char.
-it won't do anything really different than bagman.
+Otherwise it won't do anything really different than bagman.
 ]]
 --[[
 
@@ -39,7 +39,7 @@ tony firstname, lastname, meeting locationtype, returnhome 1 = yes 0 = no, 0 = f
 
 local franchise_owners = {
 {"Firstname Lastname@Server", 1, 2},  --return to limsa
-{"Firstname Lastname@Server", 1, 0},  --return to fc entrance
+{"Firstname Lastname@Server", 0, 0},  --dont return home because next line a diff bagman is giving me stuff !
 {"Firstname Lastname@Server", 1, 0},  --return to fc entrance
 {"Firstname Lastname@Server", 1, 0},  --return to fc entrance
 {"Firstname Lastname@Server", 1, 0}  --return to fc entrance

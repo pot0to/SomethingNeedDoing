@@ -1,3 +1,5 @@
+--this script illustrates a creative use for regex and command line interaction from the OS
+
 function ping(host)
     local pingCommand = string.format("ping %s", host)
     os.execute(pingCommand.." > ping_output.txt")
