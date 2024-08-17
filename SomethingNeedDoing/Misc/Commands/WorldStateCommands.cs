@@ -1,5 +1,6 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -74,6 +75,7 @@ public class WorldStateCommands
 
     public unsafe int GetLastInstanceServerID() => WatchedValues.InstanceServerID;
     public unsafe int GetLastInstanceZoneID() => WatchedValues.InstanceServerID;
+    public unsafe uint GetZoneInstance() => UIState.Instance()->PublicInstance.InstanceId;
 
     #region OceanFishing
     public unsafe uint GetCurrentOceanFishingRoute() => EventFramework.Instance()->GetInstanceContentOceanFishing()->CurrentRoute;

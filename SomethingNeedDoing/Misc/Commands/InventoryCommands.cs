@@ -62,7 +62,9 @@ public class InventoryCommands
     }
 
     public unsafe void MoveItemToContainer(uint itemID, uint srcContainer, uint dstContainer)
-        => InventoryManager.Instance()->MoveItemSlot((InventoryType)srcContainer, (ushort)GetItemInInventory(itemID, (InventoryType)srcContainer)->Slot, (InventoryType)dstContainer, GetFirstAvailableSlot((InventoryType)dstContainer));
+    {
+        InventoryManager.Instance()->MoveItemSlot((InventoryType)srcContainer, (ushort)GetItemInInventory(itemID, (InventoryType)srcContainer)->Slot, (InventoryType)dstContainer, GetFirstAvailableSlot((InventoryType)dstContainer));
+    }
 
     private static unsafe InventoryItem* GetItemInInventory(uint itemId, InventoryType inv, bool mustBeHQ = false)
     {
@@ -81,6 +83,10 @@ public class InventoryCommands
                 return (ushort)i;
         return 0;
     }
+
+    private static unsafe InventoryItem* GetItemForSlot(InventoryType type, int slot)
+        => InventoryManager.Instance()->GetInventoryContainer(type)->GetInventorySlot(slot);
+
 
     public List<uint> GetTradeableWhiteItemIDs() => Svc.Data.GetExcelSheet<Item>()!.Where(x => !x.IsUntradable && x.Rarity == (byte)ItemRarity.White).Select(x => x.RowId).ToList();
 }

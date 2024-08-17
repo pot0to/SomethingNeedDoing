@@ -115,7 +115,7 @@ internal class ActionCommand : MacroCommand
             {
                 await PerformWait(token);
 
-                if (!unsafeMod.IsUnsafe && !DataWaiter.WaitOne(SafeCraftMaxWait))
+                if (!unsafeMod.IsUnsafe && !DataWaiter.WaitOne(SafeCraftMaxWait) && Service.Configuration.StopMacroIfActionTimeout)
                     throw new MacroActionTimeoutError("Did not receive a timely response");
             }
         }

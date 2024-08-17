@@ -14,7 +14,7 @@ internal abstract class MacroCommand
 {
     private static readonly Random Rand = new();
 
-    protected MacroCommand(string text) : this(text, 0, 0) { }
+    protected MacroCommand(string text) => Text = text;
     protected MacroCommand(string text, WaitModifier waitMod) : this(text, waitMod.Wait, waitMod.Until) { }
 
     protected MacroCommand(string text, WaitModifier waitMod, IndexModifier indexMod) : this(text, waitMod.Wait, waitMod.Until, indexMod.ObjectId) { }

@@ -19,6 +19,10 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-08-24",
+        "- Added GetZoneInstance()\n");
+
+        DisplayChangelog(
         "2024-07-29",
         "- Added dalamud services to lua\n" +
         "- Potentially fixed the /click and /callback commands to allow wait modifiers\n");
