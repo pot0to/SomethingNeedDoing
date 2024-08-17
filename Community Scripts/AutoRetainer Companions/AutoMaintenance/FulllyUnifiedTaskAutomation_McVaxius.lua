@@ -23,6 +23,9 @@ What is working?
 	Doing GC Turnins when configured inventory slots free is below a certain amount
 	Visiting personal houses when we reach specified number of retainer cleanings
 
+Soon to be working
+	Automatic Magitek Repair kit trickling -> requirements personal room in FC house w a retainerbell and a junkmonger, lots of gil, preferrably over 50m in stock, you supply your own DMC to the char somehow, crystals up to you. self retainers best way.
+
 What is almost working
 	Ocean fishing would work if i could bypass the post AR lock on ays relog. thats coming soon. purposefully locked it out for
 	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its messy and i dont recommend it
@@ -347,7 +350,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 			CharacterSafeWait()
 			return_fc_entrance() --does the same thing just enters target
 			CharacterSafeWait()
-			loggabunga("FUTA_", " - Home Visit Executed by -> "..FUTA_processors[lowestID][1][1])
+			loggabunga("FUTA_", " - Home Visit Executed by -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 			zungazunga()
 			FUTA_return() --return to configured location
 		end

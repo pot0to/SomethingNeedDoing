@@ -525,9 +525,10 @@ function clean_inventory()
 	while GetCharacterCondition(50) == true and exit_cleaning < 300 do
 		yield("/wait 1")
 		exit_cleaning = exit_cleaning + 1
-		yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far")
-		foced_am = 0
-		if math.random(1,20) == 1 and exit_cleaning > 50 and forced_am == 0 then
+		flandom = getRandomNumber(1,20)
+		yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
+		forced_am = 0
+		if flandom == 1 and exit_cleaning > 50 and forced_am == 0 then
 			forced_am = 1
 			yield("/wait 5")
 			yield("/automarket start")
@@ -542,6 +543,10 @@ function clean_inventory()
 		ungabungabunga()
 	end
 	yield("/automarket stop")
+end
+
+function getRandomNumber(min, max)
+  return math.random(min,max)
 end
 
 function try_to_buy_fuel(restock_amt)
