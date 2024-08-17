@@ -53,6 +53,8 @@ internal class QuestCommands
         return matchingRows.Count > 0 ? Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.GetRow((uint)matchingRows.First().i)!.RowId : null;
     }
 
+    public unsafe MonsterNoteRankInfo GetMonsterNoteRankInfo(int index) => MonsterNoteManager.Instance()->RankData[index];
+
     private static bool IsMatch(string x, string y) => Regex.IsMatch(x, $@"\b{Regex.Escape(y)}\b");
     private static object MatchingScore(string item, string line)
     {

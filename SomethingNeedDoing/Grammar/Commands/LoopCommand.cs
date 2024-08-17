@@ -21,8 +21,7 @@ internal class LoopCommand : MacroCommand
     private readonly int startingLoops;
     private int loopsRemaining;
 
-    private LoopCommand(string text, int loopCount, WaitModifier wait, EchoModifier echo)
-        : base(text, wait)
+    private LoopCommand(string text, int loopCount, WaitModifier wait, EchoModifier echo) : base(text, wait)
     {
         loopsRemaining = loopCount >= 0 ? loopCount : MaxLoops;
         startingLoops = loopsRemaining;

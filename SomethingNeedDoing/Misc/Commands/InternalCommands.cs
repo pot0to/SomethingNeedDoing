@@ -35,4 +35,6 @@ public class InternalCommands
 
     public void SetSNDProperty(string key, string value) => Service.Configuration.SetProperty(key, value);
     public object? GetSNDProperty(string key) => Service.Configuration.GetProperty(key);
+    public bool IsPauseLoopSet() => Service.MacroManager.PauseAtLoop;
+    public bool IsStopLoopSet() => Service.MacroManager.StopAtLoop;
 }

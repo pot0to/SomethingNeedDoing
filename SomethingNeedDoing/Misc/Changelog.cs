@@ -20,7 +20,10 @@ internal class Changelog
 
         DisplayChangelog(
         "2024-08-24",
-        "- Added GetZoneInstance()\n");
+        "- Added GetZoneInstance()\n" +
+        "- Added IsPauseLoopSet()\n" +
+        "- Added IsStopLoopSet()\n +" +
+        "- Added GetMonsterNoteRankInfo()\n");
 
         DisplayChangelog(
         "2024-07-29",
