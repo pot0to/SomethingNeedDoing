@@ -54,6 +54,13 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 --yield("/wintitle Final Fantasy XIV")   --FOR HACKY FISHIN SWITCHER WITH AHK
 --yield("/wait 5")
 --yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
+
+--update atools w fc and inventory
+yield("/freecompanycmd")
+yield("/inventory")
+yield("/saddlebag")
+
+
 FUTA_processors = {} -- Initialize variable
 -- 3D Table   {}[i][j][k]
 FUTA_defaults = {
@@ -364,7 +371,3 @@ if wheeequeheeheheheheheehhhee == 1 then
 end
 yield("/echo Debug: Finished all processing")
 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
---update atools w fc and inventory
-yield("/freecompanycmd")
-yield("/inventory")
-yield("/saddlebag")
