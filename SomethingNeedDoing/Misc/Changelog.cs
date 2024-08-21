@@ -19,7 +19,18 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-        "2024-08-24",
+        "2024-08-21",
+        "- Added LifestreamAethernetTeleport()\n" +
+        "- Added LifestreamTeleport()\n" +
+        "- Added LifestreamTeleportToHome()\n +" +
+        "- Added LifestreamTeleportToFC()\n" +
+        "- Added LifestreamTeleportToApartment()\n" +
+        "- Added LifestreamIsBusy()\n" +
+        "- Added LifestreamExecuteCommand()\n" +
+        "- Added LifestreamAbort()\n");
+
+        DisplayChangelog(
+        "2024-08-14",
         "- Added GetZoneInstance()\n" +
         "- Added IsPauseLoopSet()\n" +
         "- Added IsStopLoopSet()\n +" +

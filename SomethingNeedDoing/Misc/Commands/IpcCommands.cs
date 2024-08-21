@@ -1,4 +1,5 @@
-﻿using AutoRetainerAPI;
+﻿using Automaton.IPC;
+using AutoRetainerAPI;
 using SomethingNeedDoing.IPC;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ public class IpcCommands
 {
     internal static IpcCommands Instance { get; } = new();
     private readonly Dropbox dropbox;
+    private readonly LifestreamIPC lifestream;
 
     public List<string> ListAllFunctions()
     {
@@ -33,6 +35,7 @@ public class IpcCommands
         NavmeshIPC.Init();
         DeliverooIPC.Init();
         PandorasBoxIPC.Init();
+        lifestream = new();
         dropbox = new();
     }
 
@@ -183,5 +186,16 @@ public class IpcCommands
     public bool DropboxIsBusy() => dropbox.IsBusy();
     public int DropboxGetItemQuantity(uint id, bool hq) => dropbox.GetItemQuantity(id, hq);
     public void DropboxSetItemQuantity(uint id, bool hq, int quantity) => dropbox.SetItemQuantity(id, hq, quantity);
+    #endregion
+
+    #region Lifestream
+    public bool LifestreamAethernetTeleport(string aethernetName) => lifestream.AethernetTeleport(aethernetName);
+    public bool LifestreamTeleport(uint destination, byte subIndex) => lifestream.Teleport(destination, subIndex);
+    public bool LifestreamTeleportToHome() => lifestream.TeleportToHome();
+    public bool LifestreamTeleportToFC() => lifestream.TeleportToFC();
+    public bool LifestreamTeleportToApartment() => lifestream.TeleportToApartment();
+    public bool LifestreamIsBusy() => lifestream.IsBusy();
+    public void LifestreamExecuteCommand(string command) => lifestream.ExecuteCommand(command);
+    public void LifestreamAbort() => lifestream.Abort();
     #endregion
 }
