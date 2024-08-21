@@ -10,29 +10,39 @@ It could be ocean fishing, triple triad, inventory cleaning, going for a jog aro
 
 Requirements : SND
 and maybe more - let's see where we go with it
+everything from the folder you found this
+and https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/AutoRetainer%20Companions/RobustGCturnin/_functions.lua
 
+throw everything into %AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 
 What is working?
-	Geting Fisher Levels and determining who is the lowest level fisher
+	Geting Fisher Levels and determining who is the lowest level fisher - we cant safely AYS RELOG yet..
 	Outputting to log file if Red Onion Helm Detected
-	Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently.
+	Updating Inventories, FC, Chocobo saddlebags for Atools by opening them.
+	Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently. DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
 	Doing GC Turnins when configured inventory slots free is below a certain amount
 	Visiting personal houses when we reach specified number of retainer cleanings
 
+Soon to be working
+	Automatic Magitek Repair kit trickling -> requirements personal room in FC house w a retainerbell and a junkmonger, lots of gil, preferrably over 50m in stock, you supply your own DMC to the char somehow, crystals up to you. self retainers best way.
+
 What is almost working
 	Ocean fishing would work if i could bypass the post AR lock on ays relog. thats coming soon. purposefully locked it out for
-	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its mesmsy and i dont recommend it
+	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its messy and i dont recommend it
 
 --]]
+
+------------------------------------------------------------
+----------------------GLOBAL VARIABLES----------------------
+------------------------------------------------------------
 FUTA_config_file = "FUTAconfig_McVaxius.lua"
 force_fishing = 0 -- Set to 1 if you want the default indexed char to fish whenever possible
-gc_cleaning_safetystock = 50 -- How many inventory units before we do a cleaning
+venture_cleaning = 20 -- How many venture coins do we need to have left we do a cleaning - useful for leveling new retainer abusers 21072 is item id
 folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
 fullPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\" .. FUTA_config_file
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
-
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -41,9 +51,15 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 ------------------------------------------
 ------------------------------------------
 
-yield("/wintitle Final Fantasy XIV")
+--yield("/wintitle Final Fantasy XIV")   --FOR HACKY FISHIN SWITCHER WITH AHK
 --yield("/wait 5")
 --yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
+
+--update atools w fc and inventory
+yield("/freecompanycmd")
+yield("/inventory")
+yield("/saddlebag")
+yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing ....."
 FUTA_processors = {} -- Initialize variable
 -- 3D Table   {}[i][j][k]
 FUTA_defaults = {
@@ -57,7 +73,7 @@ FUTA_defaults = {
 		{"MRK", 0},									---{}[i][7][1..2]--number of magitek repair kits to quick synth after each AR check
 		{"FCB", "nothing", "nothing"},				---{}[i][8][1..3]--refresh FC buffs if they have 1 or less hours remaining on them. (remove and re-assign)
 		{"PHV", 0, 100},							---{}[i][9][1..3]--0 = no personal house 1 = has a personal house, personal house visit counter, once it reaches {}[][][2] it will reset to 1 after a visit, each ar completion will +1 it
-		{"DUTY", "Teaspoon Dropping Closet", -5, 0}	--{}[i][10][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1
+		{"DUTY", "Teaspoon Dropping Closet", -5, 0}	--{}[i][10][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1    				https://www.youtube.com/watch?v=TsFGJqXnqBE
     }
 }
 
@@ -125,6 +141,7 @@ for i = 1, #FUTA_processors do
     end
 end
 
+yield("/echo N.A.R.I. Table Processor Completed"
 
 
 --[[
@@ -227,7 +244,7 @@ if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_process
     yield("/echo Lowest char is max level or no chars have fishing so we aren't fishing")
 end
 
-wheeequeheeheheheheheehhhee = 0 --meh we cant do this safely
+wheeequeheeheheheheheehhhee = 0 --meh we cant do this safely 			--FOR HACKY FISHIN SWITCHER WITH AHK --- REMOVE IF YOU WANT TO USE IT
 -- It's fishing time
 if wheeequeheeheheheheheehhhee == 1 then
     if GetCharacterCondition(31) == false then
@@ -241,6 +258,7 @@ if wheeequeheeheheheheheehhhee == 1 then
 			
             yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 			
+			--FOR HACKY FISHIN SWITCHER WITH AHK --- START
 			if FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) then
 				--if we are on wrong char. we gotta kill AR And let AHK fire up the right char in a sec ;o
 				yield("/echo Hacky whacky")
@@ -267,6 +285,7 @@ if wheeequeheeheheheheheehhhee == 1 then
 				--end the script here
 				yield("/pcraft stop")
 			end
+			--FOR HACKY FISHIN SWITCHER WITH AHK --- END
 			
             fishing()
             yield("/echo Debug: Fishing completed")
@@ -315,7 +334,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
 	--check inventory size and do gcturnin shit 
 	yield("/echo Do we need to clear inventory?")
-	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 then
+	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) > 0 and GetItemCount(21072) < venture_cleaning then
 		yield("/echo Yes we need to clean inventory and turnin GC stuff! 1/5 debug")
 		loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
 		yield("/echo Yes we need to clean inventory and turnin GC stuff! 2/5 debug")
@@ -330,6 +349,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	--PHV Personal House Visit--
 	----------------------------
 	if FUTA_processors[hoo_arr_weeeeee][9][2] > 0 then
+		yield("/echo Personal House Visit counter Incremented by 1")
 		FUTA_processors[hoo_arr_weeeeee][9][2] = 1 + FUTA_processors[hoo_arr_weeeeee][9][2]
 		if FUTA_processors[hoo_arr_weeeeee][9][2] > FUTA_processors[hoo_arr_weeeeee][9][3] then
 			FUTA_processors[hoo_arr_weeeeee][9][2] = 1
@@ -337,7 +357,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 			CharacterSafeWait()
 			return_fc_entrance() --does the same thing just enters target
 			CharacterSafeWait()
-			loggabunga("FUTA_", " - Home Visit Executed by -> "..FUTA_processors[lowestID][1][1])
+			loggabunga("FUTA_", " - Home Visit Executed by -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 			zungazunga()
 			FUTA_return() --return to configured location
 		end
@@ -350,3 +370,4 @@ if wheeequeheeheheheheheehhhee == 1 then
 	yield("/ays multi e") --if we had to toggle AR
 end
 yield("/echo Debug: Finished all processing")
+tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
