@@ -145,7 +145,7 @@ for i = 1, #FUTA_processors do
     end
 end
 
-yield("/echo N.A.R.I. Table Processor Completed"
+yield("/echo N.A.R.I. Table Processor Completed")
 
 
 --[[
