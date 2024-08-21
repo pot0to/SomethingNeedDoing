@@ -59,8 +59,7 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 yield("/freecompanycmd")
 yield("/inventory")
 yield("/saddlebag")
-
-
+yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing ....."
 FUTA_processors = {} -- Initialize variable
 -- 3D Table   {}[i][j][k]
 FUTA_defaults = {
@@ -142,6 +141,7 @@ for i = 1, #FUTA_processors do
     end
 end
 
+yield("/echo N.A.R.I. Table Processor Completed"
 
 
 --[[

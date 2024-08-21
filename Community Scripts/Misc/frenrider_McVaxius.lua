@@ -383,6 +383,8 @@ while weirdvar == 1 do
 					TargetClosestEnemy()
 					--end
 					yield("/send KEY_2")
+					flandom = getRandomNumber(1,3)
+					if flandom == 1 then yield("/send E") end
 					yield("/wait 0.5")
 				end
 			end
