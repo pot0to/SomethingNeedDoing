@@ -56,10 +56,14 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 --yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 
 --update atools w fc and inventory
+yield("/echo Fully Unified Task Automation (F.U.T.A.) Initializing .....")
 yield("/freecompanycmd")
+yield("/echo Free Company command executed.")
 yield("/inventory")
+yield("/echo Inventory command executed.")
 yield("/saddlebag")
-yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing ....."
+yield("/echo Saddlebag command executed.")
+yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing .....")
 FUTA_processors = {} -- Initialize variable
 -- 3D Table   {}[i][j][k]
 FUTA_defaults = {
