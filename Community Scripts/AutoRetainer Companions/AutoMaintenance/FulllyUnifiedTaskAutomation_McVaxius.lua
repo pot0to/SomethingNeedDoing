@@ -22,9 +22,10 @@ What is working?
 	Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently. DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
 	Doing GC Turnins when configured inventory slots free is below a certain amount
 	Visiting personal houses when we reach specified number of retainer cleanings
+	Rebuying Ceruleum Fuel
 
 Soon to be working
-	Automatic Magitek Repair kit trickling -> requirements personal room in FC house w a retainerbell and a junkmonger, lots of gil, preferrably over 50m in stock, you supply your own DMC to the char somehow, crystals up to you. self retainers best way.
+	Automatic Magitek Repair kit trickling -> requirements you will restock the stuff yourself, if your out of materials youll get a log message
 
 What is almost working
 	Ocean fishing would work if i could bypass the post AR lock on ays relog. thats coming soon. purposefully locked it out for
@@ -78,7 +79,7 @@ FUTA_defaults = {
         {"Firstname Lastname@Server", 0}, 			--Y--{}[i][1][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
         {"FISH", 0},								--?--{}[i][2][1..2]--level, 0 = doont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
 		{"CLEAN", 100, 0, 0, 50},					--Y--{}[i][3][1..5]--chance to do random cleaning/100 if 100 it will be changed to 10 after 1 run, process_gc_rank = 0=no,1=yes. expert_hack = 0=no,1=yes. clean_inventory = 0=no, >0 check inventory slots free and try to clean out inventory.
-		{"FUEL", 0, 0},								--N--{}[i][4][1..3]--fuel safety stock trigger, fuel to buy up to
+		{"FUEL", 0, 0},								--Y--{}[i][4][1..3]--fuel safety stock trigger, fuel to buy up to i[4][3] amount when hitting i[4][2] amount or lower leave i[4][2] at 0 if you dont want it to process this
 		{"TT", 0, 0},								--N--{}[i][5][1..3]--minutes of TT, npc to play 1= roe 2= manservant
 		{"CUFF", 0},						    	--N--{}[i][6][1..2]--minutes of cufff-a-cur to run . assumes in front of an "entrance"
 		{"MRK", 0},									--N--{}[i][7][1..2]--number of magitek repair kits to quick synth after each AR check
@@ -322,6 +323,7 @@ end
 ------------------------------FISHING END----------------------------------------
 ---------------------------------------------------------------------------------
 if wheeequeheeheheheheheehhhee == 0 then
+
 	----------------------------
 	--CLEAN--
 	----------------------------
@@ -340,6 +342,7 @@ if wheeequeheeheheheheheehhhee == 0 then
             end
         end
     end
+
 	----------------------------
 	--CLEAN2 Electric boogaloo--
 	----------------------------
@@ -356,8 +359,20 @@ if wheeequeheeheheheheheehhhee == 0 then
 		FUTA_robust_gc()
 		yield("/echo Yes we need to clean inventory and turnin GC stuff! 5/5 debug")
 	end
+
+	----------------------------
+	-----Buy Ceruleum Fuel------
+	-----------------------------
+	if FUTA_processors[hoo_arr_weeeeee][4][2] > 0 then
+		if GetItemCount(10155) < FUTA_processors[hoo_arr_weeeeee][4][2]
+			try_to_buy_fuel(FUTA_processors[hoo_arr_weeeeee][4][3])
+		end
+	end
+
 	----------------------------
 	--PHV Personal House Visit--
+	----------------------------
+	--This should be done last--
 	----------------------------
 	if FUTA_processors[hoo_arr_weeeeee][9][2] > 0 then
 		yield("/echo Personal House Visit counter Incremented by 1")
