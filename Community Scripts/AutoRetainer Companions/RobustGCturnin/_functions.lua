@@ -391,6 +391,7 @@ function return_fc_entrance()
 	yield("/release Q")
 	yield("/interact")
 	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
 end
 
 function return_fc_near_bell()
