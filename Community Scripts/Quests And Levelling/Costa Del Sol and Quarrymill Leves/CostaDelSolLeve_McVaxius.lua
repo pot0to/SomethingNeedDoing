@@ -2,6 +2,26 @@
 --put the sea pickles into chocobo
 --turnoff addon errors
 
+
+--beter code for handling leves thanks to mootykins  https://discord.com/channels/1001823907193552978/1196163718216679514/1275953553088708700
+--[[ 
+local known_quests = {
+    ["A Recipe for Disaster"] = 778,
+    ["Just Call Me Late for Dinner"] = 779,
+    ["Kitchen Nightmares No More"] = 780,
+    ["The Blue Period"] = 781
+}
+
+function checkingu_node()
+    local quest_name = GetNodeText("GuildLeve", 11, 40, 4)
+    yield("/echo Node Text -> "..quest_name)
+    local quest_id = known_quests[quest_name]
+    if quest_id then
+        yield("/callback JournalDetail true 3 " .. quest_id)
+    end
+end
+--]]
+
 function visland_stop_moving()
  yield("/equipguud")
  yield("/equiprecommended")
