@@ -104,7 +104,7 @@ else
     yield("/echo Error: Serialized data is nil.")
 end
 
---loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfi----gs\\SomethingNeedDoing\\FUTAconfig_McVaxius.lua"
+--loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTAconfig_McVaxius.lua"
 --functionsToLoad2 = loadfile(loadfiyel2)
 --functionsToLoad2()
 
