@@ -63,6 +63,7 @@ public class WorldStateCommands
     public unsafe bool IsInFate() => FateManager.Instance()->CurrentFate is not null;
     public unsafe int GetFateStartTimeEpoch(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->StartTimeEpoch;
     public unsafe float GetFateDuration(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Duration;
+    public unsafe string GetFateName(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Name.ToString();
     public unsafe float GetFateHandInCount(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->HandInCount;
     public unsafe float GetFateLocationX(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Location.X;
     public unsafe float GetFateLocationY(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Location.Y;
