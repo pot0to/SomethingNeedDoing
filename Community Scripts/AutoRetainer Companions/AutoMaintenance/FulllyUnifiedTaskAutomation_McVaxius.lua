@@ -19,7 +19,11 @@ What is working?
 	Geting Fisher Levels and determining who is the lowest level fisher - we cant safely AYS RELOG yet..
 	Outputting to log file if Red Onion Helm Detected
 	Updating Inventories, FC, Chocobo saddlebags for Atools by opening them.
-	Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently. DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
+		******************************************************************************************
+		*DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
+		*Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently.
+		*DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
+		******************************************************************************************
 	Doing GC Turnins when configured inventory slots free is below a certain amount
 	Visiting personal houses when we reach specified number of retainer cleanings
 	Rebuying Ceruleum Fuel
@@ -30,6 +34,11 @@ Soon to be working
 What is almost working
 	Ocean fishing would work if i could bypass the post AR lock on ays relog. thats coming soon. purposefully locked it out for
 	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its messy and i dont recommend it
+
+Known issues and resolution
+	changing the table structure right now i can't do dynamically and safely (please help me!) so i am versioning things if i change the table structure so you
+	can at least keep your old configs / counters if you need them.    there is probably a nice way to do this without deleting your configs but this is where we are :(
+	
 
 --]]
 ------------------------------------------------------------
