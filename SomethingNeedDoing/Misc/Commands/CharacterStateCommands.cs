@@ -92,7 +92,7 @@ public class CharacterStateCommands
             {
                 if (int.TryParse(character, out var p))
                 {
-                    var go = MiscHelpers.GetGameObjectFromPronounID((uint)(p + 42));
+                    var go = Utils.GetGameObjectFromPronounID((uint)(p + 42));
                     return go != null ? go->Position.X : -1;
                 }
                 else return Svc.Objects.Where(x => x.IsTargetable).FirstOrDefault(x => x.Name.ToString().Equals(character))?.Position.X ?? -1;
@@ -109,7 +109,7 @@ public class CharacterStateCommands
             {
                 if (int.TryParse(character, out var p))
                 {
-                    var go = MiscHelpers.GetGameObjectFromPronounID((uint)(p + 42));
+                    var go = Utils.GetGameObjectFromPronounID((uint)(p + 42));
                     return go != null ? go->Position.Y : -1;
                 }
                 else return Svc.Objects.Where(x => x.IsTargetable).FirstOrDefault(x => x.Name.ToString().Equals(character))?.Position.Y ?? -1;
@@ -126,7 +126,7 @@ public class CharacterStateCommands
             {
                 if (int.TryParse(character, out var p))
                 {
-                    var go = MiscHelpers.GetGameObjectFromPronounID((uint)(p + 42));
+                    var go = Utils.GetGameObjectFromPronounID((uint)(p + 42));
                     return go != null ? go->Position.Z : -1;
                 }
                 else return Svc.Objects.Where(x => x.IsTargetable).FirstOrDefault(x => x.Name.ToString().Equals(character))?.Position.Z ?? -1;

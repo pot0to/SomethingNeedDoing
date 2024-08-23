@@ -38,10 +38,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DalamudPackager" Version="2.1.10" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.10.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.10.0" />
+		<PackageReference Include="DalamudPackager" Version="2.1.13" />
+		<PackageReference Include="ExdSheets" Version="2.1.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.11.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.11.0" />
 		<PackageReference Include="NLua" Version="1.6.0" />
 		<Reference Include="Newtonsoft.Json">
 			<HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>

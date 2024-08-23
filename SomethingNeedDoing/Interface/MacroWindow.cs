@@ -100,11 +100,11 @@ internal class MacroWindow : ConfigWindow
         ImGui.SameLine();
         if (ImGuiEx.IconButton(FontAwesomeIcon.FileImport, "Import macro from clipboard"))
         {
-            var text = MiscHelpers.ConvertClipboardToSafeString();
+            var text = Utils.ConvertClipboardToSafeString();
             var node = new MacroNode { Name = GetUniqueNodeName("Untitled macro") };
             RootFolder.Children.Add(node);
 
-            if (MiscHelpers.IsLuaCode(text))
+            if (Utils.IsLuaCode(text))
                 node.Language = Language.Lua;
 
             node.Contents = text;
@@ -449,9 +449,9 @@ internal class MacroWindow : ConfigWindow
         ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - buttonSize.X - ImGui.GetStyle().WindowPadding.X);
         if (ImGuiEx.IconButton(FontAwesomeIcon.FileImport, "Import from clipboard"))
         {
-            var text = MiscHelpers.ConvertClipboardToSafeString();
+            var text = Utils.ConvertClipboardToSafeString();
 
-            if (MiscHelpers.IsLuaCode(text))
+            if (Utils.IsLuaCode(text))
                 node.Language = Language.Lua;
 
             node.Contents = text;
