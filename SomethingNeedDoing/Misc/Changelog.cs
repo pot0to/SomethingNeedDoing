@@ -19,6 +19,13 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-08-23",
+        "- Added GetFateStartTimeEpoch()\n" +
+        "- Added GetFateName()\n" +
+        "- Added GetFateIsBonus()\n +" +
+        "- Added GetFateNpcObjectId()\n");
+
+        DisplayChangelog(
         "2024-08-21",
         "- Added LifestreamAethernetTeleport()\n" +
         "- Added LifestreamTeleport()\n" +
