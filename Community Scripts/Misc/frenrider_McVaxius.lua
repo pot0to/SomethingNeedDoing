@@ -99,6 +99,8 @@ clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = vislan
 clingtypeduty = ini_check("clingtypeduty", 2)				-- do we need a diff clingtype in duties? use same numbering as above 
 maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
 limitpct = ini_check("limitpct", -1)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap, -1 disables it
+rotationplogon = ini_check("rotationplogon", "RSR")			-- Which plogon for rotations? valid options are BMR, VBM, RSR
+autorotationtype = ini_check("autorotationtype", "xan")		-- If we are using BossMod rotation, what preset name shall we use? use "none" to manually configure it yourself.  keep in mind you have to make the rotation and name it in the first place.  "xan" is what i call mine
 rotationtype = ini_check("rotationtype", "Auto")			-- What RSR type shall we use?  Auto or Manual are common ones to pick. if you choose "none" it won't change existing setting.
 bossmodAI = ini_check("bossmodAI", "on")					-- do we want bossmodAI to be "on" or "off"
 xpitem = ini_check("xpitem", 0)								-- xp item - attemp to equip whenever possible azyma_earring = 41081 btw, if this value is 0 it won't do anything
@@ -154,8 +156,19 @@ yield("/wait 0.5")
 yield("/vbmai "..bossmodAI)
 yield("/bmrai "..bossmodAI)
 
-if rotationtype ~= "none" then
-	yield("/rotation "..rotationtype)
+--rotation handling
+if rotationplogon == "BMR" or rotationplogon == "VBM" then
+	yield("/rotation cancel")  --turn off RSR
+	if autorotationtype ~= "none" then
+		yield("/vbm ar set "..autorotationtype)
+		yield("/bmr ar set "..autorotationtype)
+	end
+end
+if rotationplogon == "RSR" or rotationplogon == "VBM" then
+	yield("/bmr ar toggle") --turn off Boss Mod
+	if rotationtype ~= "none" then
+		yield("/rotation "..rotationtype)
+	end
 end
 
 if fulftype ~= "unchanged" then
@@ -425,12 +438,12 @@ while weirdvar == 1 do
 						--seems like max lb is 1013040 when ultimate weapon buffs you to lb3 but you only have 30k on your bar O_o
 						--anyways it will trigger if lb3 is ready or when lb2 is max and it hits lb2
 						if (GetLimoot == (GetLimitBreakBarCount() * GetLimitBreakBarValue())) or GetLimoot > 29999 then
-							yield("/rotation Cancel")		
+							--yield("/rotation Cancel")		 --dont do this
 							yield("/echo Attempting "..local_teext)
 							yield("/ac "..local_teext)
 						end
 						if GetLimoot < GetLimitBreakBarCount() * GetLimitBreakBarValue() then
-							yield("/rotation auto")		
+							--yield("/rotation auto")		
 						end
 						--yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP().." get limoot"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug line
 					end
