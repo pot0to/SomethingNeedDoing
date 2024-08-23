@@ -3,6 +3,7 @@ Have you ever wanted your alts that have been making gil for you on other accoun
 well this script (will eventually) rotate through your alts, and visit a server and or place to deliver gil.
 
 requires plugins
+Autoretainer
 Lifestream
 Teleporter
 Pandora -> TURN OFF AUTO NUMERICS
@@ -15,9 +16,9 @@ Simpletweaks -> enable estate list
 YesAlready -> /Enter .*/
 Something Need Doing -> Turn off SND Targeting in options
 
+If YOU HAVE BOSSMOD OF ANY KIND OR RSR -> please set them to :OFF: in the DTR bar or turn the plugins off!
+
 Optional:
-Autoretainer
-Liza's plugin : Kitchen Sink if you want to use her queue method
 Simpletweaks -> enable auto equip recommended
 
 Known issues:
