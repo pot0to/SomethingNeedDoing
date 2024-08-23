@@ -32,11 +32,14 @@ What is almost working
 	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its messy and i dont recommend it
 
 --]]
-
+------------------------------------------------------------
+-------------------Static Variables-------------------------
+------------------------------------------------------------
+table_version = 2 -- don't change this. I will change it. this way your old configs are stored and someday someone can help me figure out how to migrate shit
 ------------------------------------------------------------
 ----------------------GLOBAL VARIABLES----------------------
 ------------------------------------------------------------
-FUTA_config_file = "FUTAconfig_McVaxius.lua"
+FUTA_config_file = "FUTAconfig_McVaxius_"..table_version..".lua"
 force_fishing = 0 -- Set to 1 if you want the default indexed char to fish whenever possible
 venture_cleaning = 20 -- How many venture coins do we need to have left we do a cleaning - useful for leveling new retainer abusers 21072 is item id
 folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
@@ -73,7 +76,6 @@ FUTA_processors = {} -- Initialize variable
 ----  -> --?- -> not possible yet/partially implemented
 ----  -> --X- -> not implemented
 ----  -> --Y- -> not implemented
-
 FUTA_defaults = {
     {
         {"Firstname Lastname@Server", 0}, 			--Y--{}[i][1][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
