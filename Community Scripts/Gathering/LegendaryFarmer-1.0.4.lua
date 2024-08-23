@@ -114,7 +114,7 @@ paths_to_scrip                        = { --paths to scrip exchnage, leave it as
     { -258.09,  16.079, 42.089,  129 }, -- Path to Scrip Exchange/Collectable Appraiser
     { 142.15,   13.74,  -105.39, 132 },
     { 149.349,  4,      -18.722, 130 },
-    { -161.508, 0.9219, -38.769, 1186 } -- vnav cordinates for the 4th additional location appraiser (here one in solution 9)/4th location
+    { -158.019, 0.922, -37.884, 1186} -- vnav cordinates for the 4th additional location appraiser (here one in solution 9)/4th location
 
 }
 --Collecable Appraiser and Scrip Exchange Settings
