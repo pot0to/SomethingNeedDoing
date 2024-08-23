@@ -65,21 +65,21 @@ internal class Utils
         return false;
     }
 
-    public static Sheet<T> GetSheet<T>(ClientLanguage? language = null) where T : struct, ISheetRow<T>
-        => Service.Module.GetSheet<T>((language ?? Svc.ClientState.ClientLanguage).ToLumina());
+    //public static Sheet<T> GetSheet<T>(ClientLanguage? language = null) where T : struct, ISheetRow<T>
+    //    => Service.Module.GetSheet<T>((language ?? Svc.ClientState.ClientLanguage).ToLumina());
 
-    public static int GetRowCount<T>() where T : struct, ISheetRow<T>
-        => GetSheet<T>().Count;
+    //public static int GetRowCount<T>() where T : struct, ISheetRow<T>
+    //    => GetSheet<T>().Count;
 
-    public static T? GetRow<T>(uint rowId, ClientLanguage? language = null) where T : struct, ISheetRow<T>
-        => GetSheet<T>(language).TryGetRow(rowId);
+    //public static T? GetRow<T>(uint rowId, ClientLanguage? language = null) where T : struct, ISheetRow<T>
+    //    => GetSheet<T>(language).TryGetRow(rowId);
 
-    public static T? GetRow<T>(uint rowId, ushort subRowId, ClientLanguage? language = null) where T : struct, ISheetRow<T>
-        => GetSheet<T>(language).TryGetRow(rowId, subRowId);
+    //public static T? GetRow<T>(uint rowId, ushort subRowId, ClientLanguage? language = null) where T : struct, ISheetRow<T>
+    //    => GetSheet<T>(language).TryGetRow(rowId, subRowId);
 
-    public static T? FindRow<T>(Func<T, bool> predicate) where T : struct, ISheetRow<T>
-         => GetSheet<T>().FirstOrDefault(predicate);
+    //public static T? FindRow<T>(Func<T, bool> predicate) where T : struct, ISheetRow<T>
+    //     => GetSheet<T>().FirstOrDefault(predicate);
 
-    public static T[] FindRows<T>(Func<T, bool> predicate) where T : struct, ISheetRow<T>
-        => GetSheet<T>().Where(predicate).ToArray();
+    //public static T[] FindRows<T>(Func<T, bool> predicate) where T : struct, ISheetRow<T>
+    //    => GetSheet<T>().Where(predicate).ToArray();
 }
