@@ -77,15 +77,17 @@ FUTA_processors = {} -- Initialize variable
 FUTA_defaults = {
     {
         {"Firstname Lastname@Server", 0}, 			--Y--{}[i][1][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
-        {"FISH", 0},								--?--{}[i][2][1..2]--level, 0 = doont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
-		{"CLEAN", 100, 0, 0, 50},					--Y--{}[i][3][1..5]--chance to do random cleaning/100 if 100 it will be changed to 10 after 1 run, process_gc_rank = 0=no,1=yes. expert_hack = 0=no,1=yes. clean_inventory = 0=no, >0 check inventory slots free and try to clean out inventory.
+        {"FISH", 0},								--?--{}[i][2][1..2]--level, 0 = dont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
+		{"CLEAN", 100, 0, 0, 50},					--Y--{}[i][3][1..5]--chance to do random cleaning/100 if 100 it will be changed to 11 after 1 run, process_gc_rank = 0=no,1=yes. expert_hack = 0=no,1=yes. clean_inventory = 0=no, >0 check inventory slots free and try to clean out inventory.
 		{"FUEL", 0, 0},								--Y--{}[i][4][1..3]--fuel safety stock trigger, fuel to buy up to i[4][3] amount when hitting i[4][2] amount or lower leave i[4][2] at 0 if you dont want it to process this
 		{"TT", 0, 0},								--N--{}[i][5][1..3]--minutes of TT, npc to play 1= roe 2= manservant
 		{"CUFF", 0},						    	--N--{}[i][6][1..2]--minutes of cufff-a-cur to run . assumes in front of an "entrance"
 		{"MRK", 0},									--N--{}[i][7][1..2]--number of magitek repair kits to quick synth after each AR check
 		{"FCB", "nothing", "nothing"},				--N--{}[i][8][1..3]--refresh FC buffs if they have 1 or less hours remaining on them. (remove and re-assign)
 		{"PHV", 0, 100},							--Y--{}[i][9][1..3]--0 = no personal house 1 = has a personal house, personal house visit counter, once it reaches {}[][][2] it will reset to 1 after a visit, each ar completion will +1 it
-		{"DUTY", "Teaspoon Dropping Closet", -5, 0}	--N-{}[i][10][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1    				https://www.youtube.com/watch?v=TsFGJqXnqBE
+		{"DUTY", "Teaspoon Dropping Closet", -5, 0},--N-{}[i][10][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1    				https://www.youtube.com/watch?v=TsFGJqXnqBE
+		{"MINI", 0, 0, 0},							--N-{}[i][11][1..4]--Daily mini cactpot, [2] year [3] month [4] day, if we are in the next day after reset time. then we go run it again and set the time. again.
+		{"VERM", 0, 0, 0}							--N-{}[i][12][1..4]--Verminion, [2] year [3] month [4] day, if we are in the next week after reset time. then we go run it again and set the time. again.
     }
 }
 
@@ -336,7 +338,7 @@ if wheeequeheeheheheheheehhhee == 0 then
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
 			yield("/echo rolling dice to see if we do a repricing !")
             if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
-                FUTA_processors[hoo_arr_weeeeee][3][2] = 10
+                FUTA_processors[hoo_arr_weeeeee][3][2] = 11 --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
                 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
                 yield("/echo Debug: Inventory cleaning adjustment completed")
             end
