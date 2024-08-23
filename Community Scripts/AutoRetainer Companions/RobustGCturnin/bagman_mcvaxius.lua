@@ -17,6 +17,8 @@ YesAlready -> /Enter .*/
 Something Need Doing -> Turn off SND Targeting in options
 
 If YOU HAVE BOSSMOD OF ANY KIND OR RSR -> please set them to :OFF: in the DTR bar or turn the plugins off!
+	bossmod in particular will interfere with focus targeting
+	RSR will interfere with movement in some cases
 
 Optional:
 Simpletweaks -> enable auto equip recommended
