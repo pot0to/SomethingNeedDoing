@@ -1,6 +1,23 @@
---config. 
---you need navmesh, pandora, teleporter, lifestream, somethingeeddoing, textadvance, yesalready
---and yesalready. setup yesalready to auto accept any purchases from npcs ;o
+--[[
+Usage:
+You have finished the first fishin quest and are level 10.
+Talk to sissipoo to complete fisher quest 1
+Talk to Roegadyn next to her to get ocean fishing quest.
+now run the sccript and enjoy. (I hope you read the below config requirements).
+
+
+config. 
+you need navmesh, pandora, teleporter, lifestream, somethingeeddoing, textadvance, yesalready
+and yesalready. setup yesalready to auto accept any purchases from npcs ;o
+to do the auto purchase, just make 2 entries with
+
+/Buy.*/
+and include target specific, and put the two npcs names
+Iron Thunder
+and for the 2nd one, 
+Syneyhil
+
+--]]
 
 function visland_stop_moving()
  yield("/equipguud")

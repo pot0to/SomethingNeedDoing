@@ -331,6 +331,10 @@ local function shake_hands()
 					yield("/wait 0.5")
 				end
 			end
+			if bagman_type == 4 then
+				DropboxSetItemQuantity(franchise_owners[windex][5],false,0) --clear the specific item from list
+				yield("/echo cleaning this list out to 0 so we dont send multiple packages to same tony")
+			end
 			  yield("/echo Woah we need another tony out here im not giving you this next bag you mook")
 			  --yield("/dbq 1:1") 
 			  DropboxSetItemQuantity(1,false,1)
