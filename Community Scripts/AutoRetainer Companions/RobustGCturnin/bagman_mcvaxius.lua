@@ -196,17 +196,17 @@ local function shake_hands()
 	end
 
 	--loop until we have tony targeted
-	yield("/target "..fat_tony)
+	yield("/target \""..fat_tony.."\"")
 	yield("/wait 1")
 	while string.len(GetTargetName()) == 0 do
-		yield("/target "..fat_tony)
+		yield("/target \""..fat_tony.."\"")
 		yield("/wait 1")
 	end
 	
 	--we got fat tony.  we just need to make sure he is within targeting distance. say <1 yalms before we continue
 	while distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)) > 1.5 do
 		yield("/echo this fat bastard better hurry up he is  "..distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)).." away!")
-		yield("/target "..fat_tony)   --just in case we had wrong "tony" targeted
+		yield("/target \""..fat_tony.."\"")   --just in case we had wrong "tony" targeted
 		yield("/wait 1")
 	end
 	
@@ -218,7 +218,7 @@ local function shake_hands()
 		if (GetGil() < (bagmans_take + 1)) and (tony_type == 0 or tony_type == 2) then
 			get_to_the_choppa = 1
 		end
-		yield("/target "..fat_tony)
+		yield("/target \""..fat_tony.."\"")
 		yield("/echo here you go "..fat_tony..", another full bag, with respect")
 		if bagman_type == 0 then
 			yield("/trade")
