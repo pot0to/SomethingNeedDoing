@@ -62,9 +62,7 @@ public class InventoryCommands
     }
 
     public unsafe void MoveItemToContainer(uint itemID, uint srcContainer, uint dstContainer)
-    {
-        InventoryManager.Instance()->MoveItemSlot((InventoryType)srcContainer, (ushort)GetItemInInventory(itemID, (InventoryType)srcContainer)->Slot, (InventoryType)dstContainer, GetFirstAvailableSlot((InventoryType)dstContainer));
-    }
+        => InventoryManager.Instance()->MoveItemSlot((InventoryType)srcContainer, (ushort)GetItemInInventory(itemID, (InventoryType)srcContainer)->Slot, (InventoryType)dstContainer, GetFirstAvailableSlot((InventoryType)dstContainer), 1);
 
     private static unsafe InventoryItem* GetItemInInventory(uint itemId, InventoryType inv, bool mustBeHQ = false)
     {
