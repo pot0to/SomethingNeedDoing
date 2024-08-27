@@ -114,6 +114,7 @@ you can set quantity higher than existing to ensure max out
 1 = Gil
 10155 = Ceruleum Fuel
 10373 = Magitek Repair Mats
+6600 = Miniature Aetheryte
 ill add more commonly used IDs here eventually dont wanna clutter too much though.
 ]]
 local filled_bags = {
