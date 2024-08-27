@@ -519,15 +519,16 @@ function clean_inventory()
 	--/automarket start|stop
 	zungazunga()
 	yield("/target Summoning Bell")
+	yield("/wait 1")
 	yield("/lockon on")
-	yield("/automove on <wait.3.5>")
+	yield("/automove on <wait.5.0>") --sometimes it takes a while to path over 3.5 seconds worked in testing and even 1.5 and 2.5 seconds worked but we gonna do 5 seconds to cover all issues
 	yield("/interact")
 	yield("/automarket start")
 	yield("/wait 5")
 	yield("/target Summoning Bell")
 	yield("/wait 1")
 	yield("/interact")
-	yield("/automarket start")
+--	yield("/automarket start")
 	exit_cleaning = 0
 	while GetCharacterCondition(50) == false and exit_cleaning < 20 do
 		yield("/wait 1")
@@ -535,25 +536,24 @@ function clean_inventory()
 		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
 	end
 	exit_cleaning = 0
-	--forced_am = 0
+	forced_am = 0
+	bungaboard = SetClipboard("123123123")
 	while GetCharacterCondition(50) == true and exit_cleaning < 300 do
 		yield("/wait 1")
 		exit_cleaning = exit_cleaning + 1
 		flandom = getRandomNumber(1,20)
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
 		yield("/echo Waiting for repricer to end -> "..exit_cleaning.."/300")
---[[
 		forced_am = forced_am + 1
-		if flandom == 1 and exit_cleaning > 50 and forced_am > 49 then
-			ungabunga()
-			ungabunga()
+		if forced_am > 30 then --every 30 cylces we will update clipboard if it hasnt changed then we have a problem!
+			if bungaboard == GetClipboard() then
+				yield("/echo oops Automarket is stuck ! let's help it!")
+				zungazunga()
+			end
+			bungaboard = GetClipboard()
 			forced_am = 0
-			--yield("/automarket start")
-			yield("Giving Automarket a little push to get it moving and waiting 20 seconds")
-			--yield("/wait 20")
 			exit_cleaning = exit_cleaning + 25
 		end
-		--]]
 	end
 	CharacterSafeWait()
 	zungazunga()
