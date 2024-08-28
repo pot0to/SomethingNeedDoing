@@ -545,14 +545,15 @@ function clean_inventory()
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
 		yield("/echo Waiting for repricer to end -> "..exit_cleaning.."/300")
 		forced_am = forced_am + 1
-		if forced_am > 30 then --every 30 cylces we will update clipboard if it hasnt changed then we have a problem!
+		if forced_am > 15 then --every 15 cycles we will update clipboard if it hasnt changed then we have a problem!
+			yield("/echo Clipboard contains -> "..GetClipboard())
 			if bungaboard == GetClipboard() then
 				yield("/echo oops Automarket is stuck ! let's help it!")
-				zungazunga()
+				ungabunga()
+				exit_cleaning = exit_cleaning + 25
 			end
 			bungaboard = GetClipboard()
 			forced_am = 0
-			exit_cleaning = exit_cleaning + 25
 		end
 	end
 	CharacterSafeWait()
