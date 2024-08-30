@@ -19,6 +19,19 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-08-30",
+        "- Added HasWeeklyBingoJournal()\n" +
+        "- Added IsWeeklyBingoExpired()\n" +
+        "- Added WeeklyBingoNumSecondChancePoints()\n +" +
+        "- Added GetWeeklyBingoTaskStatus()\n" +
+        "- Added GetWeeklyBingoOrderDataKey()\n" +
+        "- Added GetWeeklyBingoOrderDataType()\n" +
+        "- Added GetWeeklyBingoOrderDataData()\n" +
+        "- Added GetWeeklyBingoOrderDataText()\n" +
+        "- Added IsAetheryteUnlocked()\n" +
+        "- Added GetAetheryteList()\n");
+
+        DisplayChangelog(
         "2024-08-24",
         "- Fixed MoveItemToContainer()\n");
 
