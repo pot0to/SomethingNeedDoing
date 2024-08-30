@@ -6,6 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using Lumina.Excel.GeneratedSheets;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -169,7 +170,10 @@ public class CharacterStateCommands
     public unsafe bool HasFlightUnlocked(uint territory = 0) => PlayerState.Instance()->IsAetherCurrentZoneComplete(Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(territory != 0 ? territory : Svc.ClientState.TerritoryType)?.Unknown32 ?? 0);
     public unsafe bool TerritorySupportsMounting() => Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(Player.Territory)?.Unknown32 != 0;
 
+    public unsafe bool HasWeeklyBingoJournal() => PlayerState.Instance()->HasWeeklyBingoJournal;
     public unsafe bool IsWeeklyBingoExpired() => PlayerState.Instance()->IsWeeklyBingoExpired();
+    public unsafe uint WeeklyBingoNumSecondChancePoints() => PlayerState.Instance()->WeeklyBingoNumSecondChancePoints;
+    public unsafe int GetWeeklyBingoTaskStatus(int wonderousTailsIndex) => (int)PlayerState.Instance()->GetWeeklyBingoTaskStatus(wonderousTailsIndex);
     public unsafe uint GetWeeklyBingoOrderDataKey(int wonderousTailsIndex) => PlayerState.Instance()->WeeklyBingoOrderData[wonderousTailsIndex];
     public unsafe uint GetWeeklyBingoOrderDataType(uint wonderousTailsKey) => (Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey)?.Type).GetValueOrDefault();
     public unsafe uint GetWeeklyBingoOrderDataData(uint wonderousTailsKey) => (Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey)?.Data).GetValueOrDefault();
