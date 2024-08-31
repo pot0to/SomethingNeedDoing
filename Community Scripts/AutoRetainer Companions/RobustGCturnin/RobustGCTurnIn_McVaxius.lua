@@ -179,7 +179,7 @@ function Final_GC_Cleaning()
 	yield("/wait 1")
 
 	--loop until deliveroo done if we aren't using the hack.
-	if chars_fn[rcuck_count][4] == 0 and process_players == 1 then
+	if chars_fn[rcuck_count][4] == 0 then
 		dellyroo = true
 		dellyroo = DeliverooIsTurnInRunning()
 		dellycount = 0
@@ -269,18 +269,12 @@ function Final_GC_Cleaning()
 		yield("/wait 1")
 		yield("/target Personnel Officer")
 		yield("/wait 1")
-		yield("/send NUMPAD0")
+		yield("/interact")
+		yield("/wait 2")
 		yield("/pcall SelectString true 0 <wait.1>")
-		yield("/send NUMPAD0")
-		yield("/wait 1")
-		yield("/send NUMPAD0")
-		yield("/wait 1")
+		yield("/wait 2")
 		yield("/pcall GrandCompanySupplyList true 0 1 2")
-		yield("/wait 1")
-		yield("/send NUMPAD0")
-		yield("/wait 1")
-		yield("/send NUMPAD0")
-		yield("/wait 1")
+		yield("/wait 2")
 		yield("/send ESCAPE <wait.1.5>")
 		yield("/send ESCAPE <wait.1.5>")
 		yield("/wait 3")
@@ -537,7 +531,7 @@ if process_fc_buffs == 1 then
 end
 
 --gc turn in
-if process_players > 0 or chars_fn[i][3] == 1 then
+if process_players > 0 then
 	for i=rcuck_count, #chars_fn do
 		yield("/echo Loading Characters for GC TURNIN -> "..chars_fn[i][1])
 		yield("/echo Processing Retainer Abuser "..i.."/"..#chars_fn)
