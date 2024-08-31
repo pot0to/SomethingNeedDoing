@@ -78,7 +78,10 @@ yield("/saddlebag")
 yield("/echo Saddlebag command executed.")
 yield("/echo Fully Unified Task Automation (F.U.T.A.) atools database updated")
 yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing .....")
-
+yield("/bmrai off")
+yield("/vbmai off")
+yield("/rotation Cancel")
+yield("/echo Script breakers disabled")
 FUTA_processors = {} -- Initialize variable
 
 -- 3D Table   {}[i][j][k]
