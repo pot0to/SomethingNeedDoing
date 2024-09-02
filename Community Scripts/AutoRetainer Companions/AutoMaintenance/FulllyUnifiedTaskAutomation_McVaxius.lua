@@ -16,10 +16,16 @@ and https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Script
 throw everything into %AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 
 What is working?
-	Geting Fisher Levels and determining who is the lowest level fisher - we cant safely AYS RELOG yet..
+	Fishing
+		Geting Fisher Levels and determining who is the lowest level fisher - we cant safely AYS RELOG yet..
+		Fully cycling ocean fishing to the char with lowest level of fishing job
 	Outputting to log file if Red Onion Helm Detected
 	Updating Inventories, FC, Chocobo saddlebags for Atools by opening them.
-	Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently. DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
+		******************************************************************************************
+		*DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
+		*Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently.
+		*DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
+		******************************************************************************************
 	Doing GC Turnins when configured inventory slots free is below a certain amount
 	Visiting personal houses when we reach specified number of retainer cleanings
 	Rebuying Ceruleum Fuel
@@ -27,16 +33,20 @@ What is working?
 Soon to be working
 	Automatic Magitek Repair kit trickling -> requirements you will restock the stuff yourself, if your out of materials youll get a log message
 
-What is almost working
-	Ocean fishing would work if i could bypass the post AR lock on ays relog. thats coming soon. purposefully locked it out for
-	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its messy and i dont recommend it
+Known issues and resolution
+	changing the table structure right now i can't do dynamically and safely (please help me!) so i am versioning things if i change the table structure so you
+	can at least keep your old configs / counters if you need them.    there is probably a nice way to do this without deleting your configs but this is where we are :(
+	
 
 --]]
-
+------------------------------------------------------------
+-------------------Static Variables-------------------------
+------------------------------------------------------------
+table_version = 2 -- don't change this. I will change it. this way your old configs are stored and someday someone can help me figure out how to migrate shit
 ------------------------------------------------------------
 ----------------------GLOBAL VARIABLES----------------------
 ------------------------------------------------------------
-FUTA_config_file = "FUTAconfig_McVaxius.lua"
+FUTA_config_file = "FUTAconfig_McVaxius_"..table_version..".lua"
 force_fishing = 0 -- Set to 1 if you want the default indexed char to fish whenever possible
 venture_cleaning = 20 -- How many venture coins do we need to have left we do a cleaning - useful for leveling new retainer abusers 21072 is item id
 folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
@@ -66,14 +76,16 @@ yield("/saddlebag")
 yield("/echo Saddlebag command executed.")
 yield("/echo Fully Unified Task Automation (F.U.T.A.) atools database updated")
 yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing .....")
-
+yield("/bmrai off")
+yield("/vbmai off")
+yield("/rotation Cancel")
+yield("/echo Script breakers disabled")		
 FUTA_processors = {} -- Initialize variable
 
 -- 3D Table   {}[i][j][k]
 ----  -> --?- -> not possible yet/partially implemented
 ----  -> --X- -> not implemented
 ----  -> --Y- -> not implemented
-
 FUTA_defaults = {
     {
         {"Firstname Lastname@Server", 0}, 			--Y--{}[i][1][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
@@ -258,7 +270,6 @@ if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_process
     yield("/echo Lowest char is max level or no chars have fishing so we aren't fishing")
 end
 
-wheeequeheeheheheheheehhhee = 0 --meh we cant do this safely 			--FOR HACKY FISHIN SWITCHER WITH AHK --- REMOVE IF YOU WANT TO USE IT
 -- It's fishing time
 if wheeequeheeheheheheheehhhee == 1 then
     if GetCharacterCondition(31) == false then
@@ -275,31 +286,36 @@ if wheeequeheeheheheheheehhhee == 1 then
 			--FOR HACKY FISHIN SWITCHER WITH AHK --- START
 			if FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) then
 				--if we are on wrong char. we gotta kill AR And let AHK fire up the right char in a sec ;o
-				yield("/echo Hacky whacky")
 				yield("/ays multi d")
-				yield("/wait 3")
-				--do sheet
-				yield("/echo Hacky AHK shit")
-				-- make a ahk file from scratch
-				local file = io.open(folderPath .. "not_a_key_logger.ahk", "w")
-                file:write("WinActivate, Flantasy\n")
-                file:write("Sleep, 5000\n")
-                --file:write("Send, {ENTER}/ays relog "..string.match(FUTA_processors[lowestID][1][1], "([^@]+)").." {ENTER}\n")
-                file:write("Send, {ENTER}/ays relog "..FUTA_processors[lowestID][1][1].." {ENTER}\n")
-                file:write("Sleep, 45000\n")
-                file:write("Send, {ENTER}/pcraft run FUTA {ENTER}\n")
-                file:close()
-				-- Call a batch file using its full path
-				--os.execute("cmd /c start \"\" \ "..os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
-				os.execute('cmd /c start "" "' .. os.getenv("appdata") .. '\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk"')
-				yield("/wintitle Flantasy")
-				--end the script here
-				yield("/pcraft stop")				--os.execute(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
-				yield("/wintitle Flantasy")
-				--end the script here
-				yield("/pcraft stop")
+				yield("/wait 1")
+				yield("/ays reset")
+				yield("/wait 5")
+
+				--[[Hacky shit left here for posterity
+					--FOR HACKY FISHING SWITCHER WITH AHK --- START
+					--do sheet
+					yield("/echo Hacky AHK shit")
+					-- make a ahk file from scratch
+					local file = io.open(folderPath .. "not_a_key_logger.ahk", "w")
+					file:write("WinActivate, Flantasy\n")
+					file:write("Sleep, 5000\n")
+					--file:write("Send, {ENTER}/ays relog "..string.match(FUTA_processors[lowestID][1][1], "([^@]+)").." {ENTER}\n")
+					file:write("Send, {ENTER}/ays relog "..FUTA_processors[lowestID][1][1].." {ENTER}\n")
+					file:write("Sleep, 45000\n")
+					file:write("Send, {ENTER}/pcraft run FUTA {ENTER}\n")
+					file:close()
+					-- Call a batch file using its full path
+					--os.execute("cmd /c start \"\" \ "..os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
+					os.execute('cmd /c start "" "' .. os.getenv("appdata") .. '\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk"')
+					yield("/wintitle Flantasy")
+					--end the script here
+					yield("/pcraft stop")				--os.execute(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
+					yield("/wintitle Flantasy")
+					--end the script here
+					yield("/pcraft stop")
+					--FOR HACKY FISHING SWITCHER WITH AHK --- END
+				--]]
 			end
-			--FOR HACKY FISHIN SWITCHER WITH AHK --- END
 			
             fishing()
             yield("/echo Debug: Fishing completed")
@@ -353,13 +369,16 @@ if wheeequeheeheheheheheehhhee == 0 then
 	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) > 0 and GetItemCount(21072) < venture_cleaning then
 		yield("/echo Yes we need to clean inventory and turnin GC stuff! 1/5 debug")
 		loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
-		yield("/echo Yes we need to clean inventory and turnin GC stuff! 2/5 debug")
+		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 2/5 debug")
 		functionsToLoad = loadfile(loadfiyel2)
-		yield("/echo Yes we need to clean inventory and turnin GC stuff! 3/5 debug")
+		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 3/5 debug")
 		functionsToLoad()
-		yield("/echo Yes we need to clean inventory and turnin GC stuff! 4/5 debug")
+		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 4/5 debug")
 		FUTA_robust_gc()
-		yield("/echo Yes we need to clean inventory and turnin GC stuff! 5/5 debug")
+		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 5/5 debug")
+		if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
+			loggabunga("FUTA_", " - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+		end
 	end
 
 	----------------------------
@@ -367,6 +386,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	-----------------------------
 	if FUTA_processors[hoo_arr_weeeeee][4][2] > 0 then
 		if GetItemCount(10155) < FUTA_processors[hoo_arr_weeeeee][4][2] then
+			enter_workshop()
 			try_to_buy_fuel(FUTA_processors[hoo_arr_weeeeee][4][3])
 		end
 	end

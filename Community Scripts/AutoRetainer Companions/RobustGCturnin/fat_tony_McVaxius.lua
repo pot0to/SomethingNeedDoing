@@ -7,6 +7,7 @@ Otherwise it won't do anything really different than bagman.
 --[[
 
 requires plugins
+Autoretainer
 Lifestream
 Teleporter
 Pandora -> TURN OFF AUTO NUMERICS
@@ -16,10 +17,6 @@ Visland
 Vnavmesh
 Simpletweaks -> enable targeting fix
 YesAlready -> /Enter .*/
-
-Optional:
-Autoretainer
-Liza's plugin : Kitchen Sink if you want to use her queue method
 ]]
 
 tonys_turf = "Maduin" --what server will our tonies run to

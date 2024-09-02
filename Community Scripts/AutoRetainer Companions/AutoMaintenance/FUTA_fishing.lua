@@ -3,6 +3,7 @@ function fishing()
 	
 	--now we have to keep trying until we are on the right character.... just in case we are not.
 	while FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) do
+		yield("/echo Load -> "..FUTA_processors[lowestID][1][1])
 		yield("/ays relog " ..FUTA_processors[lowestID][1][1])
 		yield("/wait 3")
 
