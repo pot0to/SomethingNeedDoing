@@ -16,7 +16,9 @@ and https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Script
 throw everything into %AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 
 What is working?
-	Geting Fisher Levels and determining who is the lowest level fisher - we cant safely AYS RELOG yet..
+	Fishing
+		Geting Fisher Levels and determining who is the lowest level fisher - we cant safely AYS RELOG yet..
+		Fully cycling ocean fishing to the char with lowest level of fishing job
 	Outputting to log file if Red Onion Helm Detected
 	Updating Inventories, FC, Chocobo saddlebags for Atools by opening them.
 		******************************************************************************************
@@ -30,10 +32,6 @@ What is working?
 
 Soon to be working
 	Automatic Magitek Repair kit trickling -> requirements you will restock the stuff yourself, if your out of materials youll get a log message
-
-What is almost working
-	Ocean fishing would work if i could bypass the post AR lock on ays relog. thats coming soon. purposefully locked it out for
-	now but if your smart you can install AHK And wintitle plugin and comment out one line of code and try it. its messy and i dont recommend it
 
 Known issues and resolution
 	changing the table structure right now i can't do dynamically and safely (please help me!) so i am versioning things if i change the table structure so you
@@ -81,7 +79,7 @@ yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing ....."
 yield("/bmrai off")
 yield("/vbmai off")
 yield("/rotation Cancel")
-yield("/echo Script breakers disabled")
+yield("/echo Script breakers disabled")		
 FUTA_processors = {} -- Initialize variable
 
 -- 3D Table   {}[i][j][k]
@@ -272,7 +270,6 @@ if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_process
     yield("/echo Lowest char is max level or no chars have fishing so we aren't fishing")
 end
 
-wheeequeheeheheheheheehhhee = 0 --meh we cant do this safely 			--FOR HACKY FISHIN SWITCHER WITH AHK --- REMOVE IF YOU WANT TO USE IT
 -- It's fishing time
 if wheeequeheeheheheheheehhhee == 1 then
     if GetCharacterCondition(31) == false then
@@ -289,31 +286,36 @@ if wheeequeheeheheheheheehhhee == 1 then
 			--FOR HACKY FISHIN SWITCHER WITH AHK --- START
 			if FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) then
 				--if we are on wrong char. we gotta kill AR And let AHK fire up the right char in a sec ;o
-				yield("/echo Hacky whacky")
 				yield("/ays multi d")
+				yield("/wait 1")
+				yield("/ays reset")
 				yield("/wait 3")
-				--do sheet
-				yield("/echo Hacky AHK shit")
-				-- make a ahk file from scratch
-				local file = io.open(folderPath .. "not_a_key_logger.ahk", "w")
-                file:write("WinActivate, Flantasy\n")
-                file:write("Sleep, 5000\n")
-                --file:write("Send, {ENTER}/ays relog "..string.match(FUTA_processors[lowestID][1][1], "([^@]+)").." {ENTER}\n")
-                file:write("Send, {ENTER}/ays relog "..FUTA_processors[lowestID][1][1].." {ENTER}\n")
-                file:write("Sleep, 45000\n")
-                file:write("Send, {ENTER}/pcraft run FUTA {ENTER}\n")
-                file:close()
-				-- Call a batch file using its full path
-				--os.execute("cmd /c start \"\" \ "..os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
-				os.execute('cmd /c start "" "' .. os.getenv("appdata") .. '\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk"')
-				yield("/wintitle Flantasy")
-				--end the script here
-				yield("/pcraft stop")				--os.execute(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
-				yield("/wintitle Flantasy")
-				--end the script here
-				yield("/pcraft stop")
+
+				--[[Hacky shit left here for posterity
+					--FOR HACKY FISHING SWITCHER WITH AHK --- START
+					--do sheet
+					yield("/echo Hacky AHK shit")
+					-- make a ahk file from scratch
+					local file = io.open(folderPath .. "not_a_key_logger.ahk", "w")
+					file:write("WinActivate, Flantasy\n")
+					file:write("Sleep, 5000\n")
+					--file:write("Send, {ENTER}/ays relog "..string.match(FUTA_processors[lowestID][1][1], "([^@]+)").." {ENTER}\n")
+					file:write("Send, {ENTER}/ays relog "..FUTA_processors[lowestID][1][1].." {ENTER}\n")
+					file:write("Sleep, 45000\n")
+					file:write("Send, {ENTER}/pcraft run FUTA {ENTER}\n")
+					file:close()
+					-- Call a batch file using its full path
+					--os.execute("cmd /c start \"\" \ "..os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
+					os.execute('cmd /c start "" "' .. os.getenv("appdata") .. '\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk"')
+					yield("/wintitle Flantasy")
+					--end the script here
+					yield("/pcraft stop")				--os.execute(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
+					yield("/wintitle Flantasy")
+					--end the script here
+					yield("/pcraft stop")
+					--FOR HACKY FISHING SWITCHER WITH AHK --- END
+				--]]
 			end
-			--FOR HACKY FISHIN SWITCHER WITH AHK --- END
 			
             fishing()
             yield("/echo Debug: Fishing completed")
