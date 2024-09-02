@@ -289,7 +289,7 @@ if wheeequeheeheheheheheehhhee == 1 then
 				yield("/ays multi d")
 				yield("/wait 1")
 				yield("/ays reset")
-				yield("/wait 3")
+				yield("/wait 5")
 
 				--[[Hacky shit left here for posterity
 					--FOR HACKY FISHING SWITCHER WITH AHK --- START
