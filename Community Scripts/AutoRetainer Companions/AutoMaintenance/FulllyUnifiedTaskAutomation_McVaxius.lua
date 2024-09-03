@@ -419,6 +419,9 @@ if wheeequeheeheheheheheehhhee == 0 then
 				yield("/echo Waiting on artisan to finish what its doing....")
 				zungazunga()
 				yield("/wait 5")
+				if GetCharacterCondition(5) == true then
+					threetimes = 0 --reset it if we are still changing jobs in between
+				end
 				if GetCharacterCondition(5) == false then 
 					threetimes = threetimes + 1 
 				end
