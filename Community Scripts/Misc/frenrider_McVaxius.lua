@@ -294,7 +294,8 @@ function clingmove(nemm)
 	if zclingtype == 4 then
 		--we only doing this silly method out of combat
 		if GetCharacterCondition(26) == false then
-			yield("/target "..nemm)
+			--yield("/target "..nemm)
+			yield("/target \""..nemm.."\"")
 			yield("/follow")
 		end
 		--if we in combat and target is nemm we will clear it becuase that may bork autotarget from RSR

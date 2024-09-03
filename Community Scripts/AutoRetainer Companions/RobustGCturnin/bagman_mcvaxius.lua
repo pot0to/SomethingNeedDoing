@@ -3,6 +3,7 @@ Have you ever wanted your alts that have been making gil for you on other accoun
 well this script (will eventually) rotate through your alts, and visit a server and or place to deliver gil.
 
 requires plugins
+Autoretainer
 Lifestream
 Teleporter
 Pandora -> TURN OFF AUTO NUMERICS
@@ -15,9 +16,11 @@ Simpletweaks -> enable estate list
 YesAlready -> /Enter .*/
 Something Need Doing -> Turn off SND Targeting in options
 
+If YOU HAVE BOSSMOD OF ANY KIND OR RSR -> please set them to :OFF: in the DTR bar or turn the plugins off!
+	bossmod in particular will interfere with focus targeting
+	RSR will interfere with movement in some cases
+
 Optional:
-Autoretainer
-Liza's plugin : Kitchen Sink if you want to use her queue method
 Simpletweaks -> enable auto equip recommended
 
 Known issues:
@@ -111,6 +114,7 @@ you can set quantity higher than existing to ensure max out
 1 = Gil
 10155 = Ceruleum Fuel
 10373 = Magitek Repair Mats
+6600 = Miniature Aetheryte
 ill add more commonly used IDs here eventually dont wanna clutter too much though.
 ]]
 local filled_bags = {
@@ -193,17 +197,17 @@ local function shake_hands()
 	end
 
 	--loop until we have tony targeted
-	yield("/target "..fat_tony)
+	yield("/target \""..fat_tony.."\"")
 	yield("/wait 1")
 	while string.len(GetTargetName()) == 0 do
-		yield("/target "..fat_tony)
+		yield("/target \""..fat_tony.."\"")
 		yield("/wait 1")
 	end
 	
 	--we got fat tony.  we just need to make sure he is within targeting distance. say <1 yalms before we continue
 	while distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)) > 1.5 do
 		yield("/echo this fat bastard better hurry up he is  "..distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fat_tony),GetObjectRawYPos(fat_tony),GetObjectRawZPos(fat_tony)).." away!")
-		yield("/target "..fat_tony)   --just in case we had wrong "tony" targeted
+		yield("/target \""..fat_tony.."\"")   --just in case we had wrong "tony" targeted
 		yield("/wait 1")
 	end
 	
@@ -215,7 +219,7 @@ local function shake_hands()
 		if (GetGil() < (bagmans_take + 1)) and (tony_type == 0 or tony_type == 2) then
 			get_to_the_choppa = 1
 		end
-		yield("/target "..fat_tony)
+		yield("/target \""..fat_tony.."\"")
 		yield("/echo here you go "..fat_tony..", another full bag, with respect")
 		if bagman_type == 0 then
 			yield("/trade")
