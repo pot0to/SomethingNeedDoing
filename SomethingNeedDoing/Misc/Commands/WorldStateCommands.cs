@@ -73,7 +73,7 @@ public class WorldStateCommands
     public unsafe uint GetFateNpcObjectId(ushort fateID) => FateManager.Instance()->FateDirector->FateNpcObjectId;
     #endregion
 
-    public float DistanceBetween(float x1, float y1, float z1, float x2, float y2, float z2) => Vector3.DistanceSquared(new Vector3(x1, y1, z1), new Vector3(x2, y2, z2));
+    public float DistanceBetween(float x1, float y1, float z1, float x2, float y2, float z2) => Vector3.Distance(new Vector3(x1, y1, z1), new Vector3(x2, y2, z2));
 
     public unsafe float GetContentTimeLeft() => EventFramework.Instance()->GetInstanceContentDirector()->ContentDirector.ContentTimeLeft;
 
@@ -121,12 +121,12 @@ public class WorldStateCommands
 
     public List<string> GetNearbyObjectNames(float distance = 0, byte objectKind = 0)
         => Svc.Objects
-            .OrderBy(o => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position))
-            .Where(o => o.IsTargetable && (distance == 0 || Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position) <= distance) && (objectKind == 0 || (byte)o.ObjectKind == objectKind))
+            .OrderBy(o => Vector3.Distance(o.Position, Svc.ClientState.LocalPlayer!.Position))
+            .Where(o => o.IsTargetable && (distance == 0 || Vector3.Distance(o.Position, Svc.ClientState.LocalPlayer!.Position) <= distance) && (objectKind == 0 || (byte)o.ObjectKind == objectKind))
             .Select(o => o.Name.TextValue)
             .ToList();
 
-    private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.IGameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer!.Position);
+    private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.IGameObject o) => Vector3.Distance(o.Position, Svc.ClientState.LocalPlayer!.Position);
 
     public unsafe Vector2? GetActiveMiniMapGatheringMarker(int level = 0)
     {

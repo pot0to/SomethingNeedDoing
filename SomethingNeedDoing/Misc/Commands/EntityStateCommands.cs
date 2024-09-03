@@ -166,6 +166,6 @@ internal class EntityStateCommands
     public unsafe float GetBuddyTimeRemaining() => UIState.Instance()->Buddy.CompanionInfo.TimeLeft;
     #endregion
 
-    private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.IGameObject o) => Vector3.DistanceSquared(o.Position, Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero);
+    private float DistanceToObject(Dalamud.Game.ClientState.Objects.Types.IGameObject o) => Vector3.Distance(o.Position, Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero);
     private Dalamud.Game.ClientState.Objects.Types.IGameObject? GetGameObjectFromName(string name) => Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(x => x.Name.TextValue.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 }
