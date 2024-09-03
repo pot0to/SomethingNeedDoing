@@ -410,7 +410,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 		if GetItemCount(10335) < 20 then
 			loggabunga("FUTA_", " - MRK -> Not enough DMC -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
-		if GetInventoryFreeSlotCount() > 19 then
+		if GetInventoryFreeSlotCount() > 19 and GetItemCount(10386) and GetItemCount(10335) then
 			mrkMade = GetItemCount(10373)
 			yield("/artisan lists "..FUTA_processors[hoo_arr_weeeeee][7][2].." start")
 			--begin waiting for crafting to finish
