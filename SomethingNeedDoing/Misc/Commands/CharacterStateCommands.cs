@@ -173,6 +173,7 @@ public class CharacterStateCommands
     public unsafe bool HasWeeklyBingoJournal() => PlayerState.Instance()->HasWeeklyBingoJournal;
     public unsafe bool IsWeeklyBingoExpired() => PlayerState.Instance()->IsWeeklyBingoExpired();
     public unsafe uint WeeklyBingoNumSecondChancePoints() => PlayerState.Instance()->WeeklyBingoNumSecondChancePoints;
+    public unsafe int WeeklyBingoNumPlacedStickers() => PlayerState.Instance()->WeeklyBingoNumPlacedStickers;
     public unsafe int GetWeeklyBingoTaskStatus(int wonderousTailsIndex) => (int)PlayerState.Instance()->GetWeeklyBingoTaskStatus(wonderousTailsIndex);
     public unsafe uint GetWeeklyBingoOrderDataKey(int wonderousTailsIndex) => PlayerState.Instance()->WeeklyBingoOrderData[wonderousTailsIndex];
     public unsafe uint GetWeeklyBingoOrderDataType(uint wonderousTailsKey) => (Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey)?.Type).GetValueOrDefault();
