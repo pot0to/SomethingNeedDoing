@@ -19,6 +19,12 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-09-04",
+        "- Added WeeklyBingoNumPlacedStickers()\n" +
+        "- Added QuestionableIsRunning()\n" +
+        "- Added QuestionableGetCurrentQuestId()\n");
+
+        DisplayChangelog(
         "2024-09-03",
         "- Normalised distance functions\n");
 

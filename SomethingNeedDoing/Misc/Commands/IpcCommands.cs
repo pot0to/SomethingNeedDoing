@@ -13,6 +13,7 @@ public class IpcCommands
     internal static IpcCommands Instance { get; } = new();
     private readonly Dropbox dropbox;
     private readonly LifestreamIPC lifestream;
+    private readonly Questionable questionable;
 
     public List<string> ListAllFunctions()
     {
@@ -37,6 +38,7 @@ public class IpcCommands
         PandorasBoxIPC.Init();
         lifestream = new();
         dropbox = new();
+        questionable = new Questionable();
     }
 
     internal void Dispose()
@@ -64,7 +66,12 @@ public class IpcCommands
     #endregion
 
     #region Deliveroo
-    public unsafe bool DeliverooIsTurnInRunning() => DeliverooIPC.IsTurnInRunning!.InvokeFunc();
+    public bool DeliverooIsTurnInRunning() => DeliverooIPC.IsTurnInRunning!.InvokeFunc();
+    #endregion
+
+    #region Questionable
+    public bool QuestionableIsRunning() => questionable.IsRunning();
+    public string QuestionableGetCurrentQuestId() => questionable.GetCurrentQuestId();
     #endregion
 
     #region visland
