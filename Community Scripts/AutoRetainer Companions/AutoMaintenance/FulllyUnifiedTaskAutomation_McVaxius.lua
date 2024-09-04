@@ -100,7 +100,7 @@ FUTA_defaults = {
 		{"FUEL", 0, 0},								--Y--{}[i][4][1..3]--fuel safety stock trigger, fuel to buy up to i[4][3] amount when hitting i[4][2] amount or lower leave i[4][2] at 0 if you dont want it to process this
 		{"TT", 0, 0},								--N--{}[i][5][1..3]--minutes of TT, npc to play 1= roe 2= manservant
 		{"CUFF", 0},						    	--N--{}[i][6][1..2]--minutes of cufff-a-cur to run . assumes in front of an "entrance"
-		{"MRK", 0},									--Y--{}[i][7][1..2]--the artisan list to trigger after each QV check on this char
+		{"MRK", 0},									--Y--{}[i][7][1..2]--the artisan list ID to trigger after each QV check on this char, just make an artisan list with magitek repair mats and put the ID there
 		{"FCB", "nothing", "nothing"},				--N--{}[i][8][1..3]--refresh FC buffs if they have 1 or less hours remaining on them. (remove and re-assign)
 		{"PHV", 0, 100},							--Y--{}[i][9][1..3]--0 = no personal house 1 = has a personal house, personal house visit counter, once it reaches {}[][][2] it will reset to 1 after a visit, each ar completion will +1 it
 		{"DUTY", "Teaspoon Dropping Closet", -5, 0},--N-{}[i][10][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1    				https://www.youtube.com/watch?v=TsFGJqXnqBE
@@ -114,7 +114,7 @@ serializedData = readSerializedData(fullPath)
 deserializedTable = {}
 if serializedData then
     deserializedTable = deserializeTable(serializedData)
-	    -- Assign the deserialized table to FUTA_processors
+	-- Assign the deserialized table to FUTA_processors
     FUTA_processors = deserializedTable
 
     -- Check the deserialized table
@@ -373,6 +373,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	--check inventory size and do gcturnin shit 
 	yield("/echo Do we need to clear inventory?")
 	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) > 0 and GetItemCount(21072) < venture_cleaning then
+		FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV
 		yield("/echo Yes we need to clean inventory and turnin GC stuff! 1/5 debug")
 		loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
 		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 2/5 debug")
