@@ -268,7 +268,8 @@ for i = 1, #FUTA_processors do
         lowestID = i
     end
 end
-yield("/echo Debug: Lowest ID determined as " .. lowestID)
+
+yield("/echo Debug: Lowest ID determined -> "..lowestID.." Corresponding to -> "..FUTA_processors[lowestID][1][1])
 
 -- If the lowest guy is max level, we aren't fishing
 if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_processors[lowestID][2][2] == -1 then
@@ -374,15 +375,11 @@ if wheeequeheeheheheheheehhhee == 0 then
 	yield("/echo Do we need to clear inventory?")
 	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) > 0 and GetItemCount(21072) < venture_cleaning then
 		FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV
-		yield("/echo Yes we need to clean inventory and turnin GC stuff! 1/5 debug")
+		yield("/echo Yes we need to clean inventory and turnin GC stuff!")
 		loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
-		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 2/5 debug")
 		functionsToLoad = loadfile(loadfiyel2)
-		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 3/5 debug")
 		functionsToLoad()
-		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 4/5 debug")
 		FUTA_robust_gc()
-		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 5/5 debug")
 		if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
 			loggabunga("FUTA_", " - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
