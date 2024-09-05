@@ -284,8 +284,9 @@ function Final_GC_Cleaning()
 	---]]
 
 	--Code for opening FC menu so allagan tools can pull the FC points
-	yield("/freecompanycmd")
-	yield("/wait 3")
+	--yield("/freecompanycmd")
+	--yield("/wait 3")
+	--removed above two lines because allagan tools was 0ing out FC points sometimes when opening too quickly before logging out of the char
 end
 
 --gc turn in

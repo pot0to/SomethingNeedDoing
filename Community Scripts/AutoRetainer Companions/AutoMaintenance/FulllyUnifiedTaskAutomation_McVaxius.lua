@@ -29,9 +29,15 @@ What is working?
 	Doing GC Turnins when configured inventory slots free is below a certain amount
 	Visiting personal houses when we reach specified number of retainer cleanings
 	Rebuying Ceruleum Fuel
+	Trickling in repair kits
 
 Soon to be working
 	Automatic Magitek Repair kit trickling -> requirements you will restock the stuff yourself, if your out of materials youll get a log message
+
+nice to have working
+	(From Cabbage @ Punish disc) gardening -> https://gist.github.com/cabbscripts/6d265058d5e605b90adb8362c7638976
+		it uses YA's list priority to harvest -> reseed -> quit, could add watering in too
+		and assumes your plots are stacked on top of the housing entrance 
 
 Known issues and resolution
 	changing the table structure right now i can't do dynamically and safely (please help me!) so i am versioning things if i change the table structure so you
@@ -94,7 +100,7 @@ FUTA_defaults = {
 		{"FUEL", 0, 0},								--Y--{}[i][4][1..3]--fuel safety stock trigger, fuel to buy up to i[4][3] amount when hitting i[4][2] amount or lower leave i[4][2] at 0 if you dont want it to process this
 		{"TT", 0, 0},								--N--{}[i][5][1..3]--minutes of TT, npc to play 1= roe 2= manservant
 		{"CUFF", 0},						    	--N--{}[i][6][1..2]--minutes of cufff-a-cur to run . assumes in front of an "entrance"
-		{"MRK", 0},									--N--{}[i][7][1..2]--number of magitek repair kits to quick synth after each AR check
+		{"MRK", 0},									--Y--{}[i][7][1..2]--the artisan list ID to trigger after each QV check on this char, just make an artisan list with magitek repair mats and put the ID there
 		{"FCB", "nothing", "nothing"},				--N--{}[i][8][1..3]--refresh FC buffs if they have 1 or less hours remaining on them. (remove and re-assign)
 		{"PHV", 0, 100},							--Y--{}[i][9][1..3]--0 = no personal house 1 = has a personal house, personal house visit counter, once it reaches {}[][][2] it will reset to 1 after a visit, each ar completion will +1 it
 		{"DUTY", "Teaspoon Dropping Closet", -5, 0},--N-{}[i][10][1..4]--name of duty, number of times to run (negative values for one time run - set to 0 after), normal 0 unsynced 1    				https://www.youtube.com/watch?v=TsFGJqXnqBE
@@ -108,7 +114,7 @@ serializedData = readSerializedData(fullPath)
 deserializedTable = {}
 if serializedData then
     deserializedTable = deserializeTable(serializedData)
-	    -- Assign the deserialized table to FUTA_processors
+	-- Assign the deserialized table to FUTA_processors
     FUTA_processors = deserializedTable
 
     -- Check the deserialized table
@@ -262,7 +268,8 @@ for i = 1, #FUTA_processors do
         lowestID = i
     end
 end
-yield("/echo Debug: Lowest ID determined as " .. lowestID)
+
+yield("/echo Debug: Lowest ID determined -> "..lowestID.." Corresponding to -> "..FUTA_processors[lowestID][1][1])
 
 -- If the lowest guy is max level, we aren't fishing
 if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_processors[lowestID][2][2] == -1 then
@@ -367,15 +374,12 @@ if wheeequeheeheheheheheehhhee == 0 then
 	--check inventory size and do gcturnin shit 
 	yield("/echo Do we need to clear inventory?")
 	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) > 0 and GetItemCount(21072) < venture_cleaning then
-		yield("/echo Yes we need to clean inventory and turnin GC stuff! 1/5 debug")
+		FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV
+		yield("/echo Yes we need to clean inventory and turnin GC stuff!")
 		loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
-		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 2/5 debug")
 		functionsToLoad = loadfile(loadfiyel2)
-		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 3/5 debug")
 		functionsToLoad()
-		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 4/5 debug")
 		FUTA_robust_gc()
-		--yield("/echo Yes we need to clean inventory and turnin GC stuff! 5/5 debug")
 		if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
 			loggabunga("FUTA_", " - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
@@ -383,7 +387,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 
 	----------------------------
 	-----Buy Ceruleum Fuel------
-	-----------------------------
+	----------------------------
 	if FUTA_processors[hoo_arr_weeeeee][4][2] > 0 then
 		if GetItemCount(10155) < FUTA_processors[hoo_arr_weeeeee][4][2] then
 			enter_workshop()
@@ -391,6 +395,44 @@ if wheeequeheeheheheheheehhhee == 0 then
 		end
 	end
 
+	----------------------------
+	----Trickle Repair Kits-----
+	----------------------------
+	if FUTA_processors[hoo_arr_weeeeee][7][2] > 0 then
+		if GetInventoryFreeSlotCount() < 20 then
+			loggabunga("FUTA_", " - MRK -> Not enough space to safely synth -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+		end
+		if GetItemCount(10386) < 20 then
+			loggabunga("FUTA_", " - MRK -> Not enough G6DM -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+		end
+		if GetItemCount(10335) < 20 then
+			loggabunga("FUTA_", " - MRK -> Not enough DMC -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+		end
+		if GetInventoryFreeSlotCount() > 19 and GetItemCount(10386) and GetItemCount(10335) then
+			mrkMade = GetItemCount(10373)
+			yield("/artisan lists "..FUTA_processors[hoo_arr_weeeeee][7][2].." start")
+			--begin waiting for crafting to finish
+			threetimes = 0
+			while GetCharacterCondition(5) == true or threetimes < 3 do
+				yield("/echo Waiting on artisan to finish what its doing....")
+				zungazunga()
+				yield("/wait 5")
+				if GetCharacterCondition(5) == true then
+					threetimes = 0 --reset it if we are still changing jobs in between
+				end
+				if GetCharacterCondition(5) == false then 
+					threetimes = threetimes + 1 
+				end
+			end
+			zungazunga()
+			yield("/wait 5")
+			zungazunga()
+			yield("/wait 5")
+			mrkMade = GetItemCount(10373) - mrkMade
+			loggabunga("FUTA_", " - MRK -> "..FUTA_processors[hoo_arr_weeeeee][1][1].." -> MRK made -> "..mrkMade)
+		end
+	end
+	
 	----------------------------
 	--PHV Personal House Visit--
 	----------------------------

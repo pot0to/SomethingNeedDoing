@@ -161,6 +161,7 @@ function fishing()
 		yield("/target Antoinaut")
 		yield("/wait 0.5")
 		yield("/interact")
+		yield("/wait 5")
 	end
 	
 	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
