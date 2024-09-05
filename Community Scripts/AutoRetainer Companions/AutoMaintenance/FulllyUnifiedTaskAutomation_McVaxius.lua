@@ -292,7 +292,7 @@ if wheeequeheeheheheheheehhhee == 1 then
 			
 			--FOR HACKY FISHIN SWITCHER WITH AHK --- START
 			if FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) then
-				--if we are on wrong char. we gotta kill AR And let AHK fire up the right char in a sec ;o
+				--if we are on wrong char. we gotta kill AR
 				yield("/ays multi d")
 				yield("/wait 1")
 				yield("/ays reset")
