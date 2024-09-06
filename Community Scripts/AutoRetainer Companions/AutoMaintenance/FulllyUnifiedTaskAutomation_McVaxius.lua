@@ -356,7 +356,13 @@ if wheeequeheeheheheheheehhhee == 0 then
     if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
         if getRandomNumber(0, 99) < FUTA_processors[hoo_arr_weeeeee][3][2] then
             yield("/echo Debug: Inventory cleaning adjustment started")
-            clean_inventory()
+			--kneecapping AR for now because it interferes with am
+			yield("/ays multi d")
+			yield("/wait 1")
+			yield("/ays reset")
+			yield("/wait 5")
+			clean_inventory()
+			yield("/ays multi e")
             zungazunga()
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
 			yield("/echo rolling dice to see if we do a repricing !")
