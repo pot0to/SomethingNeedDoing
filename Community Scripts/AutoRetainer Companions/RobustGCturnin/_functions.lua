@@ -585,6 +585,7 @@ function clean_inventory()
 		ungabungabunga()
 	end
 	yield("/automarket stop")
+	yield("/wait 1")
 end
 
 function getRandomNumber(min, max)
