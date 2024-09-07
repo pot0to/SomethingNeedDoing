@@ -60,6 +60,7 @@ loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDo
 fullPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\" .. FUTA_config_file
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
+dont_report_good_stuff = 0 --by default reporting everything, if you turn this on, it will not report on "good" stuff (we made x MRK!) aside from personal home entries
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -447,7 +448,9 @@ if wheeequeheeheheheheheehhhee == 0 then
 			zungazunga()
 			yield("/wait 5")
 			mrkMade = GetItemCount(10373) - mrkMade
-			loggabunga("FUTA_", " - MRK -> "..FUTA_processors[hoo_arr_weeeeee][1][1].." -> MRK made -> "..mrkMade)
+			if dont_report_good_stuff == 0 then
+				loggabunga("FUTA_", " - MRK -> "..FUTA_processors[hoo_arr_weeeeee][1][1].." -> MRK made -> "..mrkMade)
+			end
 		end
 	end
 	
