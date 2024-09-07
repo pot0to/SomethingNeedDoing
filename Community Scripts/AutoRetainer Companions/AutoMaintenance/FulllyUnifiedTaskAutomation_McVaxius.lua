@@ -292,7 +292,7 @@ if wheeequeheeheheheheheehhhee == 1 then
 			
 			--FOR HACKY FISHIN SWITCHER WITH AHK --- START
 			if FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) then
-				--if we are on wrong char. we gotta kill AR And let AHK fire up the right char in a sec ;o
+				--if we are on wrong char. we gotta kill AR
 				yield("/ays multi d")
 				yield("/wait 1")
 				yield("/ays reset")
@@ -352,21 +352,39 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
 	--CLEAN--
 	----------------------------
-    -- Start of processing things when there is no fishing
-    if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
+    -- Start of processing things when there is no fishing   
+	if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
+		yield("/echo rolling dice to see if we do a repricing !")
         if getRandomNumber(0, 99) < FUTA_processors[hoo_arr_weeeeee][3][2] then
+			wheeequeheeheheheheheehhhee = 1  --re using this var because we can and it means the same thing at end of script
             yield("/echo Debug: Inventory cleaning adjustment started")
-            clean_inventory()
+			--kneecapping AR for now because it interferes with am
+			yield("/ays multi d")
+			yield("/wait 1")
+			yield("/ays reset")
+			yield("/wait 1")
+			yield("/ays multi d")
+			yield("/wait 5")
+			clean_inventory()
+			yield("/echo Debug:Debug:Debug:Debug:Debug:Debug:Debug:")
             zungazunga()
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
-			yield("/echo rolling dice to see if we do a repricing !")
             if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
                 FUTA_processors[hoo_arr_weeeeee][3][2] = 11 --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
                 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
-                yield("/echo Debug: Inventory cleaning adjustment completed")
+                yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to 11")
             end
         end
     end
+	 --In case we just ran it and need to avoid double triggering it
+	if FUTA_processors[hoo_arr_weeeeee][3][2] == -1 then
+		yield("/echo Debug: Inventory cleaning adjustment completed -> -1 changed to 11")
+		FUTA_processors[hoo_arr_weeeeee][3][2] = 11 
+	end
+	if wheeequeheeheheheheheehhhee == 1 then
+		FUTA_processors[hoo_arr_weeeeee][3][2] = -1
+		yield("/echo Debug: Inventory cleaning adjustment completed -> chance changed to -1 to avoid double send")
+	end
 
 	----------------------------
 	--CLEAN2 Electric boogaloo--
@@ -456,8 +474,9 @@ end
 
 -- Stop beginning to do stuff
 zungazunga()
+yield("/echo Debug: Finished all processing")
+tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
+
 if wheeequeheeheheheheheehhhee == 1 then
 	yield("/ays multi e") --if we had to toggle AR
 end
-yield("/echo Debug: Finished all processing")
-tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
