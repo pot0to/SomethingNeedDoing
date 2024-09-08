@@ -61,7 +61,7 @@ fullPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedD
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
 dont_report_good_stuff = 0 --by default reporting everything, if you turn this on, it will not report on "good" stuff (we made x MRK!) aside from personal home entries
-logfile_differentiator = "Account 1 - "  --example of extra text to throw into log file say if your pointing a few clients to same log file for convenience
+logfile_differentiator = " - Account 1"  --example of extra text to throw into log file say if your pointing a few clients to same log file for convenience
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -335,7 +335,7 @@ if wheeequeheeheheheheheehhhee == 1 then
                 currentTime = os.date("*t")
                 formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
                 FUTA_processors[lowestID][2][2] = GetLevel()
-                file:write(formattedTime.." - ".."["..lowestID.."] - "..FUTA_processors[lowestID][1][1].." - Fisher Lv - "..FUTA_processors[lowestID][2][2].."\n")
+                file:write(formattedTime.." - "..logfile_differentiator.."["..lowestID.."] - "..FUTA_processors[lowestID][1][1].." - Fisher Lv - "..FUTA_processors[lowestID][2][2].."\n")
                 file:close()
                 yield("/echo Text has been written to '" .. folderPath .. "FeeshLevels.txt'")
             else
