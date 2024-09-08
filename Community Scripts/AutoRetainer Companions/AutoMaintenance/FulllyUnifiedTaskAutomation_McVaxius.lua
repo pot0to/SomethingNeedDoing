@@ -477,9 +477,9 @@ if wheeequeheeheheheheheehhhee == 0 then
 end
 
 -- Stop beginning to do stuff
-zungazunga()
 yield("/echo Debug: Finished all processing")
 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
+zungazunga()
 
 if wheeequeheeheheheheheehhhee == 1 then
 	yield("/ays multi e") --if we had to toggle AR
