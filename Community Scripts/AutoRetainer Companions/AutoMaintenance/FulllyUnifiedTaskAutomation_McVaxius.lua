@@ -61,6 +61,7 @@ fullPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedD
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
 dont_report_good_stuff = 0 --by default reporting everything, if you turn this on, it will not report on "good" stuff (we made x MRK!) aside from personal home entries
+logfile_differentiator = "Account 1 - "  --example of extra text to throw into log file say if your pointing a few clients to same log file for convenience
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -400,7 +401,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 		functionsToLoad()
 		FUTA_robust_gc()
 		if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
-			loggabunga("FUTA_", " - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			loggabunga("FUTA_", logfile_differentiator.." - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
 	end
 
@@ -419,13 +420,13 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
 	if FUTA_processors[hoo_arr_weeeeee][7][2] > 0 then
 		if GetInventoryFreeSlotCount() < 20 then
-			loggabunga("FUTA_", " - MRK -> Not enough space to safely synth -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			loggabunga("FUTA_", logfile_differentiator.." - MRK -> Not enough space to safely synth -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
 		if GetItemCount(10386) < 20 then
-			loggabunga("FUTA_", " - MRK -> Not enough G6DM -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			loggabunga("FUTA_", logfile_differentiator.." - MRK -> Not enough G6DM -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
 		if GetItemCount(10335) < 20 then
-			loggabunga("FUTA_", " - MRK -> Not enough DMC -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			loggabunga("FUTA_", logfile_differentiator.." - MRK -> Not enough DMC -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
 		if GetInventoryFreeSlotCount() > 19 and GetItemCount(10386) and GetItemCount(10335) then
 			mrkMade = GetItemCount(10373)
@@ -449,7 +450,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 			yield("/wait 5")
 			mrkMade = GetItemCount(10373) - mrkMade
 			if dont_report_good_stuff == 0 then
-				loggabunga("FUTA_", " - MRK -> "..FUTA_processors[hoo_arr_weeeeee][1][1].." -> MRK made -> "..mrkMade)
+				loggabunga("FUTA_", logfile_differentiator.." - MRK -> "..FUTA_processors[hoo_arr_weeeeee][1][1].." -> MRK made -> "..mrkMade)
 			end
 		end
 	end
@@ -468,7 +469,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 			CharacterSafeWait()
 			return_fc_entrance() --does the same thing just enters target
 			CharacterSafeWait()
-			loggabunga("FUTA_", " - Home Visit Executed by -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			loggabunga("FUTA_", logfile_differentiator.." - Home Visit Executed by -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 			zungazunga()
 			FUTA_return() --return to configured location
 		end
