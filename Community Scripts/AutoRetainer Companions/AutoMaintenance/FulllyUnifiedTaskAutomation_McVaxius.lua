@@ -24,6 +24,7 @@ What is working?
 		******************************************************************************************
 		*DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
 		*Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently.
+		you may need to turn off retainer window bailout in /ays expert   or set it to 30 or 60 seconds.. still tbd on this
 		*DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
 		******************************************************************************************
 	Doing GC Turnins when configured inventory slots free is below a certain amount
@@ -60,6 +61,8 @@ loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDo
 fullPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\" .. FUTA_config_file
 functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
+dont_report_good_stuff = 0 --by default reporting everything, if you turn this on, it will not report on "good" stuff (we made x MRK!) aside from personal home entries
+logfile_differentiator = " - Account 1"  --example of extra text to throw into log file say if your pointing a few clients to same log file for convenience
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -333,7 +336,7 @@ if wheeequeheeheheheheheehhhee == 1 then
                 currentTime = os.date("*t")
                 formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
                 FUTA_processors[lowestID][2][2] = GetLevel()
-                file:write(formattedTime.." - ".."["..lowestID.."] - "..FUTA_processors[lowestID][1][1].." - Fisher Lv - "..FUTA_processors[lowestID][2][2].."\n")
+                file:write(formattedTime.." - "..logfile_differentiator.."["..lowestID.."] - "..FUTA_processors[lowestID][1][1].." - Fisher Lv - "..FUTA_processors[lowestID][2][2].."\n")
                 file:close()
                 yield("/echo Text has been written to '" .. folderPath .. "FeeshLevels.txt'")
             else
@@ -366,7 +369,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 			yield("/ays multi d")
 			yield("/wait 5")
 			clean_inventory()
-			yield("/echo Debug:Debug:Debug:Debug:Debug:Debug:Debug:")
+--			yield("/echo Debug:Debug:Debug:Debug:Debug:Debug:Debug:")
             zungazunga()
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
             if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
@@ -399,7 +402,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 		functionsToLoad()
 		FUTA_robust_gc()
 		if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
-			loggabunga("FUTA_", " - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			loggabunga("FUTA_", logfile_differentiator.." - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
 	end
 
@@ -418,13 +421,13 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
 	if FUTA_processors[hoo_arr_weeeeee][7][2] > 0 then
 		if GetInventoryFreeSlotCount() < 20 then
-			loggabunga("FUTA_", " - MRK -> Not enough space to safely synth -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			loggabunga("FUTA_", logfile_differentiator.." - MRK -> Not enough space to safely synth -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
 		if GetItemCount(10386) < 20 then
-			loggabunga("FUTA_", " - MRK -> Not enough G6DM -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			loggabunga("FUTA_", logfile_differentiator.." - MRK -> Not enough G6DM -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
 		if GetItemCount(10335) < 20 then
-			loggabunga("FUTA_", " - MRK -> Not enough DMC -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			loggabunga("FUTA_", logfile_differentiator.." - MRK -> Not enough DMC -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
 		if GetInventoryFreeSlotCount() > 19 and GetItemCount(10386) and GetItemCount(10335) then
 			mrkMade = GetItemCount(10373)
@@ -447,7 +450,9 @@ if wheeequeheeheheheheheehhhee == 0 then
 			zungazunga()
 			yield("/wait 5")
 			mrkMade = GetItemCount(10373) - mrkMade
-			loggabunga("FUTA_", " - MRK -> "..FUTA_processors[hoo_arr_weeeeee][1][1].." -> MRK made -> "..mrkMade)
+			if dont_report_good_stuff == 0 then
+				loggabunga("FUTA_", logfile_differentiator.." - MRK -> "..FUTA_processors[hoo_arr_weeeeee][1][1].." -> MRK made -> "..mrkMade)
+			end
 		end
 	end
 	
@@ -465,7 +470,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 			CharacterSafeWait()
 			return_fc_entrance() --does the same thing just enters target
 			CharacterSafeWait()
-			loggabunga("FUTA_", " - Home Visit Executed by -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			loggabunga("FUTA_", logfile_differentiator.." - Home Visit Executed by -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 			zungazunga()
 			FUTA_return() --return to configured location
 		end
@@ -473,9 +478,9 @@ if wheeequeheeheheheheheehhhee == 0 then
 end
 
 -- Stop beginning to do stuff
-zungazunga()
 yield("/echo Debug: Finished all processing")
 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
+zungazunga()
 
 if wheeequeheeheheheheheehhhee == 1 then
 	yield("/ays multi e") --if we had to toggle AR
