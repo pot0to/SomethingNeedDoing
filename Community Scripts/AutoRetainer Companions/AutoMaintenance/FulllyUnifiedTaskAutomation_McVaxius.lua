@@ -24,6 +24,7 @@ What is working?
 		******************************************************************************************
 		*DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
 		*Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently.
+		you may need to turn off retainer window bailout in /ays expert   or set it to 30 or 60 seconds.. still tbd on this
 		*DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
 		******************************************************************************************
 	Doing GC Turnins when configured inventory slots free is below a certain amount
@@ -368,7 +369,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 			yield("/ays multi d")
 			yield("/wait 5")
 			clean_inventory()
-			yield("/echo Debug:Debug:Debug:Debug:Debug:Debug:Debug:")
+--			yield("/echo Debug:Debug:Debug:Debug:Debug:Debug:Debug:")
             zungazunga()
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
             if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
