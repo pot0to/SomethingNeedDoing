@@ -209,11 +209,16 @@ function WalkTo(x, y, z)
 		yield("/wait 0.5")
 		--if GetZoneID() == 130 or GetZoneID() == 341 then --130 is uldah. dont need to jump anymore it paths properly. we will test anyways.
 		countee = countee + 1
+		if countee == 10 and GetPlayerGC() == 3 then --it gets stuck around uldah aetheryte sometimes
+			countee = 0
+			yield("/vnavmesh moveto "..x.." "..y.." "..z)
+		end
+		--yield("/echo we are still pathfinding apparently -> countee -> "..countee)
 		if gachi_jumpy == 1 and countee == 10 and GetZoneID() ~= 129 then --we only doing jumps if we configured for it
 		--if GetZoneID() == 341 then --only need to jump in goblet for now
 			yield("/gaction jump")
 			countee = 0
-			yield("/echo we are still pathfinding apparently")
+			yield("/echo we are REALLY still pathfinding apparently")
 		end
 	end
 end
@@ -281,11 +286,9 @@ function WalkToGC()
 			visland_stop_moving()
 		end
 		if movementtype == 0 then --default navmesh
-			WalkTo(-142.5, 4, -106.5)
-			yield("/wait 5") --do it a few times just in case
-			WalkTo(-142.5, 4, -106.5)
-			yield("/wait 5") --do it a few times just in case
-			WalkTo(-142.5, 4, -106.5)
+			WalkTo(-129.5, -1.9, -151.6)
+			WalkTo(-116, 2, -136.9)
+			WalkTo(-141.7, 4.1, -106.8)
 		end
     end
 end
