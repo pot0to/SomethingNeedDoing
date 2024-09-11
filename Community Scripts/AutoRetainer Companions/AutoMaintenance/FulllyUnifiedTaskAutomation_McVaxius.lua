@@ -76,6 +76,7 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 --yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 
 --update atools w fc and inventory
+RestoreYesAlready()
 yield("/echo Fully Unified Task Automation (F.U.T.A.) Initializing .....")
 yield("/freecompanycmd")
 yield("/echo Free Company command executed.")

@@ -226,8 +226,12 @@ function ZoneTransition()
         yield("/echo Are we ready? -> "..iswoah.."/20")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
+		if 	iswoah == 5 then yield("/pcall SelectYesno true 0") end
+		if 	iswoah == 10 then yield("/pcall SelectYesno true 0") end
+		if 	iswoah == 15 then yield("/pcall SelectYesno true 0") end
 		if 	iswoah == 20 then
 			iswehehe = false
+			yield("/pcall SelectYesno true 0")
 		end
     until not iswehehe
 	iswoah = 0
@@ -236,8 +240,12 @@ function ZoneTransition()
         yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
+		if 	iswoah == 5 then yield("/pcall SelectYesno true 0") end
+		if 	iswoah == 10 then yield("/pcall SelectYesno true 0") end
+		if 	iswoah == 15 then yield("/pcall SelectYesno true 0") end
 		if 	iswoah == 20 then
 			iswehehe = true
+			yield("/pcall SelectYesno true 0")
 		end
     until iswehehe
 end
