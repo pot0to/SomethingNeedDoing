@@ -282,6 +282,10 @@ function WalkToGC()
 		end
 		if movementtype == 0 then --default navmesh
 			WalkTo(-142.5, 4, -106.5)
+			yield("/wait 5") --do it a few times just in case
+			WalkTo(-142.5, 4, -106.5)
+			yield("/wait 5") --do it a few times just in case
+			WalkTo(-142.5, 4, -106.5)
 		end
     end
 end
