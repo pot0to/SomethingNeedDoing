@@ -14,6 +14,7 @@ public class IpcCommands
     private readonly Dropbox dropbox;
     private readonly LifestreamIPC lifestream;
     private readonly Questionable questionable;
+    private readonly RSR rsr;
 
     public List<string> ListAllFunctions()
     {
@@ -39,6 +40,7 @@ public class IpcCommands
         lifestream = new();
         dropbox = new();
         questionable = new Questionable();
+        rsr = new();
     }
 
     internal void Dispose()
@@ -204,5 +206,14 @@ public class IpcCommands
     public bool LifestreamIsBusy() => lifestream.IsBusy();
     public void LifestreamExecuteCommand(string command) => lifestream.ExecuteCommand(command);
     public void LifestreamAbort() => lifestream.Abort();
+    #endregion
+
+    #region RSR
+    public void AddPriorityNameID(uint nameId) => rsr.AddPriorityNameID(nameId);
+    public void RemovePriorityNameID(uint nameId) => rsr.RemovePriorityNameID(nameId);
+    public void AddBlacklistNameID(uint nameId) => rsr.AddBlacklistNameID(nameId);
+    public void RemoveBlacklistNameID(uint nameId) => rsr.RemoveBlacklistNameID(nameId);
+    public void ChangeOperatingMode(byte stateCommand) => rsr.ChangeOperatingMode((RSR.StateCommandType)stateCommand);
+    public void TriggerSpecialState(byte specialCommand) => rsr.TriggerSpecialState((RSR.SpecialCommandType)specialCommand);
     #endregion
 }

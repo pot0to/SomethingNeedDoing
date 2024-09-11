@@ -19,6 +19,10 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-09-11",
+        "- Added RSR IPC commands\n");
+
+        DisplayChangelog(
         "2024-09-07",
         "- Added GetFateRadius()\n" +
         "- Removed GetFateNpcObjectId()\n");
