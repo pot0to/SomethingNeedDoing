@@ -97,6 +97,7 @@ cling = ini_check("cling", 1) 								-- Distance to cling to fren when > bistan
 force_gyasahl = ini_check("force_gyasahl", false) 	   		-- force gysahl green usage . maybe cause problems in towns with follow
 clingtype = ini_check("clingtype", 0)						-- Clingtype, 0 = navmesh, 1 = visland, 2 = bmr follow leader, 3 = automaton autofollow, 4 = vanilla game follow
 clingtypeduty = ini_check("clingtypeduty", 2)				-- do we need a diff clingtype in duties? use same numbering as above 
+follow_in_combat = ini_check("follow_in_combat", 0)		-- 0 = dont follow the leader while in combat, 1 = follow the leader while in combat
 maxbistance = ini_check("maxbistance", 50) 					-- Max distance from fren that we will actually chase them, so that we dont get zone hopping situations ;p
 limitpct = ini_check("limitpct", -1)						-- What percentage of life on target should we use LB at. It will automatically use LB3 if that's the cap or it will use LB2 if that's the cap, -1 disables it
 rotationplogon = ini_check("rotationplogon", "RSR")			-- Which plogon for rotations? valid options are BMR, VBM, RSR
@@ -259,49 +260,55 @@ function clingmove(nemm)
 	if GetCharacterCondition(34) == true then
 		zclingtype = clingtypeduty --get diff clingtype in duties
 	end
-	--navmesh
-	if zclingtype == 0 then
-		PathfindAndMoveTo(GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm), false)
+	allowmovement = 0  --dont allow movement by default
+	if (follow_in_combat == 1 and GetCharacterCondition(26) == true) or GetCharacterCondition(26) == false then
+		allowmovement = 1
 	end
-	--visland
-	if zclingtype == 1 then
-		yield("/visland moveto "..GetObjectRawXPos(nemm).." "..GetObjectRawYPos(nemm).." "..GetObjectRawZPos(nemm)) --* verify this is correct later when we can load dalamud
-	end
-	--not bmr
-	if zclingtype > 2 or zclingtype < 2 then
-			yield("/bmrai follow "..GetCharacterName())
-			yield("/bmrai followoutofcombat on")
-			yield("/bmrai maxdistancetarget 2.6")
-	end
-	--bmr
-	if zclingtype == 2 then
-		bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm))
-		if bistance < maxbistance then
-			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
-			yield("/bmrai followoutofcombat on")
-			yield("/bmrai follow "..nemm) 	  --* verify this is correct later when we can load dalamud
+	if allowmovement == 1 then
+		--navmesh
+		if zclingtype == 0 then
+			PathfindAndMoveTo(GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm), false)
 		end
-		if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
-			yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
-			yield("/bmrai followoutofcombat on")
-			yield("/bmrai follow "..GetCharacterName()) 	  --* verify this is correct later when we can load dalamud
-			yield("/echo too far! stop following!")
+		--visland
+		if zclingtype == 1 then
+			yield("/visland moveto "..GetObjectRawXPos(nemm).." "..GetObjectRawYPos(nemm).." "..GetObjectRawZPos(nemm)) --* verify this is correct later when we can load dalamud
 		end
-	end
-	if zclingtype == 3 then
-		yield("/autofollow "..nemm)
-	end
-	if zclingtype == 4 then
-		--we only doing this silly method out of combat
-		if GetCharacterCondition(26) == false then
-			--yield("/target "..nemm)
-			yield("/target \""..nemm.."\"")
-			yield("/follow")
+		--not bmr
+		if zclingtype > 2 or zclingtype < 2 then
+				yield("/bmrai follow "..GetCharacterName())
+				yield("/bmrai followoutofcombat on")
+				yield("/bmrai maxdistancetarget 2.6")
 		end
-		--if we in combat and target is nemm we will clear it becuase that may bork autotarget from RSR
-		if GetCharacterCondition(26) == true then
-			if nemm == GetTargetName() then
-				ClearTarget()
+		--bmr
+		if zclingtype == 2 then
+			bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm))
+			if bistance < maxbistance then
+				yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
+				yield("/bmrai followoutofcombat on")
+				yield("/bmrai follow "..nemm) 	  --* verify this is correct later when we can load dalamud
+			end
+			if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
+				yield("/bmrai followtarget on") --* verify this is correct later when we can load dalamud
+				yield("/bmrai followoutofcombat on")
+				yield("/bmrai follow "..GetCharacterName()) 	  --* verify this is correct later when we can load dalamud
+				yield("/echo too far! stop following!")
+			end
+		end
+		if zclingtype == 3 then
+			yield("/autofollow "..nemm)
+		end
+		if zclingtype == 4 then
+			--we only doing this silly method out of combat
+			if GetCharacterCondition(26) == false then
+				--yield("/target "..nemm)
+				yield("/target \""..nemm.."\"")
+				yield("/follow")
+			end
+			--if we in combat and target is nemm we will clear it becuase that may bork autotarget from RSR
+			if GetCharacterCondition(26) == true then
+				if nemm == GetTargetName() then
+					ClearTarget()
+				end
 			end
 		end
 	end
