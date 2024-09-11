@@ -35,7 +35,7 @@ function fishing()
 		yield("/pcall Repair true 0")
 		yield("/wait 1")
 		yield("/pcall Repair true 1")
-		yield("/wait 1")
+		yield("/wait 3")
 		yield("/pcall SelectYesno true 0")
 		ungabunga()
 	end
