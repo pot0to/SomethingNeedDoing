@@ -36,6 +36,7 @@ function fishing()
 		yield("/wait 1")
 		yield("/pcall Repair true 1")
 		yield("/wait 1")
+		yield("/pcall SelectYesno true 0")
 		ungabunga()
 	end
 	 yield("/bait Versatile Lure")

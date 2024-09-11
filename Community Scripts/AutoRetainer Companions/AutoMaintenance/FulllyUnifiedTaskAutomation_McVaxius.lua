@@ -412,6 +412,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
 	if FUTA_processors[hoo_arr_weeeeee][4][2] > 0 then
 		if GetItemCount(10155) < FUTA_processors[hoo_arr_weeeeee][4][2] then
+			ungabungabunga() -- get out of any screens we are in
 			enter_workshop()
 			try_to_buy_fuel(FUTA_processors[hoo_arr_weeeeee][4][3])
 		end
