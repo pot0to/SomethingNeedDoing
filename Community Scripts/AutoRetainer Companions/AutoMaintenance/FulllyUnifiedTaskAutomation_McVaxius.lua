@@ -32,9 +32,6 @@ What is working?
 	Rebuying Ceruleum Fuel
 	Trickling in repair kits
 
-Soon to be working
-	Automatic Magitek Repair kit trickling -> requirements you will restock the stuff yourself, if your out of materials youll get a log message
-
 nice to have working
 	(From Cabbage @ Punish disc) gardening -> https://gist.github.com/cabbscripts/6d265058d5e605b90adb8362c7638976
 		it uses YA's list priority to harvest -> reseed -> quit, could add watering in too
