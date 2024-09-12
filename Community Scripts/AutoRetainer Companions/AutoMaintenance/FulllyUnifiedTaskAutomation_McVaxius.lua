@@ -271,7 +271,7 @@ for i = 1, #FUTA_processors do
     end
 end
 
-yield("/echo Debug: Lowest ID determined -> "..lowestID.." Corresponding to -> "..FUTA_processors[lowestID][1][1])
+yield("/echo Debug: Lowest ID determined -> "..lowestID.." Corresponding to -> "..FUTA_processors[lowestID][1][1].. " With a level of -> "..FUTA_processors[lowestID][2][2])
 
 -- If the lowest guy is max level, we aren't fishing
 if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_processors[lowestID][2][2] == -1 then
