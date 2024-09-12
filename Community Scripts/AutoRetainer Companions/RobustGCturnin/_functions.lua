@@ -282,8 +282,8 @@ function WalkToGC()
 			visland_stop_moving()
 		end
 		if movementtype == 0 then --default navmesh
-			WalkTo(-129.5, -1.9, -151.6)
-			WalkTo(-116, 2, -136.9)
+			--WalkTo(-129.5, -1.9, -151.6)
+			--WalkTo(-116, 2, -136.9)
 			WalkTo(-141.7, 4.1, -106.8)
 		end
     end
