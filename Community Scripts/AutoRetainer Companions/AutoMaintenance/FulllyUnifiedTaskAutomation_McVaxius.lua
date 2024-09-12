@@ -23,7 +23,7 @@ What is working?
 	Updating Inventories, FC, Chocobo saddlebags for Atools by opening them.
 		******************************************************************************************
 		*DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
-		*Repricing items in retainers first time 100%, 10% chance after that unless you configure it differently.
+		*Repricing items in retainers first time 100%, 11% chance after that unless you configure it differently.
 		you may need to turn off retainer window bailout in /ays expert   or set it to 30 or 60 seconds.. still tbd on this
 		*DONT ASK ABOUT THIS IN PUNISH DISC OR YOU WILL BE SENT TO THE TEASPOON DROPPING CLOSET
 		******************************************************************************************
@@ -31,9 +31,6 @@ What is working?
 	Visiting personal houses when we reach specified number of retainer cleanings
 	Rebuying Ceruleum Fuel
 	Trickling in repair kits
-
-Soon to be working
-	Automatic Magitek Repair kit trickling -> requirements you will restock the stuff yourself, if your out of materials youll get a log message
 
 nice to have working
 	(From Cabbage @ Punish disc) gardening -> https://gist.github.com/cabbscripts/6d265058d5e605b90adb8362c7638976
@@ -43,6 +40,7 @@ nice to have working
 Known issues and resolution
 	changing the table structure right now i can't do dynamically and safely (please help me!) so i am versioning things if i change the table structure so you
 	can at least keep your old configs / counters if you need them.    there is probably a nice way to do this without deleting your configs but this is where we are :(
+	also - if you dont have a fully busy roster of retainers, ocean fishing via this method isnt reccommended, you should just use the persistent ocean fishing script thats also on this repo somewhere. i won't be updating that one though.
 	
 
 --]]
@@ -76,6 +74,7 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 --yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 
 --update atools w fc and inventory
+RestoreYesAlready()
 yield("/echo Fully Unified Task Automation (F.U.T.A.) Initializing .....")
 yield("/freecompanycmd")
 yield("/echo Free Company command executed.")
@@ -272,7 +271,7 @@ for i = 1, #FUTA_processors do
     end
 end
 
-yield("/echo Debug: Lowest ID determined -> "..lowestID.." Corresponding to -> "..FUTA_processors[lowestID][1][1])
+yield("/echo Debug: Lowest ID determined -> "..lowestID.." Corresponding to -> "..FUTA_processors[lowestID][1][1].. " With a level of -> "..FUTA_processors[lowestID][2][2])
 
 -- If the lowest guy is max level, we aren't fishing
 if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_processors[lowestID][2][2] == -1 then
@@ -357,8 +356,9 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
     -- Start of processing things when there is no fishing   
 	if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
-		yield("/echo rolling dice to see if we do a repricing !")
-        if getRandomNumber(0, 99) < FUTA_processors[hoo_arr_weeeeee][3][2] then
+		cleanrand = getRandomNumber(0, 99)
+		yield("/echo rolling dice to see if we do a repricing -> "..cleanrand.." out of chance -> "..FUTA_processors[hoo_arr_weeeeee][3][2])
+        if cleanrand < FUTA_processors[hoo_arr_weeeeee][3][2] then
 			wheeequeheeheheheheheehhhee = 1  --re using this var because we can and it means the same thing at end of script
             yield("/echo Debug: Inventory cleaning adjustment started")
 			--kneecapping AR for now because it interferes with am
@@ -411,6 +411,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
 	if FUTA_processors[hoo_arr_weeeeee][4][2] > 0 then
 		if GetItemCount(10155) < FUTA_processors[hoo_arr_weeeeee][4][2] then
+			ungabungabunga() -- get out of any screens we are in
 			enter_workshop()
 			try_to_buy_fuel(FUTA_processors[hoo_arr_weeeeee][4][3])
 		end

@@ -209,11 +209,12 @@ function WalkTo(x, y, z)
 		yield("/wait 0.5")
 		--if GetZoneID() == 130 or GetZoneID() == 341 then --130 is uldah. dont need to jump anymore it paths properly. we will test anyways.
 		countee = countee + 1
+		--yield("/echo we are still pathfinding apparently -> countee -> "..countee)
 		if gachi_jumpy == 1 and countee == 10 and GetZoneID() ~= 129 then --we only doing jumps if we configured for it
 		--if GetZoneID() == 341 then --only need to jump in goblet for now
 			yield("/gaction jump")
 			countee = 0
-			yield("/echo we are still pathfinding apparently")
+			yield("/echo we are REALLY still pathfinding apparently")
 		end
 	end
 end
@@ -226,8 +227,12 @@ function ZoneTransition()
         yield("/echo Are we ready? -> "..iswoah.."/20")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
+		if 	iswoah == 5 then yield("/pcall SelectYesno true 0") end
+		if 	iswoah == 10 then yield("/pcall SelectYesno true 0") end
+		if 	iswoah == 15 then yield("/pcall SelectYesno true 0") end
 		if 	iswoah == 20 then
 			iswehehe = false
+			yield("/pcall SelectYesno true 0")
 		end
     until not iswehehe
 	iswoah = 0
@@ -236,8 +241,12 @@ function ZoneTransition()
         yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
+		if 	iswoah == 5 then yield("/pcall SelectYesno true 0") end
+		if 	iswoah == 10 then yield("/pcall SelectYesno true 0") end
+		if 	iswoah == 15 then yield("/pcall SelectYesno true 0") end
 		if 	iswoah == 20 then
 			iswehehe = true
+			yield("/pcall SelectYesno true 0")
 		end
     until iswehehe
 end
@@ -273,7 +282,9 @@ function WalkToGC()
 			visland_stop_moving()
 		end
 		if movementtype == 0 then --default navmesh
-			WalkTo(-142.5, 4, -106.5)
+			--WalkTo(-129.5, -1.9, -151.6)
+			--WalkTo(-116, 2, -136.9)
+			WalkTo(-141.7, 4.1, -106.8)
 		end
     end
 end
