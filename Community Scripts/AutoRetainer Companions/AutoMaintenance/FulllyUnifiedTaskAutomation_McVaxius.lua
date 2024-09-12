@@ -356,8 +356,9 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
     -- Start of processing things when there is no fishing   
 	if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
-		yield("/echo rolling dice to see if we do a repricing !")
-        if getRandomNumber(0, 99) < FUTA_processors[hoo_arr_weeeeee][3][2] then
+		cleanrand = getRandomNumber(0, 99)
+		yield("/echo rolling dice to see if we do a repricing -> "..cleanrand.." out of chance -> "..FUTA_processors[hoo_arr_weeeeee][3][2])
+        if cleanrand < FUTA_processors[hoo_arr_weeeeee][3][2] then
 			wheeequeheeheheheheheehhhee = 1  --re using this var because we can and it means the same thing at end of script
             yield("/echo Debug: Inventory cleaning adjustment started")
 			--kneecapping AR for now because it interferes with am
