@@ -8,7 +8,7 @@ This script will, after AR is done, do various things based on a set of rules yo
 
 It could be ocean fishing, triple triad, inventory cleaning, going for a jog around the housing ward, delivering something to specific person, crafting. or whatever!
 
-Requirements : SND
+Requirements : SND, vnavmesh, dropbox, visland, pandora, simpletweaks
 and maybe more - let's see where we go with it
 everything from the folder you found this
 and https://github.com/Jaksuhn/SomethingNeedDoing/blob/master/Community%20Scripts/AutoRetainer%20Companions/RobustGCturnin/_functions.lua
@@ -61,6 +61,7 @@ functionsToLoad = loadfile(loadfiyel)
 functionsToLoad()
 dont_report_good_stuff = 0 --by default reporting everything, if you turn this on, it will not report on "good" stuff (we made x MRK!) aside from personal home entries
 logfile_differentiator = " - Account 1"  --example of extra text to throw into log file say if your pointing a few clients to same log file for convenience
+force_equipstuff = 0 --should we try to force recommended equip every chance we get? by default we won't do it
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -482,7 +483,7 @@ end
 yield("/echo Debug: Finished all processing")
 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
 zungazunga()
-
+yield("/echo onto the next one ..... ")
 if wheeequeheeheheheheheehhhee == 1 then
 	yield("/ays multi e") --if we had to toggle AR
 end

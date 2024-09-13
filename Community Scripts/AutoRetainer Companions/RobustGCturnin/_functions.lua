@@ -306,16 +306,19 @@ function CharacterSafeWait()
 end
 
 function visland_stop_moving()
- yield("/equipguud")
- yield("/equiprecommended")
- yield("/character")
- yield("/pcall Character true 15")
- yield("/wait 0.5")
- yield("/pcall SelectYesno true 0")
- yield("/character")
- yield("/pcall Character true 15")
- yield("/pcall SelectYesno true 0")
- yield("/wait 3")
+ do_we_force_equip = force_equipstuff or 1  --default is on, unless we specify the global force_equipstuff in the calling script
+ if do_we_force_equip == 1 then
+	 yield("/equipguud")
+	 yield("/equiprecommended")
+	 yield("/character")
+	 yield("/pcall Character true 15")
+	 yield("/wait 0.5")
+	 yield("/pcall SelectYesno true 0")
+	 yield("/character")
+	 yield("/pcall Character true 15")
+	 yield("/pcall SelectYesno true 0")
+	 yield("/wait 3")
+ end
  muuv = 1
  muuvX = GetPlayerRawXPos()
  muuvY = GetPlayerRawYPos()
@@ -335,12 +338,14 @@ function visland_stop_moving()
  yield("/vnavmesh stop")
  yield("/wait 3")
  --added becuase simpletweaks is slow to update :(
- yield("/character")
- yield("/wait 1")
- yield("/pcall Character true 12")
- yield("/wait 1")
- yield("/pcall RecommendEquip true 0")
- yield("/wait 1")
+ if do_we_force_equip == 1 then
+	 yield("/character")
+	 yield("/wait 1")
+	 yield("/pcall Character true 12")
+	 yield("/wait 1")
+	 yield("/pcall RecommendEquip true 0")
+	 yield("/wait 1")
+ end
 end
 
 
