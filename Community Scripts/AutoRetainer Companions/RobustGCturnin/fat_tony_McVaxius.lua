@@ -18,6 +18,9 @@ Vnavmesh
 Simpletweaks -> enable targeting fix
 YesAlready -> /Enter .*/
 ]]
+--TURN OFF RSR!
+yield("/rotation Cancel")
+--TURN OFF RSR!
 
 tonys_turf = "Maduin" --what server will our tonies run to
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name

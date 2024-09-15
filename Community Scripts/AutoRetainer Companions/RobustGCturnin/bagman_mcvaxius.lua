@@ -50,6 +50,10 @@ for bagman its similar
 PandoraSetFeatureState("Auto-Fill Numeric Dialogs", false) 
 --End because nobody read the instructions at the top <3
 
+--TURN OFF RSR!
+yield("/rotation Cancel")
+--TURN OFF RSR!
+
 tonys_turf = "Maduin" --what server is tony on
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
 tony_zoneID = 132 --this is the zone id for where the aetheryte is, if its anything other than 0, it will be evaluated to see if your already in teh zone for cases of multi transfer from or to same
