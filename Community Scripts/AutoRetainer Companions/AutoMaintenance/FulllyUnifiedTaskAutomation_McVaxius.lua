@@ -232,7 +232,7 @@ check_ro_helm()
 ---------------------------------------------------------------------------------
 ------------------------------FISHING  START-------------------------------------
 ---------------------------------------------------------------------------------
-if FUTA_processors[hoo_arr_weeeeee][2][2] == 0 then
+if FUTA_processors[hoo_arr_weeeeee][2][2] > -1 then  -- -1 is ignore+disable for this feature
 	--we dont have a fishing level setup
     yield("/echo Let's see if fishing is even a thing on this char and update the database")
 	yield("/wait 0.5")	
