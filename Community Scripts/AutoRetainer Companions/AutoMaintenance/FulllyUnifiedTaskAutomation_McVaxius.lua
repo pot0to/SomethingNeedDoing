@@ -383,7 +383,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	 --In case we just ran it and need to avoid double triggering it
 	if FUTA_processors[hoo_arr_weeeeee][3][2] == -1 then
 		yield("/echo Debug: Inventory cleaning adjustment completed -> -1 changed to 11")
-		FUTA_processors[hoo_arr_weeeeee][3][2] = 11 
+		FUTA_processors[hoo_arr_weeeeee][3][2] = 5 
 	end
 	if wheeequeheeheheheheheehhhee == 1 then
 		FUTA_processors[hoo_arr_weeeeee][3][2] = -1
@@ -395,7 +395,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
 	--check inventory size and do gcturnin shit 
 	yield("/echo Do we need to clear inventory?")
-	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) > 0 and GetItemCount(21072) < venture_cleaning then
+	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
 		FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV
 		yield("/echo Yes we need to clean inventory and turnin GC stuff!")
 		loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
