@@ -42,7 +42,14 @@ koffers = {
 {38476,"Paladin's Dzemael Arms (Lv. 44)"},
 {38473,"Paladin's Flametongue Arms (Lv. 35)"},
 {38472,"Paladin's Longstop Arms (Lv. 32)"},
-{38477,"Paladin's Templar Arms (Lv. 47)"}
+{38477,"Paladin's Templar Arms (Lv. 47)"},
+{36137,"Crag Weapon Coffer (IL 80)"},
+{36616,"Heavens Weapon Coffer (IL 205)"},
+{36143,"Hive Weapon Coffer (IL 190)"},
+{36141,"Ice Weapon Coffer (IL 110)"},
+{36135,"Inferno Weapon Coffer (IL 60)"},
+{36138,"Mogpon Coffer (IL 75)"},
+{36136,"Vortex Weapon Coffer (IL 70)"}
 }
 
 --[[
