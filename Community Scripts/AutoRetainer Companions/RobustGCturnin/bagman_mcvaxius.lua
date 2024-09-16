@@ -453,6 +453,7 @@ for i=1,#franchise_owners do
 		end
 		shake_hands() -- its a business doing pleasure with you tony as always
 	--end
+	zungazunga() --close any trailing dialogs in case a trade was errantly opened.
 	if road_trip == 1 then --we need to get home
 		--time to go home.. maybe?
 		if franchise_owners[i][2] == 0 then
