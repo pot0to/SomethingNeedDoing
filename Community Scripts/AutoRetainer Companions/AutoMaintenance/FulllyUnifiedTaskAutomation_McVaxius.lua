@@ -62,6 +62,7 @@ functionsToLoad()
 dont_report_good_stuff = 0 --by default reporting everything, if you turn this on, it will not report on "good" stuff (we made x MRK!) aside from personal home entries
 logfile_differentiator = " - Account 1"  --example of extra text to throw into log file say if your pointing a few clients to same log file for convenience
 force_equipstuff = 0 --should we try to force recommended equip every chance we get? by default we won't do it
+discard_type = 0 --0 = dont discard, 1 = discard, 2 = discard only if "CLEAN"[3] is > 0, or if its ==0 we desynth instead! from special white list of items ill put here --* not implemented
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -228,6 +229,7 @@ yield("/echo tablebunga() completed successfully")
 
 -- Begin to do stuff
 wheeequeheeheheheheheehhhee = 0 -- Secret variable
+do_we_discard = 0 --set this for now
 yield("/echo Debug: Beginning to do stuff")
 
 --check for red onion helm
@@ -282,6 +284,24 @@ yield("/echo Debug: Lowest ID determined -> "..lowestID.." Corresponding to -> "
 if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_processors[lowestID][2][2] == -1 then
     wheeequeheeheheheheheehhhee = 0
     yield("/echo Lowest char is max level or no chars have fishing so we aren't fishing")
+end
+
+
+--update do_we_discard
+dwdid = hoo_arr_weeeeee
+if wheeequeheeheheheheheehhhee == 1 then 
+	dwdid = lowestID
+end
+if discard_type == 1 then
+	do_we_discard = 1
+end
+if discard_type == 2 then
+	if FUTA_processors[dwdid][3][2] > 0 then
+		do_we_discard = 1 
+	end
+	if FUTA_processors[dwdid][3][2] == 0 then
+		do_we_discard = 2 
+	end
 end
 
 -- It's fishing time
@@ -400,6 +420,12 @@ if wheeequeheeheheheheheehhhee == 0 then
 	--check inventory size and do gcturnin shit 
 	yield("/echo Do we need to clear inventory?")
 	if FUTA_processors[hoo_arr_weeeeee][3][2] < 1000 then
+		--first try to npcsell before we go to a GC desk
+		if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
+			yield("/echo Attempting to clean inventory @ an npc and or retainerbell and enjoying npc vendor gil")
+			yield("/ays npcsell") --for now we only have actual npc selling. retainer bell not working as of 2024 09 18 unless its via normal retainer checks
+			delete_my_items_please(do_we_discard)
+		end
 		if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
 			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then 
 				FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV - but only if we are even allowing it on this one
@@ -442,6 +468,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 		if GetItemCount(10335) < 20 then
 			loggabunga("FUTA_", logfile_differentiator.." - MRK -> Not enough DMC -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
+		--do same for all 6 crystal types, if we under 500 of any of them throw up a warning!
 		if GetInventoryFreeSlotCount() > 19 and GetItemCount(10386) and GetItemCount(10335) then
 			mrkMade = GetItemCount(10373)
 			yield("/artisan lists "..FUTA_processors[hoo_arr_weeeeee][7][2].." start")

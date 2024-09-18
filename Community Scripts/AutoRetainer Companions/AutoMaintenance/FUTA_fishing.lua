@@ -114,7 +114,7 @@ function fishing()
 			omadamkhoneh = -200  --we dont want this to trigger again
 		end
 		if GetCharacterCondition(43)==false then
-		   yield("/discardall")
+		   delete_my_items_please(do_we_discard)
 		   yield("/wait 5")
 		end
 		if GetCharacterCondition(43)==false then

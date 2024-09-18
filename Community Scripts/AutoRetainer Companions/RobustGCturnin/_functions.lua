@@ -1,4 +1,3 @@
-
 --*****************************************************************
 --************************* START INIZER **************************
 --*****************************************************************
@@ -785,5 +784,19 @@ function check_ro_helm()
 	if GetItemCount(2820) > 0 then
 		yield("/echo RED ONION HELM DETECTED")
 		loggabunga("FUTA_"," - Red Onion Helm detected on -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+	end
+end
+
+function delete_my_items_please(how)
+	if how == 0 then
+		yield("/echo not deleting or desynthing items")
+	end
+	if how == 1 then
+		yield("/echo Attempting to delete items")
+		yield("/discardall")
+	end
+	if how == 2 then
+		yield("/echo Attempting to desynth items")
+		yield("/echo i dont know how to do this yet--*")
 	end
 end
