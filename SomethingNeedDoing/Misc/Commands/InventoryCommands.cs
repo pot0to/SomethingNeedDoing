@@ -50,6 +50,19 @@ public class InventoryCommands
         return slots;
     }
 
+    public unsafe uint GetItemIdInSlot(uint container, uint slot)
+        => InventoryManager.Instance()->GetInventoryContainer((InventoryType)container)->GetInventorySlot((ushort)slot)->ItemId;
+
+    public unsafe List<uint> GetItemIdsInContainer(uint container)
+    {
+        var cont = InventoryManager.Instance()->GetInventoryContainer((InventoryType)container);
+        var list = new List<uint>();
+        for (var i = 0; i < cont->Size; i++)
+            if (cont->Items[i].ItemId != 0)
+                list.Add(cont->Items[i].ItemId);
+        return list;
+    }
+
     public unsafe int GetFreeSlotsInContainer(uint container)
     {
         var inv = InventoryManager.Instance();

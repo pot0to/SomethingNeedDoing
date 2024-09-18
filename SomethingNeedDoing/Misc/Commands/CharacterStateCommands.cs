@@ -182,4 +182,6 @@ public class CharacterStateCommands
 
     public bool IsAetheryteUnlocked(uint id) => Svc.AetheryteList.Any(x => x.AetheryteId == id);
     public List<uint> GetAetheryteList() => Svc.AetheryteList.Select(x => x.AetheryteId).ToList();
+
+    public unsafe bool IsFriendOnline(byte* name, ushort worldId) => InfoProxyFriendList.Instance()->GetEntryByName(name, worldId)->State != InfoProxyCommonList.CharacterData.OnlineStatus.Offline;
 }

@@ -19,6 +19,12 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-09-18",
+        "- Added GetItemIdInSlot()\n" +
+        "- Added IsFriendOnline()\n" +
+        "- Added GetItemIdsInContainer()\n");
+
+        DisplayChangelog(
         "2024-09-11",
         "- Added RSR IPC commands\n");
 
