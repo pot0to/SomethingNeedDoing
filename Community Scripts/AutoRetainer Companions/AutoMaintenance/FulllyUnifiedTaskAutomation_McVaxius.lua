@@ -374,7 +374,7 @@ if wheeequeheeheheheheheehhhee == 0 then
             zungazunga()
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
             if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
-                FUTA_processors[hoo_arr_weeeeee][3][2] = 11 --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
+                FUTA_processors[hoo_arr_weeeeee][3][2] = 5 --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
                 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
                 yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to 11")
             end
@@ -395,18 +395,25 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
 	--check inventory size and do gcturnin shit 
 	yield("/echo Do we need to clear inventory?")
-	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
-		FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV
-		yield("/echo Yes we need to clean inventory and turnin GC stuff!")
-		loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
-		functionsToLoad = loadfile(loadfiyel2)
-		functionsToLoad()
-		FUTA_robust_gc()
-		if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
-			loggabunga("FUTA_", logfile_differentiator.." - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+	if FUTA_processors[hoo_arr_weeeeee][3][2] < 1000 then
+		if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
+			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then 
+				FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV - but only if we are even allowing it on this one
+			end
+			yield("/echo Yes we need to clean inventory and turnin GC stuff!")
+			loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
+			functionsToLoad = loadfile(loadfiyel2)
+			functionsToLoad()
+			FUTA_robust_gc()
+			FUTA_processors[hoo_arr_weeeeee][3][2] = FUTA_processors[hoo_arr_weeeeee][3][2] + 1000 --to keep it from double running after it turns itself on in case there was some weird overflow with submarine items
+			if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
+				loggabunga("FUTA_", logfile_differentiator.." - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			end
 		end
 	end
-
+	if FUTA_processors[hoo_arr_weeeeee][3][2] > 1000 then
+		FUTA_processors[hoo_arr_weeeeee][3][2] = FUTA_processors[hoo_arr_weeeeee][3][2] - 1000 --reset it for next actual run
+	end
 	----------------------------
 	-----Buy Ceruleum Fuel------
 	----------------------------
