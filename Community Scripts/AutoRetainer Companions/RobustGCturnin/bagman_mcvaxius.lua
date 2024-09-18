@@ -50,12 +50,17 @@ for bagman its similar
 PandoraSetFeatureState("Auto-Fill Numeric Dialogs", false) 
 --End because nobody read the instructions at the top <3
 
+--TURN OFF RSR!
+yield("/rotation Cancel")
+--TURN OFF RSR!
+
 tonys_turf = "Maduin" --what server is tony on
 tonys_spot = "Pavolis Meats" --where we tping to aka aetheryte name
 tony_zoneID = 132 --this is the zone id for where the aetheryte is, if its anything other than 0, it will be evaluated to see if your already in teh zone for cases of multi transfer from or to same
 tonys_house = 0 --0 fc 1 personal 2 apartment. don't judge. tony doesnt trust your bagman to come to the big house
 tony_type = 0 --0 = specific aetheryte name, 1 first estate in list outside, 2 first estate in list inside
 bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off the top for themselves?
+dropboxhack = 1 --for bagman type 2 - if gil isnt being changed after a while. we will force a trade window because maybe there was a race condition as mentione above
 tonyception = 0 --0 = dont be fancy, 1 = we have multiple fat tonies in the table and therefore we need to give 1 gil at the end of the trade so tony will leave and the next tony can come
 bagman_type = 0 --[[
 0 = pcalls (gil only, a bit sloppy too with no multi tony support), 
@@ -185,8 +190,11 @@ end
 get_to_the_choppa = 0 -- alternate exit var
 horrible_counter_method = 0
 windex = 1 --bagman index
+bagmantype2check = GetItemCount(1)
+bagmantype2checkcounter = 0
 
 local function shake_hands()
+	bagmantype2checkcounter = 0
 	get_to_the_choppa = 0
 	horrible_counter_method = 0
 	--get_to_the_choppa = 1 -- alternate exit var
@@ -324,6 +332,18 @@ local function shake_hands()
 		  floo = DropboxIsBusy()
 		  yield("/wait 2")
 		  yield("/echo Trading happening!")
+		  if bagman_type == 2 and dropboxhack == 1 then
+			bagmantype2checkcounter = bagmantype2checkcounter + 1
+			if bagmantype2checkcounter == 5 then
+				if bagmantype2check == GetItemCount(1) then
+					yield("/target \""..fat_tony.."\"")
+					yield("/trade")
+					yield("/echo oops couldn't trade .. trying again!")
+				end
+				bagmantype2checkcounter = 0
+				bagmantype2check = GetItemCount(1)
+			end
+		  end
 		end
 		yield("/wait 5")
 		if tonyception == 1 then
@@ -433,6 +453,7 @@ for i=1,#franchise_owners do
 		end
 		shake_hands() -- its a business doing pleasure with you tony as always
 	--end
+	zungazunga() --close any trailing dialogs in case a trade was errantly opened.
 	if road_trip == 1 then --we need to get home
 		--time to go home.. maybe?
 		if franchise_owners[i][2] == 0 then
