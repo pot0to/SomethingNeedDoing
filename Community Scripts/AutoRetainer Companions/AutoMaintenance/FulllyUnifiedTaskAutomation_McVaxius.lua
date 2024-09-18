@@ -62,7 +62,7 @@ functionsToLoad()
 dont_report_good_stuff = 0 --by default reporting everything, if you turn this on, it will not report on "good" stuff (we made x MRK!) aside from personal home entries
 logfile_differentiator = " - Account 1"  --example of extra text to throw into log file say if your pointing a few clients to same log file for convenience
 force_equipstuff = 0 --should we try to force recommended equip every chance we get? by default we won't do it
-discard_type = 0 --0 = dont discard, 1 = discard, 2 = discard only if "CLEAN"[3] is > 0, or if its ==0 we desynth instead! from special white list of items ill put here --* not implemented
+discard_type = 0 --0 = dont discard, 1 = discard, 2 = discard only if "CLEAN"[3] is > 0, or if its ==0 we desynth instead!, 3 = dont discard but desnyth if "CLEAN"[3] == 0 from special white list of items ill put here --* not implemented
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -295,8 +295,8 @@ end
 if discard_type == 1 then
 	do_we_discard = 1
 end
-if discard_type == 2 then
-	if FUTA_processors[dwdid][3][2] > 0 then
+if discard_type > 1 then
+	if FUTA_processors[dwdid][3][2] > 0 and discard_type == 2 then
 		do_we_discard = 1 
 	end
 	if FUTA_processors[dwdid][3][2] == 0 then
