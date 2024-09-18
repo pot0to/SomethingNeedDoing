@@ -75,7 +75,6 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 --yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 
 --update atools w fc and inventory
-RestoreYesAlready()
 yield("/echo Fully Unified Task Automation (F.U.T.A.) Initializing .....")
 yield("/freecompanycmd")
 yield("/echo Free Company command executed.")
@@ -85,9 +84,14 @@ yield("/saddlebag")
 yield("/echo Saddlebag command executed.")
 yield("/echo Fully Unified Task Automation (F.U.T.A.) atools database updated")
 yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing .....")
+----------------------------------
+--Script breaker stuff force fixed
+RestoreYesAlready()
 yield("/bmrai off")
 yield("/vbmai off")
 yield("/rotation Cancel")
+--script breaker stuff end
+--------------------------
 yield("/echo Script breakers disabled")		
 FUTA_processors = {} -- Initialize variable
 
