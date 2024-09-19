@@ -536,18 +536,23 @@ function enter_workshop()
 	--]]
 	--enter house
 	yield("/wait 0.5")
+	yield("/target Entrance")
+	yield("/wait 0.5")
 	yield("/interact")
 	yield("/wait 5")
 	--enter workshop
 	yield("/target \"Entrance to Additional Chambers\"")
-	yield("/wait 0.5")
-	yield("/lockon")
-	yield("/automove")
-	visland_stop_moving()
-	yield("/interact")
-	yield("/wait 1")
-	yield("/pcall SelectString true 0")
-	yield("/wait 5")
+	--check to make sure we actually targeted the door to additional rooms.
+	if GetTargetName() == "Entrance to Additional Chambers" then
+		yield("/wait 0.5")
+		yield("/lockon")
+		yield("/automove")
+		visland_stop_moving()
+		yield("/interact")
+		yield("/wait 1")
+		yield("/pcall SelectString true 0")
+		yield("/wait 5")
+	end
 end
 
 function clean_inventory()
