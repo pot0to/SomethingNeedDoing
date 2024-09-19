@@ -409,7 +409,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 		yield("/echo Debug: Inventory cleaning adjustment completed -> -1 changed to 11")
 		FUTA_processors[hoo_arr_weeeeee][3][2] = 5 
 	end
-	if wheeequeheeheheheheheehhhee == 1 then
+	if wheeequeheeheheheheheehhhee == 1 and FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
 		FUTA_processors[hoo_arr_weeeeee][3][2] = -1
 		yield("/echo Debug: Inventory cleaning adjustment completed -> chance changed to -1 to avoid double send")
 	end
