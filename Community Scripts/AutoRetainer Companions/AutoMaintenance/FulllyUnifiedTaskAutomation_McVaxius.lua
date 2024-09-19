@@ -62,6 +62,7 @@ functionsToLoad()
 dont_report_good_stuff = 0 --by default reporting everything, if you turn this on, it will not report on "good" stuff (we made x MRK!) aside from personal home entries
 logfile_differentiator = " - Account 1"  --example of extra text to throw into log file say if your pointing a few clients to same log file for convenience
 force_equipstuff = 0 --should we try to force recommended equip every chance we get? by default we won't do it
+discard_type = 0 --0 = dont discard, 1 = discard, 2 = discard only if "CLEAN"[3] is > 0, or if its ==0 we desynth instead!, 3 = dont discard but desnyth if "CLEAN"[3] == 0 from special white list of items ill put here --* not implemented
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -75,7 +76,6 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 --yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 
 --update atools w fc and inventory
-RestoreYesAlready()
 yield("/echo Fully Unified Task Automation (F.U.T.A.) Initializing .....")
 yield("/freecompanycmd")
 yield("/echo Free Company command executed.")
@@ -85,9 +85,14 @@ yield("/saddlebag")
 yield("/echo Saddlebag command executed.")
 yield("/echo Fully Unified Task Automation (F.U.T.A.) atools database updated")
 yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing .....")
+----------------------------------
+--Script breaker stuff force fixed
+RestoreYesAlready()
 yield("/bmrai off")
 yield("/vbmai off")
 yield("/rotation Cancel")
+--script breaker stuff end
+--------------------------
 yield("/echo Script breakers disabled")		
 FUTA_processors = {} -- Initialize variable
 
@@ -224,6 +229,7 @@ yield("/echo tablebunga() completed successfully")
 
 -- Begin to do stuff
 wheeequeheeheheheheheehhhee = 0 -- Secret variable
+do_we_discard = 0 --set this for now
 yield("/echo Debug: Beginning to do stuff")
 
 --check for red onion helm
@@ -278,6 +284,24 @@ yield("/echo Debug: Lowest ID determined -> "..lowestID.." Corresponding to -> "
 if FUTA_processors[lowestID][2][2] == 100 and force_fishing == 0 or FUTA_processors[lowestID][2][2] == -1 then
     wheeequeheeheheheheheehhhee = 0
     yield("/echo Lowest char is max level or no chars have fishing so we aren't fishing")
+end
+
+
+--update do_we_discard
+dwdid = hoo_arr_weeeeee
+if wheeequeheeheheheheheehhhee == 1 then 
+	dwdid = lowestID
+end
+if discard_type == 1 then
+	do_we_discard = 1
+end
+if discard_type > 1 then
+	if FUTA_processors[dwdid][3][2] > 0 and discard_type == 2 then
+		do_we_discard = 1 
+	end
+	if FUTA_processors[dwdid][3][2] == 0 then
+		do_we_discard = 2 
+	end
 end
 
 -- It's fishing time
@@ -374,7 +398,7 @@ if wheeequeheeheheheheheehhhee == 0 then
             zungazunga()
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
             if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
-                FUTA_processors[hoo_arr_weeeeee][3][2] = 11 --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
+                FUTA_processors[hoo_arr_weeeeee][3][2] = 5 --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
                 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
                 yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to 11")
             end
@@ -395,18 +419,31 @@ if wheeequeheeheheheheheehhhee == 0 then
 	----------------------------
 	--check inventory size and do gcturnin shit 
 	yield("/echo Do we need to clear inventory?")
-	if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
-		FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV
-		yield("/echo Yes we need to clean inventory and turnin GC stuff!")
-		loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
-		functionsToLoad = loadfile(loadfiyel2)
-		functionsToLoad()
-		FUTA_robust_gc()
-		if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
-			loggabunga("FUTA_", logfile_differentiator.." - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+	if FUTA_processors[hoo_arr_weeeeee][3][2] < 1000 then
+		--first try to npcsell before we go to a GC desk
+		if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
+			yield("/echo Attempting to clean inventory @ an npc and or retainerbell and or desynthing (not yet)")
+			delete_my_items_please(do_we_discard)
+			yield("/ays npcsell") --for now we only have actual npc selling. retainer bell not working as of 2024 09 18 unless its via normal retainer checks
+		end
+		if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
+			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then 
+				FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV - but only if we are even allowing it on this one
+			end
+			yield("/echo Yes we need to clean inventory and turnin GC stuff!")
+			loadfiyel2 = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\FUTA_GC.lua"
+			functionsToLoad = loadfile(loadfiyel2)
+			functionsToLoad()
+			FUTA_robust_gc()
+			FUTA_processors[hoo_arr_weeeeee][3][2] = FUTA_processors[hoo_arr_weeeeee][3][2] + 1000 --to keep it from double running after it turns itself on in case there was some weird overflow with submarine items
+			if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
+				loggabunga("FUTA_", logfile_differentiator.." - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+			end
 		end
 	end
-
+	if FUTA_processors[hoo_arr_weeeeee][3][2] > 1000 then
+		FUTA_processors[hoo_arr_weeeeee][3][2] = FUTA_processors[hoo_arr_weeeeee][3][2] - 1000 --reset it for next actual run
+	end
 	----------------------------
 	-----Buy Ceruleum Fuel------
 	----------------------------
@@ -431,6 +468,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 		if GetItemCount(10335) < 20 then
 			loggabunga("FUTA_", logfile_differentiator.." - MRK -> Not enough DMC -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 		end
+		--do same for all 6 crystal types, if we under 500 of any of them throw up a warning!
 		if GetInventoryFreeSlotCount() > 19 and GetItemCount(10386) and GetItemCount(10335) then
 			mrkMade = GetItemCount(10373)
 			yield("/artisan lists "..FUTA_processors[hoo_arr_weeeeee][7][2].." start")
