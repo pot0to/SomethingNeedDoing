@@ -80,15 +80,6 @@ public class WorldStateCommands
     60725 - Escort
     */
     public unsafe uint GetFateIconId(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->IconId;
-    /*
-    Fate Map Icon Id - looks like the fate type leaks through so not sure how useful it is... meaning even though the map shows an exclamation point (60504) the value returned instead is for the actual fate type
-    60501 - Slay enemies
-    60502 - Boss/NM
-    60503 - Collection/Gather
-    60504 - little exclamation point
-    60505 - Escort
-    */
-    public unsafe uint GetFateMapIconId(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->MapIconId;
     public unsafe int GetFateLevel(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Level;
     public unsafe int GetFateMaxLevel(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->MaxLevel;
     public unsafe ushort GetFateChain(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->FATEChain;
