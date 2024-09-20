@@ -71,6 +71,27 @@ public class WorldStateCommands
     public unsafe float GetFateProgress(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Progress;
     public unsafe bool GetFateIsBonus(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->IsBonus;
     public unsafe float GetFateRadius(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Radius;
+    /*
+    Fate Icon Id
+    60721 - Slay enemies
+    60722 - Boss/NM
+    60723 - Collection/Gather
+    60724 - Defend
+    60725 - Escort
+    */
+    public unsafe uint GetFateIconId(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->IconId;
+    /*
+    Fate Map Icon Id - looks like the fate type leaks through so not sure how useful it is... meaning even though the map shows an exclamation point (60504) the value returned instead is for the actual fate type
+    60501 - Slay enemies
+    60502 - Boss/NM
+    60503 - Collection/Gather
+    60504 - little exclamation point
+    60505 - Escort
+    */
+    public unsafe uint GetFateMapIconId(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->MapIconId;
+    public unsafe int GetFateLevel(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Level;
+    public unsafe int GetFateMaxLevel(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->MaxLevel;
+    public unsafe ushort GetFateChain(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->FATEChain;
     #endregion
 
     public float DistanceBetween(float x1, float y1, float z1, float x2, float y2, float z2) => Vector3.Distance(new Vector3(x1, y1, z1), new Vector3(x2, y2, z2));
