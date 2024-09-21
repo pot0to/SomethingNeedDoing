@@ -15,6 +15,7 @@ public class IpcCommands
     private readonly LifestreamIPC lifestream;
     private readonly Questionable questionable;
     private readonly RSR rsr;
+    private readonly Artisan artisan;
 
     public List<string> ListAllFunctions()
     {
@@ -41,6 +42,7 @@ public class IpcCommands
         dropbox = new();
         questionable = new Questionable();
         rsr = new();
+        artisan = new();
     }
 
     internal void Dispose()
@@ -215,5 +217,16 @@ public class IpcCommands
     public void RemoveBlacklistNameID(uint nameId) => rsr.RemoveBlacklistNameID(nameId);
     public void ChangeOperatingMode(byte stateCommand) => rsr.ChangeOperatingMode((RSR.StateCommandType)stateCommand);
     public void TriggerSpecialState(byte specialCommand) => rsr.TriggerSpecialState((RSR.SpecialCommandType)specialCommand);
+    #endregion
+
+    #region Artisan
+    public bool GetEnduranceStatus() => artisan.GetEnduranceStatus();
+    public void SetEnduranceStatus(bool state) => artisan.SetEnduranceStatus(state);
+    public bool IsListRunning() => artisan.IsListRunning();
+    public bool IsListPaused() => artisan.IsListPaused();
+    public void SetListPause(bool state) => artisan.SetListPause(state);
+    public bool GetStopRequest() => artisan.GetStopRequest();
+    public void SetStopRequest(bool state) => artisan.SetStopRequest(state);
+    public void CraftItem(ushort recipeID, int amount) => artisan.CraftItem(recipeID, amount);
     #endregion
 }
