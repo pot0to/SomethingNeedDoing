@@ -409,7 +409,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 		yield("/echo Debug: Inventory cleaning adjustment completed -> -1 changed to 11")
 		FUTA_processors[hoo_arr_weeeeee][3][2] = 5 
 	end
-	if wheeequeheeheheheheheehhhee == 1 then
+	if wheeequeheeheheheheheehhhee == 1 and FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
 		FUTA_processors[hoo_arr_weeeeee][3][2] = -1
 		yield("/echo Debug: Inventory cleaning adjustment completed -> chance changed to -1 to avoid double send")
 	end
@@ -435,7 +435,9 @@ if wheeequeheeheheheheheehhhee == 0 then
 			functionsToLoad = loadfile(loadfiyel2)
 			functionsToLoad()
 			FUTA_robust_gc()
-			FUTA_processors[hoo_arr_weeeeee][3][2] = FUTA_processors[hoo_arr_weeeeee][3][2] + 1000 --to keep it from double running after it turns itself on in case there was some weird overflow with submarine items
+			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then --to keep it from double running after it turns itself on in case there was some weird overflow with submarine items, but only if its not disabled already
+				FUTA_processors[hoo_arr_weeeeee][3][2] = FUTA_processors[hoo_arr_weeeeee][3][2] + 1000 
+			end
 			if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
 				loggabunga("FUTA_", logfile_differentiator.." - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 			end

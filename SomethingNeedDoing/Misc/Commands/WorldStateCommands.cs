@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Client.Game.Event;
+﻿using Dalamud.Game.ClientState.Fates;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
@@ -61,6 +62,12 @@ public class WorldStateCommands
         .FirstOrDefault();
 
     public unsafe bool IsInFate() => FateManager.Instance()->CurrentFate is not null;
+    public unsafe string GetFateState(ushort fateID)
+    {
+        var fate = FateManager.Instance()->GetFateById(fateID);
+        var state = (FateState)fate->State;
+        return state.ToString();
+    }
     public unsafe int GetFateStartTimeEpoch(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->StartTimeEpoch;
     public unsafe float GetFateDuration(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Duration;
     public unsafe string GetFateName(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Name.ToString();
@@ -71,6 +78,19 @@ public class WorldStateCommands
     public unsafe float GetFateProgress(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Progress;
     public unsafe bool GetFateIsBonus(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->IsBonus;
     public unsafe float GetFateRadius(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Radius;
+    /*
+    Fate Icon Id
+    60721 - Slay enemies
+    60722 - Boss/NM
+    60723 - Collection/Gather
+    60724 - Defend
+    60725 - Escort
+    */
+    public unsafe uint GetFateIconId(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->IconId;
+    public unsafe int GetFateLevel(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Level;
+    public unsafe int GetFateMaxLevel(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->MaxLevel;
+    public unsafe ushort GetFateChain(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->FATEChain;
+    public unsafe uint GetFateEventItem(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->EventItem;
     #endregion
 
     public float DistanceBetween(float x1, float y1, float z1, float x2, float y2, float z2) => Vector3.Distance(new Vector3(x1, y1, z1), new Vector3(x2, y2, z2));
