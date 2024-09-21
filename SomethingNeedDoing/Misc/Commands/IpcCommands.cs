@@ -211,22 +211,22 @@ public class IpcCommands
     #endregion
 
     #region RSR
-    public void AddPriorityNameID(uint nameId) => rsr.AddPriorityNameID(nameId);
-    public void RemovePriorityNameID(uint nameId) => rsr.RemovePriorityNameID(nameId);
-    public void AddBlacklistNameID(uint nameId) => rsr.AddBlacklistNameID(nameId);
-    public void RemoveBlacklistNameID(uint nameId) => rsr.RemoveBlacklistNameID(nameId);
-    public void ChangeOperatingMode(byte stateCommand) => rsr.ChangeOperatingMode((RSR.StateCommandType)stateCommand);
-    public void TriggerSpecialState(byte specialCommand) => rsr.TriggerSpecialState((RSR.SpecialCommandType)specialCommand);
+    public void RSRAddPriorityNameID(uint nameId) => rsr.AddPriorityNameID(nameId);
+    public void RSRRemovePriorityNameID(uint nameId) => rsr.RemovePriorityNameID(nameId);
+    public void RSRAddBlacklistNameID(uint nameId) => rsr.AddBlacklistNameID(nameId);
+    public void RSRRemoveBlacklistNameID(uint nameId) => rsr.RemoveBlacklistNameID(nameId);
+    public void RSRChangeOperatingMode(byte stateCommand) => rsr.ChangeOperatingMode((RSR.StateCommandType)stateCommand);
+    public void RSRTriggerSpecialState(byte specialCommand) => rsr.TriggerSpecialState((RSR.SpecialCommandType)specialCommand);
     #endregion
 
     #region Artisan
-    public bool GetEnduranceStatus() => artisan.GetEnduranceStatus();
-    public void SetEnduranceStatus(bool state) => artisan.SetEnduranceStatus(state);
-    public bool IsListRunning() => artisan.IsListRunning();
-    public bool IsListPaused() => artisan.IsListPaused();
-    public void SetListPause(bool state) => artisan.SetListPause(state);
-    public bool GetStopRequest() => artisan.GetStopRequest();
-    public void SetStopRequest(bool state) => artisan.SetStopRequest(state);
-    public void CraftItem(ushort recipeID, int amount) => artisan.CraftItem(recipeID, amount);
+    public bool ArtisanGetEnduranceStatus() => artisan.GetEnduranceStatus();
+    public void ArtisanSetEnduranceStatus(bool state) => artisan.SetEnduranceStatus(state);
+    public bool ArtisanIsListRunning() => artisan.IsListRunning();
+    public bool ArtisanIsListPaused() => artisan.IsListPaused();
+    public void ArtisanSetListPause(bool state) => artisan.SetListPause(state);
+    public bool ArtisanGetStopRequest() => artisan.GetStopRequest();
+    public void ArtisanSetStopRequest(bool state) => artisan.SetStopRequest(state);
+    public void ArtisanCraftItem(ushort recipeID, int amount) => artisan.CraftItem(recipeID, amount);
     #endregion
 }

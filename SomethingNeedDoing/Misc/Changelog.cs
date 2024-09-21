@@ -29,7 +29,8 @@ internal class Changelog
         "- Added IsLevelSynced()\n" +
         "- Added GetFateEventItem()\n" +
         "- Added GetFateState()\n" +
-        "- Added TargetClosestFateEnemy()\n");
+        "- Added TargetClosestFateEnemy()\n" +
+        "- Fixed artisan/rsr ipc function names\n");
 
         DisplayChangelog(
         "2024-09-18",
