@@ -219,6 +219,7 @@ function WalkTo(x, y, z)
 end
 
 function ZoneTransition()
+	yield("/automove off")
 	iswehehe = IsPlayerAvailable() 
 	iswoah = 0
     repeat 
@@ -235,6 +236,7 @@ function ZoneTransition()
 		end
     until not iswehehe
 	iswoah = 0
+	yield("/automove off")
     repeat 
         yield("/wait 0.5")
         yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
@@ -788,6 +790,9 @@ function check_ro_helm()
 	--check for red onion helms and report in to a log file if there is one
 	if GetItemCount(2820) > 0 then
 		yield("/echo RED ONION HELM DETECTED")
+		if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
+			FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --force a cleaning next round as this will choke up the cleaning agent
+		end
 		loggabunga("FUTA_"," - Red Onion Helm detected on -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 	end
 end
