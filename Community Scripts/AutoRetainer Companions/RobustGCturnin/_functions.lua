@@ -1,4 +1,3 @@
-
 --*****************************************************************
 --************************* START INIZER **************************
 --*****************************************************************
@@ -537,18 +536,23 @@ function enter_workshop()
 	--]]
 	--enter house
 	yield("/wait 0.5")
+	yield("/target Entrance")
+	yield("/wait 0.5")
 	yield("/interact")
 	yield("/wait 5")
 	--enter workshop
 	yield("/target \"Entrance to Additional Chambers\"")
-	yield("/wait 0.5")
-	yield("/lockon")
-	yield("/automove")
-	visland_stop_moving()
-	yield("/interact")
-	yield("/wait 1")
-	yield("/pcall SelectString true 0")
-	yield("/wait 5")
+	--check to make sure we actually targeted the door to additional rooms.
+	if GetTargetName() == "Entrance to Additional Chambers" then
+		yield("/wait 0.5")
+		yield("/lockon")
+		yield("/automove")
+		visland_stop_moving()
+		yield("/interact")
+		yield("/wait 1")
+		yield("/pcall SelectString true 0")
+		yield("/wait 5")
+	end
 end
 
 function clean_inventory()
@@ -785,5 +789,19 @@ function check_ro_helm()
 	if GetItemCount(2820) > 0 then
 		yield("/echo RED ONION HELM DETECTED")
 		loggabunga("FUTA_"," - Red Onion Helm detected on -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+	end
+end
+
+function delete_my_items_please(how)
+	if how == 0 then
+		yield("/echo not deleting or desynthing items")
+	end
+	if how == 1 then
+		yield("/echo Attempting to delete items")
+		yield("/discardall")
+	end
+	if how == 2 then
+		yield("/echo Attempting to desynth items")
+		yield("/echo i dont know how to do this yet--*")
 	end
 end
