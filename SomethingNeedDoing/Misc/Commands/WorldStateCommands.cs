@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Client.Game.Event;
+﻿using Dalamud.Game.ClientState.Fates;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
@@ -61,6 +62,12 @@ public class WorldStateCommands
         .FirstOrDefault();
 
     public unsafe bool IsInFate() => FateManager.Instance()->CurrentFate is not null;
+    public unsafe string GetFateState(ushort fateID)
+    {
+        var fate = FateManager.Instance()->GetFateById(fateID);
+        var state = (FateState)fate->State;
+        return state.ToString();
+    }
     public unsafe int GetFateStartTimeEpoch(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->StartTimeEpoch;
     public unsafe float GetFateDuration(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Duration;
     public unsafe string GetFateName(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Name.ToString();
