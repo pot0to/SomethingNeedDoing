@@ -21,7 +21,15 @@ internal class Changelog
         DisplayChangelog(
         "2024-09-21",
         "- Added artisan ipc commands\n" +
-        "- Added GetJobExp()\n");
+        "- Added GetJobExp()\n" +
+        "- Added GetFateIconId()\n" +
+        "- Added GetFateLevel()\n" +
+        "- Added GetFateMaxLevel()\n" +
+        "- Added GetFateChain()\n" +
+        "- Added IsLevelSynced()\n" +
+        "- Added GetFateEventItem()\n" +
+        "- Added GetFateState()\n" +
+        "- Added TargetClosestFateEnemy()\n");
 
         DisplayChangelog(
         "2024-09-18",
