@@ -219,6 +219,7 @@ function WalkTo(x, y, z)
 end
 
 function ZoneTransition()
+	yield("/automove off")
 	iswehehe = IsPlayerAvailable() 
 	iswoah = 0
     repeat 
@@ -235,6 +236,7 @@ function ZoneTransition()
 		end
     until not iswehehe
 	iswoah = 0
+	yield("/automove off")
     repeat 
         yield("/wait 0.5")
         yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
