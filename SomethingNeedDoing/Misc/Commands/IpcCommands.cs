@@ -16,6 +16,7 @@ public class IpcCommands
     private readonly Questionable questionable;
     private readonly RSR rsr;
     private readonly Artisan artisan;
+    private readonly AutoRetainer autoretainer;
 
     public List<string> ListAllFunctions()
     {
@@ -43,6 +44,7 @@ public class IpcCommands
         questionable = new Questionable();
         rsr = new();
         artisan = new();
+        autoretainer = new();
     }
 
     internal void Dispose()
@@ -147,6 +149,26 @@ public class IpcCommands
             ? _autoRetainerApi.GetOfflineCharacterData(Svc.ClientState.LocalContentId).OfflineSubmarineData.AsParallel().Any(x => x.ReturnTime <= DateTime.Now.ToUnixTimestamp())
             : GetAllEnabledCharacters().Any(c => _autoRetainerApi.GetOfflineCharacterData(c).OfflineSubmarineData.Any(x => x.ReturnTime <= DateTime.Now.ToUnixTimestamp()));
     }
+
+    public bool GetMultiModeEnabled() => autoretainer.GetMultiModeEnabled();
+    public void SetMultiModeEnabled(bool value) => autoretainer.SetMultiModeEnabled(value);
+    public bool IsBusy() => autoretainer.IsBusy();
+    public int GetInventoryFreeSlotCount() => autoretainer.GetInventoryFreeSlotCount();
+    public Dictionary<ulong, HashSet<string>> GetEnabledRetainers() => autoretainer.GetEnabledRetainers();
+    public bool AreAnyRetainersAvailableForCurrentChara() => autoretainer.AreAnyRetainersAvailableForCurrentChara();
+    public void AbortAllTasks() => autoretainer.AbortAllTasks();
+    public void DisableAllFunctions() => autoretainer.DisableAllFunctions();
+    public void EnableMultiMode() => autoretainer.EnableMultiMode();
+    public void EnqueueHET() => autoretainer.EnqueueHET(() => { });
+    public bool CanAutoLogin() => autoretainer.CanAutoLogin();
+    public bool Relog(string charaNameWithWorld) => autoretainer.Relog(charaNameWithWorld);
+    public bool GetOptionRetainerSense() => autoretainer.GetOptionRetainerSense();
+    public void SetOptionRetainerSense(bool value) => autoretainer.SetOptionRetainerSense(value);
+    public int GetOptionRetainerSenseThreshold() => autoretainer.GetOptionRetainerSenseThreshold();
+    public void SetOptionRetainerSenseThreshold(int value) => autoretainer.SetOptionRetainerSenseThreshold(value);
+    public long? GetClosestRetainerVentureSecondsRemaining(ulong cid) => autoretainer.GetClosestRetainerVentureSecondsRemaining(cid);
+    public void EnqueueInitiation() => autoretainer.EnqueueInitiation();
+    public (uint ShopDataID, uint ExchangeDataID, Vector3 Position)? GetGCInfo() => autoretainer.GetGCInfo();
 
     private unsafe ParallelQuery<ulong> GetAllEnabledCharacters() => _autoRetainerApi.GetRegisteredCharacters().AsParallel().Where(c => _autoRetainerApi.GetOfflineCharacterData(c).Enabled);
     #endregion

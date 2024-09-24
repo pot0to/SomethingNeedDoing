@@ -19,6 +19,11 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-09-24",
+        "- Added additional autoretainer ipc commands()\n" +
+        "- Fixed display of ipc commands in help\n");
+
+        DisplayChangelog(
         "2024-09-21",
         "- Added artisan ipc commands\n" +
         "- Added GetJobExp()\n" +
