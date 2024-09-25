@@ -1,7 +1,7 @@
 ﻿using ECommons.EzIpcManager;
 using System;
 
-namespace Automaton.IPC;
+namespace SomethingNeedDoing.IPC;
 
 #nullable disable
 public class LifestreamIPC

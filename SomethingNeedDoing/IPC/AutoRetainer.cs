@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using GCInfo = (uint ShopDataID, uint ExchangeDataID, System.Numerics.Vector3 Position);
 
-namespace Automaton.IPC;
+namespace SomethingNeedDoing.IPC;
 
 #nullable disable
 public class AutoRetainer
