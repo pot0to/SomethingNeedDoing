@@ -19,6 +19,10 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-09-25",
+        "- Fixed new AR ipc command names\n");
+
+        DisplayChangelog(
         "2024-09-24",
         "- Added additional autoretainer ipc commands()\n" +
         "- Fixed display of ipc commands in help\n");
