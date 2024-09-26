@@ -810,3 +810,12 @@ function delete_my_items_please(how)
 		yield("/echo i dont know how to do this yet--*")
 	end
 end
+
+function grab_aetheryte()
+	yield("/target Aetheryte")
+	yield("/wait 2")
+	yield("/interact")
+	yield("/wait 2")
+	yield("/interact")
+	yield("/wait 10")
+end
