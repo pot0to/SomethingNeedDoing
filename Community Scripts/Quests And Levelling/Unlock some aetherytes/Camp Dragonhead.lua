@@ -46,14 +46,14 @@ for i=1,#charlist do
 		yield("/tp Fallg")
 		CharacterSafeWait()
 		
-		while type(GetZoneID()) == "number" do
-			while GetZoneID() == 154 do  --it gets stuck partway through this area, but a renav fixes it
+		while type(GetZoneID()) == "number" and GetZoneID() == 154 do
+				--it gets stuck partway through this area, but a renav fixes it
 				yield("/vnav "..movetype.."to -367.21618652344 -6.9321041107178 185.84088134766") 
 				yield("/wait 5")
 			end
 		end
 		CharacterSafeWait()
-		yield("/vnav "..movetype.."to ]230.07713317871 312.49884033203 -234.03834533691") --get to dragonhead aetheryte
+		yield("/vnav "..movetype.."to 230.07713317871 312.49884033203 -234.03834533691") --get to dragonhead aetheryte
 		visland_stop_moving()
 		grab_aetheryte()
 		zungazunga()
