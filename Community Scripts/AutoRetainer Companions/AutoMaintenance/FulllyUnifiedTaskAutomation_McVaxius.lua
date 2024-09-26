@@ -244,6 +244,14 @@ if FUTA_processors[hoo_arr_weeeeee][2][2] > -1 then  -- -1 is ignore+disable for
 	yield("/wait 0.5")	
 	if tonumber(GetLevel(17)) > 0 then
 		FUTA_processors[hoo_arr_weeeeee][2][2] = tonumber(GetLevel(17))
+		if FUTA_processors[hoo_arr_weeeeee][2][2] == 99999 then --*this doesnt work atm
+			xp = GetNodeText("_Exp", 3)
+			xpxp = string.match(xp, "%d[%d.,]*"):gsub(",", "")  -- Remove commas
+			yield("/echo Cleaned xp string: " .. xpxp)
+			local xp_numeric = tonumber(xpxp) or 0  -- Convert to number, default to 0 if nil
+			yield("/echo partial levle in 99 is  -> ".. xp_numeric / 25000000)
+			FUTA_processors[hoo_arr_weeeeee][2][2] = FUTA_processors[hoo_arr_weeeeee][2][2] + xp_numeric
+		end
 		tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
 		yield("/echo tablebunga() completed successfully w new fishing data")
 	end
@@ -360,7 +368,10 @@ if wheeequeheeheheheheheehhhee == 1 then
                 currentTime = os.date("*t")
                 formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
                 FUTA_processors[lowestID][2][2] = GetLevel()
-                file:write(formattedTime.." - "..logfile_differentiator.."["..lowestID.."] - "..FUTA_processors[lowestID][1][1].." - Fisher Lv - "..FUTA_processors[lowestID][2][2].."\n")
+				xp = GetNodeText("_Exp", 3)
+				yield("/echo current xp: "..string.match(xp, "%d[%d.,]*"))
+				xpxp = string.match(xp, "%d[%d.,]*")
+                file:write(formattedTime.." - "..logfile_differentiator.."["..lowestID.."] - "..FUTA_processors[lowestID][1][1].." - Fisher Lv - "..FUTA_processors[lowestID][2][2].." - XP -> "..xpxp.."\n")
                 file:close()
                 yield("/echo Text has been written to '" .. folderPath .. "FeeshLevels.txt'")
             else
@@ -400,7 +411,7 @@ if wheeequeheeheheheheheehhhee == 0 then
             if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
                 FUTA_processors[hoo_arr_weeeeee][3][2] = 5 --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
                 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
-                yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to 11")
+                yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to 5")
             end
         end
     end
