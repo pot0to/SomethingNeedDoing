@@ -20,7 +20,8 @@ internal class Changelog
 
         DisplayChangelog(
         "2024-09-25",
-        "- Added GetActiveMacroName()\n");
+        "- Added GetActiveMacroName()\n" +
+        "- Added IsMacroRunningOrQueued()\n");
 
         DisplayChangelog(
         "2024-09-25",
