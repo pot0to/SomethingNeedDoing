@@ -393,6 +393,13 @@ function return_to_lair()
 end
 
 function return_fc_entrance()
+	yield("/target Entrance <wait.1>")
+	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	yield("/target Entrance <wait.1>")
+	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	yield("/wait 5")
+	--commented out this garbage finally
+--[[
 	yield("/hold W <wait.1.0>")
 	yield("/release W")
 	yield("/target Entrance <wait.1>")
@@ -433,6 +440,7 @@ function return_fc_entrance()
 	yield("/interact")
 	yield("/wait 1")
 	yield("/pcall SelectYesno true 0")
+	--]]
 end
 
 function return_fc_near_bell()
