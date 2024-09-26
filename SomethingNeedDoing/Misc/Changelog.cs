@@ -20,6 +20,10 @@ internal class Changelog
 
         DisplayChangelog(
         "2024-09-25",
+        "- Added GetActiveMacroName()\n");
+
+        DisplayChangelog(
+        "2024-09-25",
         "- Fixed new AR ipc command names\n");
 
         DisplayChangelog(
