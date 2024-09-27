@@ -149,6 +149,10 @@ public class IpcCommands
             : GetAllEnabledCharacters().Any(c => _autoRetainerApi.GetOfflineCharacterData(c).OfflineSubmarineData.Any(x => x.ReturnTime <= DateTime.Now.ToUnixTimestamp()));
     }
 
+    public void ARFinishCharacterPostProcess() => _autoRetainerApi.FinishCharacterPostProcess();
+    public List<ulong> ARGetCharacterCIDs() => _autoRetainerApi.GetRegisteredCharacters();
+    public AutoRetainerAPI.Configuration.OfflineCharacterData ARGetCharacterData(ulong cid) => _autoRetainerApi.GetOfflineCharacterData(cid);
+
     public bool ARGetMultiModeEnabled() => autoretainer.GetMultiModeEnabled();
     public void ARSetMultiModeEnabled(bool value) => autoretainer.SetMultiModeEnabled(value);
     public bool ARIsBusy() => autoretainer.IsBusy();

@@ -19,7 +19,13 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-        "2024-09-25",
+        "2024-09-27",
+        "- Added ARFinishCharacterPostProcess()\n" +
+        "- Added ARGetCharacterCIDs()\n" +
+        "- Added ARGetCharacterData()\n");
+
+        DisplayChangelog(
+        "2024-09-26",
         "- Added GetActiveMacroName()\n" +
         "- Added IsMacroRunningOrQueued()\n");
 
