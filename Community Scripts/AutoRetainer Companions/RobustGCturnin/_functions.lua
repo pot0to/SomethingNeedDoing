@@ -393,6 +393,8 @@ function return_to_lair()
 end
 
 function return_fc_entrance()
+	yield("/hold W <wait.1.0>")
+	yield("/release W")
 	yield("/target Entrance <wait.1>")
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 	yield("/target Entrance <wait.1>")
