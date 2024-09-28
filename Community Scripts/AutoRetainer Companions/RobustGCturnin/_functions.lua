@@ -594,9 +594,8 @@ function clean_inventory()
 	exit_cleaning = 0
 	forced_am = 0
 	bungaboard = SetClipboard("123123123")
-	--[[ FAILSAFE REMOVED TEMPORARILY
 	while GetCharacterCondition(50) == true and exit_cleaning < 300 do
-		yield("/wait 1")
+		yield("/wait 2")
 		exit_cleaning = exit_cleaning + 1
 		flandom = getRandomNumber(1,20)
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
@@ -613,12 +612,14 @@ function clean_inventory()
 			forced_am = 0
 		end
 	end
-	--]]
+
 	CharacterSafeWait()
 	zungazunga()
+
 	if exit_cleaning > 250 then
 		ungabungabunga()
 	end
+
 	yield("/automarket stop")
 	yield("/wait 1")
 end
