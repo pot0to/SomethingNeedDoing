@@ -592,6 +592,7 @@ function clean_inventory()
 	exit_cleaning = 0
 	forced_am = 0
 	bungaboard = SetClipboard("123123123")
+	--[[ FAILSAFE REMOVED TEMPORARILY
 	while GetCharacterCondition(50) == true and exit_cleaning < 300 do
 		yield("/wait 1")
 		exit_cleaning = exit_cleaning + 1
@@ -599,7 +600,7 @@ function clean_inventory()
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
 		yield("/echo Waiting for repricer to end -> "..exit_cleaning.."/300")
 		forced_am = forced_am + 1
-		if forced_am > 15 then --every 15 cycles we will update clipboard if it hasnt changed then we have a problem!
+		if forced_am > 100 then --every 100 cycles we will update clipboard if it hasnt changed then we have a problem!
 			yield("/echo Clipboard contains -> "..GetClipboard())
 			if bungaboard == GetClipboard() then
 				yield("/echo oops Automarket is stuck ! let's help it!")
@@ -610,6 +611,7 @@ function clean_inventory()
 			forced_am = 0
 		end
 	end
+	--]]
 	CharacterSafeWait()
 	zungazunga()
 	if exit_cleaning > 250 then
