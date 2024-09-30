@@ -435,7 +435,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 		if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
 			yield("/echo Attempting to clean inventory @ an npc and or retainerbell and or desynthing (not yet)")
 			delete_my_items_please(do_we_discard)
-			yield("/ays npcsell") --for now we only have actual npc selling. retainer bell not working as of 2024 09 18 unless its via normal retainer checks
+			yield("/itemsell") --npc AND retainer selling
 		end
 		if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
 			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then 
