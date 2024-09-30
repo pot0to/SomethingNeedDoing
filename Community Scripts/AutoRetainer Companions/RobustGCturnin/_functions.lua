@@ -396,6 +396,15 @@ function return_fc_entrance()
 	yield("/hold W <wait.1.0>")
 	yield("/release W")
 	yield("/target Entrance <wait.1>")
+	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	yield("/target Entrance <wait.1>")
+	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	yield("/wait 5")
+	--commented out this garbage finally
+--[[
+	yield("/hold W <wait.1.0>")
+	yield("/release W")
+	yield("/target Entrance <wait.1>")
 	yield("/interact")
 	yield("/lockon on")
 	yield("/automove on")
@@ -433,6 +442,7 @@ function return_fc_entrance()
 	yield("/interact")
 	yield("/wait 1")
 	yield("/pcall SelectYesno true 0")
+	--]]
 end
 
 function return_fc_near_bell()
@@ -585,13 +595,13 @@ function clean_inventory()
 	forced_am = 0
 	bungaboard = SetClipboard("123123123")
 	while GetCharacterCondition(50) == true and exit_cleaning < 300 do
-		yield("/wait 1")
+		yield("/wait 2")
 		exit_cleaning = exit_cleaning + 1
 		flandom = getRandomNumber(1,20)
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
 		yield("/echo Waiting for repricer to end -> "..exit_cleaning.."/300")
 		forced_am = forced_am + 1
-		if forced_am > 15 then --every 15 cycles we will update clipboard if it hasnt changed then we have a problem!
+		if forced_am > 100 then --every 100 cycles we will update clipboard if it hasnt changed then we have a problem!
 			yield("/echo Clipboard contains -> "..GetClipboard())
 			if bungaboard == GetClipboard() then
 				yield("/echo oops Automarket is stuck ! let's help it!")
@@ -602,11 +612,14 @@ function clean_inventory()
 			forced_am = 0
 		end
 	end
+
 	CharacterSafeWait()
 	zungazunga()
+
 	if exit_cleaning > 250 then
 		ungabungabunga()
 	end
+
 	yield("/automarket stop")
 	yield("/wait 1")
 end
@@ -809,4 +822,13 @@ function delete_my_items_please(how)
 		yield("/echo Attempting to desynth items")
 		yield("/echo i dont know how to do this yet--*")
 	end
+end
+
+function grab_aetheryte()
+	yield("/target Aetheryte")
+	yield("/wait 2")
+	yield("/interact")
+	yield("/wait 2")
+	yield("/interact")
+	yield("/wait 10")
 end

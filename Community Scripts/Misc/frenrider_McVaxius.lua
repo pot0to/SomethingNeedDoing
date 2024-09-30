@@ -256,6 +256,10 @@ function moveToFormationPosition(followerIndex, leaderX, leaderY, leaderZ, leade
 end
 
 function clingmove(nemm)
+	--jump if we are mounted and below the leader by 10 yalms
+	if (GetObjectRawYPos(nemm) - GetPlayerRawYPos()) > 9 and GetCharacterCondition(4) == true then
+		yield("/gaction jump")
+	end
 	zclingtype = clingtype
 	if GetCharacterCondition(34) == true then
 		zclingtype = clingtypeduty --get diff clingtype in duties
@@ -488,8 +492,8 @@ while weirdvar == 1 do
 							clingmove(fren)
 
 							yield("/target <"..fartycardinality..">")
-							yield("/follow")
-							yield("/wait 0.1") --we dont want to go tooo hard on this
+							--yield("/follow")
+							--yield("/wait 0.1") --we dont want to go tooo hard on this
 							
 							--i could't make the following method smooth please help :(
 							--[[
@@ -542,7 +546,7 @@ while weirdvar == 1 do
 								yield("/wait 5")
 								--try to fly 
 								yield("/gaction jump")
-								yield("/lockon on")
+								--yield("/lockon on")
 							end
 						end
 						if IsPartyMemberMounted(shartycardinality) == true and fly_you_fools == false then
