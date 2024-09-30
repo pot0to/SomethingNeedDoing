@@ -19,6 +19,10 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-09-30",
+        "- Added InSanctuary()\n");
+
+        DisplayChangelog(
         "2024-09-27",
         "- Added ARFinishCharacterPostProcess()\n" +
         "- Added ARGetCharacterCIDs()\n" +

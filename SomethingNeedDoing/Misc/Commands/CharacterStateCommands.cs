@@ -171,6 +171,7 @@ public class CharacterStateCommands
 
     public unsafe bool HasFlightUnlocked(uint territory = 0) => PlayerState.Instance()->IsAetherCurrentZoneComplete(Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(territory != 0 ? territory : Svc.ClientState.TerritoryType)?.Unknown32 ?? 0);
     public unsafe bool TerritorySupportsMounting() => Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(Player.Territory)?.Unknown32 != 0;
+    public unsafe bool InSanctuary() => TerritoryInfo.Instance()->InSanctuary;
 
     public unsafe bool HasWeeklyBingoJournal() => PlayerState.Instance()->HasWeeklyBingoJournal;
     public unsafe bool IsWeeklyBingoExpired() => PlayerState.Instance()->IsWeeklyBingoExpired();
