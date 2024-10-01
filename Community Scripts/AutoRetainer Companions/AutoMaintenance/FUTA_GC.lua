@@ -135,6 +135,7 @@ function Final_GC_Cleaning()
 		yield("/wait 1")
 		yield("/pcall SelectYesno true 0")
 		yield("/wait 25")
+		yield("/deliveroo enable")
 	end
 
 	--loop until deliveroo done if we aren't using the hack.

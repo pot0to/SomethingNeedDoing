@@ -38,6 +38,7 @@ RSR
 	this is insanely buggy and perhaps crashy.. nodetext scanning too fast will break things
 
 *it still doesnt follow in some weird cases
+	figured this out. if the party leader doesnt enter zone first, the other party members may fail to recalibrate to follow
 
 *lazyloot is a toggle not on or off so you have to turn it on yourself
 
@@ -542,6 +543,9 @@ while weirdvar == 1 do
 						if fly_you_fools == true then
 							if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false and IsPartyMemberMounted(shartycardinality) == true then
 								--mountup your own mount
+								--cancel movement
+								yield("/send s")
+								ClearTarget()
 								yield("/mount \""..fool_flier.."\"")
 								yield("/wait 5")
 								--try to fly 
