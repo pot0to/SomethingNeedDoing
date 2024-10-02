@@ -557,6 +557,9 @@ while weirdvar == 1 do
 						yield("/ridepillion <"..mker.."> 3")]]
 						--yield("/echo fly fools .."..tostring(fly_you_fools))
 						if fly_you_fools == true then
+							if GetCharacterCondition(4) == true then
+								yield("/rotation cancel") --keep rotations off
+							end
 							if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false and IsPartyMemberMounted(shartycardinality) == true then
 								--mountup your own mount
 								--cancel movement
@@ -566,7 +569,7 @@ while weirdvar == 1 do
 								yield("/wait 5")
 								yield("/rotation Cancel")
 								--try to fly 
-								yield("/gaction jump")
+								--yield("/gaction jump")
 								--yield("/lockon on")
 							end
 						end
