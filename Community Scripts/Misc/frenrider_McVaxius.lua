@@ -564,9 +564,9 @@ while weirdvar == 1 do
 								--mountup your own mount
 								--cancel movement
 								--yield("/send s")
-								ClearTarget()
 								yield("/mount \""..fool_flier.."\"")
 								yield("/wait 5")
+								ClearTarget()
 								yield("/rotation Cancel")
 								--try to fly 
 								--yield("/gaction jump")
@@ -578,6 +578,7 @@ while weirdvar == 1 do
 								--yield("/ridepillion <"..partycardinality.."> "..i)
 								counting_fartula()
 								yield("/ridepillion <"..fartycardinality.."> 2")
+								yield("/rotation Cancel")
 							--end
 							yield("/echo Attempting to Mount Friend")
 							yield("/wait 0.5")
