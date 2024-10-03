@@ -392,6 +392,22 @@ function return_to_lair()
 	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 end
 
+function double_check_nav(x3,y3,z3)
+	x1 = GetPlayerRawXPos
+	y1 = GetPlayerRawYPos
+	z1 = GetPlayerRawZPos
+	yield("/wait 2")
+	if ((x1-GetPlayerRawXPos) + (y1-GetPlayerRawYPos) + (z1-GetPlayerRawZPos)) == 0 then
+		--yield("/vnav rebuild")
+		NavRebuild()
+		while NavBuildProgress() == true do
+			yield("/echo waiting on navmesh to finish rebuilding the mesh")
+			yield("/wait 1")
+		end
+		yield("/vnav moveto "..x3.." "..y3.." "..z3)
+	end
+end
+
 function return_fc_entrance()
 	yield("/hold W <wait.1.0>")
 	yield("/release W")
@@ -399,6 +415,7 @@ function return_fc_entrance()
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 	yield("/target Entrance <wait.1>")
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	double_check_nav(GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos())
 	yield("/wait 5")
 	--commented out this garbage finally
 --[[
