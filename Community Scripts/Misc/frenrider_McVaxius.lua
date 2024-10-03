@@ -395,7 +395,7 @@ while weirdvar == 1 do
 			end
 			
 			re_engage = re_engage + 1
-			if re_engage > 9 then --every 10 seconds we will do rhandling() just to make sure we are attacking stuff if we aren't mounted.
+			if re_engage > 2 then --every 3 seconds we will do rhandling() just to make sure we are attacking stuff if we aren't mounted.
 				if GetCharacterCondition(4) == false then
 					rhandling()
 				end
