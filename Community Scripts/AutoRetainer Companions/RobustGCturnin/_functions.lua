@@ -397,7 +397,7 @@ function double_check_nav(x3,y3,z3)
 	y1 = GetPlayerRawYPos
 	z1 = GetPlayerRawZPos
 	yield("/wait 2")
-	if ((x1-GetPlayerRawXPos) + (y1-GetPlayerRawYPos) + (z1-GetPlayerRawZPos)) == 0 then
+	if x1-GetPlayerRawXPos() == 0 and y1-GetPlayerRawYPos() == 0 and z1-GetPlayerRawZPos() == 0 then
 		--yield("/vnav rebuild")
 		NavRebuild()
 		while NavBuildProgress() == true do
