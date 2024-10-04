@@ -122,7 +122,21 @@ function Final_GC_Cleaning()
 	visland_stop_moving() --just in case we want to auto equip rq before dumping gear
 	--deliveroo i choose you
 	yield("/deliveroo enable")
-	yield("/wait 1")
+	yield("/wait 3")
+	if GetCharacterCondition(35) == true then
+		yield("/echo oh boy we forgot to click the squadron stuff before")
+		yield("/wait 10") --we forgot to enable squadrons
+		yield("/wait 1")
+		yield("/pcall SelectYesno true 0")
+
+		yield("/wait 1")
+		yield("/pcall SelectYesno true 0")
+
+		yield("/wait 1")
+		yield("/pcall SelectYesno true 0")
+		yield("/wait 25")
+		yield("/deliveroo enable")
+	end
 
 	--loop until deliveroo done if we aren't using the hack.
 	if FUTA_processors[hoo_arr_weeeeee][3][4] == 0 then
@@ -145,6 +159,12 @@ function Final_GC_Cleaning()
 			end
 		end
 	end
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
 
 	--added 5 second wait here because sometimes they get stuck.
 	yield("/wait 5")

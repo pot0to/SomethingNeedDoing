@@ -325,39 +325,10 @@ if wheeequeheeheheheheheehhhee == 1 then
 			
             yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 			
-			--FOR HACKY FISHIN SWITCHER WITH AHK --- START
-			if FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) then
-				--if we are on wrong char. we gotta kill AR
-				yield("/ays multi d")
-				yield("/wait 1")
-				yield("/ays reset")
-				yield("/wait 5")
-
-				--[[Hacky shit left here for posterity
-					--FOR HACKY FISHING SWITCHER WITH AHK --- START
-					--do sheet
-					yield("/echo Hacky AHK shit")
-					-- make a ahk file from scratch
-					local file = io.open(folderPath .. "not_a_key_logger.ahk", "w")
-					file:write("WinActivate, Flantasy\n")
-					file:write("Sleep, 5000\n")
-					--file:write("Send, {ENTER}/ays relog "..string.match(FUTA_processors[lowestID][1][1], "([^@]+)").." {ENTER}\n")
-					file:write("Send, {ENTER}/ays relog "..FUTA_processors[lowestID][1][1].." {ENTER}\n")
-					file:write("Sleep, 45000\n")
-					file:write("Send, {ENTER}/pcraft run FUTA {ENTER}\n")
-					file:close()
-					-- Call a batch file using its full path
-					--os.execute("cmd /c start \"\" \ "..os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
-					os.execute('cmd /c start "" "' .. os.getenv("appdata") .. '\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk"')
-					yield("/wintitle Flantasy")
-					--end the script here
-					yield("/pcraft stop")				--os.execute(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
-					yield("/wintitle Flantasy")
-					--end the script here
-					yield("/pcraft stop")
-					--FOR HACKY FISHING SWITCHER WITH AHK --- END
-				--]]
-			end
+			yield("/ays multi d")
+			yield("/wait 1")
+			yield("/ays reset")
+			yield("/wait 5")
 			
             fishing()
             yield("/echo Debug: Fishing completed")

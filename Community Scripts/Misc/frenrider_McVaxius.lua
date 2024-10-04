@@ -38,6 +38,7 @@ RSR
 	this is insanely buggy and perhaps crashy.. nodetext scanning too fast will break things
 
 *it still doesnt follow in some weird cases
+	figured this out. if the party leader doesnt enter zone first, the other party members may fail to recalibrate to follow
 
 *lazyloot is a toggle not on or off so you have to turn it on yourself
 
@@ -158,19 +159,22 @@ yield("/vbmai "..bossmodAI)
 yield("/bmrai "..bossmodAI)
 
 --rotation handling
-if rotationplogon == "BMR" or rotationplogon == "VBM" then
-	yield("/rotation cancel")  --turn off RSR
-	if autorotationtype ~= "none" then
-		yield("/vbm ar set "..autorotationtype)
-		yield("/bmr ar set "..autorotationtype)
+function rhandling()
+	if rotationplogon == "BMR" or rotationplogon == "VBM" then
+		yield("/rotation cancel")  --turn off RSR
+		if autorotationtype ~= "none" then
+			yield("/vbm ar set "..autorotationtype)
+			yield("/bmr ar set "..autorotationtype)
+		end
+	end
+	if rotationplogon == "RSR" or rotationplogon == "VBM" then
+		yield("/bmr ar toggle") --turn off Boss Mod
+		if rotationtype ~= "none" then
+			yield("/rotation "..rotationtype)
+		end
 	end
 end
-if rotationplogon == "RSR" or rotationplogon == "VBM" then
-	yield("/bmr ar toggle") --turn off Boss Mod
-	if rotationtype ~= "none" then
-		yield("/rotation "..rotationtype)
-	end
-end
+rhandling()
 
 if fulftype ~= "unchanged" then
 --turns out its just a toggle we can't turn it on or off purposefully
@@ -338,7 +342,7 @@ partycardinality = partycardinality + 1
 
 countfartula = 2
 function counting_fartula()
-countfartula = 2 --redeclare dont worry its fine.
+countfartula = 2 --redeclare dont worry its fine. we need this so we can do it later in the code for recalibration
 	while countfartula < 9 do
 		yield("/target <"..countfartula..">")
 		yield("/wait 0.5")
@@ -363,6 +367,7 @@ yield("/bmrai follow slot1")
 yield("/echo Beginning fren rider main loop")
 
 xp_item_equip = 0 --counter
+re_engage = 0 --counter
 
 while weirdvar == 1 do
 	--catch if character is ready before doing anything
@@ -380,12 +385,23 @@ while weirdvar == 1 do
 				yield("/bmrai follow slot1")
 				yield("/ac dismount")
 				yield("/wait 0.5")
+				rhandling()
 			end
-			xp_item_equip = xp_item_equip + 1
+
+			xp_item_equip = xp_item_equip + 1		
 			if xp_item_equip > ((1/timefriction)) * 5 and xpitem > 0 and GetItemCountInContainer(xpitem,1000) ~= 1 then -- every 5 seconds try to equip xp item(s) if they aren't already equipped
 					yield("/equipitem "..xpitem)
 					xp_item_equip = 0
 			end
+			
+			re_engage = re_engage + 1
+			if re_engage > 2 then --every 3 seconds we will do rhandling() just to make sure we are attacking stuff if we aren't mounted.
+				if GetCharacterCondition(4) == false then
+					rhandling()
+				end
+				re_engage = 0
+			end
+			
 			--Food check!
 			statoos = GetStatusTimeRemaining(48)
 			---yield("/echo "..statoos)
@@ -450,12 +466,12 @@ while weirdvar == 1 do
 						--seems like max lb is 1013040 when ultimate weapon buffs you to lb3 but you only have 30k on your bar O_o
 						--anyways it will trigger if lb3 is ready or when lb2 is max and it hits lb2
 						if (GetLimoot == (GetLimitBreakBarCount() * GetLimitBreakBarValue())) or GetLimoot > 29999 then
-							--yield("/rotation Cancel")		 --dont do this
+							yield("/rotation Cancel")		
 							yield("/echo Attempting "..local_teext)
 							yield("/ac "..local_teext)
 						end
 						if GetLimoot < GetLimitBreakBarCount() * GetLimitBreakBarValue() then
-							--yield("/rotation auto")		
+							yield("/rotation auto")		
 						end
 						--yield("/echo limitpct "..limitpct.." HPP"..GetTargetHPP().." HP"..GetTargetHP().." get limoot"..GetLimitBreakBarCount() * GetLimitBreakBarValue()) --debug line
 					end
@@ -492,6 +508,7 @@ while weirdvar == 1 do
 							clingmove(fren)
 
 							yield("/target <"..fartycardinality..">")
+							
 							--yield("/follow")
 							--yield("/wait 0.1") --we dont want to go tooo hard on this
 							
@@ -540,12 +557,19 @@ while weirdvar == 1 do
 						yield("/ridepillion <"..mker.."> 3")]]
 						--yield("/echo fly fools .."..tostring(fly_you_fools))
 						if fly_you_fools == true then
+							if GetCharacterCondition(4) == true then
+								yield("/rotation cancel") --keep rotations off
+							end
 							if GetCharacterCondition(4) == false and GetCharacterCondition(10) == false and IsPartyMemberMounted(shartycardinality) == true then
 								--mountup your own mount
+								--cancel movement
+								--yield("/send s")
 								yield("/mount \""..fool_flier.."\"")
 								yield("/wait 5")
+								ClearTarget()
+								yield("/rotation Cancel")
 								--try to fly 
-								yield("/gaction jump")
+								--yield("/gaction jump")
 								--yield("/lockon on")
 							end
 						end
@@ -554,6 +578,7 @@ while weirdvar == 1 do
 								--yield("/ridepillion <"..partycardinality.."> "..i)
 								counting_fartula()
 								yield("/ridepillion <"..fartycardinality.."> 2")
+								yield("/rotation Cancel")
 							--end
 							yield("/echo Attempting to Mount Friend")
 							yield("/wait 0.5")
