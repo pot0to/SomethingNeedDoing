@@ -671,7 +671,7 @@ function try_to_buy_fuel(restock_amt)
 		yield("/pcall FreeCompanyCreditShop false 0 0u "..buyamt.."u") 
 		yield("/pcall SelectYesno true 0")
 		yield("/wait 1")
-		yield("/pcall SelectYesno true 0")
+		--yield("/pcall SelectYesno true 0")
 		oldFuel = curFuel
 		curFuel = GetItemCount(10155)
 		if oldFuel == curFuel then
