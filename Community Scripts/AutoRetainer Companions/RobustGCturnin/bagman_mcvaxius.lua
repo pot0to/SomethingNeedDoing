@@ -442,6 +442,8 @@ for i=1,#franchise_owners do
 		end
 		if tony_type == 1 then
 			approach_entrance()
+			yield("/wait 5")
+			approach_entrance()
 			visland_stop_moving()
 			if tony_type == 2 then
 				yield("/interact")
