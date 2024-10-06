@@ -407,6 +407,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 			yield("/echo Attempting to clean inventory @ an npc and or retainerbell and or desynthing (not yet)")
 			delete_my_items_please(do_we_discard)
 			yield("/itemsell") --npc AND retainer selling
+			yield("/ays itemsell") --npc AND retainer selling
 		end
 		if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
 			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then 
