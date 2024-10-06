@@ -663,8 +663,8 @@ function try_to_buy_fuel(restock_amt)
 	--grab current fuel total
 	curFuel = GetItemCount(10155)
 	oldFuel = curFuel + 1
+	buyfail = 0 --counter
 	while curFuel < restock_amt do
-		buyfail = 0 --counter
 		buyamt = 99 --this can be set to 231u if you want but i wouldn't recommend it as it shows on lodestone
 		if (restock_amt - curFuel) < 99 then
 			buyamt = restock_amt - curFuel
@@ -675,11 +675,13 @@ function try_to_buy_fuel(restock_amt)
 		--yield("/pcall SelectYesno true 0")
 		oldFuel = curFuel
 		curFuel = GetItemCount(10155)
+		yield("/echo Current Fuel -> "..curFuel.." Old Fuel -> "..oldFuel)
 		if oldFuel < curFuel then
 			buyfail = 0
 		end
 		if oldFuel == curFuel then
 			buyfail = buyfail + 1
+			yield("/echo We might be out of FC points ?")
 			if buyfail > 3 then
 				curFuel = restock_amt
 				yield("/echo we ran out of FC points before finishing our purchases :(")
