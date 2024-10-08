@@ -831,7 +831,7 @@ function loggabunga(filename, texty)
 end
 
 function check_GC_RANKS(renkk)
-	if GetAddersGCRank < renkk and GetFlamesGCRank < renkk and GetMaelstromGCRank < renkk then
+	if GetAddersGCRank() < renkk and GetFlamesGCRank() < renkk and GetMaelstromGCRank() < renkk then
 		loggabunga("FUTA_"," - GC ranks below Lt RK2 for main GC -> "..FUTA_processors[hoo_arr_weeeeee][1][1].." - Adders - "..GetAddersGCRank().." - Maelstrom - "..GetMaelstromGCRank().." - Flames - "..GetFlamesGCRank().."")
 	end
 end
