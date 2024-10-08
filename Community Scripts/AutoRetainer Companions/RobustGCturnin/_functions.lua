@@ -830,6 +830,12 @@ function loggabunga(filename, texty)
 	end
 end
 
+function check_GC_RANKS(renkk)
+	if GetAddersGCRank < renkk and GetFlamesGCRank < renkk and GetMaelstromGCRank < renkk then
+		loggabunga("FUTA_"," - GC ranks below Lt RK2 for main GC -> "..FUTA_processors[hoo_arr_weeeeee][1][1].." - Adders - "..GetAddersGCRank().." - Maelstrom - "..GetMaelstromGCRank().." - Flames - "..GetFlamesGCRank().."")
+	end
+end
+
 function check_ro_helm()
 	--check for red onion helms and report in to a log file if there is one
 	if GetItemCount(2820) > 0 then
