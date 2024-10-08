@@ -349,7 +349,6 @@ function visland_stop_moving()
  end
 end
 
-
 function return_to_limsa_bell()
 	yield("/tp Limsa Lominsa")
 	ZoneTransition()
@@ -413,10 +412,13 @@ function return_fc_entrance()
 	yield("/release W")
 	yield("/target Entrance <wait.1>")
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	yield("/gaction jump")
 	yield("/target Entrance <wait.1>")
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	yield("/wait 1")
+	yield("/gaction jump")
 	double_check_nav(GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos())
-	yield("/wait 5")
+	visland_stop_moving()
 	--commented out this garbage finally
 --[[
 	yield("/hold W <wait.1.0>")
@@ -808,6 +810,7 @@ function FUTA_return()
 	--normal small house shenanigans
 	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 5 then
 		return_fc_entrance()
+		
 	end
 
 	--retainer bell nearby shenanigans
