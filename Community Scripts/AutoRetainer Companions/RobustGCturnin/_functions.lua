@@ -399,7 +399,7 @@ function double_check_nav(x3, y3, z3)
 	if (x1 - GetPlayerRawXPos()) == 0 and (y1 - GetPlayerRawYPos()) == 0 and (z1 - GetPlayerRawZPos()) == 0 then
 		--yield("/vnav rebuild")
 		NavRebuild()
-		while NavBuildProgress() do
+		while not NavIsReady() do
 			yield("/echo waiting on navmesh to finish rebuilding the mesh")
 			yield("/wait 1")
 		end
