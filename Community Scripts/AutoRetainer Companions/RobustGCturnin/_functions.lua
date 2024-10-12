@@ -391,21 +391,22 @@ function return_to_lair()
 	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 end
 
-function double_check_nav(x3,y3,z3)
-	x1 = GetPlayerRawXPos
-	y1 = GetPlayerRawYPos
-	z1 = GetPlayerRawZPos
+function double_check_nav(x3, y3, z3)
+	x1 = GetPlayerRawXPos()
+	y1 = GetPlayerRawYPos()
+	z1 = GetPlayerRawZPos()
 	yield("/wait 2")
-	if x1-GetPlayerRawXPos() == 0 and y1-GetPlayerRawYPos() == 0 and z1-GetPlayerRawZPos() == 0 then
+	if (x1 - GetPlayerRawXPos()) == 0 and (y1 - GetPlayerRawYPos()) == 0 and (z1 - GetPlayerRawZPos()) == 0 then
 		--yield("/vnav rebuild")
 		NavRebuild()
-		while NavBuildProgress() == true do
+		while NavBuildProgress() do
 			yield("/echo waiting on navmesh to finish rebuilding the mesh")
 			yield("/wait 1")
 		end
-		yield("/vnav moveto "..x3.." "..y3.." "..z3)
+		yield("/vnav moveto " .. x3 .. " " .. y3 .. " " .. z3)
 	end
 end
+
 
 function return_fc_entrance()
 	yield("/hold W <wait.1.0>")
@@ -420,6 +421,11 @@ function return_fc_entrance()
 	double_check_nav(GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos())
 	visland_stop_moving()
 	yield("/interact")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
+	yield("/interact")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
 	--commented out this garbage finally
 --[[
 	yield("/hold W <wait.1.0>")
@@ -608,7 +614,7 @@ function clean_inventory()
 	exit_cleaning = 0
 	while GetCharacterCondition(50) == false and exit_cleaning < 20 do
 		yield("/wait 1")
---		exit_cleaning = exit_cleaning + 1
+		exit_cleaning = exit_cleaning + 1
 		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
 	end
 	exit_cleaning = 0
@@ -616,7 +622,7 @@ function clean_inventory()
 	--bungaboard = SetClipboard("123123123")
 	while GetCharacterCondition(50) == true and exit_cleaning < 10 do
 		yield("/wait 2")
-		exit_cleaning = exit_cleaning + 1
+--		exit_cleaning = exit_cleaning + 1
 		flandom = getRandomNumber(1,20)
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
 		yield("/echo Waiting for repricer to end or if we are stuck on retainer list for 10 sec -> "..exit_cleaning.."/10")
