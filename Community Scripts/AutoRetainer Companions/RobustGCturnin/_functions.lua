@@ -349,7 +349,6 @@ function visland_stop_moving()
  end
 end
 
-
 function return_to_limsa_bell()
 	yield("/tp Limsa Lominsa")
 	ZoneTransition()
@@ -392,31 +391,41 @@ function return_to_lair()
 	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 end
 
-function double_check_nav(x3,y3,z3)
-	x1 = GetPlayerRawXPos
-	y1 = GetPlayerRawYPos
-	z1 = GetPlayerRawZPos
+function double_check_nav(x3, y3, z3)
+	x1 = GetPlayerRawXPos()
+	y1 = GetPlayerRawYPos()
+	z1 = GetPlayerRawZPos()
 	yield("/wait 2")
-	if x1-GetPlayerRawXPos() == 0 and y1-GetPlayerRawYPos() == 0 and z1-GetPlayerRawZPos() == 0 then
+	if (x1 - GetPlayerRawXPos()) == 0 and (y1 - GetPlayerRawYPos()) == 0 and (z1 - GetPlayerRawZPos()) == 0 then
 		--yield("/vnav rebuild")
 		NavRebuild()
-		while NavBuildProgress() == true do
+		while not NavIsReady() do
 			yield("/echo waiting on navmesh to finish rebuilding the mesh")
 			yield("/wait 1")
 		end
-		yield("/vnav moveto "..x3.." "..y3.." "..z3)
+		yield("/vnav moveto " .. x3 .. " " .. y3 .. " " .. z3)
 	end
 end
+
 
 function return_fc_entrance()
 	yield("/hold W <wait.1.0>")
 	yield("/release W")
 	yield("/target Entrance <wait.1>")
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	yield("/gaction jump")
 	yield("/target Entrance <wait.1>")
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	yield("/wait 1")
+	yield("/gaction jump")
 	double_check_nav(GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos())
-	yield("/wait 5")
+	visland_stop_moving()
+	yield("/interact")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
+	yield("/interact")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
 	--commented out this garbage finally
 --[[
 	yield("/hold W <wait.1.0>")
@@ -609,15 +618,22 @@ function clean_inventory()
 		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
 	end
 	exit_cleaning = 0
-	forced_am = 0
-	bungaboard = SetClipboard("123123123")
-	while GetCharacterCondition(50) == true and exit_cleaning < 300 do
+	--forced_am = 0
+	--bungaboard = SetClipboard("123123123")
+	while GetCharacterCondition(50) == true and exit_cleaning < 10 do
 		yield("/wait 2")
-		exit_cleaning = exit_cleaning + 1
+--		exit_cleaning = exit_cleaning + 1
 		flandom = getRandomNumber(1,20)
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
-		yield("/echo Waiting for repricer to end -> "..exit_cleaning.."/300")
-		forced_am = forced_am + 1
+		yield("/echo Waiting for repricer to end or if we are stuck on retainer list for 10 sec -> "..exit_cleaning.."/10")
+		--forced_am = forced_am + 1
+		if IsAddonVisible("RetainerList") then
+			exit_cleaning = exit_cleaning + 1
+		end
+		if not IsAddonVisible("RetainerList") then
+			exit_cleaning = 0
+		end
+		--[[
 		if forced_am > 100 then --every 100 cycles we will update clipboard if it hasnt changed then we have a problem!
 			yield("/echo Clipboard contains -> "..GetClipboard())
 			if bungaboard == GetClipboard() then
@@ -628,12 +644,13 @@ function clean_inventory()
 			bungaboard = GetClipboard()
 			forced_am = 0
 		end
+		---]]
 	end
 
 	CharacterSafeWait()
 	zungazunga()
 
-	if exit_cleaning > 250 then
+	if exit_cleaning > 9 then
 		ungabungabunga()
 	end
 
@@ -808,6 +825,7 @@ function FUTA_return()
 	--normal small house shenanigans
 	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 5 then
 		return_fc_entrance()
+		
 	end
 
 	--retainer bell nearby shenanigans
@@ -824,6 +842,12 @@ function loggabunga(filename, texty)
 		formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
 		file:write(formattedTime..texty.."\n")
 		file:close()
+	end
+end
+
+function check_GC_RANKS(renkk)
+	if GetAddersGCRank() < renkk and GetFlamesGCRank() < renkk and GetMaelstromGCRank() < renkk then
+		loggabunga("FUTA_",logfile_differentiator.." - GC ranks below rank "..renkk.." main GC -> Adders - "..GetAddersGCRank().." - Maelstrom - "..GetMaelstromGCRank().." - Flames - "..GetFlamesGCRank().." - Charname -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 	end
 end
 

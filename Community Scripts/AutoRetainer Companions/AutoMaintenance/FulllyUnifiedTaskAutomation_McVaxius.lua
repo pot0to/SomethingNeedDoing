@@ -63,6 +63,7 @@ dont_report_good_stuff = 0 --by default reporting everything, if you turn this o
 logfile_differentiator = " - Account 1"  --example of extra text to throw into log file say if your pointing a few clients to same log file for convenience
 force_equipstuff = 0 --should we try to force recommended equip every chance we get? by default we won't do it
 discard_type = 0 --0 = dont discard, 1 = discard, 2 = discard only if "CLEAN"[3] is > 0, or if its ==0 we desynth instead!, 3 = dont discard but desnyth if "CLEAN"[3] == 0 from special white list of items ill put here --* not implemented
+log_gcranks = 9 --log the gc ranks of each char if they are below this rank on all 3. that way we can catch the "lower" one from the main one they are in. set it to 0 to disable the check
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -234,6 +235,9 @@ yield("/echo Debug: Beginning to do stuff")
 
 --check for red onion helm
 check_ro_helm()
+
+--check for GC Ranks
+check_GC_RANKS(log_gcranks)
 
 ---------------------------------------------------------------------------------
 ------------------------------FISHING  START-------------------------------------
@@ -510,3 +514,4 @@ yield("/echo onto the next one ..... ")
 if wheeequeheeheheheheheehhhee == 1 then
 	yield("/ays multi e") --if we had to toggle AR
 end
+--yield("/pcraft stop") --uncomment this if you want it to clear snd errors after script run
