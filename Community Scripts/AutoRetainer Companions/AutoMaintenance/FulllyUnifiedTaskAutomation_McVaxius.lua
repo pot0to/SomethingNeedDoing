@@ -514,3 +514,4 @@ yield("/echo onto the next one ..... ")
 if wheeequeheeheheheheheehhhee == 1 then
 	yield("/ays multi e") --if we had to toggle AR
 end
+--yield("/pcraft stop") --uncomment this if you want it to clear snd errors after script run

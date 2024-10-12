@@ -419,6 +419,7 @@ function return_fc_entrance()
 	yield("/gaction jump")
 	double_check_nav(GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos())
 	visland_stop_moving()
+	yield("/interact")
 	--commented out this garbage finally
 --[[
 	yield("/hold W <wait.1.0>")
@@ -607,19 +608,26 @@ function clean_inventory()
 	exit_cleaning = 0
 	while GetCharacterCondition(50) == false and exit_cleaning < 20 do
 		yield("/wait 1")
-		exit_cleaning = exit_cleaning + 1
+--		exit_cleaning = exit_cleaning + 1
 		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
 	end
 	exit_cleaning = 0
-	forced_am = 0
-	bungaboard = SetClipboard("123123123")
-	while GetCharacterCondition(50) == true and exit_cleaning < 300 do
+	--forced_am = 0
+	--bungaboard = SetClipboard("123123123")
+	while GetCharacterCondition(50) == true and exit_cleaning < 10 do
 		yield("/wait 2")
 		exit_cleaning = exit_cleaning + 1
 		flandom = getRandomNumber(1,20)
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
-		yield("/echo Waiting for repricer to end -> "..exit_cleaning.."/300")
-		forced_am = forced_am + 1
+		yield("/echo Waiting for repricer to end or if we are stuck on retainer list for 10 sec -> "..exit_cleaning.."/10")
+		--forced_am = forced_am + 1
+		if IsAddonVisible("RetainerList") then
+			exit_cleaning = exit_cleaning + 1
+		end
+		if not IsAddonVisible("RetainerList") then
+			exit_cleaning = 0
+		end
+		--[[
 		if forced_am > 100 then --every 100 cycles we will update clipboard if it hasnt changed then we have a problem!
 			yield("/echo Clipboard contains -> "..GetClipboard())
 			if bungaboard == GetClipboard() then
@@ -630,12 +638,13 @@ function clean_inventory()
 			bungaboard = GetClipboard()
 			forced_am = 0
 		end
+		---]]
 	end
 
 	CharacterSafeWait()
 	zungazunga()
 
-	if exit_cleaning > 250 then
+	if exit_cleaning > 9 then
 		ungabungabunga()
 	end
 
@@ -832,7 +841,7 @@ end
 
 function check_GC_RANKS(renkk)
 	if GetAddersGCRank() < renkk and GetFlamesGCRank() < renkk and GetMaelstromGCRank() < renkk then
-		loggabunga("FUTA_",logfile_differentiator.." - GC ranks below Lt RK2 for main GC -> Adders - "..GetAddersGCRank().." - Maelstrom - "..GetMaelstromGCRank().." - Flames - "..GetFlamesGCRank().." - Charname -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+		loggabunga("FUTA_",logfile_differentiator.." - GC ranks below rank "..renkk.." main GC -> Adders - "..GetAddersGCRank().." - Maelstrom - "..GetMaelstromGCRank().." - Flames - "..GetFlamesGCRank().." - Charname -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 	end
 end
 
