@@ -132,6 +132,7 @@ function Final_GC_Cleaning()
 			yield("/pcall FreeCompany false 0 4u <wait.1>")
 			--yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
 			castattempt = 0
+			--credit to https://github.com/WigglyMuffin/SNDScripts/blob/main/vac_functions.lua  for finding the nodetext for this one :~D
 			for i = 1, 30 do
 				local node_text = GetNodeText("FreeCompanyAction", 5, i, 3)
 				yield("/echo i = "..i.." -> "..node_text)
