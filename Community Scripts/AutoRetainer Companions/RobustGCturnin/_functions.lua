@@ -621,7 +621,7 @@ function clean_inventory()
 	exit_cleaning_RL = 0
 	--forced_am = 0
 	--bungaboard = SetClipboard("123123123")
-	while GetCharacterCondition(50) == true and exit_cleaning_RS < 10 and exit_cleaning_RL do
+	while GetCharacterCondition(50) == true and exit_cleaning_RS < 10 and exit_cleaning_RL < 10 do
 		yield("/wait 2")
 --		exit_cleaning = exit_cleaning + 1
 		flandom = getRandomNumber(1,20)
