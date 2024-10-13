@@ -648,15 +648,15 @@ function clean_inventory()
 		end
 	end
 
+	yield("/automarket stop")
+	yield("/wait 1")
+
 	CharacterSafeWait()
 	zungazunga()
 
 	if exit_cleaning > 9 then
 		ungabungabunga()
 	end
-
-	yield("/automarket stop")
-	yield("/wait 1")
 end
 
 function getRandomNumber(min, max)
