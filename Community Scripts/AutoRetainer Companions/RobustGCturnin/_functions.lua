@@ -617,37 +617,28 @@ function clean_inventory()
 		exit_cleaning = exit_cleaning + 1
 		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
 	end
-	exit_cleaning = 0
+	exit_cleaning_RS = 0
+	exit_cleaning_RL = 0
 	--forced_am = 0
 	--bungaboard = SetClipboard("123123123")
-	while GetCharacterCondition(50) == true and exit_cleaning < 10 do
+	while GetCharacterCondition(50) == true and exit_cleaning_RS < 10 and exit_cleaning_RL do
 		yield("/wait 2")
 --		exit_cleaning = exit_cleaning + 1
 		flandom = getRandomNumber(1,20)
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
-		yield("/echo Waiting for repricer to end or if we are stuck on retainer list for 10 sec -> "..exit_cleaning.."/10")
-		--forced_am = forced_am + 1
+		yield("/echo Repricer Addon Fallback - RetainerSell -> "..exit_cleaning_RS.."/10 - RetainerList -> "..exit_cleaning_RL.."/10")
 		if IsAddonVisible("RetainerSell") then
-			exit_cleaning = exit_cleaning + 1
+			exit_cleaning_RS = exit_cleaning_RS + 1
+		end
+		if not IsAddonVisible("RetainerSell") then
+			exit_cleaning_RS = 0
 		end
 		if IsAddonVisible("RetainerList") then
-			exit_cleaning = exit_cleaning + 1
+			exit_cleaning_RL = exit_cleaning_RL + 1
 		end
-		if (not IsAddonVisible("RetainerList")) and (not IsAddonVisible("RetainerSell")) then
-			exit_cleaning = 0
+		if not IsAddonVisible("RetainerList") then
+			exit_cleaning_RL = 0
 		end
-		--[[
-		if forced_am > 100 then --every 100 cycles we will update clipboard if it hasnt changed then we have a problem!
-			yield("/echo Clipboard contains -> "..GetClipboard())
-			if bungaboard == GetClipboard() then
-				yield("/echo oops Automarket is stuck ! let's help it!")
-				ungabunga()
-				exit_cleaning = exit_cleaning + 25
-			end
-			bungaboard = GetClipboard()
-			forced_am = 0
-		end
-		---]]
 	end
 
 	CharacterSafeWait()
