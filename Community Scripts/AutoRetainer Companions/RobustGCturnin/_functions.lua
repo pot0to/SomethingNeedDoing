@@ -409,9 +409,12 @@ end
 
 
 function return_fc_entrance()
+	--saw a weirdness where vnav never finished.. no errors and error traps. need more analysis. wasn't life stream the char isnt registered in it
+	yield("/echo attempting to enter nearby entrance to house")
 	yield("/hold W <wait.1.0>")
 	yield("/release W")
 	yield("/target Entrance <wait.1>")
+	yield("/echo vnavving over")
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 	yield("/gaction jump")
 	yield("/target Entrance <wait.1>")
@@ -825,15 +828,13 @@ function FUTA_return()
 
 	--normal small house shenanigans
 	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 5 then
-		return_fc_entrance()
-		
+		return_fc_entrance()	
 	end
 
 	--retainer bell nearby shenanigans
 	if FUTA_processors[hoo_arr_weeeeee][1][2] == 1 or FUTA_processors[hoo_arr_weeeeee][1][2] == 6 then
 		return_fc_near_bell()
 	end	
-	
 end
 
 function loggabunga(filename, texty)
