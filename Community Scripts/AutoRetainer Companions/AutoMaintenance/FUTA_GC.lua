@@ -130,7 +130,17 @@ function Final_GC_Cleaning()
 			yield("/echo FC Seal Buff II")
 			yield("/freecompanycmd <wait.1>")
 			yield("/pcall FreeCompany false 0 4u <wait.1>")
-			yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
+			--yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
+			castattempt = 0
+			for i = 1, 30 do
+				local node_text = GetNodeText("FreeCompanyAction", 5, i, 3)
+				yield("/echo i = "..i.." -> "..node_text)
+				yield("/wait 0.3")
+				if type(node_text) == "string" and node_text == "Seal Sweetener II" and castattempt == 0 then --we hit it. time to cast it
+					castattempt = 1
+					yield("/pcall FreeCompanyAction false 1 "..i.."u <wait.1>")
+				end
+			end
 			yield("/pcall ContextMenu true 0 0 1u 0 0 <wait.1>")
 			yield("/pcall SelectYesno true 0 <wait.1>")
 			
