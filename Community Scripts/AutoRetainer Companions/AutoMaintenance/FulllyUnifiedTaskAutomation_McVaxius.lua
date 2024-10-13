@@ -64,10 +64,11 @@ logfile_differentiator = " - Account 1"  --example of extra text to throw into l
 force_equipstuff = 0 --should we try to force recommended equip every chance we get? by default we won't do it
 discard_type = 0 --0 = dont discard, 1 = discard, 2 = discard only if "CLEAN"[3] is > 0, or if its ==0 we desynth instead!, 3 = dont discard but desnyth if "CLEAN"[3] == 0 from special white list of items ill put here --* not implemented
 log_gcranks = 9 --log the gc ranks of each char if they are below this rank on all 3. that way we can catch the "lower" one from the main one they are in. set it to 0 to disable the check
+automarketfix = "autobot" -- try to xldisable profile automarket. however if you set this to "no" it wont do it.
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
-re_organize_return_locations = 0 -- only set this one time and run the script so it can clean up the return locations, 0 magitek fuel = limsa bell, +fuel = fc entrance
+re_organize_return_locations = 0 -- only set this one time and run the script so it can clean up the return locations, 0 magitek fuel = limsa bell, +fuel = fc entrance, also sets some defaults for fcs with newly acquired subs
 ------------------------------------------
 ------------------------------------------
 ------------------------------------------
@@ -93,6 +94,11 @@ yield("/bmrai off")
 yield("/vbmai off")
 yield("/rotation Cancel")
 --script breaker stuff end
+if automarketfix ~= "no" then
+	yield("/xldisableprofile "..automarketfix)
+	yield("/wait 2")
+	yield("/xlenableprofile "..automarketfix)
+end
 --------------------------
 yield("/echo Script breakers disabled")		
 FUTA_processors = {} -- Initialize variable
@@ -221,6 +227,16 @@ end
 if re_organize_return_locations == 1 then
 	if GetItemCount(10155) >  0 then
 		FUTA_processors[hoo_arr_weeeeee][1][2] = 0  --configure for return to fc house if we have repair kits
+	end
+	--insert hacky stuff to fix some data for later
+	--fuel settings
+	if GetItemCount(10373) == 0 and FUTA_processors[hoo_arr_weeeeee][4][2] > -1 then
+		FUTA_processors[hoo_arr_weeeeee][4][2] = 0
+		FUTA_processors[hoo_arr_weeeeee][4][3] = 0
+	end
+	if FUTA_processors[hoo_arr_weeeeee][4][2] > -1 and GetItemCount(10373) > 0 then
+		FUTA_processors[hoo_arr_weeeeee][4][2] = 666
+		FUTA_processors[hoo_arr_weeeeee][4][3] = 6666
 	end
 end
 

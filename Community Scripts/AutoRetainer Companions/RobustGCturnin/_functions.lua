@@ -630,7 +630,7 @@ function clean_inventory()
 		if IsAddonVisible("RetainerSell") then
 			exit_cleaning_RS = exit_cleaning_RS + 1
 		end
-		if not IsAddonVisible("RetainerSell") then
+		if not IsAddonVisible("RetainerSell") or IsAddonVisible("IemSearchResult") then
 			exit_cleaning_RS = 0
 		end
 		if IsAddonVisible("RetainerList") then
