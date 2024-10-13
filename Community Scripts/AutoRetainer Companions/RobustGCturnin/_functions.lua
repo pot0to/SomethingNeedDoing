@@ -627,10 +627,13 @@ function clean_inventory()
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
 		yield("/echo Waiting for repricer to end or if we are stuck on retainer list for 10 sec -> "..exit_cleaning.."/10")
 		--forced_am = forced_am + 1
+		if IsAddonVisible("RetainerSell") then
+			exit_cleaning = exit_cleaning + 1
+		end
 		if IsAddonVisible("RetainerList") then
 			exit_cleaning = exit_cleaning + 1
 		end
-		if not IsAddonVisible("RetainerList") then
+		if (not IsAddonVisible("RetainerList")) and (not IsAddonVisible("RetainerSell")) then
 			exit_cleaning = 0
 		end
 		--[[
