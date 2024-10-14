@@ -203,7 +203,6 @@ function Final_GC_Cleaning()
 	--deliveroo i choose you
 	yield("/deliveroo enable")
 	yield("/wait 3")
-	yield("/pcall SelectYesno true 0")
 	if GetCharacterCondition(35) == true then
 		yield("/echo oh boy we forgot to click the squadron stuff before")
 		yield("/wait 10") --we forgot to enable squadrons
