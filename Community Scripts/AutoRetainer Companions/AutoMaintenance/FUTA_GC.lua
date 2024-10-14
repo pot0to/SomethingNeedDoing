@@ -129,24 +129,29 @@ function Final_GC_Cleaning()
 			--fire off the buff if they exist
 			yield("/echo FC Seal Buff II")
 			yield("/freecompanycmd <wait.1>")
+			fcpoynts = GetNodeText("FreeCompany", 15)
+			clean_fcpoynts = fcpoynts:gsub(",", "")
+			numeric_fcpoynts = tonumber(clean_fcpoynts)
+
 			yield("/pcall FreeCompany false 0 4u <wait.1>")
 			--yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
 			castattempt = 0
 			--credit to https://github.com/WigglyMuffin/SNDScripts/blob/main/vac_functions.lua  for finding the nodetext for this one :~D
 			for i = 1, 30 do
 				local node_text = GetNodeText("FreeCompanyAction", 5, i, 3)
-				yield("/echo i = "..i.." -> "..node_text)
+				zz = i - 1
+				yield("/echo i = "..zz.." -> "..node_text)
 				yield("/wait 0.3")
 				if type(node_text) == "string" and node_text == "Seal Sweetener II" and castattempt == 0 then --we hit it. time to cast it
 					castattempt = 1
-					yield("/pcall FreeCompanyAction false 1 "..i.."u <wait.1>")
+					yield("/pcall FreeCompanyAction false 1 "..zz.."u <wait.1>")
 				end
 			end
 			yield("/pcall ContextMenu true 0 0 1u 0 0 <wait.1>")
 			yield("/pcall SelectYesno true 0 <wait.1>")
 			
-			--if seal buff fails to work then trigger buy seal buff from npc routine
-			if GetStatusTimeRemaining(414) == 0 then
+			--if seal buff fails to work then trigger buy seal buff from npc routine, but only do this if we can failsafe ourselves with 16k gil and 7k fc points
+			if GetStatusTimeRemaining(414) == 0 and numeric_fcpoynts > 7000 and GetItemCount(1) > 16000 then
 						--yesalready off
 						PauseYesAlready()
 						 --now we buy the buff
