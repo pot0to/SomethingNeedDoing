@@ -10,6 +10,9 @@ while wheahehhahehhaheohuahoeuhaosdflkj == 1 do
 	y1 = GetPlayerRawYPos()
 	z1 = GetPlayerRawZPos()
 	yield("/wait 20")
+	if GetCharacterCondition(34) == true then
+		yield("/vnav stop")
+	end
 	if (x1 - GetPlayerRawXPos()) == 0 and (y1 - GetPlayerRawYPos()) == 0 and (z1 - GetPlayerRawZPos()) == 0 then
 		yield("/echo We havent moved in 20 seconds. its time to slap the machine or jiggle it a bit")
 		yield("/pcall SelectYesno true 0")

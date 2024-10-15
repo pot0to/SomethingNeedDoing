@@ -368,6 +368,7 @@ yield("/echo Beginning fren rider main loop")
 
 xp_item_equip = 0 --counter
 re_engage = 0 --counter
+renav_check = 0
 
 while weirdvar == 1 do
 	--catch if character is ready before doing anything
@@ -376,6 +377,23 @@ while weirdvar == 1 do
 			bistance = distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(fren),GetObjectRawYPos(fren),GetObjectRawZPos(fren))
 			if bistance > maxbistance then --follow ourselves if fren too far away or it will do weird shit
 				clingmove(GetCharacterName())
+			end
+
+			--if we in combat and target is <3 yalms dont nav anywhere.
+			if GetCharacterCondition(26) == true and type(GetTargetName()) == "string" and string.len(GetTargetName()) > 1 then
+				if distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(GetTargetName()),GetObjectRawYPos(GetTargetName()),GetObjectRawZPos(GetTargetName())) < 3 then
+					yield("/nvav stop")
+				end
+			end
+
+			--renav condition while in a duty. if we stuck for more than 10 seconds in place. renav damnit
+			if GetCharacterCondition(4) == true and bistance > cling and GetCharacterCondition(34) == true then 
+				renav_check = renav_check + 1
+				if renav_check > 10 then
+					renav_check = 0
+					yield("/echo Gently checking nav")
+					double_check_navGO(GetObjectRawXPos(GetCharacterName()), GetObjectRawYPos(GetCharacterName()), GetObjectRawZPos(GetCharacterName()))
+				end
 			end
 
 			--dismount regardless of in duty or not

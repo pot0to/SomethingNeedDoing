@@ -321,23 +321,31 @@ function visland_stop_moving()
 	 yield("/wait 3")
  end
  muuv = 1
+ muuvstop = 0
  muuvX = GetPlayerRawXPos()
  muuvY = GetPlayerRawYPos()
  muuvZ = GetPlayerRawZPos()
  while muuv == 1 do
 	yield("/wait 1")
+	muuvstop = muuvstop + 1
 	if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
 		muuv = 0
 	end
 	muuvX = GetPlayerRawXPos()
 	muuvY = GetPlayerRawYPos()
 	muuvZ = GetPlayerRawZPos()
+	if muuvstop > 50 then
+		if math.abs(muuvX - GetPlayerRawXPos()) < 2 and math.abs(muuvY - GetPlayerRawYPos()) < 2 and math.abs(muuvZ - GetPlayerRawZPos()) < 2 then
+			muuv = 0 --we need an escape clause here otherwise some situations we will never achieve success sometimes we are stuck near the target but not quite there.
+		end
+	end
  end
+ yield("/wait 1")
  --yield("/echo movement stopped - time for GC turn ins or whatever")
  yield("/echo movement stopped safely - script proceeding to next bit")
  yield("/visland stop")
  yield("/vnavmesh stop")
- yield("/wait 3")
+ yield("/wait 1")
  --added becuase simpletweaks is slow to update :(
  if do_we_force_equip == 1 then
 	 yield("/character")
@@ -407,6 +415,17 @@ function double_check_nav(x3, y3, z3)
 	end
 end
 
+function double_check_navGO(x3, y3, z3)
+	x1 = GetPlayerRawXPos()
+	y1 = GetPlayerRawYPos()
+	z1 = GetPlayerRawZPos()
+	yield("/wait 2")
+	if (x1 - GetPlayerRawXPos()) == 0 and (y1 - GetPlayerRawYPos()) == 0 and (z1 - GetPlayerRawZPos()) == 0 then
+		--yield("/vnav rebuild")
+		yield("/vnav moveto " .. x3 .. " " .. y3 .. " " .. z3)
+	end
+end
+
 
 function return_fc_entrance()
 	--saw a weirdness where vnav never finished.. no errors and error traps. need more analysis. wasn't life stream the char isnt registered in it
@@ -418,9 +437,11 @@ function return_fc_entrance()
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 	yield("/gaction jump")
 	yield("/target Entrance <wait.1>")
+	yield("/echo vnavving over!")
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 	yield("/wait 1")
 	yield("/gaction jump")
+	yield("/echo double check")
 	double_check_nav(GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos())
 	visland_stop_moving()
 	yield("/interact")
