@@ -321,23 +321,31 @@ function visland_stop_moving()
 	 yield("/wait 3")
  end
  muuv = 1
+ muuvstop = 0
  muuvX = GetPlayerRawXPos()
  muuvY = GetPlayerRawYPos()
  muuvZ = GetPlayerRawZPos()
  while muuv == 1 do
 	yield("/wait 1")
+	muuvstop = muuvstop + 1
 	if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
 		muuv = 0
 	end
 	muuvX = GetPlayerRawXPos()
 	muuvY = GetPlayerRawYPos()
 	muuvZ = GetPlayerRawZPos()
+	if muuvstop > 50 then
+		if math.abs(muuvX - GetPlayerRawXPos()) < 2 and math.abs(muuvY - GetPlayerRawYPos()) < 2 and math.abs(muuvZ - GetPlayerRawZPos()) < 2 then
+			muuv = 0 --we need an escape clause here otherwise some situations we will never achieve success sometimes we are stuck near the target but not quite there.
+		end
+	end
  end
+ yield("/wait 1")
  --yield("/echo movement stopped - time for GC turn ins or whatever")
  yield("/echo movement stopped safely - script proceeding to next bit")
  yield("/visland stop")
  yield("/vnavmesh stop")
- yield("/wait 3")
+ yield("/wait 1")
  --added becuase simpletweaks is slow to update :(
  if do_we_force_equip == 1 then
 	 yield("/character")
@@ -407,17 +415,33 @@ function double_check_nav(x3, y3, z3)
 	end
 end
 
+function double_check_navGO(x3, y3, z3)
+	x1 = GetPlayerRawXPos()
+	y1 = GetPlayerRawYPos()
+	z1 = GetPlayerRawZPos()
+	yield("/wait 2")
+	if (x1 - GetPlayerRawXPos()) == 0 and (y1 - GetPlayerRawYPos()) == 0 and (z1 - GetPlayerRawZPos()) == 0 then
+		--yield("/vnav rebuild")
+		yield("/vnav moveto " .. x3 .. " " .. y3 .. " " .. z3)
+	end
+end
+
 
 function return_fc_entrance()
+	--saw a weirdness where vnav never finished.. no errors and error traps. need more analysis. wasn't life stream the char isnt registered in it
+	yield("/echo attempting to enter nearby entrance to house")
 	yield("/hold W <wait.1.0>")
 	yield("/release W")
 	yield("/target Entrance <wait.1>")
+	yield("/echo vnavving over")
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 	yield("/gaction jump")
 	yield("/target Entrance <wait.1>")
+	yield("/echo vnavving over!")
 	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 	yield("/wait 1")
 	yield("/gaction jump")
+	yield("/echo double check")
 	double_check_nav(GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos())
 	visland_stop_moving()
 	yield("/interact")
@@ -617,35 +641,39 @@ function clean_inventory()
 		exit_cleaning = exit_cleaning + 1
 		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
 	end
-	exit_cleaning = 0
+	exit_cleaning_RS = 0
+	exit_cleaning_RL = 0
+	exit_cleaning_ISR = 0
 	--forced_am = 0
 	--bungaboard = SetClipboard("123123123")
-	while GetCharacterCondition(50) == true and exit_cleaning < 10 do
+	while GetCharacterCondition(50) == true and exit_cleaning_RS < 10 and exit_cleaning_RL < 10 and exit_cleaning_ISR < 10 do
 		yield("/wait 2")
 --		exit_cleaning = exit_cleaning + 1
 		flandom = getRandomNumber(1,20)
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
-		yield("/echo Waiting for repricer to end or if we are stuck on retainer list for 10 sec -> "..exit_cleaning.."/10")
-		--forced_am = forced_am + 1
+		yield("/echo Repricer Addon Fallback - RetainerSell -> "..exit_cleaning_RS.."/10 - RetainerList -> "..exit_cleaning_RL.."/10 - ItemSearchResult -> "..exit_cleaning_ISR.."/10")
+		if IsAddonVisible("RetainerSell") then
+			exit_cleaning_RS = exit_cleaning_RS + 1
+		end
+		if not IsAddonVisible("RetainerSell") or IsAddonVisible("IemSearchResult") then
+			exit_cleaning_RS = 0
+		end
+		if IsAddonVisible("IemSearchResult") then
+			exit_cleaning_ISR = exit_cleaning_RL + 1
+		end
+		if not IsAddonVisible("IemSearchResult") then
+			exit_cleaning_ISR = 0
+		end
 		if IsAddonVisible("RetainerList") then
-			exit_cleaning = exit_cleaning + 1
+			exit_cleaning_RL = exit_cleaning_RL + 1
 		end
 		if not IsAddonVisible("RetainerList") then
-			exit_cleaning = 0
+			exit_cleaning_RL = 0
 		end
-		--[[
-		if forced_am > 100 then --every 100 cycles we will update clipboard if it hasnt changed then we have a problem!
-			yield("/echo Clipboard contains -> "..GetClipboard())
-			if bungaboard == GetClipboard() then
-				yield("/echo oops Automarket is stuck ! let's help it!")
-				ungabunga()
-				exit_cleaning = exit_cleaning + 25
-			end
-			bungaboard = GetClipboard()
-			forced_am = 0
-		end
-		---]]
 	end
+
+	yield("/automarket stop")
+	yield("/wait 1")
 
 	CharacterSafeWait()
 	zungazunga()
@@ -653,9 +681,6 @@ function clean_inventory()
 	if exit_cleaning > 9 then
 		ungabungabunga()
 	end
-
-	yield("/automarket stop")
-	yield("/wait 1")
 end
 
 function getRandomNumber(min, max)
@@ -824,15 +849,13 @@ function FUTA_return()
 
 	--normal small house shenanigans
 	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 5 then
-		return_fc_entrance()
-		
+		return_fc_entrance()	
 	end
 
 	--retainer bell nearby shenanigans
 	if FUTA_processors[hoo_arr_weeeeee][1][2] == 1 or FUTA_processors[hoo_arr_weeeeee][1][2] == 6 then
 		return_fc_near_bell()
 	end	
-	
 end
 
 function loggabunga(filename, texty)
