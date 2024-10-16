@@ -123,9 +123,10 @@ function Final_GC_Cleaning()
 	visland_stop_moving() --just in case we want to auto equip rq before dumping gear
 	if process_fc_buffs == 1 then
 		if GetStatusTimeRemaining(414) > 0 then
-		yield("/echo We ahve Seal Sweetener online!")
+			yield("/echo We have Seal Sweetener online already!")
 		end
-		while GetStatusTimeRemaining(414) == 0 do
+		purchase_attempts = 0
+		while GetStatusTimeRemaining(414) == 0 and numeric_fcpoynts > 7000 and GetItemCount(1) > 16000 do
 			--fire off the buff if they exist
 			yield("/echo FC Seal Buff II")
 			yield("/freecompanycmd <wait.1>")
@@ -137,12 +138,19 @@ function Final_GC_Cleaning()
 			--yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
 			castattempt = 0
 			--credit to https://github.com/WigglyMuffin/SNDScripts/blob/main/vac_functions.lua  for finding the nodetext for this one :~D
+			search_boof = "Seal Sweetener II"
+			buymax = 15
+			if purchase_attempts > 0 then
+				search_boof = "Seal Sweetener"
+				yield("/echo FC not ready for Seal Sweetener II")
+				buymax = 1 -- only buy one of the garbage buff
+			end
 			for i = 1, 30 do
 				local node_text = GetNodeText("FreeCompanyAction", 5, i, 3)
 				zz = i - 1
 				yield("/echo i = "..zz.." -> "..node_text)
 				yield("/wait 0.3")
-				if type(node_text) == "string" and node_text == "Seal Sweetener II" and castattempt == 0 then --we hit it. time to cast it
+				if type(node_text) == "string" and node_text == search_boof and castattempt == 0 then --we hit it. time to cast it
 					castattempt = 1
 					yield("/pcall FreeCompanyAction false 1 "..zz.."u <wait.1>")
 				end
@@ -151,7 +159,8 @@ function Final_GC_Cleaning()
 			yield("/pcall SelectYesno true 0 <wait.1>")
 			
 			--if seal buff fails to work then trigger buy seal buff from npc routine, but only do this if we can failsafe ourselves with 16k gil and 7k fc points
-			if GetStatusTimeRemaining(414) == 0 and numeric_fcpoynts > 7000 and GetItemCount(1) > 16000 then
+			if GetStatusTimeRemaining(414) == 0 then
+						purchase_attempts = purchase_attempts + 1
 						--yesalready off
 						PauseYesAlready()
 						 --now we buy the buff
@@ -180,8 +189,13 @@ function Final_GC_Cleaning()
 						yield("/pcall SelectString true 0 <wait.1>")
 
 						buycount = 0
-						while (buycount < 15) do
-							yield("/pcall FreeCompanyExchange false 2 22u")
+						while (buycount < buymax) do
+							if purchase_attempts == 0 then
+								yield("/pcall FreeCompanyExchange false 2 22u")
+							end
+							if purchase_attempts > 0 then
+								yield("/pcall FreeCompanyExchange false 2 5u")
+							end
 							yield("/wait 1")
 							yield("/pcall SelectYesno true 0")
 							yield("/wait 1")
