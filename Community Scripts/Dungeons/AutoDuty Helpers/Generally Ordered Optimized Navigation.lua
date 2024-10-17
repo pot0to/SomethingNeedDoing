@@ -52,7 +52,7 @@ z1 = GetPlayerRawZPos()
 
 stopcuckingme = 0    --counter for checking whento pop duty
 imthecaptainnow = 0  --set this to 1 if its the party leader
-
+maxjiggle = 6 -- = how much time before we jiggle
 while 1 == 1 do
 --safe check ifs
 if IsPlayerAvailable() then
@@ -184,12 +184,28 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--yield("/echo x diff"..math.abs(x1 - GetPlayerRawXPos()))
 	--check if we are stuck somewhere.
 	--first ensure we are in the duty and not in combat
+
+	if GetZoneID() == 1044 then --Praetorium
+		maxjiggle = 6
+		flurb = GetNodeText("_ToDoList", 27, 3)
+		yield("/echo Prae Duty Progress -> "..flurb)
+		if flurb == "Arrive on the Echelon: 0/1"  and GetCharacterCondition(26) == false then
+			maxjiggle = 20
+		end
+		if flurb == "Defeat Gaius van Baelsar: 0/1" and GetCharacterCondition(26) == false then
+			maxjiggle = 20
+	--		yield("/target Shortcut")
+	--		yield("/target Gauis")
+	--		yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+		end
+	end
+
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		if math.abs(x1 - GetPlayerRawXPos()) < 3 and math.abs(y1 - GetPlayerRawYPos()) < 3 and math.abs(z1 - GetPlayerRawZPos()) < 3 then
 			yield("/echo we havent moved very much something is up ")
 			jigglecounter = jigglecounter + 1
 		end
-		if jigglecounter > 6 then --we stuck for 30+ seconds somewhere
+		if jigglecounter > maxjiggle then --we stuck for 30+ seconds somewhere
 			yield("/echo attempting to restart AD and hope for the best")
 			jigglecounter = 0
 			yield("/ad stop")
@@ -203,17 +219,18 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		end
 	end
 
-    local mytarget = GetTargetName()
-    if type(mytarget) == "string" and mytarget ~= "Phantom Gaius" then
-        local ndist = GetDistanceToObject(null)
-        local gdist = GetDistanceToObject("Phantom Gaius")
-        local deltadist = ndist - gdist
-        if (deltadist > 1 or deltadist < -1) and gdist < 100 then
-            yield("/echo target")
-            TargetClosestEnemy()
-        end
-    end
-
+	if GetZoneID() == 1044 then --Praetorium
+		local mytarget = GetTargetName()
+		if type(mytarget) == "string" and mytarget ~= "Phantom Gaius" then
+			local ndist = GetDistanceToObject(null)
+			local gdist = GetDistanceToObject("Phantom Gaius")
+			local deltadist = ndist - gdist
+			if (deltadist > 1 or deltadist < -1) and gdist < 100 then
+				yield("/echo target")
+				TargetClosestEnemy()
+			end
+		end
+	end
 	--if GetCharacterCondition(34) == false then --fix autoqueue just shitting out
 		--yield("/send U")
 	--end
