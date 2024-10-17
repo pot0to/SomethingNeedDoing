@@ -38,6 +38,10 @@ duty specific stuff like only do the phantom targetioong for gaeuis in prae
 known issues:
 I SAW AN UNKNOWN LUA ERROR so i might add debug lines everywhere until i catch it.
 
+recommended party:
+war dps dps sch
+for sch in RSR turn off adloquim, succor and physick
+
 --]]
 yield("/echo please get ready for G O O N ing time")
 
@@ -168,6 +172,15 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			end
 		end
 	end
+	--end safe check one
+	end
+	end
+	--
+	--safe check ifs part 2
+	if IsPlayerAvailable() then
+	if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
+	--
+
 	--yield("/echo x diff"..math.abs(x1 - GetPlayerRawXPos()))
 	--check if we are stuck somewhere.
 	--first ensure we are in the duty and not in combat

@@ -132,15 +132,16 @@ function Final_GC_Cleaning()
 		numeric_fcpoynts = tonumber(clean_fcpoynts)
 		buymax = 15
 		search_boof = "Seal Sweetener II"
+		yield("/freecompanycmd <wait.1>")
 		while GetStatusTimeRemaining(414) == 0 and numeric_fcpoynts > 7000 and GetItemCount(1) > 16000 do
 			--fire off the buff if they exist
 			yield("/echo FC Seal Buff II")
-			yield("/pcall FreeCompany false 0 4u <wait.1>")
 			--yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
 			castattempt = 0
 			--credit to https://github.com/WigglyMuffin/SNDScripts/blob/main/vac_functions.lua  for finding the nodetext for this one :~D
 			yield("/freecompanycmd <wait.1>")
-			if purchase_attempts > 0 then
+			yield("/pcall FreeCompany false 0 4u <wait.1>")
+			if purchase_attempts > 1 then
 				search_boof = "Seal Sweetener"
 				yield("/echo FC not ready for Seal Sweetener II")
 				buymax = 1 -- only buy one of the garbage buff
@@ -190,10 +191,10 @@ function Final_GC_Cleaning()
 
 						buycount = 0
 						while (buycount < buymax) do
-							if purchase_attempts == 0 then
+							if purchase_attempts < 2 then
 								yield("/pcall FreeCompanyExchange false 2 22u")
 							end
-							if purchase_attempts > 0 then
+							if purchase_attempts > 1 then
 								yield("/pcall FreeCompanyExchange false 2 5u")
 							end
 							yield("/wait 1")
