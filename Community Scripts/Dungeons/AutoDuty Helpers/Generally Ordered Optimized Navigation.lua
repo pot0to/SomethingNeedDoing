@@ -185,19 +185,33 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--check if we are stuck somewhere.
 	--first ensure we are in the duty and not in combat
 
-	if GetZoneID() == 1044 then --Praetorium
+	if GetZoneID() == 1044 and GetCharacterCondition(26) == false then --Praetorium
 		maxjiggle = 6
-		flurb = GetNodeText("_ToDoList", 27, 3)
-		yield("/echo Prae Duty Progress -> "..flurb)
-		if flurb == "Arrive on the Echelon: 0/1"  and GetCharacterCondition(26) == false then
-			maxjiggle = 20
+		flurb = "????"
+		if GetNodeText("_ToDoList", 22, 3) == "Arrive at the command chamber: 0/1"  and GetCharacterCondition(26) == false then
+		flurb = GetNodeText("_ToDoList", 22, 3)
 		end
-		if flurb == "Defeat Gaius van Baelsar: 0/1" and GetCharacterCondition(26) == false then
+		if GetNodeText("_ToDoList", 23, 3) == "Clear the command chamber: 0/1"  and GetCharacterCondition(26) == false then
+		flurb = GetNodeText("_ToDoList", 23, 3)
+		end
+		if GetNodeText("_ToDoList", 24, 3) == "Arrive at the Laboratorium Primum: 0/1"  and GetCharacterCondition(26) == false then
+		flurb = GetNodeText("_ToDoList", 24, 3)
+		end
+		if GetNodeText("_ToDoList", 25, 3) == "Clear the Laboratorium Primum: 0/1"  and GetCharacterCondition(26) == false then
+		flurb = GetNodeText("_ToDoList", 25, 3)
+		end
+		if GetNodeText("_ToDoList", 26, 3) == "Arrive on the Echelon: 0/1"  and GetCharacterCondition(26) == false then
 			maxjiggle = 20
+			flurb = GetNodeText("_ToDoList", 26, 3)
+		end
+		if GetNodeText("_ToDoList", 27, 3) == "Defeat Gaius van Baelsar: 0/1" and GetCharacterCondition(26) == false then
+			maxjiggle = 20
+			flurb = GetNodeText("_ToDoList", 27, 3)
 	--		yield("/target Shortcut")
 	--		yield("/target Gauis")
 	--		yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 		end
+		yield("/echo Prae Duty Progress -> "..flurb)
 	end
 
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
