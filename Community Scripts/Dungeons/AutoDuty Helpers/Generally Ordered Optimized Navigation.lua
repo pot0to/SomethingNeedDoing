@@ -10,20 +10,15 @@ Automaton
 Simpletweaks -> targeting fix
 SND -> disable snd targeting
 SND -> disable addon errors
-Cross World Party made via PF
-Enhanged Duty start
-	duty start -> /ad start
+
+Enhanced Duty start/end
+	duty start -> /pcraft run start_gooning
 	duty end -> /ad stop
 	leave duty -> 10 seconds
-Use tank for tank path, and others for others.
-
-if ad start isnt working
-use the start_gooning.lua as autoduty start
-/pcraft run start_gooning
-
+Use whatever path you want. but i reccommend the included path file for tank and others. Credit to @Akasha and @Ritsuko for the path files.  tank tries to w2w, tank2 does not.
 
 todo:
-duty specific stuff like onyl do the phantom targetioong for gaeuis in prae
+duty specific stuff like only do the phantom targetioong for gaeuis in prae
 
 known issues:
 I SAW AN UNKNOWN LUA ERROR so i might add debug lines everywhere until i catch it.
