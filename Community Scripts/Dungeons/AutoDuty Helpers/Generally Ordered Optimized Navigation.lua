@@ -18,6 +18,14 @@ Simpletweaks -> targeting fix
 SND -> disable snd targeting
 SND -> disable addon errors
 
+Yesalready configs
+	"YesNo"
+		Return to the starting point for the Praetorium?   ※You may be unable to re-enter ongoing battles.
+		/Repair all displayed items for.*/
+		/Exit.*/
+	"Lists"
+		/Retire to an inn room.*/
+
 Enhanced Duty start/end
 	duty start -> /pcraft run start_gooning
 	duty end -> /ad stop
@@ -90,16 +98,6 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			--[[
 			repair at 50%
 			make sure we have more than 5k gil
-
-			turn off SND targeting in SND options
-			turn on targeting fix in simpletweaks
-
-			Yesalready configs
-			"YesNo"
-				/Repair all displayed items for.*/
-				/Exit.*/
-			"Lists"
-				/Retire to an inn room.*/
 			]]
 			--turn off yesalready or we getting ROPED
 			PauseYesAlready()
