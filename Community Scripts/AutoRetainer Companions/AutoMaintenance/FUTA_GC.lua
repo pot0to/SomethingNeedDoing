@@ -136,11 +136,11 @@ function Final_GC_Cleaning()
 		while GetStatusTimeRemaining(414) == 0 and numeric_fcpoynts > 7000 and GetItemCount(1) > 16000 do
 			--fire off the buff if they exist
 			yield("/echo FC Seal Buff II")
-			yield("/pcall FreeCompany false 0 4u <wait.1>")
 			--yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
 			castattempt = 0
 			--credit to https://github.com/WigglyMuffin/SNDScripts/blob/main/vac_functions.lua  for finding the nodetext for this one :~D
 			yield("/freecompanycmd <wait.1>")
+			yield("/pcall FreeCompany false 0 4u <wait.1>")
 			if purchase_attempts > 1 then
 				search_boof = "Seal Sweetener"
 				yield("/echo FC not ready for Seal Sweetener II")
