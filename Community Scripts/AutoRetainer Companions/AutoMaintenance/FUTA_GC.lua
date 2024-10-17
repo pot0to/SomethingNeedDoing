@@ -145,8 +145,6 @@ function Final_GC_Cleaning()
 				yield("/echo FC not ready for Seal Sweetener II")
 				buymax = 1 -- only buy one of the garbage buff
 			end
-			yield("/freecompanycmd <wait.1>")
-			yield("/pcall FreeCompany false 0 4u <wait.1>")
 			for i = 1, 30 do
 				local node_text = GetNodeText("FreeCompanyAction", 5, i, 3)
 				zz = i - 1
@@ -159,7 +157,6 @@ function Final_GC_Cleaning()
 			end
 			yield("/pcall ContextMenu true 0 0 1u 0 0 <wait.1>")
 			yield("/pcall SelectYesno true 0 <wait.1>")
-			yield("/freecompanycmd <wait.1>")
 			
 			--if seal buff fails to work then trigger buy seal buff from npc routine, but only do this if we can failsafe ourselves with 16k gil and 7k fc points
 			if GetStatusTimeRemaining(414) == 0 then
