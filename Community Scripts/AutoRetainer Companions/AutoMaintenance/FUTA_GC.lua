@@ -132,6 +132,7 @@ function Final_GC_Cleaning()
 		numeric_fcpoynts = tonumber(clean_fcpoynts)
 		buymax = 15
 		search_boof = "Seal Sweetener II"
+		yield("/freecompanycmd <wait.1>")
 		while GetStatusTimeRemaining(414) == 0 and numeric_fcpoynts > 7000 and GetItemCount(1) > 16000 do
 			--fire off the buff if they exist
 			yield("/echo FC Seal Buff II")
