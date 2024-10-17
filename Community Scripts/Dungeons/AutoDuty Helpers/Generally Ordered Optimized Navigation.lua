@@ -7,6 +7,13 @@ purpose: help autoduty with farming duties.
 
 Plugins/configs (ill update as people realize i forgot instructions)
 Automaton
+Some form of bossmod
+Rotation Solver Reborn
+Vnavmesh
+Pandora
+Something Need doing (SND)
+Simpletweaks
+and more (?)
 Simpletweaks -> targeting fix
 SND -> disable snd targeting
 SND -> disable addon errors
