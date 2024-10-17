@@ -3,6 +3,8 @@ Generally Ordered Optimized Navigation.lua  (thanks for the idea fifi)
 or "Something need Gooning"
 thanks to @Akasha and @Ritsuko for some of the ideas/code
 
+purpose: help autoduty with farming duties.
+
 Plugins/configs (ill update as people realize i forgot instructions)
 Automaton
 Simpletweaks -> targeting fix
@@ -20,8 +22,10 @@ use the start_gooning.lua as autoduty start
 /pcraft run start_gooning
 
 
-known issues:
+todo:
+duty specific stuff like onyl do the phantom targetioong for gaeuis in prae
 
+known issues:
 I SAW AN UNKNOWN LUA ERROR so i might add debug lines everywhere until i catch it.
 
 --]]
