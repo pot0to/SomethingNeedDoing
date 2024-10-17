@@ -18,7 +18,7 @@ Simpletweaks -> targeting fix
 SND -> disable snd targeting
 SND -> disable addon errors
 
-Yesalready configs (maybe only the first one is needed since the rest are done via pcalls w ya off)
+Yesalready configs (maybe only the first one is needed since the rest are done via pcalls w ya off) also make sure yesalready is on :p ad turns it off sometimes (???)
 	"YesNo"
 		Return to the starting point for the Praetorium?   ※You may be unable to re-enter ongoing battles.
 		/Repair all displayed items for.*/
