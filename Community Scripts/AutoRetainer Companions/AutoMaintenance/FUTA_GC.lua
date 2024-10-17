@@ -130,6 +130,8 @@ function Final_GC_Cleaning()
 		fcpoynts = GetNodeText("FreeCompany", 15)
 		clean_fcpoynts = fcpoynts:gsub(",", "")
 		numeric_fcpoynts = tonumber(clean_fcpoynts)
+		buymax = 15
+		search_boof = "Seal Sweetener II"
 		while GetStatusTimeRemaining(414) == 0 and numeric_fcpoynts > 7000 and GetItemCount(1) > 16000 do
 			--fire off the buff if they exist
 			yield("/echo FC Seal Buff II")
@@ -137,8 +139,6 @@ function Final_GC_Cleaning()
 			--yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
 			castattempt = 0
 			--credit to https://github.com/WigglyMuffin/SNDScripts/blob/main/vac_functions.lua  for finding the nodetext for this one :~D
-			search_boof = "Seal Sweetener II"
-			buymax = 15
 			yield("/freecompanycmd <wait.1>")
 			if purchase_attempts > 0 then
 				search_boof = "Seal Sweetener"
