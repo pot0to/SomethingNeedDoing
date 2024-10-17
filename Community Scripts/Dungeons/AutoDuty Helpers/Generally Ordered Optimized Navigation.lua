@@ -184,7 +184,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--yield("/echo x diff"..math.abs(x1 - GetPlayerRawXPos()))
 	--check if we are stuck somewhere.
 	--first ensure we are in the duty and not in combat
-
+--[[
 	if GetZoneID() == 1044 and GetCharacterCondition(26) == false then --Praetorium
 		maxjiggle = 6
 		flurb = "????"
@@ -212,7 +212,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--		yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 		end
 		yield("/echo Prae Duty Progress -> "..flurb)
-	end
+	end--]]
 
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		if math.abs(x1 - GetPlayerRawXPos()) < 3 and math.abs(y1 - GetPlayerRawYPos()) < 3 and math.abs(z1 - GetPlayerRawZPos()) < 3 then
