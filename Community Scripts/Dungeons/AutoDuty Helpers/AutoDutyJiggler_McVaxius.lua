@@ -3,6 +3,8 @@
 --instructions:
 --none. it works on my machine (tm)
 
+--if you actually reading this. please note this file is obselete just here mostly as a code example. this is not useful for anything. please look at GOON and START_GOON thats all you need.
+
 wheahehhahehhaheohuahoeuhaosdflkj = 1
 
 while wheahehhahehhaheohuahoeuhaosdflkj == 1 do
