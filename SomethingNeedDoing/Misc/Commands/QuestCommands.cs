@@ -45,17 +45,23 @@ internal class QuestCommands
     private readonly List<SeString> questNames = Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.Select(x => x.Name).ToList();
     public uint? GetQuestIDByName(string name)
     {
+        Svc.Log.Info("GetQuestIDByName");
         var matchingRows = questNames.Select((n, i) => (n, i)).Where(t => !string.IsNullOrEmpty(t.n) && IsMatch(name, t.n)).ToList();
         if (matchingRows.Count > 1)
         {
+            Svc.Log.Info("Matching rows > 1");
             matchingRows = [.. matchingRows.OrderByDescending(t => MatchingScore(t.n, name))];
+        }
+        else
+        {
+            Svc.Log.Info("Matching rows none");
         }
         return matchingRows.Count > 0 ? Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.GetRow((uint)matchingRows.First().i)!.RowId : null;
     }
 
     public unsafe MonsterNoteRankInfo GetMonsterNoteRankInfo(int index) => MonsterNoteManager.Instance()->RankData[index];
 
-    private static bool IsMatch(string x, string y) => Regex.IsMatch(x, $@"\b{Regex.Escape(y)}\b");
+    private static bool IsMatch(string x, string y) => Regex.IsMatch(x, $@"{Regex.Escape(y)}\b");
     private static object MatchingScore(string item, string line)
     {
         var score = 0;
