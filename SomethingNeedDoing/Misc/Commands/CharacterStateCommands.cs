@@ -71,9 +71,9 @@ public class CharacterStateCommands
 
     public bool IsPlayerCasting() => Svc.ClientState.LocalPlayer!.IsCasting;
 
-    public unsafe bool IsMoving() => AgentMap.Instance()->IsPlayerMoving == 1;
-
     public unsafe bool IsLevelSynced() => UIState.Instance()->PlayerState.IsLevelSynced == 1;
+
+    public unsafe bool IsMoving() => AgentMap.Instance()->IsPlayerMoving == 1;
 
     public bool IsPlayerOccupied() => GenericHelpers.IsOccupied();
 
@@ -184,16 +184,7 @@ public class CharacterStateCommands
     public unsafe string GetWeeklyBingoOrderDataText(uint wonderousTailsKey) => Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey)?.Text.Value?.Description ?? string.Empty;
 
     public bool IsAetheryteUnlocked(uint id) => Svc.AetheryteList.Any(x => x.AetheryteId == id);
-    public List<uint> GetAetheryteList() => Svc.AetheryteList.Select(x => x.AetheryteId).ToList();
-    public List<uint> GetAetherytesInZone(uint zoneID) => Svc.AetheryteList.Where(x => x.TerritoryId == zoneID).Select(x => x.AetheryteId).ToList();
-    public string GetAetheryteName(uint aetheryteID) => Svc.AetheryteList.FirstOrDefault(x => x.AetheryteId == aetheryteID)?.AetheryteData.GameData?.PlaceName.Value?.Name ?? string.Empty;
 
-    private static float ConvertMapMarkerToRawPosition(int pos, float scale = 100f)
-    {
-        var num = scale / 100f;
-        var rawPosition = ((float)(pos - 1024.0) / num);
-        return rawPosition;
-    }
     public unsafe bool IsFriendOnline(byte* name, ushort worldId) => InfoProxyFriendList.Instance()->GetEntryByName(name, worldId)->State != InfoProxyCommonList.CharacterData.OnlineStatus.Offline;
 
     public unsafe float GetJobExp(uint classjob) => PlayerState.Instance()->ClassJobExperience[GenericHelpers.GetRow<ClassJob>(classjob)?.ExpArrayIndex ?? 0];
