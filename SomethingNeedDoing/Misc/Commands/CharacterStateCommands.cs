@@ -9,8 +9,7 @@ using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Security.Policy;
-using ECommons;
+
 namespace SomethingNeedDoing.Misc.Commands;
 
 public class CharacterStateCommands
@@ -72,9 +71,9 @@ public class CharacterStateCommands
 
     public bool IsPlayerCasting() => Svc.ClientState.LocalPlayer!.IsCasting;
 
-    public unsafe bool IsLevelSynced() => UIState.Instance()->PlayerState.IsLevelSynced == 1;
-
     public unsafe bool IsMoving() => AgentMap.Instance()->IsPlayerMoving == 1;
+
+    public unsafe bool IsLevelSynced() => UIState.Instance()->PlayerState.IsLevelSynced == 1;
 
     public bool IsPlayerOccupied() => GenericHelpers.IsOccupied();
 
