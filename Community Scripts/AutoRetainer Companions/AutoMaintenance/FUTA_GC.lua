@@ -14,11 +14,11 @@ clean_inventory	 = 0    --0=no, >0 check inventory slots free and try to clean o
 --Behaviour Configs --
 ----------------------
 gachi_jumpy   = 0 	--0=no jump, 1=yes jump.  jump or not. sometimes navmesh goes through the shortcut in uldah and sometimes gets stuck getting to bells in housing districts
-auto_eqweep   = 0	--0=no, 1=yes + job change.  Basically this will check to see if your on a DOH or DOL, if you are then it will scan your DOW/DOM and switch you to the highest level one you have, auto equip and save gearset. niche feature i like for myself . off by default
+auto_eqweep   = 1	--0=no, 1=yes + job change.  Basically this will check to see if your on a DOH or DOL, if you are then it will scan your DOW/DOM and switch you to the highest level one you have, auto equip and save gearset. niche feature i like for myself . off by default
 config_sell   = 0	--0=dont do anything,1=change char setting to not give dialog for non tradeables etc selling to npc, 2=reset setting back to yes check for non tradeables etc selling to npc. usecase for 1 and 2 are one time things for a cleaning run so that they can subsequently handle selling or not selling. this feature will be stripped out once limiana updaptes AR
 nnl			  = 1   --leave the novicenetwork
 movementtype  = 0   --0 = vnavmesh, 1 = visland. many things wont work with visland mode. its there as emergency for cleaning only.
-open_coffers  = 0	--0=no,1=yes. do we try to open coffers before doing a turnin round. (will iterate through the list of items).
+open_coffers  = 1	--0=no,1=yes. do we try to open coffers before doing a turnin round. (will iterate through the list of items).
 ----------------------
 --Refueling Configs --
 ----------------------
@@ -28,6 +28,7 @@ restock_amt   = 6666 --n>0 minimum amount of total fuel to reach, when restockin
 --Process Configs --
 --------------------
 process_players  = 1	--0=no,1=yes+cleaning. do we run the actual GC turnins? turning this on will run the chars from chars_fn to go do seal turnins and process whatever deliveroo rules you setup, 2=cleaning only
+process_fc_buffs = 1	--0=no,1=yes try to get seal buff 2 (Seal Sweetener II) and keep it stocked to 15 if possible and also try to cast it before a deliveroo turnon.
 --------------------
 ----Coffer Table----
 --------------------
@@ -120,10 +121,118 @@ function Final_GC_Cleaning()
 	--the purpose of this section is to get your char to face the npcs and orient the camera properly. otherwise the rest of the script might die
 
 	visland_stop_moving() --just in case we want to auto equip rq before dumping gear
+	if process_fc_buffs == 1 then
+		if GetStatusTimeRemaining(414) > 0 then
+			yield("/echo We have Seal Sweetener online already!")
+		end
+		purchase_attempts = 0
+		yield("/freecompanycmd <wait.1>")
+		fcpoynts = GetNodeText("FreeCompany", 15)
+		clean_fcpoynts = fcpoynts:gsub(",", "")
+		numeric_fcpoynts = tonumber(clean_fcpoynts)
+		buymax = 15
+		search_boof = "Seal Sweetener II"
+		yield("/freecompanycmd <wait.1>")
+		while GetStatusTimeRemaining(414) == 0 and numeric_fcpoynts > 7000 and GetItemCount(1) > 16000 do
+			--fire off the buff if they exist
+			yield("/echo FC Seal Buff II")
+			--yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
+			castattempt = 0
+			--credit to https://github.com/WigglyMuffin/SNDScripts/blob/main/vac_functions.lua  for finding the nodetext for this one :~D
+			yield("/freecompanycmd <wait.1>")
+			yield("/pcall FreeCompany false 0 4u <wait.1>")
+			if purchase_attempts > 1 then
+				search_boof = "Seal Sweetener"
+				yield("/echo FC not ready for Seal Sweetener II")
+				buymax = 1 -- only buy one of the garbage buff
+			end
+			for i = 1, 30 do
+				local node_text = GetNodeText("FreeCompanyAction", 5, i, 3)
+				zz = i - 1
+				yield("/echo i = "..zz.." -> "..node_text)
+				yield("/wait 0.3")
+				if type(node_text) == "string" and node_text == search_boof and castattempt == 0 then --we hit it. time to cast it
+					castattempt = 1
+					yield("/pcall FreeCompanyAction false 1 "..zz.."u <wait.1>")
+				end
+			end
+			yield("/pcall ContextMenu true 0 0 1u 0 0 <wait.1>")
+			yield("/pcall SelectYesno true 0 <wait.1>")
+			
+			--if seal buff fails to work then trigger buy seal buff from npc routine, but only do this if we can failsafe ourselves with 16k gil and 7k fc points
+			if GetStatusTimeRemaining(414) == 0 then
+						purchase_attempts = purchase_attempts + 1
+						--yesalready off
+						PauseYesAlready()
+						 --now we buy the buff
+						yield("/target \"OIC Administrator\"")
+						yield("/wait 0.5")
+						yield("/lockon")
+						yield("/wait 0.5")
+						yield("/automove")
+						yield("/wait 2")
+						yield("/interact")
+						yield("/wait 2")
+						yield("/pcall SelectString true 1 <wait.1>")
+						yield("/wait 2")
+						yield("/pcall SelectYesno true 0")
+						zungazunga()
+						yield("/wait 2")
+						yield("/target \"OIC Quartermaster\"")
+						yield("/wait 0.5")
+						yield("/lockon")
+						yield("/wait 0.5")
+						yield("/automove")
+						yield("/wait 2")
+						yield("/interact")
+						yield("/wait 2")
+						yield("/pcall SelectString true 0 <wait.1>")
+						yield("/pcall SelectString true 0 <wait.1>")
+
+						buycount = 0
+						while (buycount < buymax) do
+							if purchase_attempts < 2 then
+								yield("/pcall FreeCompanyExchange false 2 22u")
+							end
+							if purchase_attempts > 1 then
+								yield("/pcall FreeCompanyExchange false 2 5u")
+							end
+							yield("/wait 1")
+							yield("/pcall SelectYesno true 0")
+							yield("/wait 1")
+							buycount = buycount + 1
+						end
+						ungabunga()	--quick escape in case we got stuck in menu
+			end
+		end
+		yield("/target \"Personnel Officer\"")
+		yield("/wait 0.5")
+		yield("/lockon")
+		yield("/wait 0.5")
+		yield("/automove")
+		yield("/wait 2")
+		RestoreYesAlready()
+		ClearTarget()
+	end
+
 	--deliveroo i choose you
 	yield("/deliveroo enable")
-	yield("/wait 1")
+	yield("/wait 3")
+	if GetCharacterCondition(35) == true then
+		yield("/echo oh boy we forgot to click the squadron stuff before")
+		yield("/wait 10") --we forgot to enable squadrons
+		yield("/wait 1")
+		yield("/pcall SelectYesno true 0")
 
+		yield("/wait 1")
+		yield("/pcall SelectYesno true 0")
+
+		yield("/wait 1")
+		yield("/pcall SelectYesno true 0")
+		yield("/wait 25")
+		yield("/deliveroo enable")
+	end
+	
 	--loop until deliveroo done if we aren't using the hack.
 	if FUTA_processors[hoo_arr_weeeeee][3][4] == 0 then
 		dellyroo = true
@@ -145,6 +254,12 @@ function Final_GC_Cleaning()
 			end
 		end
 	end
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
 
 	--added 5 second wait here because sometimes they get stuck.
 	yield("/wait 5")

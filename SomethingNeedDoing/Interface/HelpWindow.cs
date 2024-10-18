@@ -632,7 +632,7 @@ https://github.com/goatcorp/Dalamud/tree/master/Dalamud/Plugin/Services".Trim();
         {
             ImGui.TextUnformatted($"{commandName}");
             using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
-            ImGui.TextWrapped(string.Join("\n", commandInstance.ListAllFunctions()));
+            ECommons.ImGuiMethods.ImGuiEx.TextWrapped(string.Join("\n", commandInstance.ListAllFunctions()));
             ImGui.Separator();
         }
     }

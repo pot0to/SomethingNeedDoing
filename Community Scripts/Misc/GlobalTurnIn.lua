@@ -7,24 +7,27 @@
     Author: UcanPatates  
 
     **********************
-    * Version  |  1.1.3  *
+    * Version  |  1.1.6  *
     **********************
 
+    -> 1.1.6  : Added an option to teleport to the FC house for vendor selling.
+    -> 1.1.5  : Added automatic Retainer sell (if your sell list was configured beforehand).
+    -> 1.1.4  : Fixed unnecessary halving with the turn-in NPC.
     -> 1.1.3  : Added a check for the Automaton Plugin.
-    -> 1.1.2  : Automaton Update for merging the stacks.
-    -> 1.1.1  : Fixed a crash with the gc town teleportation.
-    -> 1.1.0  : Configuration for the empty inv slots.
-    -> 1.0.9  : Added the option to buy to the armory first to fill it up.
-    -> 1.0.8  : Fixed a issue with deltascape shops not opening up correctly.
-    -> 1.0.7  : Added Option to use tickets.
-    -> 1.0.6  : Fix for faster buy with 2 different exchange items.
+    -> 1.1.2  : Updated Automaton for merging stacks.
+    -> 1.1.1  : Fixed a crash with GC town teleportation.
+    -> 1.1.0  : Added configuration for empty inventory slots.
+    -> 1.0.9  : Added the option to buy for the armory first to fill it up.
+    -> 1.0.8  : Fixed an issue with Deltascape shops not opening correctly.
+    -> 1.0.7  : Added the option to use tickets.
+    -> 1.0.6  : Fix for faster buying with two different exchange items.
     -> 1.0.5  : Added Alexandrian Exchange.
-    -> 1.0.4  : Added Omega exchange.
-    -> 1.0.3  : Added the ability to continue trying to buy items if it can't do so in one big stack
-    -> 1.0.2  : Ugh i don't miss the version number thingy at all fixed the moveto function and fixed the SelectString without repeat.
-    -> 1.0.1  : Added some code cleanup overall, you did a great job though! -> Ice
-    -> 1.0.0  : Looks like it is working :D
-    -> 0.0.1  : Testing.
+    -> 1.0.4  : Added Omega Exchange.
+    -> 1.0.3  : Added the ability to continue trying to buy items if it can't do so in one large stack.
+    -> 1.0.2  : Fixed the MoveTo function and corrected SelectString without repeat (also fixed the version number issue).
+    -> 1.0.1  : Cleaned up the code overall. Great job! -> Ice
+    -> 1.0.0  : Looks like it's working! :D
+    -> 0.0.1  : Initial testing.
 
 
     ***************
@@ -55,7 +58,7 @@ UseTicket = false
 -- do you want to use tickets to teleport.
 
 
-MaxItem = true 
+MaxItem = false 
 -- do you want your maximize the inventory you have and buy one of a single item? 
 -- true = buy one single item to fill up the inventory
 -- false = buy 1 of each item (Technically safer, but if you're already farming A4N... >.>
@@ -66,6 +69,7 @@ MaxArmoryFreeSlot = 2
 -- how many empty slots you want.
 
 VendorTurnIn = false
+TeleportToFC = false
 -- If you DON'T want FC points, and wanna stay off the marketboard
 -- use this to sell to your retainer, you'll lose some gil profit in the end, but you'll also stay more off the radar..
 
@@ -739,6 +743,37 @@ function GetOUT()
     until IsPlayerAvailable()
 end
 
+function FcAndSell()
+    local WhereToComeBack = GetZoneID()
+    yield("/li fc")
+    while WhereToComeBack == GetZoneID() do
+        yield("/wait 2")
+    end
+    PlayerTest()
+    local YardId = GetZoneID()
+    while YardId == GetZoneID() do
+        if GetCharacterCondition(45) then
+            yield("/wait 1")
+        else
+            if GetTargetName() ~= "Entrance" then
+                yield("/target Entrance")
+            elseif IsAddonVisible("SelectYesno") then
+                yield("/pcall SelectYesno true 0")
+            elseif GetDistanceToTarget() > 4  then
+                local X = GetTargetRawXPos()
+                local Y = GetTargetRawYPos()
+                local Z = GetTargetRawZPos()
+                WalkTo(X,Y,Z,4)
+            else
+                yield("/interact")
+            end
+        end
+        yield("/wait 0.5")
+    end
+    PlayerTest()
+    SummoningBellSell()
+end
+
 function WhichArmoryItem(ItemToBuy)
     local ArmoryId = ItemIdArmoryTable[ItemToBuy]
     return ArmoryId
@@ -787,7 +822,7 @@ function TurnIn(TableName,MaxArmoryValue)
     local function Exchange(ItemID, List, Amount)
         local ItemCount = GetItemCount(ItemID)
         local ExpectedItemCount
-
+        local brakepoint = 0
         if MaxArmory then
             ExpectedItemCount = ItemCount + Amount
         else
@@ -809,14 +844,13 @@ function TurnIn(TableName,MaxArmoryValue)
                 yield("/wait 0.3")
             elseif IsAddonVisible("ShopExchangeItemDialog") then
                 yield("/pcall ShopExchangeItemDialog true 0")
-            elseif ItemCount >= ExpectedItemCount then 
+            elseif ItemCount >= ExpectedItemCount or brakepoint > 10 then 
                 break
             elseif IsAddonVisible("ShopExchangeItem") then
                 yield("/pcall ShopExchangeItem true 0 " .. List .. " " .. Amount)
                 yield("/wait 0.6")
             end
-
-            if MaxItem then
+            if MaxItem and ItemCount == GetItemCount(ItemID) and brakepoint > 5 then
                 local newAmount = math.max(1, math.floor(Amount / 2))
                 Amount = newAmount
                 ExpectedItemCount = ItemCount + Amount
@@ -825,6 +859,7 @@ function TurnIn(TableName,MaxArmoryValue)
                 end
                 LogInfo("[Exchange] Adjusting amount to " .. Amount .. " for item ID " .. ItemID)
             end
+            brakepoint = brakepoint + 1
         end
         yield("/wait 0.1") 
         LogInfo("[Exchange] Finished exchange for item ID " .. ItemID)
@@ -947,19 +982,8 @@ function MountUp()
 end
 
 function SummoningBellSell()
-    yield("/target Summoning Bell")
-    if GetTargetName() == "Summoning Bell" then
-        yield("/wait 0.1")
-        yield("/interact")
-    else
-        SummoningBellSell()
-    end
+    yield("/ays itemsell")
     while TotalExchangeItem > 0 do
-        if not IsAddonReady("InventoryRetainer") then
-            yield("/target Summoning Bell")
-            yield("/wait 0.1")
-            yield("/interact")
-        end
         yield("/wait 1")
         IsThereTradeItem()
     end
@@ -1032,9 +1056,13 @@ while IsThereTradeItem() do
         
     if TotalExchangeItem > 0 then
         if VendorTurnIn then
-            MountUp()
-            WalkTo(-1.6, 206.5, 50.1, 1)
-            SummoningBellSell()
+            if TeleportToFC then
+                FcAndSell()
+            else
+                MountUp()
+                WalkTo(-1.6, 206.5, 50.1, 1)
+                SummoningBellSell()
+            end
         else
             TeleportGC()
             GcDelivero()

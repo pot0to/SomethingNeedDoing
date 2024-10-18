@@ -63,10 +63,12 @@ dont_report_good_stuff = 0 --by default reporting everything, if you turn this o
 logfile_differentiator = " - Account 1"  --example of extra text to throw into log file say if your pointing a few clients to same log file for convenience
 force_equipstuff = 0 --should we try to force recommended equip every chance we get? by default we won't do it
 discard_type = 0 --0 = dont discard, 1 = discard, 2 = discard only if "CLEAN"[3] is > 0, or if its ==0 we desynth instead!, 3 = dont discard but desnyth if "CLEAN"[3] == 0 from special white list of items ill put here --* not implemented
+log_gcranks = 9 --log the gc ranks of each char if they are below this rank on all 3. that way we can catch the "lower" one from the main one they are in. set it to 0 to disable the check
+automarketfix = "autobot" -- try to xldisable profile automarket. however if you set this to "no" it wont do it.  the reason for this is eventually automarket just does some weird stuff and wont let you access retainer bells
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
-re_organize_return_locations = 0 -- only set this one time and run the script so it can clean up the return locations, 0 magitek fuel = limsa bell, +fuel = fc entrance
+re_organize_return_locations = 0 -- only set this one time and run the script so it can clean up the return locations, 0 magitek fuel = limsa bell, +fuel = fc entrance, also sets some defaults for fcs with newly acquired subs
 ------------------------------------------
 ------------------------------------------
 ------------------------------------------
@@ -86,12 +88,17 @@ yield("/echo Saddlebag command executed.")
 yield("/echo Fully Unified Task Automation (F.U.T.A.) atools database updated")
 yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing .....")
 ----------------------------------
---Script breaker stuff force fixed
+--Script+ar breaker stuff force fixed
 RestoreYesAlready()
 yield("/bmrai off")
 yield("/vbmai off")
 yield("/rotation Cancel")
 --script breaker stuff end
+if automarketfix ~= "no" then
+	yield("/xldisableprofile "..automarketfix)
+	yield("/wait 2")
+	yield("/xlenableprofile "..automarketfix)
+end
 --------------------------
 yield("/echo Script breakers disabled")		
 FUTA_processors = {} -- Initialize variable
@@ -221,6 +228,16 @@ if re_organize_return_locations == 1 then
 	if GetItemCount(10155) >  0 then
 		FUTA_processors[hoo_arr_weeeeee][1][2] = 0  --configure for return to fc house if we have repair kits
 	end
+	--insert hacky stuff to fix some data for later
+	--fuel settings
+	if GetItemCount(10373) == 0 and FUTA_processors[hoo_arr_weeeeee][4][2] > -1 then
+		FUTA_processors[hoo_arr_weeeeee][4][2] = 0
+		FUTA_processors[hoo_arr_weeeeee][4][3] = 0
+	end
+	if FUTA_processors[hoo_arr_weeeeee][4][2] > -1 and GetItemCount(10373) > 0 then
+		FUTA_processors[hoo_arr_weeeeee][4][2] = 666
+		FUTA_processors[hoo_arr_weeeeee][4][3] = 6666
+	end
 end
 
 -- After tablebunga() call
@@ -235,6 +252,9 @@ yield("/echo Debug: Beginning to do stuff")
 --check for red onion helm
 check_ro_helm()
 
+--check for GC Ranks
+check_GC_RANKS(log_gcranks)
+
 ---------------------------------------------------------------------------------
 ------------------------------FISHING  START-------------------------------------
 ---------------------------------------------------------------------------------
@@ -244,6 +264,14 @@ if FUTA_processors[hoo_arr_weeeeee][2][2] > -1 then  -- -1 is ignore+disable for
 	yield("/wait 0.5")	
 	if tonumber(GetLevel(17)) > 0 then
 		FUTA_processors[hoo_arr_weeeeee][2][2] = tonumber(GetLevel(17))
+		if FUTA_processors[hoo_arr_weeeeee][2][2] == 99999 then --*this doesnt work atm
+			xp = GetNodeText("_Exp", 3)
+			xpxp = string.match(xp, "%d[%d.,]*"):gsub(",", "")  -- Remove commas
+			yield("/echo Cleaned xp string: " .. xpxp)
+			local xp_numeric = tonumber(xpxp) or 0  -- Convert to number, default to 0 if nil
+			yield("/echo partial levle in 99 is  -> ".. xp_numeric / 25000000)
+			FUTA_processors[hoo_arr_weeeeee][2][2] = FUTA_processors[hoo_arr_weeeeee][2][2] + xp_numeric
+		end
 		tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
 		yield("/echo tablebunga() completed successfully w new fishing data")
 	end
@@ -317,39 +345,10 @@ if wheeequeheeheheheheheehhhee == 1 then
 			
             yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
 			
-			--FOR HACKY FISHIN SWITCHER WITH AHK --- START
-			if FUTA_processors[lowestID][1][1] ~= GetCharacterName(true) then
-				--if we are on wrong char. we gotta kill AR
-				yield("/ays multi d")
-				yield("/wait 1")
-				yield("/ays reset")
-				yield("/wait 5")
-
-				--[[Hacky shit left here for posterity
-					--FOR HACKY FISHING SWITCHER WITH AHK --- START
-					--do sheet
-					yield("/echo Hacky AHK shit")
-					-- make a ahk file from scratch
-					local file = io.open(folderPath .. "not_a_key_logger.ahk", "w")
-					file:write("WinActivate, Flantasy\n")
-					file:write("Sleep, 5000\n")
-					--file:write("Send, {ENTER}/ays relog "..string.match(FUTA_processors[lowestID][1][1], "([^@]+)").." {ENTER}\n")
-					file:write("Send, {ENTER}/ays relog "..FUTA_processors[lowestID][1][1].." {ENTER}\n")
-					file:write("Sleep, 45000\n")
-					file:write("Send, {ENTER}/pcraft run FUTA {ENTER}\n")
-					file:close()
-					-- Call a batch file using its full path
-					--os.execute("cmd /c start \"\" \ "..os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
-					os.execute('cmd /c start "" "' .. os.getenv("appdata") .. '\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk"')
-					yield("/wintitle Flantasy")
-					--end the script here
-					yield("/pcraft stop")				--os.execute(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\not_a_key_logger.ahk")
-					yield("/wintitle Flantasy")
-					--end the script here
-					yield("/pcraft stop")
-					--FOR HACKY FISHING SWITCHER WITH AHK --- END
-				--]]
-			end
+			yield("/ays multi d")
+			yield("/wait 1")
+			yield("/ays reset")
+			yield("/wait 5")
 			
             fishing()
             yield("/echo Debug: Fishing completed")
@@ -360,7 +359,10 @@ if wheeequeheeheheheheheehhhee == 1 then
                 currentTime = os.date("*t")
                 formattedTime = string.format("%04d-%02d-%02d %02d:%02d:%02d", currentTime.year, currentTime.month, currentTime.day, currentTime.hour, currentTime.min, currentTime.sec)
                 FUTA_processors[lowestID][2][2] = GetLevel()
-                file:write(formattedTime.." - "..logfile_differentiator.."["..lowestID.."] - "..FUTA_processors[lowestID][1][1].." - Fisher Lv - "..FUTA_processors[lowestID][2][2].."\n")
+				xp = GetNodeText("_Exp", 3)
+				yield("/echo current xp: "..string.match(xp, "%d[%d.,]*"))
+				xpxp = string.match(xp, "%d[%d.,]*")
+                file:write(formattedTime.." - "..logfile_differentiator.."["..lowestID.."] - "..FUTA_processors[lowestID][1][1].." - Fisher Lv - "..FUTA_processors[lowestID][2][2].." - XP -> "..xpxp.."\n")
                 file:close()
                 yield("/echo Text has been written to '" .. folderPath .. "FeeshLevels.txt'")
             else
@@ -400,7 +402,7 @@ if wheeequeheeheheheheheehhhee == 0 then
             if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
                 FUTA_processors[hoo_arr_weeeeee][3][2] = 5 --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
                 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
-                yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to 11")
+                yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to 5")
             end
         end
     end
@@ -409,7 +411,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 		yield("/echo Debug: Inventory cleaning adjustment completed -> -1 changed to 11")
 		FUTA_processors[hoo_arr_weeeeee][3][2] = 5 
 	end
-	if wheeequeheeheheheheheehhhee == 1 then
+	if wheeequeheeheheheheheehhhee == 1 and FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
 		FUTA_processors[hoo_arr_weeeeee][3][2] = -1
 		yield("/echo Debug: Inventory cleaning adjustment completed -> chance changed to -1 to avoid double send")
 	end
@@ -424,7 +426,8 @@ if wheeequeheeheheheheheehhhee == 0 then
 		if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
 			yield("/echo Attempting to clean inventory @ an npc and or retainerbell and or desynthing (not yet)")
 			delete_my_items_please(do_we_discard)
-			yield("/ays npcsell") --for now we only have actual npc selling. retainer bell not working as of 2024 09 18 unless its via normal retainer checks
+			yield("/itemsell") --npc AND retainer selling
+			yield("/ays itemsell") --npc AND retainer selling
 		end
 		if GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning then
 			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then 
@@ -435,7 +438,9 @@ if wheeequeheeheheheheheehhhee == 0 then
 			functionsToLoad = loadfile(loadfiyel2)
 			functionsToLoad()
 			FUTA_robust_gc()
-			FUTA_processors[hoo_arr_weeeeee][3][2] = FUTA_processors[hoo_arr_weeeeee][3][2] + 1000 --to keep it from double running after it turns itself on in case there was some weird overflow with submarine items
+			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then --to keep it from double running after it turns itself on in case there was some weird overflow with submarine items, but only if its not disabled already
+				FUTA_processors[hoo_arr_weeeeee][3][2] = FUTA_processors[hoo_arr_weeeeee][3][2] + 1000 
+			end
 			if GetInventoryFreeSlotCount() < (FUTA_processors[hoo_arr_weeeeee][3][5] + 20) then
 				loggabunga("FUTA_", logfile_differentiator.." - Inventory still low after cleaning -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 			end
@@ -525,3 +530,4 @@ yield("/echo onto the next one ..... ")
 if wheeequeheeheheheheheehhhee == 1 then
 	yield("/ays multi e") --if we had to toggle AR
 end
+--yield("/pcraft stop") --uncomment this if you want it to clear snd errors after script run

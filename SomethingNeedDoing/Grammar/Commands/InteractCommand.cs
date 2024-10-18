@@ -12,7 +12,7 @@ namespace SomethingNeedDoing.Grammar.Commands;
 internal class InteractCommand : MacroCommand
 {
     public static string[] Commands => ["interact"];
-    public static string Description => "Interacts with curent target.";
+    public static string Description => "Interacts with current target.";
     public static string[] Examples => ["/interact"];
 
     private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}", RegexOptions.Compiled | RegexOptions.IgnoreCase);

@@ -19,6 +19,44 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-09-30",
+        "- Added InSanctuary()\n");
+
+        DisplayChangelog(
+        "2024-09-27",
+        "- Added ARFinishCharacterPostProcess()\n" +
+        "- Added ARGetCharacterCIDs()\n" +
+        "- Added ARGetCharacterData()\n");
+
+        DisplayChangelog(
+        "2024-09-26",
+        "- Added GetActiveMacroName()\n" +
+        "- Added IsMacroRunningOrQueued()\n");
+
+        DisplayChangelog(
+        "2024-09-25",
+        "- Fixed new AR ipc command names\n");
+
+        DisplayChangelog(
+        "2024-09-24",
+        "- Added additional autoretainer ipc commands()\n" +
+        "- Fixed display of ipc commands in help\n");
+
+        DisplayChangelog(
+        "2024-09-21",
+        "- Added artisan ipc commands\n" +
+        "- Added GetJobExp()\n" +
+        "- Added GetFateIconId()\n" +
+        "- Added GetFateLevel()\n" +
+        "- Added GetFateMaxLevel()\n" +
+        "- Added GetFateChain()\n" +
+        "- Added IsLevelSynced()\n" +
+        "- Added GetFateEventItem()\n" +
+        "- Added GetFateState()\n" +
+        "- Added TargetClosestFateEnemy()\n" +
+        "- Fixed artisan/rsr ipc function names\n");
+
+        DisplayChangelog(
         "2024-09-18",
         "- Added GetItemIdInSlot()\n" +
         "- Added IsFriendOnline()\n" +

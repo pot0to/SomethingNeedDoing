@@ -219,6 +219,7 @@ function WalkTo(x, y, z)
 end
 
 function ZoneTransition()
+	yield("/automove off")
 	iswehehe = IsPlayerAvailable() 
 	iswoah = 0
     repeat 
@@ -235,6 +236,7 @@ function ZoneTransition()
 		end
     until not iswehehe
 	iswoah = 0
+	yield("/automove off")
     repeat 
         yield("/wait 0.5")
         yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
@@ -319,23 +321,31 @@ function visland_stop_moving()
 	 yield("/wait 3")
  end
  muuv = 1
+ muuvstop = 0
  muuvX = GetPlayerRawXPos()
  muuvY = GetPlayerRawYPos()
  muuvZ = GetPlayerRawZPos()
  while muuv == 1 do
 	yield("/wait 1")
+	muuvstop = muuvstop + 1
 	if muuvX == GetPlayerRawXPos() and muuvY == GetPlayerRawYPos() and muuvZ == GetPlayerRawZPos() then
 		muuv = 0
 	end
 	muuvX = GetPlayerRawXPos()
 	muuvY = GetPlayerRawYPos()
 	muuvZ = GetPlayerRawZPos()
+	if muuvstop > 50 then
+		if math.abs(muuvX - GetPlayerRawXPos()) < 2 and math.abs(muuvY - GetPlayerRawYPos()) < 2 and math.abs(muuvZ - GetPlayerRawZPos()) < 2 then
+			muuv = 0 --we need an escape clause here otherwise some situations we will never achieve success sometimes we are stuck near the target but not quite there.
+		end
+	end
  end
+ yield("/wait 1")
  --yield("/echo movement stopped - time for GC turn ins or whatever")
  yield("/echo movement stopped safely - script proceeding to next bit")
  yield("/visland stop")
  yield("/vnavmesh stop")
- yield("/wait 3")
+ yield("/wait 1")
  --added becuase simpletweaks is slow to update :(
  if do_we_force_equip == 1 then
 	 yield("/character")
@@ -346,7 +356,6 @@ function visland_stop_moving()
 	 yield("/wait 1")
  end
 end
-
 
 function return_to_limsa_bell()
 	yield("/tp Limsa Lominsa")
@@ -390,7 +399,59 @@ function return_to_lair()
 	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 end
 
+function double_check_nav(x3, y3, z3)
+	x1 = GetPlayerRawXPos()
+	y1 = GetPlayerRawYPos()
+	z1 = GetPlayerRawZPos()
+	yield("/wait 2")
+	if (x1 - GetPlayerRawXPos()) == 0 and (y1 - GetPlayerRawYPos()) == 0 and (z1 - GetPlayerRawZPos()) == 0 then
+		--yield("/vnav rebuild")
+		NavRebuild()
+		while not NavIsReady() do
+			yield("/echo waiting on navmesh to finish rebuilding the mesh")
+			yield("/wait 1")
+		end
+		yield("/vnav moveto " .. x3 .. " " .. y3 .. " " .. z3)
+	end
+end
+
+function double_check_navGO(x3, y3, z3)
+	x1 = GetPlayerRawXPos()
+	y1 = GetPlayerRawYPos()
+	z1 = GetPlayerRawZPos()
+	yield("/wait 2")
+	if (x1 - GetPlayerRawXPos()) == 0 and (y1 - GetPlayerRawYPos()) == 0 and (z1 - GetPlayerRawZPos()) == 0 then
+		--yield("/vnav rebuild")
+		yield("/vnav moveto " .. x3 .. " " .. y3 .. " " .. z3)
+	end
+end
+
+
 function return_fc_entrance()
+	--saw a weirdness where vnav never finished.. no errors and error traps. need more analysis. wasn't life stream the char isnt registered in it
+	yield("/echo attempting to enter nearby entrance to house")
+	yield("/hold W <wait.1.0>")
+	yield("/release W")
+	yield("/target Entrance <wait.1>")
+	yield("/echo vnavving over")
+	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	yield("/gaction jump")
+	yield("/target Entrance <wait.1>")
+	yield("/echo vnavving over!")
+	yield("/vnav moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+	yield("/wait 1")
+	yield("/gaction jump")
+	yield("/echo double check")
+	double_check_nav(GetTargetRawXPos(),GetTargetRawYPos(),GetTargetRawZPos())
+	visland_stop_moving()
+	yield("/interact")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
+	yield("/interact")
+	yield("/wait 1")
+	yield("/pcall SelectYesno true 0")
+	--commented out this garbage finally
+--[[
 	yield("/hold W <wait.1.0>")
 	yield("/release W")
 	yield("/target Entrance <wait.1>")
@@ -431,6 +492,7 @@ function return_fc_entrance()
 	yield("/interact")
 	yield("/wait 1")
 	yield("/pcall SelectYesno true 0")
+	--]]
 end
 
 function return_fc_near_bell()
@@ -579,34 +641,46 @@ function clean_inventory()
 		exit_cleaning = exit_cleaning + 1
 		yield("/echo Waiting for repricer to start -> "..exit_cleaning.."/20")
 	end
-	exit_cleaning = 0
-	forced_am = 0
-	bungaboard = SetClipboard("123123123")
-	while GetCharacterCondition(50) == true and exit_cleaning < 300 do
-		yield("/wait 1")
-		exit_cleaning = exit_cleaning + 1
+	exit_cleaning_RS = 0
+	exit_cleaning_RL = 0
+	exit_cleaning_ISR = 0
+	--forced_am = 0
+	--bungaboard = SetClipboard("123123123")
+	while GetCharacterCondition(50) == true and exit_cleaning_RS < 10 and exit_cleaning_RL < 10 and exit_cleaning_ISR < 10 do
+		yield("/wait 2")
+--		exit_cleaning = exit_cleaning + 1
 		flandom = getRandomNumber(1,20)
 		--yield("/echo Waiting for repricer to end -> "..exit_cleaning.." seconds duration so far flandom -> "..flandom)
-		yield("/echo Waiting for repricer to end -> "..exit_cleaning.."/300")
-		forced_am = forced_am + 1
-		if forced_am > 15 then --every 15 cycles we will update clipboard if it hasnt changed then we have a problem!
-			yield("/echo Clipboard contains -> "..GetClipboard())
-			if bungaboard == GetClipboard() then
-				yield("/echo oops Automarket is stuck ! let's help it!")
-				ungabunga()
-				exit_cleaning = exit_cleaning + 25
-			end
-			bungaboard = GetClipboard()
-			forced_am = 0
+		yield("/echo Repricer Addon Fallback - RetainerSell -> "..exit_cleaning_RS.."/10 - RetainerList -> "..exit_cleaning_RL.."/10 - ItemSearchResult -> "..exit_cleaning_ISR.."/10")
+		if IsAddonVisible("RetainerSell") then
+			exit_cleaning_RS = exit_cleaning_RS + 1
+		end
+		if not IsAddonVisible("RetainerSell") or IsAddonVisible("IemSearchResult") then
+			exit_cleaning_RS = 0
+		end
+		if IsAddonVisible("IemSearchResult") then
+			exit_cleaning_ISR = exit_cleaning_RL + 1
+		end
+		if not IsAddonVisible("IemSearchResult") then
+			exit_cleaning_ISR = 0
+		end
+		if IsAddonVisible("RetainerList") then
+			exit_cleaning_RL = exit_cleaning_RL + 1
+		end
+		if not IsAddonVisible("RetainerList") then
+			exit_cleaning_RL = 0
 		end
 	end
-	CharacterSafeWait()
-	zungazunga()
-	if exit_cleaning > 250 then
-		ungabungabunga()
-	end
+
 	yield("/automarket stop")
 	yield("/wait 1")
+
+	CharacterSafeWait()
+	zungazunga()
+
+	if exit_cleaning > 9 then
+		ungabungabunga()
+	end
 end
 
 function getRandomNumber(min, max)
@@ -631,18 +705,29 @@ function try_to_buy_fuel(restock_amt)
 	--grab current fuel total
 	curFuel = GetItemCount(10155)
 	oldFuel = curFuel + 1
+	buyfail = 0 --counter
 	while curFuel < restock_amt do
 		buyamt = 99 --this can be set to 231u if you want but i wouldn't recommend it as it shows on lodestone
 		if (restock_amt - curFuel) < 99 then
 			buyamt = restock_amt - curFuel
 		end
 		yield("/pcall FreeCompanyCreditShop false 0 0u "..buyamt.."u") 
+		yield("/pcall SelectYesno true 0")
 		yield("/wait 1")
+		--yield("/pcall SelectYesno true 0")
 		oldFuel = curFuel
 		curFuel = GetItemCount(10155)
+		yield("/echo Current Fuel -> "..curFuel.." Old Fuel -> "..oldFuel)
+		if oldFuel < curFuel then
+			buyfail = 0
+		end
 		if oldFuel == curFuel then
-			curFuel = restock_amt
-			yield("/echo we ran out of FC points before finishing our purchases :(")
+			buyfail = buyfail + 1
+			yield("/echo We might be out of FC points ?")
+			if buyfail > 3 then
+				curFuel = restock_amt
+				yield("/echo we ran out of FC points before finishing our purchases :(")
+			end
 		end
 	end
 	yield("/echo We now have "..GetItemCount(10155).." Ceruelum Fuel Tanks")
@@ -764,14 +849,13 @@ function FUTA_return()
 
 	--normal small house shenanigans
 	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 5 then
-		return_fc_entrance()
+		return_fc_entrance()	
 	end
 
 	--retainer bell nearby shenanigans
 	if FUTA_processors[hoo_arr_weeeeee][1][2] == 1 or FUTA_processors[hoo_arr_weeeeee][1][2] == 6 then
 		return_fc_near_bell()
 	end	
-	
 end
 
 function loggabunga(filename, texty)
@@ -784,10 +868,19 @@ function loggabunga(filename, texty)
 	end
 end
 
+function check_GC_RANKS(renkk)
+	if GetAddersGCRank() < renkk and GetFlamesGCRank() < renkk and GetMaelstromGCRank() < renkk then
+		loggabunga("FUTA_",logfile_differentiator.." - GC ranks below rank "..renkk.." main GC -> Adders - "..GetAddersGCRank().." - Maelstrom - "..GetMaelstromGCRank().." - Flames - "..GetFlamesGCRank().." - Charname -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
+	end
+end
+
 function check_ro_helm()
 	--check for red onion helms and report in to a log file if there is one
 	if GetItemCount(2820) > 0 then
 		yield("/echo RED ONION HELM DETECTED")
+		if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
+			FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --force a cleaning next round as this will choke up the cleaning agent
+		end
 		loggabunga("FUTA_"," - Red Onion Helm detected on -> "..FUTA_processors[hoo_arr_weeeeee][1][1])
 	end
 end
@@ -804,4 +897,13 @@ function delete_my_items_please(how)
 		yield("/echo Attempting to desynth items")
 		yield("/echo i dont know how to do this yet--*")
 	end
+end
+
+function grab_aetheryte()
+	yield("/target Aetheryte")
+	yield("/wait 2")
+	yield("/interact")
+	yield("/wait 2")
+	yield("/interact")
+	yield("/wait 10")
 end

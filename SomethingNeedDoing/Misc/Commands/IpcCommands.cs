@@ -1,5 +1,4 @@
-﻿using Automaton.IPC;
-using AutoRetainerAPI;
+﻿using AutoRetainerAPI;
 using SomethingNeedDoing.IPC;
 using System;
 using System.Collections.Generic;
@@ -15,6 +14,8 @@ public class IpcCommands
     private readonly LifestreamIPC lifestream;
     private readonly Questionable questionable;
     private readonly RSR rsr;
+    private readonly Artisan artisan;
+    private readonly AutoRetainer autoretainer;
 
     public List<string> ListAllFunctions()
     {
@@ -41,6 +42,8 @@ public class IpcCommands
         dropbox = new();
         questionable = new Questionable();
         rsr = new();
+        artisan = new();
+        autoretainer = new();
     }
 
     internal void Dispose()
@@ -146,6 +149,30 @@ public class IpcCommands
             : GetAllEnabledCharacters().Any(c => _autoRetainerApi.GetOfflineCharacterData(c).OfflineSubmarineData.Any(x => x.ReturnTime <= DateTime.Now.ToUnixTimestamp()));
     }
 
+    public void ARFinishCharacterPostProcess() => _autoRetainerApi.FinishCharacterPostProcess();
+    public List<ulong> ARGetCharacterCIDs() => _autoRetainerApi.GetRegisteredCharacters();
+    public AutoRetainerAPI.Configuration.OfflineCharacterData ARGetCharacterData(ulong cid) => _autoRetainerApi.GetOfflineCharacterData(cid);
+
+    public bool ARGetMultiModeEnabled() => autoretainer.GetMultiModeEnabled();
+    public void ARSetMultiModeEnabled(bool value) => autoretainer.SetMultiModeEnabled(value);
+    public bool ARIsBusy() => autoretainer.IsBusy();
+    public int ARGetInventoryFreeSlotCount() => autoretainer.GetInventoryFreeSlotCount();
+    public Dictionary<ulong, HashSet<string>> ARGetEnabledRetainers() => autoretainer.GetEnabledRetainers();
+    public bool ARAreAnyRetainersAvailableForCurrentChara() => autoretainer.AreAnyRetainersAvailableForCurrentChara();
+    public void ARAbortAllTasks() => autoretainer.AbortAllTasks();
+    public void ARDisableAllFunctions() => autoretainer.DisableAllFunctions();
+    public void AREnableMultiMode() => autoretainer.EnableMultiMode();
+    public void AREnqueueHET() => autoretainer.EnqueueHET(() => { });
+    public bool ARCanAutoLogin() => autoretainer.CanAutoLogin();
+    public bool ARRelog(string charaNameWithWorld) => autoretainer.Relog(charaNameWithWorld);
+    public bool ARGetOptionRetainerSense() => autoretainer.GetOptionRetainerSense();
+    public void ARSetOptionRetainerSense(bool value) => autoretainer.SetOptionRetainerSense(value);
+    public int ARGetOptionRetainerSenseThreshold() => autoretainer.GetOptionRetainerSenseThreshold();
+    public void ARSetOptionRetainerSenseThreshold(int value) => autoretainer.SetOptionRetainerSenseThreshold(value);
+    public long? ARGetClosestRetainerVentureSecondsRemaining(ulong cid) => autoretainer.GetClosestRetainerVentureSecondsRemaining(cid);
+    public void AREnqueueInitiation() => autoretainer.EnqueueInitiation();
+    public (uint ShopDataID, uint ExchangeDataID, Vector3 Position)? ARGetGCInfo() => autoretainer.GetGCInfo();
+
     private unsafe ParallelQuery<ulong> GetAllEnabledCharacters() => _autoRetainerApi.GetRegisteredCharacters().AsParallel().Where(c => _autoRetainerApi.GetOfflineCharacterData(c).Enabled);
     #endregion
 
@@ -209,11 +236,22 @@ public class IpcCommands
     #endregion
 
     #region RSR
-    public void AddPriorityNameID(uint nameId) => rsr.AddPriorityNameID(nameId);
-    public void RemovePriorityNameID(uint nameId) => rsr.RemovePriorityNameID(nameId);
-    public void AddBlacklistNameID(uint nameId) => rsr.AddBlacklistNameID(nameId);
-    public void RemoveBlacklistNameID(uint nameId) => rsr.RemoveBlacklistNameID(nameId);
-    public void ChangeOperatingMode(byte stateCommand) => rsr.ChangeOperatingMode((RSR.StateCommandType)stateCommand);
-    public void TriggerSpecialState(byte specialCommand) => rsr.TriggerSpecialState((RSR.SpecialCommandType)specialCommand);
+    public void RSRAddPriorityNameID(uint nameId) => rsr.AddPriorityNameID(nameId);
+    public void RSRRemovePriorityNameID(uint nameId) => rsr.RemovePriorityNameID(nameId);
+    public void RSRAddBlacklistNameID(uint nameId) => rsr.AddBlacklistNameID(nameId);
+    public void RSRRemoveBlacklistNameID(uint nameId) => rsr.RemoveBlacklistNameID(nameId);
+    public void RSRChangeOperatingMode(byte stateCommand) => rsr.ChangeOperatingMode((RSR.StateCommandType)stateCommand);
+    public void RSRTriggerSpecialState(byte specialCommand) => rsr.TriggerSpecialState((RSR.SpecialCommandType)specialCommand);
+    #endregion
+
+    #region Artisan
+    public bool ArtisanGetEnduranceStatus() => artisan.GetEnduranceStatus();
+    public void ArtisanSetEnduranceStatus(bool state) => artisan.SetEnduranceStatus(state);
+    public bool ArtisanIsListRunning() => artisan.IsListRunning();
+    public bool ArtisanIsListPaused() => artisan.IsListPaused();
+    public void ArtisanSetListPause(bool state) => artisan.SetListPause(state);
+    public bool ArtisanGetStopRequest() => artisan.GetStopRequest();
+    public void ArtisanSetStopRequest(bool state) => artisan.SetStopRequest(state);
+    public void ArtisanCraftItem(ushort recipeID, int amount) => artisan.CraftItem(recipeID, amount);
     #endregion
 }

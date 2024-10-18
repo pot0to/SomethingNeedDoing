@@ -34,6 +34,8 @@ internal partial class MacroManager : IDisposable
 
     public bool StopAtLoop { get; private set; } = false;
 
+    public string ActiveMacroName { get; private set; } = string.Empty;
+
     public void Dispose()
     {
         Svc.ClientState.Login -= OnLogin;
@@ -121,6 +123,7 @@ internal partial class MacroManager : IDisposable
 
         try
         {
+            ActiveMacroName = macro.Node.Name;
             step = macro.GetCurrentStep();
 
             if (step == null)

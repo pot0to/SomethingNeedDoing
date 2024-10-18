@@ -44,6 +44,7 @@ internal class EntityStateCommands
     public byte? GetTargetObjectKind() => (byte?)Svc.Targets.Target?.ObjectKind;
     public byte? GetTargetSubKind() => Svc.Targets.Target?.SubKind;
     public unsafe void TargetClosestEnemy(float distance = 0) => Svc.Targets.Target = Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(o => o.IsTargetable && o.IsHostile() && !o.IsDead && (distance == 0 || DistanceToObject(o) <= distance));
+    public unsafe void TargetClosestFateEnemy(float distance = 0) => Svc.Targets.Target = Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(o => o.IsTargetable && o.IsHostile() && !o.IsDead && (distance == 0 || DistanceToObject(o) <= distance) && o.Struct()->FateId > 0);
     public void ClearTarget() => Svc.Targets.Target = null;
     public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero);
 

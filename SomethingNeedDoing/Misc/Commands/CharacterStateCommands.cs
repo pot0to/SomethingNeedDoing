@@ -1,4 +1,4 @@
-﻿using Dalamud.Utility;
+﻿using ECommons;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
@@ -29,14 +29,14 @@ public class CharacterStateCommands
         return list;
     }
 
-    public bool IsPlayerAvailable() => Player.Interactable && !ECommons.GenericHelpers.IsOccupied();
+    public bool IsPlayerAvailable() => Player.Interactable && !GenericHelpers.IsOccupied();
 
     public unsafe bool HasStatus(string statusName)
     {
         statusName = statusName.ToLowerInvariant();
         var sheet = Svc.Data.GetExcelSheet<Sheets.Status>()!;
         var statusIDs = sheet
-            .Where(row => row.Name.RawString.Equals(statusName, System.StringComparison.InvariantCultureIgnoreCase))
+            .Where(row => row.Name.RawString.Equals(statusName, StringComparison.InvariantCultureIgnoreCase))
             .Select(row => row.RowId)
             .ToArray()!;
 
@@ -72,9 +72,11 @@ public class CharacterStateCommands
 
     public bool IsPlayerCasting() => Svc.ClientState.LocalPlayer!.IsCasting;
 
+    public unsafe bool IsLevelSynced() => UIState.Instance()->PlayerState.IsLevelSynced == 1;
+
     public unsafe bool IsMoving() => AgentMap.Instance()->IsPlayerMoving == 1;
 
-    public bool IsPlayerOccupied() => ECommons.GenericHelpers.IsOccupied();
+    public bool IsPlayerOccupied() => GenericHelpers.IsOccupied();
 
     public unsafe uint GetGil() => InventoryManager.Instance()->GetGil();
 
@@ -170,6 +172,7 @@ public class CharacterStateCommands
 
     public unsafe bool HasFlightUnlocked(uint territory = 0) => PlayerState.Instance()->IsAetherCurrentZoneComplete(Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(territory != 0 ? territory : Svc.ClientState.TerritoryType)?.Unknown32 ?? 0);
     public unsafe bool TerritorySupportsMounting() => Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(Player.Territory)?.Unknown32 != 0;
+    public unsafe bool InSanctuary() => TerritoryInfo.Instance()->InSanctuary;
 
     public unsafe bool HasWeeklyBingoJournal() => PlayerState.Instance()->HasWeeklyBingoJournal;
     public unsafe bool IsWeeklyBingoExpired() => PlayerState.Instance()->IsWeeklyBingoExpired();
@@ -193,4 +196,6 @@ public class CharacterStateCommands
         return rawPosition;
     }
     public unsafe bool IsFriendOnline(byte* name, ushort worldId) => InfoProxyFriendList.Instance()->GetEntryByName(name, worldId)->State != InfoProxyCommonList.CharacterData.OnlineStatus.Offline;
+
+    public unsafe float GetJobExp(uint classjob) => PlayerState.Instance()->ClassJobExperience[GenericHelpers.GetRow<ClassJob>(classjob)?.ExpArrayIndex ?? 0];
 }

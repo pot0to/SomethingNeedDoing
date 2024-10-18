@@ -37,4 +37,6 @@ public class InternalCommands
     public object? GetSNDProperty(string key) => Service.Configuration.GetProperty(key);
     public bool IsPauseLoopSet() => Service.MacroManager.PauseAtLoop;
     public bool IsStopLoopSet() => Service.MacroManager.StopAtLoop;
+    public string GetActiveMacroName() => Service.MacroManager.ActiveMacroName;
+    public bool IsMacroRunningOrQueued(string name) => Service.MacroManager.MacroStatus.Any(m => m.Name == name);
 }
