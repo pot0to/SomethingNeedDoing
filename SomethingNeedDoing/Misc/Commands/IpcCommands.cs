@@ -216,4 +216,8 @@ public class IpcCommands
     public void ChangeOperatingMode(byte stateCommand) => rsr.ChangeOperatingMode((RSR.StateCommandType)stateCommand);
     public void TriggerSpecialState(byte specialCommand) => rsr.TriggerSpecialState((RSR.SpecialCommandType)specialCommand);
     #endregion
+
+    #region GatherBuddyReborn
+    public bool IsGBRAutoGatherEnabled() => GatherBuddyRebornIPC.IsGBRAutoGatherEnabled!.InvokeFunc();
+    #endregion
 }
