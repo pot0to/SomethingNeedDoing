@@ -225,6 +225,8 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			flurb = GetNodeText("_ToDoList", 27, 3)
 			yield("/target Shortcut")
 			yield("/wait 0.5")
+			yield("/target Magitek")
+			yield("/wait 0.5")
 			yield("/target Gauis")
 			yield("/wait 0.5")
 			if type(GetTargetName()) == "string" and GetTargetName() == "Shortcut" then
@@ -237,6 +239,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				yield("/rotation auto")
 			end
 			if type(GetTargetName()) == "string" and GetCharacterCondition(26) == false then
+				yield("/interact")
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 			end
 		end
