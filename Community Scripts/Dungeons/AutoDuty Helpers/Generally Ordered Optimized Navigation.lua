@@ -10,7 +10,7 @@ Automaton
 Some form of bossmod
 Rotation Solver Reborn
 Vnavmesh
-Pandora
+Pandora -> actually have this disabled it causes problems.
 Something Need doing (SND)
 Simpletweaks
 and more (?)
@@ -18,7 +18,7 @@ Simpletweaks -> targeting fix
 SND -> disable snd targeting
 SND -> disable addon errors
 
-Yesalready configs (maybe only the first one is needed since the rest are done via pcalls w ya off) also make sure yesalready is on :p ad turns it off sometimes (???)
+Yesalready configs (maybe only the first one is needed since the rest are done via callbacks w ya off) also make sure yesalready is on :p ad turns it off sometimes (???)
 	"YesNo"
 		Return to the starting point for the Praetorium?   ※You may be unable to re-enter ongoing battles.
 		/Repair all displayed items for.*/
@@ -80,15 +80,15 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 						break
 					  end
 					end
-					yield("/pcall Repair true 0")
+					yield("/callback Repair true 0")
 					yield("/wait 0.1")
 					if IsAddonVisible("SelectYesno") then
-					  yield("/pcall SelectYesno true 0")
+					  yield("/callback SelectYesno true 0")
 					  yield("/wait 1")
 					end
 					while GetCharacterCondition(39) do yield("/wait 1")
 					yield("/wait 1")
-					yield("/pcall Repair true -1")
+					yield("/callback Repair true -1")
 					  minicounter = minicounter + 1
 					  if minicounter > 20 then
 						minicounter = 0
@@ -112,11 +112,11 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				yield("/lockon on")
 				yield("/automove")
 				yield("/wait 2")
-				yield("/pcall _Notification true 0 17")
-				yield("/pcall ContentsFinderConfirm true 9")
+				yield("/callback _Notification true 0 17")
+				yield("/callback ContentsFinderConfirm true 9")
 				yield("/interact")
 				yield("/wait 2")
-				yield("/pcall SelectYesno true 0")
+				yield("/callback SelectYesno true 0")
 				yield("/wait 8")
 				
 				--find the repair npc
@@ -128,19 +128,19 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				yield("/automove")
 				yield("/wait 2")
 				yield("/wait 1")
-				yield("/pcall _Notification true 0 17")
-				yield("/pcall ContentsFinderConfirm true 9")
+				yield("/callback _Notification true 0 17")
+				yield("/callback ContentsFinderConfirm true 9")
 				yield("/interact")
 				yield("/wait 1")
-				yield("/pcall SelectIconString true 1")
+				yield("/callback SelectIconString true 1")
 				yield("/wait 1")
-				yield("/pcall Repair true 0")
+				yield("/callback Repair true 0")
 				yield("/wait 2")
-				--yield("/pcall Repair true 1")
+				--yield("/callback Repair true 1")
 				--yield("/wait 5")
-				yield("/pcall SelectYesno true 0")
+				yield("/callback SelectYesno true 0")
 				yield("/wait 2")
-				yield("/pcall SelectYesno true 0")
+				yield("/callback SelectYesno true 0")
 				yield("/send ESCAPE <wait.1.5>")
 				yield("/send ESCAPE <wait.1.5>")
 				yield("/send ESCAPE <wait.1.5>")
@@ -156,16 +156,16 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				yield("/automove")
 				yield("/wait 2")
 				yield("/wait 0.5")
-				yield("/pcall _Notification true 0 17")
-				yield("/pcall ContentsFinderConfirm true 9")
+				yield("/callback _Notification true 0 17")
+				yield("/callback ContentsFinderConfirm true 9")
 				yield("/interact")
 				yield("/wait 1")
-				yield("/pcall _Notification true 0 17")
-				yield("/pcall ContentsFinderConfirm true 9")
-				yield("/pcall SelectIconString true 0")
-				yield("/pcall _Notification true 0 17")
-				yield("/pcall ContentsFinderConfirm true 9")
-				yield("/pcall SelectString true 0")
+				yield("/callback _Notification true 0 17")
+				yield("/callback ContentsFinderConfirm true 9")
+				yield("/callback SelectIconString true 0")
+				yield("/callback _Notification true 0 17")
+				yield("/callback ContentsFinderConfirm true 9")
+				yield("/callback SelectString true 0")
 				yield("/wait 1")
 				yield("/wait 8")
 				RestoreYesAlready()
@@ -226,7 +226,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/wait 2")
 			yield("/return")
 			yield("/wait 1")
-			yield("/pcall SelectYesno true 0")
+			yield("/callback SelectYesno true 0")
 			yield("/wait 12")
 			yield("/ad start")
 			yield("/wait 2")
@@ -270,7 +270,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	if stopcuckingme > 2 and GetCharacterCondition(34) == false and imthecaptainnow == 1 then
 		yield("/finder")
 		yield("/echo attempting to trigger duty finder")
-		yield("/pcall ContentsFinder true 12 0")
+		yield("/callback ContentsFinder true 12 0")
 		stopcuckingme = 0
 	end
 
