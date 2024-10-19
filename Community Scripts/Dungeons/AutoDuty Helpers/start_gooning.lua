@@ -25,7 +25,7 @@ while not HasPlugin("AutoDuty") do
 	yield("/wait 1")
 	yield("/echo waiting on collection to turn back on")
 end
-	if HasPlugin("AutoDuty") then
-		yield("/echo ad start")
-		yield("/ad start")
-	end
+--if HasPlugin("AutoDuty") then
+	yield("/echo ad start")
+	yield("/ad start")
+--end
