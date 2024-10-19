@@ -12,7 +12,7 @@ yield("/ad stop")
 --the following collection should contain pandora AND autoduty
 --this is not a safe solution and sometimes breaks the plugin when re enabling (REEEEEEEE enabling)
 yield("/xldisableprofile ad_collection")
-while HasPlugin("AutoDuty") or HasPlugin("Pandora")  do
+while HasPlugin("AutoDuty") or HasPlugin("PandorasBox")  do
 	yield("/wait 1")
 end
 yield("/wait 1")
