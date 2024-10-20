@@ -223,6 +223,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		if GetNodeText("_ToDoList", 27, 3) == "Defeat Gaius van Baelsar: 0/1" and GetCharacterCondition(26) == false then
 			maxjiggle = 20
 			flurb = GetNodeText("_ToDoList", 27, 3)
+--[[ this doesnt work the way i intended so removing it for now.
 			yield("/target Shortcut")
 			yield("/wait 0.5")
 			yield("/target Magitek")
@@ -243,6 +244,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 			end
 		end
+--]]
 		yield("/echo Prae Duty Progress -> "..flurb)
 	end
 
