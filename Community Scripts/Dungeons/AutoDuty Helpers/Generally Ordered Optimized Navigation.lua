@@ -243,11 +243,13 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				yield("/interact")
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 			end
-		end
 --]]
+		end
 		yield("/echo Prae Duty Progress -> "..flurb)
 	end
 
+	--1044 is prae we only need this there atm
+	if GetZoneID() == 1044 then --Praetorium
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		if math.abs(x1 - GetPlayerRawXPos()) < 3 and math.abs(y1 - GetPlayerRawYPos()) < 3 and math.abs(z1 - GetPlayerRawZPos()) < 3 then
 			yield("/echo we havent moved very much something is up ")
@@ -267,7 +269,6 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		end
 	end
 
-	if GetZoneID() == 1044 then --Praetorium
 		local mytarget = GetTargetName()
 		if type(mytarget) == "string" and mytarget ~= "Phantom Gaius" then
 			local ndist = GetDistanceToObject(null)
