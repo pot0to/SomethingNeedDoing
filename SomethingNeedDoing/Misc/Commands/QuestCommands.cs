@@ -39,23 +39,26 @@ internal class QuestCommands
     }
 
     public unsafe bool IsQuestAccepted(ushort id) => QuestManager.Instance()->IsQuestAccepted(id);
+    public unsafe List<uint> GetAcceptedQuests() => Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.Where(x => IsQuestAccepted((ushort)x.RowId)).Select(x => x.RowId).ToList();
     public unsafe bool IsQuestComplete(ushort id) => QuestManager.IsQuestComplete(id);
     public unsafe byte GetQuestSequence(ushort id) => QuestManager.GetQuestSequence(id);
 
+    private readonly List<SeString> questNames = Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.Select(x => x.Name).ToList();
     public uint? GetQuestIDByName(string name)
     {
-        var matchingRows = Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.Where(q => !string.IsNullOrEmpty(q.Name) && IsMatch(name, q.Name)).ToList();
-
-        if (matchingRows.Count() > 1)
+        var matchingRows = questNames.Select((n, i) => (n, i)).Where(t => !string.IsNullOrEmpty(t.n) && IsMatch(name, t.n)).ToList();
+        if (matchingRows.Count > 1)
         {
-            matchingRows = [.. matchingRows.OrderByDescending(t => MatchingScore(t.Name, name))];
+            matchingRows = [.. matchingRows.OrderByDescending(t => MatchingScore(t.n, name))];
         }
-        return matchingRows.FirstOrDefault()?.RowId;
+        return matchingRows.Count > 0 ? Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.GetRow((uint)matchingRows.First().i)!.RowId : null;
     }
+
+    public string GetQuestAlliedSociety(uint id) => Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.FirstOrDefault(x => x.RowId == id)?.BeastTribe.Value?.Name ?? "";
 
     public unsafe MonsterNoteRankInfo GetMonsterNoteRankInfo(int index) => MonsterNoteManager.Instance()->RankData[index];
 
-    private static bool IsMatch(string x, string y) => Regex.IsMatch(x, $@"{Regex.Escape(y)}\b");
+    private static bool IsMatch(string x, string y) => Regex.IsMatch(x, $@"\b{Regex.Escape(y)}\b");
     private static object MatchingScore(string item, string line)
     {
         var score = 0;

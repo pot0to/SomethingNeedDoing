@@ -188,4 +188,27 @@ public class CharacterStateCommands
     public unsafe bool IsFriendOnline(byte* name, ushort worldId) => InfoProxyFriendList.Instance()->GetEntryByName(name, worldId)->State != InfoProxyCommonList.CharacterData.OnlineStatus.Offline;
 
     public unsafe float GetJobExp(uint classjob) => PlayerState.Instance()->ClassJobExperience[GenericHelpers.GetRow<ClassJob>(classjob)?.ExpArrayIndex ?? 0];
+
+    public List<uint> GetAetheryteList() => Svc.AetheryteList.Select(x => x.AetheryteId).ToList();
+    public List<uint> GetAetherytesInZone(uint zoneID) => Svc.AetheryteList.Where(x => x.TerritoryId == zoneID).Select(x => x.AetheryteId).ToList();
+    public string GetAetheryteName(uint aetheryteID) => Svc.AetheryteList.FirstOrDefault(x => x.AetheryteId == aetheryteID)?.AetheryteData.GameData?.PlaceName.Value?.Name ?? string.Empty;
+    public float GetAetheryteRawXPos(uint aetheryteID)
+    {
+        var pos = GenericHelpers.FindRow<MapMarker>(m => m?.DataType == 3 && m.DataKey == aetheryteID)?.X;
+        if (pos == null) return 0f;
+        else return ConvertMapMarkerToRawPosition(pos.Value);
+    }
+    public float GetAetheryteRawYPos(uint aetheryteID)
+    {
+        var pos = GenericHelpers.FindRow<MapMarker>(m => m?.DataType == 3 && m.DataKey == aetheryteID)?.Y;
+        if (pos == null) return 0f;
+        else return ConvertMapMarkerToRawPosition(pos.Value);
+    }
+
+    private static float ConvertMapMarkerToRawPosition(int pos, float scale = 100f)
+    {
+        var num = scale / 100f;
+        var rawPosition = ((float)(pos - 1024.0) / num);
+        return rawPosition;
+    }
 }
