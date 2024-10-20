@@ -52,6 +52,7 @@ z1 = GetPlayerRawZPos()
 
 stopcuckingme = 0    --counter for checking whento pop duty
 imthecaptainnow = 0  --set this to 1 if its the party leader
+
 maxjiggle = 6 -- = how much time before we jiggle
 while 1 == 1 do
 --safe check ifs
@@ -199,7 +200,8 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		end
 		if GetNodeText("_ToDoList", 25, 3) == "Clear the Laboratorium Primum: 0/1"  and GetCharacterCondition(26) == false then
 			flurb = GetNodeText("_ToDoList", 25, 3)
-			yield("/target Shortcut")
+--this doesnt work the way i intended so removing it for now.
+			--[[yield("/target Shortcut")
 			yield("/wait 0.5")
 			yield("/target Nero")
 			yield("/wait 0.5")
@@ -215,6 +217,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			if type(GetTargetName()) == "string" and GetCharacterCondition(26) == false then
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 			end
+			--]]
 		end
 		if GetNodeText("_ToDoList", 26, 3) == "Arrive on the Echelon: 0/1"  and GetCharacterCondition(26) == false then
 			maxjiggle = 20
@@ -223,7 +226,6 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		if GetNodeText("_ToDoList", 27, 3) == "Defeat Gaius van Baelsar: 0/1" and GetCharacterCondition(26) == false then
 			maxjiggle = 20
 			flurb = GetNodeText("_ToDoList", 27, 3)
---[[ this doesnt work the way i intended so removing it for now.
 			yield("/target Shortcut")
 			yield("/wait 0.5")
 			yield("/target Magitek")
@@ -243,7 +245,6 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				yield("/interact")
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 			end
---]]
 		end
 		yield("/echo Prae Duty Progress -> "..flurb)
 	end
