@@ -31,3 +31,7 @@ end
 --]]
 yield("/echo ad start")
 yield("/ad start")
+yield("/vbm ai cfg on")
+yield("/bmrai on")
+yield("/rotation auto")
+yield("/echo let's start gooning!")

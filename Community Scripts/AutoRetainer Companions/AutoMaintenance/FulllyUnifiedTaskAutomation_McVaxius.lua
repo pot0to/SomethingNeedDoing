@@ -96,6 +96,10 @@ yield("/rotation Cancel")
 --script breaker stuff end
 if automarketfix ~= "no" then
 	yield("/xldisableprofile "..automarketfix)
+	while HasPlugin("AutoBot") do
+		yield("/echo waiting on am to turn off safely")
+		yield("/wait 1")
+	end
 	yield("/wait 2")
 	yield("/xlenableprofile "..automarketfix)
 end
