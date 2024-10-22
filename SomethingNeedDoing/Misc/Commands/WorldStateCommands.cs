@@ -182,4 +182,10 @@ public class WorldStateCommands
 
         return null;
     }
+    public (float, float) GetAetheryteRawPos(uint aetheryteID)
+    {
+        var pos = GenericHelpers.FindRow<MapMarker>(m => m?.DataType == 3 && m.DataKey.Row == aetheryteID);
+        if (pos == null) return (0f, 0f);
+        else return (Utils.ConvertMapMarkerToRawPosition(pos.X), Utils.ConvertMapMarkerToRawPosition(pos.Y));
+    }
 }

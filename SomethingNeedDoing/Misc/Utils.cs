@@ -65,6 +65,13 @@ internal class Utils
         return false;
     }
 
+    public static float ConvertMapMarkerToRawPosition(int pos, float scale = 100f)
+    {
+        var num = scale / 100f;
+        var rawPosition = ((float)(pos - 1024.0) / num);
+        return rawPosition;
+    }
+
     //public static Sheet<T> GetSheet<T>(ClientLanguage? language = null) where T : struct, ISheetRow<T>
     //    => Service.Module.GetSheet<T>((language ?? Svc.ClientState.ClientLanguage).ToLumina());
 
