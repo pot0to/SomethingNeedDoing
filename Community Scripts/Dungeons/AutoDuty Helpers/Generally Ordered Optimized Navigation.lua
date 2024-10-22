@@ -64,7 +64,7 @@ if isLeader() then
 	yield("/echo I am the party leader i guess")
 end
 
-maxjiggle = 6 -- = how much time before we jiggle
+maxjiggle = 15 -- = how much time before we jiggle
 while 1 == 1 do
 --safe check ifs
 if IsPlayerAvailable() then
@@ -73,11 +73,11 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--is there some bullshit and yesalready was disabled?
 	yield("/callback SelectYesno true 0")
 	--Do we need repairs?
-	--check every 0.5 seconds 8 times so total looop is 5 seconds
+	--check every 0.3 seconds 8 times so total looop is 2.4 seconds
 	goat = 0
 	while goat < 9 do
 		goat = goat + 1
-		yield("/wait 0.5")
+		yield("/wait 0.3")
 		if GetCharacterCondition(34) == false then
 			--SELF REPAIR
 			local minicounter = 0
@@ -256,7 +256,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			local gdist = GetDistanceToObject("Phantom Gaius")
 			local deltadist = ndist - gdist
 			if (deltadist > 1 or deltadist < -1) and gdist < 100 then
-				yield("/echo target")
+				yield("/echo targetting nearby enemy")
 				TargetClosestEnemy()
 			end
 		end
@@ -267,13 +267,26 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		yield("/equiprecommended")
-		TargetClosestEnemy()
+		--TargetClosestEnemy()
+		yield("/ac \"Fester\"")
 	end
 	
 	if GetCharacterCondition(4) == false and GetCharacterCondition(26) == true then
-		yield("/vnav stop")
-		jigglecounter = 0 -- we reset the jiggle counter while we are in combat. combat is good means we are doing something productive
-		yield("/echo stopping nav for combat")
+		if type(GetTargetName()) ~= "string" then
+			TargetClosestEnemy()
+			yield("/vnav stop")
+			yield("/ad pause")
+			yield("/wait 0.5")
+			jigglecounter = 0 -- we reset the jiggle counter while we are in combat. combat is good means we are doing something productive
+			yield("/echo stopping vnav for combat")
+			yield("/echo pausing AD for combat")
+			yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+			yield("/wait 5")
+			yield("/vnav stop")
+			yield("/wait 0.5")
+			yield("/ad resume")
+			yield("/echo resuming AD")
+		end
 	end
 	
 	if GetCharacterCondition(34) == true then
@@ -281,7 +294,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		y1 = GetPlayerRawYPos()
 		z1 = GetPlayerRawZPos()
 	end
-    yield("/wait 1.0")
+    yield("/wait 0.5")
 
 	stopcuckingme = stopcuckingme + 1
 	--autoqueue at the end because its least important thing
