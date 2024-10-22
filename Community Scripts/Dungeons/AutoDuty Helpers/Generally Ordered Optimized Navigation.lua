@@ -101,7 +101,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				end
 			end
 			--JUST OUTSIDE THE INN REPAIR
-			if NeedsRepair(50) and  GetItemCount(1) > 4999 then
+			if NeedsRepair(50) and  GetItemCount(1) > 4999 and GetCharacterCondition(34) == false then --only do this outside of a duty yo
 			--[[
 			repair at 50%
 			make sure we have more than 5k gil
@@ -109,6 +109,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			--turn off yesalready or we getting ROPED
 			PauseYesAlready()
 				--if GetItemCount(1) > 4999 then
+				--[[
 				--Exit the inn room
 				yield("/target Heavy")
 				yield("/wait 1")
@@ -149,29 +150,40 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				yield("/send ESCAPE <wait.1.5>")
 				yield("/send ESCAPE <wait.1>")
 				yield("/wait 3")
-				
+				--]]
+				yield("/ad start")
+				goatcounter = 0
+				for goatcounter=1,30 do
+					yield("/wait 0.5")
+					yield("/callback _Notification true 0 17")
+					yield("/callback ContentsFinderConfirm true 9")
+				end
+
 				--reenter the inn room
-				yield("/target Antoinaut") --gridania
-				yield("/target Mytesyn")   --limsa
-				yield("/target Otopa")     --uldah
-				yield("/wait 1")
-				yield("/lockon on")
-				yield("/automove")
-				yield("/wait 2")
-				yield("/wait 0.5")
-				yield("/callback _Notification true 0 17")
-				yield("/callback ContentsFinderConfirm true 9")
-				yield("/interact")
-				yield("/wait 1")
-				yield("/callback _Notification true 0 17")
-				yield("/callback ContentsFinderConfirm true 9")
-				yield("/callback SelectIconString true 0")
-				yield("/callback _Notification true 0 17")
-				yield("/callback ContentsFinderConfirm true 9")
-				yield("/callback SelectString true 0")
-				yield("/wait 1")
-				yield("/wait 8")
-				RestoreYesAlready()
+				if GetZoneID() ~= 177 and GetCharacterCondition(34) == false and NeedsRepair(50) == false then
+					yield("/target /ad stop") --seems to be needed or we get stuck in repair genjutsu
+					yield("/target Antoinaut") --gridania
+					yield("/target Mytesyn")   --limsa
+					yield("/target Otopa")     --uldah
+					yield("/wait 1")
+					yield("/lockon on")
+					yield("/automove")
+					yield("/wait 2")
+					yield("/wait 0.5")
+					yield("/callback _Notification true 0 17")
+					yield("/callback ContentsFinderConfirm true 9")
+					yield("/interact")
+					yield("/wait 1")
+					yield("/callback _Notification true 0 17")
+					yield("/callback ContentsFinderConfirm true 9")
+					yield("/callback SelectIconString true 0")
+					yield("/callback _Notification true 0 17")
+					yield("/callback ContentsFinderConfirm true 9")
+					yield("/callback SelectString true 0")
+					yield("/wait 1")
+					--yield("/wait 8")
+					--RestoreYesAlready()
+				end
 			end
 		end
 	end
