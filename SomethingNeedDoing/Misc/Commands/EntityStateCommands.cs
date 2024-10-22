@@ -161,6 +161,8 @@ internal class EntityStateCommands
         return true;
     }
     public unsafe bool IsPartyMemberInCombat(int index) => ((Character*)Svc.Party[index]?.Address!)->InCombat;
+
+    public uint GetPartyLeadIndex() => Svc.Party.PartyLeaderIndex;
     #endregion
 
     #region Chocobo
