@@ -19,6 +19,16 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "20204-10-22",
+        "- Added GetZoneName()\n" +
+        "- Added GetAetherytesInZone()\n" +
+        "- Added GetAetheryteName()\n" +
+        "- Added GetAetheryteRawPos()\n" +
+        "- Added GetPartyLeadIndex()\n" +
+        "- Added GetAcceptedQuests()\n" +
+        "- Added GetQuestAlliedSociety()\n");
+
+        DisplayChangelog(
         "2024-09-30",
         "- Added InSanctuary()\n");
 

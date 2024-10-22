@@ -1,4 +1,5 @@
 ﻿using Dalamud.Game.ClientState.Fates;
+using ECommons;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
@@ -34,6 +35,7 @@ public class WorldStateCommands
     }
 
     public int GetZoneID() => Svc.ClientState.TerritoryType;
+    public string GetZoneName(uint zoneID) => Svc.Data.GetExcelSheet<TerritoryType>()?.FirstOrDefault(t => t.RowId == zoneID)?.PlaceName.ToString() ?? "";
 
     public unsafe float GetFlagXCoord() => AgentMap.Instance()->FlagMapMarker.XFloat;
     public unsafe float GetFlagYCoord() => AgentMap.Instance()->FlagMapMarker.YFloat;
@@ -179,5 +181,11 @@ public class WorldStateCommands
         }
 
         return null;
+    }
+    public (float, float) GetAetheryteRawPos(uint aetheryteID)
+    {
+        var pos = GenericHelpers.FindRow<MapMarker>(m => m?.DataType == 3 && m.DataKey.Row == aetheryteID);
+        if (pos == null) return (0f, 0f);
+        else return (Utils.ConvertMapMarkerToRawPosition(pos.X), Utils.ConvertMapMarkerToRawPosition(pos.Y));
     }
 }
