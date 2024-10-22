@@ -52,6 +52,7 @@ z1 = GetPlayerRawZPos()
 
 stopcuckingme = 0    --counter for checking whento pop duty
 
+--if its a cross world party everyoner will make a queue attempt
 function isLeader()
     return (GetCharacterName() == GetPartyMemberName(GetPartyLeadIndex()))
 end
