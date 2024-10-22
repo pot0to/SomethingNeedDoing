@@ -43,7 +43,7 @@ war dps dps sch
 for sch in RSR turn off adloquim, succor and physick
 
 --]]
-yield("/echo please get ready for G O O N ing time")
+yield("/echo please get ready for G.O.O.N ing time")
 
 jigglecounter = 0
 x1 = GetPlayerRawXPos()
@@ -51,7 +51,17 @@ y1 = GetPlayerRawYPos()
 z1 = GetPlayerRawZPos()
 
 stopcuckingme = 0    --counter for checking whento pop duty
+
+function isLeader()
+    return (GetCharacterName() == GetPartyMemberName(GetPartyLeadIndex()))
+end
+
 imthecaptainnow = 0  --set this to 1 if its the party leader
+
+if isLeader() then 
+	imthecaptainnow = 1 
+	yield("/echo I am the party leader i guess")
+end
 
 maxjiggle = 6 -- = how much time before we jiggle
 while 1 == 1 do
@@ -101,57 +111,8 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				end
 			end
 			--JUST OUTSIDE THE INN REPAIR
-			if NeedsRepair(50) and  GetItemCount(1) > 4999 and GetCharacterCondition(34) == false then --only do this outside of a duty yo
-			--[[
-			repair at 50%
-			make sure we have more than 5k gil
-			]]
-			--turn off yesalready or we getting ROPED
-			PauseYesAlready()
-				--if GetItemCount(1) > 4999 then
-				--[[
-				--Exit the inn room
-				yield("/target Heavy")
-				yield("/wait 1")
-				yield("/lockon on")
-				yield("/automove")
-				yield("/wait 2")
-				yield("/callback _Notification true 0 17")
-				yield("/callback ContentsFinderConfirm true 9")
-				yield("/interact")
-				yield("/wait 2")
-				yield("/callback SelectYesno true 0")
-				yield("/wait 8")
-				
-				--find the repair npc
-				yield("/target Erkenbaud")  --gridania
-				yield("/target Leofrun")    --limsa
-				yield("/target Zuzutyro")   --uldah
-				yield("/wait 1")
-				yield("/lockon on")
-				yield("/automove")
-				yield("/wait 2")
-				yield("/wait 1")
-				yield("/callback _Notification true 0 17")
-				yield("/callback ContentsFinderConfirm true 9")
-				yield("/interact")
-				yield("/wait 1")
-				yield("/callback SelectIconString true 1")
-				yield("/wait 1")
-				yield("/callback Repair true 0")
-				yield("/wait 2")
-				--yield("/callback Repair true 1")
-				--yield("/wait 5")
-				yield("/callback SelectYesno true 0")
-				yield("/wait 2")
-				yield("/callback SelectYesno true 0")
-				yield("/send ESCAPE <wait.1.5>")
-				yield("/send ESCAPE <wait.1.5>")
-				yield("/send ESCAPE <wait.1.5>")
-				yield("/send ESCAPE <wait.1>")
-				yield("/wait 3")
-				--]]
-				yield("/ad start")
+			if NeedsRepair(50) and GetItemCount(1) > 4999 and GetCharacterCondition(34) == false then --only do this outside of a duty yo
+				yield("/ad repair")
 				goatcounter = 0
 				for goatcounter=1,30 do
 					yield("/wait 0.5")
@@ -159,32 +120,34 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 					yield("/callback ContentsFinderConfirm true 9")
 				end
 
-				--reenter the inn room
-				if GetZoneID() ~= 177 and GetCharacterCondition(34) == false and NeedsRepair(50) == false then
-					yield("/target /ad stop") --seems to be needed or we get stuck in repair genjutsu
-					yield("/target Antoinaut") --gridania
-					yield("/target Mytesyn")   --limsa
-					yield("/target Otopa")     --uldah
-					yield("/wait 1")
-					yield("/lockon on")
-					yield("/automove")
-					yield("/wait 2")
-					yield("/wait 0.5")
-					yield("/callback _Notification true 0 17")
-					yield("/callback ContentsFinderConfirm true 9")
-					yield("/interact")
-					yield("/wait 1")
-					yield("/callback _Notification true 0 17")
-					yield("/callback ContentsFinderConfirm true 9")
-					yield("/callback SelectIconString true 0")
-					yield("/callback _Notification true 0 17")
-					yield("/callback ContentsFinderConfirm true 9")
-					yield("/callback SelectString true 0")
-					yield("/wait 1")
-					--yield("/wait 8")
-					--RestoreYesAlready()
-				end
 			end
+		end
+		--reenter the inn room
+		--if (GetZoneID() ~= 177 and GetZoneID() ~= 178) and GetCharacterCondition(34) == false and NeedsRepair(50) == false then
+		if (GetZoneID() ~= 177 and GetZoneID() ~= 178) and GetCharacterCondition(34) == false then
+			yield("/send ESCAPE")
+			yield("/ad stop") --seems to be needed or we get stuck in repair genjutsu
+			yield("/target Antoinaut") --gridania
+			yield("/target Mytesyn")   --limsa
+			yield("/target Otopa")     --uldah
+			yield("/wait 1")
+			yield("/lockon on")
+			yield("/automove")
+			yield("/wait 2")
+			yield("/wait 0.5")
+			yield("/callback _Notification true 0 17")
+			yield("/callback ContentsFinderConfirm true 9")
+			yield("/interact")
+			yield("/wait 1")
+			yield("/callback _Notification true 0 17")
+			yield("/callback ContentsFinderConfirm true 9")
+			yield("/callback SelectIconString true 0")
+			yield("/callback _Notification true 0 17")
+			yield("/callback ContentsFinderConfirm true 9")
+			yield("/callback SelectString true 0")
+			yield("/wait 1")
+			--yield("/wait 8")
+			--RestoreYesAlready()
 		end
 	end
 	--end safe check one
@@ -303,11 +266,13 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		yield("/equiprecommended")
+		TargetClosestEnemy()
 	end
 	
 	if GetCharacterCondition(4) == false and GetCharacterCondition(26) == true then
 		yield("/vnav stop")
 		jigglecounter = 0 -- we reset the jiggle counter while we are in combat. combat is good means we are doing something productive
+		yield("/echo stopping nav for combat")
 	end
 	
 	if GetCharacterCondition(34) == true then
