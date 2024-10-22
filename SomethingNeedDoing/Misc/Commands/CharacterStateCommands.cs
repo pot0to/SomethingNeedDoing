@@ -184,11 +184,6 @@ public class CharacterStateCommands
     public unsafe string GetWeeklyBingoOrderDataText(uint wonderousTailsKey) => Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey)?.Text.Value?.Description ?? string.Empty;
 
     public bool IsAetheryteUnlocked(uint id) => Svc.AetheryteList.Any(x => x.AetheryteId == id);
-
-    public unsafe bool IsFriendOnline(byte* name, ushort worldId) => InfoProxyFriendList.Instance()->GetEntryByName(name, worldId)->State != InfoProxyCommonList.CharacterData.OnlineStatus.Offline;
-
-    public unsafe float GetJobExp(uint classjob) => PlayerState.Instance()->ClassJobExperience[GenericHelpers.GetRow<ClassJob>(classjob)?.ExpArrayIndex ?? 0];
-
     public List<uint> GetAetheryteList() => Svc.AetheryteList.Select(x => x.AetheryteId).ToList();
     public List<uint> GetAetherytesInZone(uint zoneID) => Svc.AetheryteList.Where(x => x.TerritoryId == zoneID).Select(x => x.AetheryteId).ToList();
     public string GetAetheryteName(uint aetheryteID) => Svc.AetheryteList.FirstOrDefault(x => x.AetheryteId == aetheryteID)?.AetheryteData.GameData?.PlaceName.Value?.Name ?? string.Empty;
@@ -211,4 +206,8 @@ public class CharacterStateCommands
         var rawPosition = ((float)(pos - 1024.0) / num);
         return rawPosition;
     }
+
+    public unsafe bool IsFriendOnline(byte* name, ushort worldId) => InfoProxyFriendList.Instance()->GetEntryByName(name, worldId)->State != InfoProxyCommonList.CharacterData.OnlineStatus.Offline;
+
+    public unsafe float GetJobExp(uint classjob) => PlayerState.Instance()->ClassJobExperience[GenericHelpers.GetRow<ClassJob>(classjob)?.ExpArrayIndex ?? 0];
 }
