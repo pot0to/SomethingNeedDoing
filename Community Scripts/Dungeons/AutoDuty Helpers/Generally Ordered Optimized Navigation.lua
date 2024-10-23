@@ -211,7 +211,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/release W")
 			yield("/interact")
 			if type(GetTargetName()) == "string" and GetTargetName() == "Shortcut" then
-				yield("/ad stop")
+				--yield("/ad stop")
 				yield("/interact")
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 				yield("/wait 10")
@@ -239,13 +239,13 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		if jigglecounter > maxjiggle then --we stuck for 30+ seconds somewhere
 			yield("/echo attempting to restart AD and hope for the best")
 			jigglecounter = 0
-			yield("/ad stop")
+			--yield("/ad stop")
 			yield("/wait 2")
 			yield("/return")
 			yield("/wait 1")
 			yield("/callback SelectYesno true 0")
 			yield("/wait 12")
-			yield("/ad start")
+			--yield("/ad start")
 			yield("/wait 2")
 		end
 	end
