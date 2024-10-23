@@ -174,7 +174,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			if GetNodeText("_ToDoList", flurby, 3) == "Clear the Laboratorium Primum: 0/1" then flurb = "Clear the Laboratorium Primum: 0/1" end
 			if GetNodeText("_ToDoList", flurby, 3) == "Arrive on the Echelon: 0/1" then flurb = "Arrive on the Echelon: 0/1" end
 			if GetNodeText("_ToDoList", flurby, 3) == "Defeat Gaius van Baelsar: 0/1" then flurb = "Defeat Gaius van Baelsar: 0/1" end
-			yield("/wait 0.1")
+			yield("/wait 0.3")
 		end
 		if flurb == "Clear the Laboratorium Primum: 0/1"  and GetCharacterCondition(26) == false then
 			flurb = GetNodeText("_ToDoList", 25, 3)
