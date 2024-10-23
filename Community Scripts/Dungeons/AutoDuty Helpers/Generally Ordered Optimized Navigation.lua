@@ -256,8 +256,9 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			local gdist = GetDistanceToObject("Phantom Gaius")
 			local deltadist = ndist - gdist
 			if (deltadist > 1 or deltadist < -1) and gdist < 100 then
-				yield("/echo targetting nearby enemy")
+				yield("/echo targeting nearby enemy!")
 				TargetClosestEnemy()
+				yield("/vnav stop")
 			end
 		end
 	end
