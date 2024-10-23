@@ -231,6 +231,9 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 
 	--1044 is prae we only need this there atm
 	if GetZoneID() == 1044 then --Praetorium
+	--if GetZoneID() == 1044 and not HasTarget() then
+	--	TargetClosestEnemy(30)
+	--end
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		if math.abs(x1 - GetPlayerRawXPos()) < 3 and math.abs(y1 - GetPlayerRawYPos()) < 3 and math.abs(z1 - GetPlayerRawZPos()) < 3 then
 			yield("/echo we havent moved very much something is up ")
