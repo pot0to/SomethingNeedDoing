@@ -96,6 +96,7 @@ yield("/vbmai off")
 yield("/rotation Cancel")
 --script breaker stuff end
 if automarketfix ~= "no" then
+	--[[
 	yield("/xldisableprofile "..automarketfix)
 	while HasPlugin("AutoBot") do
 		yield("/echo waiting on am to turn off safely")
@@ -103,6 +104,8 @@ if automarketfix ~= "no" then
 	end
 	yield("/wait 2")
 	yield("/xlenableprofile "..automarketfix)
+	--]]
+	yield("/am stop ")
 end
 --------------------------
 yield("/echo Script breakers disabled")		
