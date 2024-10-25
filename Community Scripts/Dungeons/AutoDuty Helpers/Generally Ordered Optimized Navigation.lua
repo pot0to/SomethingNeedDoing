@@ -112,7 +112,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				end
 			end
 			--JUST OUTSIDE THE INN REPAIR
-			if NeedsRepair(50) and GetItemCount(1) > 4999 and GetCharacterCondition(34) == false then --only do this outside of a duty yo
+			if NeedsRepair(50) and GetItemCount(1) > 4999 and GetCharacterCondition(34) == false and GetCharacterCondition(56) == false then --only do this outside of a duty yo
 				yield("/ad repair")
 				goatcounter = 0
 				for goatcounter=1,30 do
@@ -120,7 +120,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 					yield("/callback _Notification true 0 17")
 					yield("/callback ContentsFinderConfirm true 9")
 				end
-
+				yield("/ad stop")
 			end
 		end
 		--reenter the inn room
