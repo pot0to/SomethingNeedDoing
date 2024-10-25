@@ -16,6 +16,7 @@ public class IpcCommands
     private readonly RSR rsr;
     private readonly Artisan artisan;
     private readonly AutoRetainer autoretainer;
+    private readonly ARDiscard ardiscard;
 
     public List<string> ListAllFunctions()
     {
@@ -44,6 +45,7 @@ public class IpcCommands
         rsr = new();
         artisan = new();
         autoretainer = new();
+        ardiscard = new();
     }
 
     internal void Dispose()
@@ -253,5 +255,9 @@ public class IpcCommands
     public bool ArtisanGetStopRequest() => artisan.GetStopRequest();
     public void ArtisanSetStopRequest(bool state) => artisan.SetStopRequest(state);
     public void ArtisanCraftItem(ushort recipeID, int amount) => artisan.CraftItem(recipeID, amount);
+    #endregion
+
+    #region ARDiscard
+    public List<uint> ARDiscardGetItemsToDiscard() => [.. ardiscard.GetItemsToDiscard()];
     #endregion
 }
