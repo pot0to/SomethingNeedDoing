@@ -334,7 +334,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
             yield("/waitaddon ContentsFinder")
             yield("/wait 1")
 			boops = boops + 1
-			if boops > 15 then whoops = 0 end
+			if boops > 15 then whoops = 1 end
 		end -- safety check before callback
 		if IsAddonVisible("ContentsFinder") then did_we_clear_it = 1 end
         yield("/wait 1")
@@ -362,7 +362,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 					yield("/waitaddon ContentsFinder")
 					yield("/wait 1")
 					boops = boops + 1
-					if boops > 15 then whoops = 0 end
+					if boops > 15 then whoops = 1 end
 				end -- safety check before callback
 				yield("/wait 3")
 				yield("/callback ContentsFinder true 3 15")
@@ -374,7 +374,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 					yield("/waitaddon ContentsFinder")
 					yield("/wait 1")
 					boops = boops + 1
-					if boops > 15 then whoops = 0 end
+					if boops > 15 then whoops = 1 end
 				end -- safety check before callback
 				yield("/wait 3")
 				--OpenRegularDuty(1048) --Decumana
