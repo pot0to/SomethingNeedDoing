@@ -4,11 +4,34 @@
   Link: https://discord.com/channels/1162031769403543643/1162799234874093661/1169362683368321205
 ]]
 
---how many 50 pt per 4 minute failures do you want
---you  need 96 to get all 4800 pt for non furniture non dye stuff
---mgf_sucks = 96
-mgf_sucks = 10
+--[[
+requirements
+smipletweaks -> targeting fix
+SND -> disable SND targeting
+PYES -> optional -> shutdown acceptance
 
+guide:
+how many 50 pt per 4 minute failures do you want
+you  need 96 to get all 4800 pt for non furniture non dye stuff
+mgf_sucks = 96
+
+Simply stand in front of the desk and run the script.
+Enjoy your MGF you filthy cheaters!
+--]]
+--=======================--
+--=======================--
+--====CONFIGURATION======--
+--=======================--
+--=======================--
+	  mgf_sucks = 96
+--=======================--
+--=======================--
+--=======================--
+--=======================--
+
+
+---------------------------------------------------------
+--dont touch anything below here
 --counter for mgf fails do the math yourself
 mgf_counter = 0
 --how many runs left
@@ -18,13 +41,13 @@ mgf_left = mgf_sucks - mgf_counter
 in_saucer = 1
 
 while (mgf_counter < mgf_sucks) do
-    --key_3 is /target "Blunderville Registrar" since SND will error out if target not found
-    yield("/send KEY_3")
+	yield("/target \"Blunderville Registrar\"")
     yield("/wait 0.35")
-    yield("/pinteract <wait.1>")
+    yield("/interact")
+    yield("/wait 1")
     yield("/pcall FGSEnterDialog true 0")
     yield("/pcall FGSEnterDialog true -2")
-    yield("/wait 1.0")
+    yield("/wait 1")
     yield("/pcall ContentsFinderConfirm true 8")
     yield("/pcall ContentsFinderConfirm true -2")
     yield("/pcall FGSSpectatorMenu true 3")
@@ -41,7 +64,7 @@ while (mgf_counter < mgf_sucks) do
         yield("/echo Runs left:"..mgf_left)
     end
 end
-yield("/wait 10.0")
+yield("/wait 10")
 yield("/echo we finished triggering")
 yield("/shutdown")
 --make sure pyes is setup do a fake shut down to get the auto text for it

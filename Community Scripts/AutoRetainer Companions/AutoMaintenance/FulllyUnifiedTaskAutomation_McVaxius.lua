@@ -65,6 +65,7 @@ force_equipstuff = 0 --should we try to force recommended equip every chance we 
 discard_type = 0 --0 = dont discard, 1 = discard, 2 = discard only if "CLEAN"[3] is > 0, or if its ==0 we desynth instead!, 3 = dont discard but desnyth if "CLEAN"[3] == 0 from special white list of items ill put here --* not implemented
 log_gcranks = 9 --log the gc ranks of each char if they are below this rank on all 3. that way we can catch the "lower" one from the main one they are in. set it to 0 to disable the check
 automarketfix = "autobot" -- try to xldisable profile automarket. however if you set this to "no" it wont do it.  the reason for this is eventually automarket just does some weird stuff and wont let you access retainer bells
+equip_from_table = 0 --0 is no, 1 is yes
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -95,6 +96,7 @@ yield("/vbmai off")
 yield("/rotation Cancel")
 --script breaker stuff end
 if automarketfix ~= "no" then
+	--[[
 	yield("/xldisableprofile "..automarketfix)
 	while HasPlugin("AutoBot") do
 		yield("/echo waiting on am to turn off safely")
@@ -102,6 +104,8 @@ if automarketfix ~= "no" then
 	end
 	yield("/wait 2")
 	yield("/xlenableprofile "..automarketfix)
+	--]]
+	yield("/am stop ")
 end
 --------------------------
 yield("/echo Script breakers disabled")		
@@ -126,6 +130,10 @@ FUTA_defaults = {
 		{"MINI", 0, 0, 0},							--N-{}[i][11][1..4]--Daily mini cactpot, [2] year [3] month [4] day, if we are in the next day after reset time. then we go run it again and set the time. again.
 		{"VERM", 0, 0, 0}							--N-{}[i][12][1..4]--Verminion, [2] year [3] month [4] day, if we are in the next week after reset time. then we go run it again and set the time. again.
     }
+}
+
+equip_teble = {
+43471,43472,43473,43474,43475          --Night of devilry
 }
 
 -- Read and deserialize the data
@@ -526,11 +534,36 @@ if wheeequeheeheheheheheehhhee == 0 then
 	end
 end
 
+--insert hacky stuff to fix some data for later
+--fuel settings
+--[[
+if GetItemCount(10373) == 0 and FUTA_processors[hoo_arr_weeeeee][4][2] > -1 then
+	FUTA_processors[hoo_arr_weeeeee][4][2] = 0
+	FUTA_processors[hoo_arr_weeeeee][4][3] = 0
+end
+if FUTA_processors[hoo_arr_weeeeee][4][2] > -1 and GetItemCount(10373) > 0 then
+	FUTA_processors[hoo_arr_weeeeee][4][2] = 666
+	FUTA_processors[hoo_arr_weeeeee][4][3] = 6666
+end
+-]]
+
 -- Stop beginning to do stuff
 yield("/echo Debug: Finished all processing")
 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
 zungazunga()
 yield("/echo onto the next one ..... ")
+
+if equip_from_table == 1 then
+	yield("/echo but wait let's double check our outfit")
+	for i=1,#equip_teble do
+		if GetItemCount(equip_teble[i])>0 then
+			yield("/equipitem "..equip_teble[i])
+			yield("/wait 3.5")
+		end
+			yield("/wait 0.1")
+	end
+end
+
 if wheeequeheeheheheheheehhhee == 1 then
 	yield("/ays multi e") --if we had to toggle AR
 end

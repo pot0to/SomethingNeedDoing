@@ -43,7 +43,7 @@ war dps dps sch
 for sch in RSR turn off adloquim, succor and physick
 
 --]]
-yield("/echo please get ready for G O O N ing time")
+yield("/echo please get ready for G.O.O.N ing time")
 
 jigglecounter = 0
 x1 = GetPlayerRawXPos()
@@ -51,9 +51,24 @@ y1 = GetPlayerRawYPos()
 z1 = GetPlayerRawZPos()
 
 stopcuckingme = 0    --counter for checking whento pop duty
+
+--if its a cross world party everyoner will make a queue attempt
+function isLeader()
+    return (GetCharacterName() == GetPartyMemberName(GetPartyLeadIndex()))
+end
+
 imthecaptainnow = 0  --set this to 1 if its the party leader
 
-maxjiggle = 6 -- = how much time before we jiggle
+if isLeader() then 
+	imthecaptainnow = 1 
+	yield("/echo I am the party leader i guess")
+end
+
+maxjiggle = 15 -- = how much time before we jiggle
+
+entered_duty = 0
+duty_counter = 0
+
 while 1 == 1 do
 --safe check ifs
 if IsPlayerAvailable() then
@@ -62,11 +77,11 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--is there some bullshit and yesalready was disabled?
 	yield("/callback SelectYesno true 0")
 	--Do we need repairs?
-	--check every 0.5 seconds 8 times so total looop is 5 seconds
+	--check every 0.3 seconds 8 times so total looop is 2.4 seconds
 	goat = 0
 	while goat < 9 do
 		goat = goat + 1
-		yield("/wait 0.5")
+		yield("/wait 0.3")
 		if GetCharacterCondition(34) == false then
 			--SELF REPAIR
 			local minicounter = 0
@@ -101,78 +116,43 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				end
 			end
 			--JUST OUTSIDE THE INN REPAIR
-			if NeedsRepair(50) and  GetItemCount(1) > 4999 then
-			--[[
-			repair at 50%
-			make sure we have more than 5k gil
-			]]
-			--turn off yesalready or we getting ROPED
-			PauseYesAlready()
-				--if GetItemCount(1) > 4999 then
-				--Exit the inn room
-				yield("/target Heavy")
-				yield("/wait 1")
-				yield("/lockon on")
-				yield("/automove")
-				yield("/wait 2")
-				yield("/callback _Notification true 0 17")
-				yield("/callback ContentsFinderConfirm true 9")
-				yield("/interact")
-				yield("/wait 2")
-				yield("/callback SelectYesno true 0")
-				yield("/wait 8")
-				
-				--find the repair npc
-				yield("/target Erkenbaud")  --gridania
-				yield("/target Leofrun")    --limsa
-				yield("/target Zuzutyro")   --uldah
-				yield("/wait 1")
-				yield("/lockon on")
-				yield("/automove")
-				yield("/wait 2")
-				yield("/wait 1")
-				yield("/callback _Notification true 0 17")
-				yield("/callback ContentsFinderConfirm true 9")
-				yield("/interact")
-				yield("/wait 1")
-				yield("/callback SelectIconString true 1")
-				yield("/wait 1")
-				yield("/callback Repair true 0")
-				yield("/wait 2")
-				--yield("/callback Repair true 1")
-				--yield("/wait 5")
-				yield("/callback SelectYesno true 0")
-				yield("/wait 2")
-				yield("/callback SelectYesno true 0")
-				yield("/send ESCAPE <wait.1.5>")
-				yield("/send ESCAPE <wait.1.5>")
-				yield("/send ESCAPE <wait.1.5>")
-				yield("/send ESCAPE <wait.1>")
-				yield("/wait 3")
-				
-				--reenter the inn room
-				yield("/target Antoinaut") --gridania
-				yield("/target Mytesyn")   --limsa
-				yield("/target Otopa")     --uldah
-				yield("/wait 1")
-				yield("/lockon on")
-				yield("/automove")
-				yield("/wait 2")
-				yield("/wait 0.5")
-				yield("/callback _Notification true 0 17")
-				yield("/callback ContentsFinderConfirm true 9")
-				yield("/interact")
-				yield("/wait 1")
-				yield("/callback _Notification true 0 17")
-				yield("/callback ContentsFinderConfirm true 9")
-				yield("/callback SelectIconString true 0")
-				yield("/callback _Notification true 0 17")
-				yield("/callback ContentsFinderConfirm true 9")
-				yield("/callback SelectString true 0")
-				yield("/wait 1")
-				yield("/wait 8")
-				RestoreYesAlready()
+			if NeedsRepair(50) and GetItemCount(1) > 4999 and GetCharacterCondition(34) == false and GetCharacterCondition(56) == false then --only do this outside of a duty yo
+				yield("/ad repair")
+				goatcounter = 0
+				for goatcounter=1,30 do
+					yield("/wait 0.5")
+					yield("/callback _Notification true 0 17")
+					yield("/callback ContentsFinderConfirm true 9")
+				end
+				yield("/ad stop")
 			end
+		end
+		--reenter the inn room
+		--if (GetZoneID() ~= 177 and GetZoneID() ~= 178) and GetCharacterCondition(34) == false and NeedsRepair(50) == false then
+		if (GetZoneID() ~= 177 and GetZoneID() ~= 178) and GetCharacterCondition(34) == false then
+			yield("/send ESCAPE")
+			yield("/ad stop") --seems to be needed or we get stuck in repair genjutsu
+			yield("/target Antoinaut") --gridania
+			yield("/target Mytesyn")   --limsa
+			yield("/target Otopa")     --uldah
+			yield("/wait 1")
+			yield("/lockon on")
+			yield("/automove")
+			yield("/wait 2")
+			yield("/wait 0.5")
+			yield("/callback _Notification true 0 17")
+			yield("/callback ContentsFinderConfirm true 9")
+			yield("/interact")
+			yield("/wait 1")
+			yield("/callback _Notification true 0 17")
+			yield("/callback ContentsFinderConfirm true 9")
+			yield("/callback SelectIconString true 0")
+			yield("/callback _Notification true 0 17")
+			yield("/callback ContentsFinderConfirm true 9")
+			yield("/callback SelectString true 0")
+			yield("/wait 1")
+			--yield("/wait 8")
+			--RestoreYesAlready()
 		end
 	end
 	--end safe check one
@@ -198,7 +178,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			if GetNodeText("_ToDoList", flurby, 3) == "Clear the Laboratorium Primum: 0/1" then flurb = "Clear the Laboratorium Primum: 0/1" end
 			if GetNodeText("_ToDoList", flurby, 3) == "Arrive on the Echelon: 0/1" then flurb = "Arrive on the Echelon: 0/1" end
 			if GetNodeText("_ToDoList", flurby, 3) == "Defeat Gaius van Baelsar: 0/1" then flurb = "Defeat Gaius van Baelsar: 0/1" end
-			yield("/wait 0.1")
+			yield("/wait 0.3")
 		end
 		if flurb == "Clear the Laboratorium Primum: 0/1"  and GetCharacterCondition(26) == false then
 			flurb = GetNodeText("_ToDoList", 25, 3)
@@ -235,7 +215,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/release W")
 			yield("/interact")
 			if type(GetTargetName()) == "string" and GetTargetName() == "Shortcut" then
-				yield("/ad stop")
+				--yield("/ad stop")
 				yield("/interact")
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 				yield("/wait 10")
@@ -255,6 +235,9 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 
 	--1044 is prae we only need this there atm
 	if GetZoneID() == 1044 then --Praetorium
+	--if GetZoneID() == 1044 and not HasTarget() then
+	--	TargetClosestEnemy(30)
+	--end
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		if math.abs(x1 - GetPlayerRawXPos()) < 3 and math.abs(y1 - GetPlayerRawYPos()) < 3 and math.abs(z1 - GetPlayerRawZPos()) < 3 then
 			yield("/echo we havent moved very much something is up ")
@@ -263,13 +246,13 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		if jigglecounter > maxjiggle then --we stuck for 30+ seconds somewhere
 			yield("/echo attempting to restart AD and hope for the best")
 			jigglecounter = 0
-			yield("/ad stop")
+			--yield("/ad stop")
 			yield("/wait 2")
 			yield("/return")
 			yield("/wait 1")
 			yield("/callback SelectYesno true 0")
 			yield("/wait 12")
-			yield("/ad start")
+			--yield("/ad start")
 			yield("/wait 2")
 		end
 	end
@@ -280,8 +263,9 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			local gdist = GetDistanceToObject("Phantom Gaius")
 			local deltadist = ndist - gdist
 			if (deltadist > 1 or deltadist < -1) and gdist < 100 then
-				yield("/echo target")
+				yield("/echo targeting nearby enemy!")
 				TargetClosestEnemy()
+				yield("/vnav stop")
 			end
 		end
 	end
@@ -291,11 +275,26 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		yield("/equiprecommended")
+		--TargetClosestEnemy()
+		yield("/ac \"Fester\"")
 	end
 	
 	if GetCharacterCondition(4) == false and GetCharacterCondition(26) == true then
-		yield("/vnav stop")
-		jigglecounter = 0 -- we reset the jiggle counter while we are in combat. combat is good means we are doing something productive
+		if type(GetTargetName()) ~= "string" then
+			TargetClosestEnemy()
+			yield("/vnav stop")
+			yield("/ad pause")
+			yield("/wait 0.5")
+			jigglecounter = 0 -- we reset the jiggle counter while we are in combat. combat is good means we are doing something productive
+			yield("/echo stopping vnav for combat")
+			yield("/echo pausing AD for combat")
+			yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
+			yield("/wait 5")
+			yield("/vnav stop")
+			yield("/wait 0.5")
+			yield("/ad resume")
+			yield("/echo resuming AD")
+		end
 	end
 	
 	if GetCharacterCondition(34) == true then
@@ -303,16 +302,69 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		y1 = GetPlayerRawYPos()
 		z1 = GetPlayerRawZPos()
 	end
-    yield("/wait 1.0")
+    yield("/wait 0.5")
 
 	stopcuckingme = stopcuckingme + 1
 	--autoqueue at the end because its least important thing
+	if GetZoneID() == 1044 and GetZoneID() == 1048 then
+		entered_duty = 0
+	end
+	if (GetZoneID() == 1044 or GetZoneID() == 1048) and entered_duty == 0 then
+		entered_duty = 1
+		duty_counter = duty_counter + 1
+		yield("/echo This is duty # -> "..duty_counter)
+	end
+	if os.date("!*t").hour > 8 then
+		duty_counter = 1
+		yield("/echo We are starting over the duty counter, we passed daily reset time!")
+	end--]]
 	if stopcuckingme > 2 and GetCharacterCondition(34) == false and imthecaptainnow == 1 then
 		yield("/finder")
+		yield("/wait 0.5")
+        while not IsAddonVisible("ContentsFinder") do
+            yield("/waitaddon ContentsFinder")
+            yield("/wait 1")
+		end -- safety check before callback
+        yield("/wait 1")
+		yield("/callback ContentsFinder true 12 1")
+		yield("/send ESCAPE")
+		--[[
+		--first we must unselect the duty that is selected. juuust in case
+		if GetNodeText("ContentsFinder", 14) == "The Praetorium" then
+			yield("/callback ContentsFinder true 3 15")
+		end
+		if GetNodeText("ContentsFinder", 14) == "Porta Decumana" then
+			yield("/callback ContentsFinder true 3 4")
+		end
+		--]]
 		yield("/echo attempting to trigger duty finder")
-		yield("/callback ContentsFinder true 12 0")
+	    --yield("/callback ContentsFinder true 12 1")
+		if duty_counter < 99 then
+			--OpenRegularDuty(1044) --Praetorium	
+			yield("/echo Trying to start Praetorium")
+			while not IsAddonVisible("ContentsFinder") do
+				OpenRegularDuty(16) --Praetorium	
+				yield("/waitaddon ContentsFinder")
+				yield("/wait 1")
+			end -- safety check before callback
+			yield("/wait 3")
+			yield("/callback ContentsFinder true 3 15")
+		end
+		if duty_counter > 98 then
+			yield("/echo Trying to start Porta")
+			while not IsAddonVisible("ContentsFinder") do
+				OpenRegularDuty(830) --Decumana
+				yield("/waitaddon ContentsFinder")
+				yield("/wait 1")
+			end -- safety check before callback
+			yield("/wait 3")
+			--OpenRegularDuty(1048) --Decumana
+			yield("/callback ContentsFinder true 3 4")
+		end
+	    yield("/callback ContentsFinder true 12 0")
 		stopcuckingme = 0
 	end
+	
 
 --safe check ends
 end
