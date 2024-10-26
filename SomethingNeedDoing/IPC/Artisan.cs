@@ -6,7 +6,7 @@ namespace SomethingNeedDoing.IPC;
 #nullable disable
 public class Artisan
 {
-    public const string Name = "Lifestream";
+    public const string Name = "Artisan";
     public Artisan() => EzIPC.Init(this, Name, SafeWrapper.AnyException);
 
     [EzIPC] public Func<bool> GetEnduranceStatus;
