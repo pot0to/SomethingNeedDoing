@@ -64,10 +64,16 @@ if isLeader() then
 	yield("/echo I am the party leader i guess")
 end
 
-maxjiggle = 15 -- = how much time before we jiggle
+--------EDITABLE SETTINGS!---------
+duty_counter = 0 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
+			     --just set it to whatever the last "current duty count" was from echos
+				 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day
+echo_level = 3 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
+----------------------------------
 
+maxjiggle = 15 -- = how much time before we jiggle
 entered_duty = 0
-duty_counter = 0
+
 
 while 1 == 1 do
 --safe check ifs
@@ -230,7 +236,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/target Gauis")
 			yield("/wait 0.5")
 		end
-		yield("/echo Prae Duty Progress -> "..flurb)
+		if echo_level < 3 then yield("/echo Prae Duty Progress -> "..flurb) end
 	end
 
 	--1044 is prae we only need this there atm
@@ -240,11 +246,11 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--end
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		if math.abs(x1 - GetPlayerRawXPos()) < 3 and math.abs(y1 - GetPlayerRawYPos()) < 3 and math.abs(z1 - GetPlayerRawZPos()) < 3 then
-			yield("/echo we havent moved very much something is up ")
+			if echo_level < 4 then yield("/echo we havent moved very much something is up ") end
 			jigglecounter = jigglecounter + 1
 		end
 		if jigglecounter > maxjiggle then --we stuck for 30+ seconds somewhere
-			yield("/echo attempting to restart AD and hope for the best")
+			if echo_level < 4 then yield("/echo attempting to restart AD and hope for the best") end
 			jigglecounter = 0
 			--yield("/ad stop")
 			yield("/wait 2")
@@ -263,7 +269,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			local gdist = GetDistanceToObject("Phantom Gaius")
 			local deltadist = ndist - gdist
 			if (deltadist > 1 or deltadist < -1) and gdist < 100 then
-				yield("/echo targeting nearby enemy!")
+				if echo_level < 1 then yield("/echo targeting nearby enemy!") end
 				TargetClosestEnemy()
 				yield("/vnav stop")
 			end
@@ -286,14 +292,14 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/ad pause")
 			yield("/wait 0.5")
 			jigglecounter = 0 -- we reset the jiggle counter while we are in combat. combat is good means we are doing something productive
-			yield("/echo stopping vnav for combat")
-			yield("/echo pausing AD for combat")
+			if echo_level < 1 then yield("/echo stopping vnav for combat") end
+			if echo_level < 1 then yield("/echo pausing AD for combat") end
 			yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 			yield("/wait 5")
 			yield("/vnav stop")
 			yield("/wait 0.5")
 			yield("/ad resume")
-			yield("/echo resuming AD")
+			if echo_level < 1 then yield("/echo resuming AD") end
 		end
 	end
 	
@@ -306,25 +312,31 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 
 	stopcuckingme = stopcuckingme + 1
 	--autoqueue at the end because its least important thing
-	if GetZoneID() == 1044 and GetZoneID() == 1048 then
+	if not (GetZoneID() == 1044 or GetZoneID() == 1048) then
 		entered_duty = 0
 	end
 	if (GetZoneID() == 1044 or GetZoneID() == 1048) and entered_duty == 0 then
 		entered_duty = 1
 		duty_counter = duty_counter + 1
-		yield("/echo This is duty # -> "..duty_counter)
+		if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter) end
 	end
-	if os.date("!*t").hour > 8 then
+	if os.date("!*t").hour > 8 and os.date("!*t").hour < 10 and duty_counter > 20 then --theres no way we can do 20 prae in 1 hour so this should cover rollover from the previous day
 		duty_counter = 1
-		yield("/echo We are starting over the duty counter, we passed daily reset time!")
+		if echo_level < 4 then yield("/echo We are starting over the duty counter, we passed daily reset time!") end
 	end--]]
 	if stopcuckingme > 2 and GetCharacterCondition(34) == false and imthecaptainnow == 1 then
 		yield("/finder")
 		yield("/wait 0.5")
-        while not IsAddonVisible("ContentsFinder") do
+		whoops = 0
+		boops = 0
+		did_we_clear_it = 0
+        while not IsAddonVisible("ContentsFinder") and whoops == 0 do
             yield("/waitaddon ContentsFinder")
-            yield("/wait 1")
+            yield("/wait 0.5")
+			boops = boops + 1
+			if boops > 10 then whoops = 1 end
 		end -- safety check before callback
+		if IsAddonVisible("ContentsFinder") then did_we_clear_it = 1 end
         yield("/wait 1")
 		yield("/callback ContentsFinder true 12 1")
 		yield("/send ESCAPE")
@@ -337,32 +349,40 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/callback ContentsFinder true 3 4")
 		end
 		--]]
-		yield("/echo attempting to trigger duty finder")
+		if echo_level < 2 then yield("/echo attempting to trigger duty finder") end
 	    --yield("/callback ContentsFinder true 12 1")
-		if duty_counter < 99 then
-			--OpenRegularDuty(1044) --Praetorium	
-			yield("/echo Trying to start Praetorium")
-			while not IsAddonVisible("ContentsFinder") do
-				OpenRegularDuty(16) --Praetorium	
-				yield("/waitaddon ContentsFinder")
-				yield("/wait 1")
-			end -- safety check before callback
-			yield("/wait 3")
-			yield("/callback ContentsFinder true 3 15")
+		if did_we_clear_it == 1 then  --we need to make sure we cleared CF before we try to queue for something.
+		whoops = 0
+		boops = 0
+			if duty_counter < 99 then
+				--OpenRegularDuty(1044) --Praetorium	
+				if echo_level < 3 then yield("/echo Trying to start Praetorium") end
+				while not IsAddonVisible("ContentsFinder") and whoops == 0 do
+					OpenRegularDuty(16) --Praetorium	
+					yield("/waitaddon ContentsFinder")
+					yield("/wait 0.5")
+					boops = boops + 1
+					if boops > 10 then whoops = 1 end
+				end -- safety check before callback
+				yield("/wait 3")
+				yield("/callback ContentsFinder true 3 15")
+			end
+			if duty_counter > 98 then
+				if echo_level < 3 then yield("/echo Trying to start Porta") end
+				while not IsAddonVisible("ContentsFinder") and whoops == 0 do
+					OpenRegularDuty(830) --Decumana
+					yield("/waitaddon ContentsFinder")
+					yield("/wait 0.5")
+					boops = boops + 1
+					if boops > 10 then whoops = 1 end
+				end -- safety check before callback
+				yield("/wait 3")
+				--OpenRegularDuty(1048) --Decumana
+				yield("/callback ContentsFinder true 3 4")
+			end
+			yield("/callback ContentsFinder true 12 0")
+			stopcuckingme = 0
 		end
-		if duty_counter > 98 then
-			yield("/echo Trying to start Porta")
-			while not IsAddonVisible("ContentsFinder") do
-				OpenRegularDuty(830) --Decumana
-				yield("/waitaddon ContentsFinder")
-				yield("/wait 1")
-			end -- safety check before callback
-			yield("/wait 3")
-			--OpenRegularDuty(1048) --Decumana
-			yield("/callback ContentsFinder true 3 4")
-		end
-	    yield("/callback ContentsFinder true 12 0")
-		stopcuckingme = 0
 	end
 	
 
