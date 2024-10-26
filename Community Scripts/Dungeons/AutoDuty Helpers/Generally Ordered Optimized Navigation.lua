@@ -64,11 +64,16 @@ if isLeader() then
 	yield("/echo I am the party leader i guess")
 end
 
-maxjiggle = 15 -- = how much time before we jiggle
-
-entered_duty = 0
-duty_counter = 0
+--------EDITABLE SETTINGS!---------
+duty_counter = 0 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
+			     --just set it to whatever the last "current duty count" was from echos
+				 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day
 echo_level = 3 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
+----------------------------------
+
+maxjiggle = 15 -- = how much time before we jiggle
+entered_duty = 0
+
 
 while 1 == 1 do
 --safe check ifs
@@ -347,23 +352,29 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		if echo_level < 2 then yield("/echo attempting to trigger duty finder") end
 	    --yield("/callback ContentsFinder true 12 1")
 		if did_we_clear_it == 1 then  --we need to make sure we cleared CF before we try to queue for something.
+		whoops = 0
+		boops = 0
 			if duty_counter < 99 then
 				--OpenRegularDuty(1044) --Praetorium	
 				if echo_level < 3 then yield("/echo Trying to start Praetorium") end
-				while not IsAddonVisible("ContentsFinder") do
+				while not IsAddonVisible("ContentsFinder") and whoops == 0 do
 					OpenRegularDuty(16) --Praetorium	
 					yield("/waitaddon ContentsFinder")
 					yield("/wait 1")
+					boops = boops + 1
+					if boops > 15 then whoops = 0 end
 				end -- safety check before callback
 				yield("/wait 3")
 				yield("/callback ContentsFinder true 3 15")
 			end
 			if duty_counter > 98 then
 				if echo_level < 3 then yield("/echo Trying to start Porta") end
-				while not IsAddonVisible("ContentsFinder") do
+				while not IsAddonVisible("ContentsFinder") and whoops == 0 do
 					OpenRegularDuty(830) --Decumana
 					yield("/waitaddon ContentsFinder")
 					yield("/wait 1")
+					boops = boops + 1
+					if boops > 15 then whoops = 0 end
 				end -- safety check before callback
 				yield("/wait 3")
 				--OpenRegularDuty(1048) --Decumana
