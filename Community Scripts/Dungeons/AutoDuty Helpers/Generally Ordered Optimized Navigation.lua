@@ -307,7 +307,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 
 	stopcuckingme = stopcuckingme + 1
 	--autoqueue at the end because its least important thing
-	if GetZoneID() == 1044 and GetZoneID() == 1048 then
+	if not (GetZoneID() == 1044 or GetZoneID() == 1048) then
 		entered_duty = 0
 	end
 	if (GetZoneID() == 1044 or GetZoneID() == 1048) and entered_duty == 0 then
