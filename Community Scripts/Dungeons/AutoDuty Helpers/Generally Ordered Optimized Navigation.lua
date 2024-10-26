@@ -65,6 +65,10 @@ if isLeader() then
 end
 
 maxjiggle = 15 -- = how much time before we jiggle
+
+entered_duty = 0
+duty_counter = 0
+
 while 1 == 1 do
 --safe check ifs
 if IsPlayerAvailable() then
@@ -302,12 +306,65 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 
 	stopcuckingme = stopcuckingme + 1
 	--autoqueue at the end because its least important thing
+	if GetZoneID() == 1044 and GetZoneID() == 1048 then
+		entered_duty = 0
+	end
+	if (GetZoneID() == 1044 or GetZoneID() == 1048) and entered_duty == 0 then
+		entered_duty = 1
+		duty_counter = duty_counter + 1
+		yield("/echo This is duty # -> "..duty_counter)
+	end
+	if os.date("!*t").hour > 8 then
+		duty_counter = 1
+		yield("/echo We are starting over the duty counter, we passed daily reset time!")
+	end--]]
 	if stopcuckingme > 2 and GetCharacterCondition(34) == false and imthecaptainnow == 1 then
 		yield("/finder")
+		yield("/wait 0.5")
+        while not IsAddonVisible("ContentsFinder") do
+            yield("/waitaddon ContentsFinder")
+            yield("/wait 1")
+		end -- safety check before callback
+        yield("/wait 1")
+		yield("/callback ContentsFinder true 12 1")
+		yield("/send ESCAPE")
+		--[[
+		--first we must unselect the duty that is selected. juuust in case
+		if GetNodeText("ContentsFinder", 14) == "The Praetorium" then
+			yield("/callback ContentsFinder true 3 15")
+		end
+		if GetNodeText("ContentsFinder", 14) == "Porta Decumana" then
+			yield("/callback ContentsFinder true 3 4")
+		end
+		--]]
 		yield("/echo attempting to trigger duty finder")
-		yield("/callback ContentsFinder true 12 0")
+	    --yield("/callback ContentsFinder true 12 1")
+		if duty_counter < 99 then
+			--OpenRegularDuty(1044) --Praetorium	
+			yield("/echo Trying to start Praetorium")
+			while not IsAddonVisible("ContentsFinder") do
+				OpenRegularDuty(16) --Praetorium	
+				yield("/waitaddon ContentsFinder")
+				yield("/wait 1")
+			end -- safety check before callback
+			yield("/wait 3")
+			yield("/callback ContentsFinder true 3 15")
+		end
+		if duty_counter > 98 then
+			yield("/echo Trying to start Porta")
+			while not IsAddonVisible("ContentsFinder") do
+				OpenRegularDuty(830) --Decumana
+				yield("/waitaddon ContentsFinder")
+				yield("/wait 1")
+			end -- safety check before callback
+			yield("/wait 3")
+			--OpenRegularDuty(1048) --Decumana
+			yield("/callback ContentsFinder true 3 4")
+		end
+	    yield("/callback ContentsFinder true 12 0")
 		stopcuckingme = 0
 	end
+	
 
 --safe check ends
 end
