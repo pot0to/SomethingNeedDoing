@@ -134,7 +134,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		end
 		--reenter the inn room
 		--if (GetZoneID() ~= 177 and GetZoneID() ~= 178) and GetCharacterCondition(34) == false and NeedsRepair(50) == false then
-		if (GetZoneID() ~= 177 and GetZoneID() ~= 178) and GetCharacterCondition(34) == false then
+		if (GetZoneID() ~= 177 and GetZoneID() ~= 178 and GetZoneID() ~= 179) and GetCharacterCondition(34) == false then
 			yield("/send ESCAPE")
 			yield("/ad stop") --seems to be needed or we get stuck in repair genjutsu
 			yield("/target Antoinaut") --gridania
