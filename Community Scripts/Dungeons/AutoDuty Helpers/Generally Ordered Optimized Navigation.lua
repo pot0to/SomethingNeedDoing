@@ -4,19 +4,20 @@ or "Something need Gooning"
 thanks to @Akasha and @Ritsuko for some of the ideas/code
 
 purpose: help autoduty with farming duties.
+design: it will run 99 prae, and then run decumana until reset time (1 am PDT) and reset the counter and go back to farming prae.
 
 Plugins/configs (ill update as people realize i forgot instructions)
 Automaton
 Some form of bossmod
 Rotation Solver Reborn
 Vnavmesh
-Pandora -> actually have this disabled it causes problems.
-Something Need doing (SND)
 Simpletweaks
-and more (?)
+
+Configurations (NOT OPTIONAL.  THEY ARE ABSOLUTELY MANDATORY)
+Pandora -> actually have this disabled it causes problems.
 Simpletweaks -> targeting fix
-SND -> disable snd targeting
-SND -> disable addon errors
+SND -> disable snd targeting + disable addon errors (everything under /target and /waitaddon)
+AD -> Turn off "Leave Duty"
 
 Yesalready configs (maybe only the first one is needed since the rest are done via callbacks w ya off) also make sure yesalready is on :p ad turns it off sometimes (???)
 	"YesNo"
@@ -30,17 +31,14 @@ Enhanced Duty start/end
 	duty start -> /pcraft run start_gooning
 	duty end -> /ad stop
 	leave duty -> 10 seconds
-Use whatever path you want. but i reccommend the included path file for tank and others. Credit to @Akasha and @Ritsuko for the path files.  tank tries to w2w, tank2 does not.
-
-todo:
-duty specific stuff like only do the phantom targetioong for gaeuis in prae
-
-known issues:
-I SAW AN UNKNOWN LUA ERROR so i might add debug lines everywhere until i catch it.
+Use whatever path you want. but i reccommend the included path file for tank and others. Credit to @Akasha and @Ritsuko for the path files.  tank tries to w2w, tank2 does not.  tank3 is the path im currently using on all 4 chars. thanks @Erdelf
 
 recommended party:
 war dps dps sch
 for sch in RSR turn off adloquim, succor and physick
+
+reccommend setup:
+WAR SCH SMN MNK
 
 --]]
 yield("/echo please get ready for G.O.O.N ing time")
@@ -71,7 +69,8 @@ duty_counter = 0 --change this if you want to restart a "run" at a higher counte
 echo_level = 3 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
 ----------------------------------
 
-maxjiggle = 15 -- = how much time before we jiggle
+--dont touch these ones
+maxjiggle = 15 -- = how much time before we jiggle the char in prae
 entered_duty = 0
 
 
@@ -122,7 +121,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				end
 			end
 			--JUST OUTSIDE THE INN REPAIR
-			if NeedsRepair(50) and GetItemCount(1) > 4999 and GetCharacterCondition(34) == false and GetCharacterCondition(56) == false then --only do this outside of a duty yo
+			if NeedsRepair(25) and GetItemCount(1) > 4999 and GetCharacterCondition(34) == false and GetCharacterCondition(56) == false then --only do this outside of a duty yo
 				yield("/ad repair")
 				goatcounter = 0
 				for goatcounter=1,30 do
@@ -135,7 +134,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		end
 		--reenter the inn room
 		--if (GetZoneID() ~= 177 and GetZoneID() ~= 178) and GetCharacterCondition(34) == false and NeedsRepair(50) == false then
-		if (GetZoneID() ~= 177 and GetZoneID() ~= 178) and GetCharacterCondition(34) == false then
+		if (GetZoneID() ~= 177 and GetZoneID() ~= 178 and GetZoneID() ~= 179) and GetCharacterCondition(34) == false then
 			yield("/send ESCAPE")
 			yield("/ad stop") --seems to be needed or we get stuck in repair genjutsu
 			yield("/target Antoinaut") --gridania
@@ -249,7 +248,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			if echo_level < 4 then yield("/echo we havent moved very much something is up ") end
 			jigglecounter = jigglecounter + 1
 		end
-		if jigglecounter > maxjiggle then --we stuck for 30+ seconds somewhere
+		if jigglecounter > maxjiggle and GetZoneID() == 1044 then --we stuck for 30+ seconds somewhere in praetorium
 			if echo_level < 4 then yield("/echo attempting to restart AD and hope for the best") end
 			jigglecounter = 0
 			--yield("/ad stop")
