@@ -46,6 +46,7 @@ public class IpcCommands
         artisan = new();
         autoretainer = new();
         ardiscard = new();
+        AutoDutyIPC.Init();
     }
 
     internal void Dispose()
@@ -259,5 +260,18 @@ public class IpcCommands
 
     #region ARDiscard
     public List<uint> ARDiscardGetItemsToDiscard() => [.. ardiscard.GetItemsToDiscard()];
+    #endregion
+
+    #region AutoDuty
+    public void ADListConfig() => AutoDutyIPC.ListConfig?.InvokeAction();
+    public string? ADGetConfig(string config) => AutoDutyIPC.GetConfig?.InvokeFunc(config);
+    public void ADSetConfig(string config, string setting) => AutoDutyIPC.SetConfig?.InvokeAction(config, setting);
+    public void ADRun(uint territoryType, int loops = 0, bool bareMode = false) => AutoDutyIPC.Run?.InvokeAction(territoryType, loops, bareMode);
+    public void ADStart(bool startFromZero = true) => AutoDutyIPC.Start?.InvokeAction(startFromZero);
+    public void ADStop() => AutoDutyIPC.Stop?.InvokeAction();
+    public bool? ADIsNavigating() => AutoDutyIPC.IsNavigating?.InvokeFunc();
+    public bool? ADIsLooping() => AutoDutyIPC.IsLooping?.InvokeFunc();
+    public bool? ADIsStopped() => AutoDutyIPC.IsStopped?.InvokeFunc();
+    public bool? ADContentHasPath(uint territoryType) => AutoDutyIPC.ContentHasPath?.InvokeFunc(territoryType);
     #endregion
 }
