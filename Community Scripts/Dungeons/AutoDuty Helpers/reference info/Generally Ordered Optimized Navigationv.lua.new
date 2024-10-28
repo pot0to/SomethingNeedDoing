@@ -31,7 +31,7 @@ Enhanced Duty start/end
 	duty start -> /pcraft run start_gooning
 	duty end -> /ad stop
 	leave duty -> 10 seconds
-Use whatever path you want. but i reccommend the included path file for all party members. W2W Ritsuko etc.
+Use whatever path you want. but i reccommend the included path file for tank and others. Credit to @Akasha and @Ritsuko for the path files.  tank tries to w2w, tank2 does not.  tank3 is the path im currently using on all 4 chars. thanks @Erdelf
 
 recommended party:
 war dps dps sch
@@ -63,14 +63,13 @@ if isLeader() then
 end
 
 --------EDITABLE SETTINGS!---------
-duty_counter = 48	 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
+duty_counter = 0	 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
 					 --just set it to whatever the last "current duty count" was from echos
 					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day
 					 --set it to 0 if its the first run of the "day"
 echo_level = 3 		 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
 feedme = 4745		 --itemID for food to eat. use simple tweaks ShowID to find it (turn it on and hover over item, it will be the number on the left in the square [] brackets)
 feedmeitem = "Orange Juice"  --add the <hq> if its HQ
-hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
 --feedmeitem = "Baked Eggplant<hq>"  --remove the <hq> if its not HQ
 ----------------------------------
 
@@ -78,33 +77,15 @@ hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
 maxjiggle = 15 -- = how much time before we jiggle the char in prae
 entered_duty = 0
 equip_counter = 0
-bailout_i_guess = 0
 
 while 1 == 1 do
 	yield("/wait 1.5") --the big wait. run the entire fucking script every ? seconds
-	
-	--decide if we are going to bailout - logic stolen from Ritsuko <3
-	im_tired = GetContentTimeLeft()
-	if type(im_tired) == "number" and im_tired  > 100  then
-		if im_tired > bailout_i_guess then
-			bailout_i_guess = im_tired --this basically sets the initial value. its not obvious but sometimes the value is 0 so this needs to be done.
-		end
-		gooning = bailout_i_guess - bailout		--now we see how long we goonign for. 
-	end
-	if gooning > hardened_sock then --too much gooning its time to get new socks from the armoire
-		yield("/p meh")
-		NavRebuild()
-		while not NavIsReady() do
-			yield("/wait 1")
-		end
-		leaveDuty()	
-	end
 --safe check ifs
 if IsPlayerAvailable() then
 if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
 --
-	--is there some bullshit and yesalready was disabled outside of the duty?
-	if GetCharacterCondition(34) == false then yield("/callback SelectYesno true 0") end
+	--is there some bullshit and yesalready was disabled?
+	yield("/callback SelectYesno true 0")
 	
 	--Food check!
 	statoos = GetStatusTimeRemaining(48)
@@ -288,13 +269,13 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		if jigglecounter > maxjiggle and GetZoneID() == 1044 then --we stuck for 30+ seconds somewhere in praetorium
 			if echo_level < 4 then yield("/echo attempting to restart AD and hope for the best") end
 			jigglecounter = 0
-			yield("/ad stop")
+			--yield("/ad stop")
 			yield("/wait 2")
 			yield("/return")
 			yield("/wait 1")
 			yield("/callback SelectYesno true 0")
 			yield("/wait 12")
-			yield("/ad start")
+			--yield("/ad start")
 			yield("/wait 2")
 		end
 	end
