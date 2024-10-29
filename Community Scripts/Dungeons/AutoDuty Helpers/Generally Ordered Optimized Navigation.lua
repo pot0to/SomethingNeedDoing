@@ -67,7 +67,7 @@ end
 ----------------------------------
 ----------------------------------
 --------EDITABLE SETTINGS!---------
-duty_counter = 44	 --set it to 0 if its the first run of the "day"
+duty_counter = 0	 --set it to 0 if its the first run of the "day"
 					 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
 					 --just set it to whatever the last "current duty count" was from echos
 					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day		 
@@ -82,7 +82,7 @@ bm_preset = "none" --if you set it to "none" it wont use bmr and instead it will
 --debug
 hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
 echo_level = 3 		 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
-debug_counter = 4 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
+debug_counter = 0 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
 ----------------------------------
 ----------------------------------
 ----------------------------------
@@ -95,18 +95,23 @@ equip_counter = 0
 inprae = 0
 maxzone = 0
 
-if bm_preset == "none" then
-	yield("/bmrai setpresetname Deactivate") --turn off bm rotation
-	yield("/rotation Auto")
+function force_rotation()
+	if bm_preset == "none" then
+		yield("/bmrai setpresetname Deactivate") --turn off bm rotation
+		yield("/rotation Auto")
+	end
+
+	if bm_preset ~= "none" then
+		yield("/bmrai setpresetname "..bm_preset)
+		yield("/bmrai followtarget on")
+		yield("/bmrai follow Slot1")
+		yield("/rotation Cancel") --turn off RSR in case it is on
+	end
+	
+	yield("/bmrai on")
 end
 
-if bm_preset ~= "none" then
-	yield("/bmrai setpresetname "..bm_preset)
-	yield("/bmrai followtarget on")
-	yield("/bmrai follow Slot1")
-	yield("/rotation Cancel") --turn off RSR in case it is on
-end
-
+force_rotation()
 --decide if we are going to bailout - logic stolen from Ritsuko <3
 function leaveDuty()
     yield("/ad stop")
@@ -134,6 +139,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	if type(zoneleft) == "number" and zoneleft > 100 then
 		if zoneleft > maxzone then
 			maxzone = zoneleft
+			--force_rotation() --refresh the rotationtype when we do this
 		end
 		inprae = maxzone - zoneleft
 		if inprae > hardened_sock and GetCharacterCondition(26) == false then
