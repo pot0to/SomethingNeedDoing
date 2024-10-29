@@ -67,7 +67,7 @@ end
 ----------------------------------
 ----------------------------------
 --------EDITABLE SETTINGS!---------
-duty_counter = 0	 --set it to 0 if its the first run of the "day"
+duty_counter = 44	 --set it to 0 if its the first run of the "day"
 					 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
 					 --just set it to whatever the last "current duty count" was from echos
 					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day		 
@@ -76,13 +76,13 @@ feedme = 4745		 --itemID for food to eat. use simple tweaks ShowID to find it (t
 feedmeitem = "Orange Juice"  --add the <hq> if its HQ
 --feedmeitem = "Baked Eggplant<hq>"  --remove the <hq> if its not HQ
 
-bm_preset = "AutoDuty" --if you set it to "none" it wont use bmr. this is for the preset to use.
---bm_preset = "none" --if you set it to "none" it wont use bmr. this is for the preset to use.
+--bm_preset = "AutoDuty" --if you set it to "none" it wont use bmr. this is for the preset to use.
+bm_preset = "none" --if you set it to "none" it wont use bmr and instead it will use RSR. this is for the preset to use.
 
 --debug
 hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
 echo_level = 3 		 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
-debug_counter = 0 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
+debug_counter = 4 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
 ----------------------------------
 ----------------------------------
 ----------------------------------
@@ -94,6 +94,11 @@ entered_duty = 0
 equip_counter = 0
 inprae = 0
 maxzone = 0
+
+if bm_preset == "none" then
+	yield("/bmrai setpresetname Deactivate") --turn off bm rotation
+	yield("/rotation Auto")
+end
 
 if bm_preset ~= "none" then
 	yield("/bmrai setpresetname "..bm_preset)
