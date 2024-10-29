@@ -63,7 +63,7 @@ if isLeader() then
 end
 
 --------EDITABLE SETTINGS!---------
-duty_counter = 5	 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
+duty_counter = 11	 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
 					 --just set it to whatever the last "current duty count" was from echos
 					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day
 					 --set it to 0 if its the first run of the "day"
@@ -72,6 +72,7 @@ feedme = 4745		 --itemID for food to eat. use simple tweaks ShowID to find it (t
 feedmeitem = "Orange Juice"  --add the <hq> if its HQ
 hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
 --feedmeitem = "Baked Eggplant<hq>"  --remove the <hq> if its not HQ
+debug_counter = 4 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
 ----------------------------------
 
 --dont touch these ones
@@ -398,7 +399,13 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	if (GetZoneID() == 1044 or GetZoneID() == 1048) and entered_duty == 0 then
 		entered_duty = 1
 		duty_counter = duty_counter + 1
-		if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter) end
+		if debug_counter == 0 then
+			if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter) end
+		end
+		if debug_counter > 0 then
+			if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter.." Runs since last crash -> "..(duty_counter-debug_counter)) end
+		end
+		
 	end
 	if os.date("!*t").hour > 8 and os.date("!*t").hour < 10 and duty_counter > 20 then --theres no way we can do 20 prae in 1 hour so this should cover rollover from the previous day
 		duty_counter = 1
