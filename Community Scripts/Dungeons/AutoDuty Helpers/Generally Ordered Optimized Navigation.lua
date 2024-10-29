@@ -63,7 +63,7 @@ if isLeader() then
 end
 
 --------EDITABLE SETTINGS!---------
-duty_counter = 59	 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
+duty_counter = 5	 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
 					 --just set it to whatever the last "current duty count" was from echos
 					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day
 					 --set it to 0 if its the first run of the "day"
@@ -84,9 +84,10 @@ maxzone = 0
 --decide if we are going to bailout - logic stolen from Ritsuko <3
 function leaveDuty()
     yield("/ad stop")
-    while IsInZone(zoneid) do
+    while IsInZone(1044) do
         if IsAddonVisible("SelectYesno") then
-            yield("/click SelectYesno Yes")
+            --yield("/click SelectYesno Yes")
+			yield("/callback SelectYesno true 0")
         else
             yield("/leaveduty")
         end
@@ -119,9 +120,9 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		end
 	end
 
-	--is there some bullshit and yesalready was disabled outside of the duty?
-	if GetCharacterCondition(34) == false then yield("/callback SelectYesno true 0") end
-	
+	if GetCharacterCondition(34) == false then yield("/callback SelectYesno true 0") end	--is there some bullshit and yesalready was disabled outside of the duty? 
+	maxzone = 0--reset the timer for inside prae
+
 	--Food check!
 	statoos = GetStatusTimeRemaining(48)
 	---yield("/echo "..statoos)
@@ -186,7 +187,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		end
 		--reenter the inn room
 		--if (GetZoneID() ~= 177 and GetZoneID() ~= 178) and GetCharacterCondition(34) == false and NeedsRepair(50) == false then
-		if (GetZoneID() ~= 177 and GetZoneID() ~= 178 and GetZoneID() ~= 179) and GetCharacterCondition(34) == false then
+		if (GetZoneID() ~= 177 and GetZoneID() ~= 178 and GetZoneID() ~= 179) and GetCharacterCondition(34) == false and IsPlayerAvailable() then
 			yield("/send ESCAPE")
 			yield("/ad stop") --seems to be needed or we get stuck in repair genjutsu
 			yield("/target Antoinaut") --gridania
@@ -195,8 +196,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/wait 1")
 			yield("/lockon on")
 			yield("/automove")
-			yield("/wait 2")
-			yield("/wait 0.5")
+			yield("/wait 2.5")
 			yield("/callback _Notification true 0 17")
 			yield("/callback ContentsFinderConfirm true 9")
 			yield("/interact")
@@ -225,19 +225,21 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--check if we are stuck somewhere.
 	--first ensure we are in the duty and not in combat
 
-	if GetZoneID() == 1044 and GetCharacterCondition(26) == false then --Praetorium
+	if GetZoneID() == 1044 and GetCharacterCondition(26) == false and IsPlayerAvailable() then --Praetorium
 		maxjiggle = 6
 		flurb = "????"
 		for flurby = 1,30 do
-			if GetNodeText("_ToDoList", flurby, 3) == "Arrive at the command chamber: 0/1" then flurb = "Arrive at the command chamber: 0/1" end
-			if GetNodeText("_ToDoList", flurby, 3) == "Clear the command chamber: 0/1" then flurb = "Clear the command chamber: 0/1" end
-			if GetNodeText("_ToDoList", flurby, 3) == "Arrive at the Laboratorium Primum: 0/1" then flurb = "Arrive at the Laboratorium Primum: 0/1" end
-			if GetNodeText("_ToDoList", flurby, 3) == "Clear the Laboratorium Primum: 0/1" then flurb = "Clear the Laboratorium Primum: 0/1" end
-			if GetNodeText("_ToDoList", flurby, 3) == "Arrive on the Echelon: 0/1" then flurb = "Arrive on the Echelon: 0/1" end
-			if GetNodeText("_ToDoList", flurby, 3) == "Defeat Gaius van Baelsar: 0/1" then flurb = "Defeat Gaius van Baelsar: 0/1" end
+			if IsPlayerAvailable() then
+				if GetNodeText("_ToDoList", flurby, 3) == "Arrive at the command chamber: 0/1" then flurb = "Arrive at the command chamber: 0/1" end
+				if GetNodeText("_ToDoList", flurby, 3) == "Clear the command chamber: 0/1" then flurb = "Clear the command chamber: 0/1" end
+				if GetNodeText("_ToDoList", flurby, 3) == "Arrive at the Laboratorium Primum: 0/1" then flurb = "Arrive at the Laboratorium Primum: 0/1" end
+				if GetNodeText("_ToDoList", flurby, 3) == "Clear the Laboratorium Primum: 0/1" then flurb = "Clear the Laboratorium Primum: 0/1" end
+				if GetNodeText("_ToDoList", flurby, 3) == "Arrive on the Echelon: 0/1" then flurb = "Arrive on the Echelon: 0/1" end
+				if GetNodeText("_ToDoList", flurby, 3) == "Defeat Gaius van Baelsar: 0/1" then flurb = "Defeat Gaius van Baelsar: 0/1" end
+			end
 			yield("/wait 0.3")
 		end
-		if flurb == "Clear the Laboratorium Primum: 0/1"  and GetCharacterCondition(26) == false then
+		if flurb == "Clear the Laboratorium Primum: 0/1"  and GetCharacterCondition(26) == false and IsPlayerAvailable() then
 			flurb = GetNodeText("_ToDoList", 25, 3)
 --this doesnt work the way i intended so removing it for now.
 			--[[yield("/target Shortcut")
@@ -258,10 +260,14 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			end
 			--]]
 		end
-		if flurb == "Arrive on the Echelon: 0/1"  and GetCharacterCondition(26) == false then
+		if flurb == "Arrive on the Echelon: 0/1"  and GetCharacterCondition(26) == false  and IsPlayerAvailable() then
 			maxjiggle = 20
 		end
-		if flurb == "Defeat Gaius van Baelsar: 0/1" and GetCharacterCondition(26) == false then
+	--safe check ifs part 3
+	if IsPlayerAvailable() then
+	if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
+	--
+		if flurb == "Defeat Gaius van Baelsar: 0/1" and GetCharacterCondition(26) == false and GetCharacterCondition(34) == true and IsPlayerAvailable() then
 			maxjiggle = 20
 			yield("/target Magitek")
 			yield("/wait 0.5")
@@ -270,8 +276,10 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/interact")
 			yield("/hold W <wait.2.0>")
 			yield("/release W")
+			yield("/wait 0.5")
 			yield("/interact")
-			if type(GetTargetName()) == "string" and GetTargetName() == "Shortcut" then
+			yield("/wait 0.5")
+			if type(GetTargetName()) == "string" and GetTargetName() == "Shortcut" and GetCharacterCondition(26) == false and IsPlayerAvailable() then
 				yield("/ad stop")
 				yield("/interact")
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
@@ -280,13 +288,20 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				yield("/bmrai on")
 				yield("/rotation auto")
 			end
-			if type(GetTargetName()) == "string" and GetCharacterCondition(26) == false then
+			if type(GetTargetName()) == "string" and GetCharacterCondition(26) == false and IsPlayerAvailable() then
 				yield("/interact")
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 			end
-			yield("/target Gaius")
-			yield("/wait 1.5")
+			if type(GetTargetName()) ~= "string" and GetCharacterCondition(26) == false and IsPlayerAvailable() then
+				yield("/wait 1.5")
+				yield("/target Gaius")
+				yield("/wait 1.5")
+			end
 		end
+		--
+		end
+		end
+		--
 		if echo_level < 3 then yield("/echo Prae Duty Progress -> "..flurb) end
 	end
 
@@ -315,7 +330,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		end
 	end
 			
-
+--[[
 		local mytarget = GetTargetName()
 		if type(mytarget) == "string" and mytarget ~= "Phantom Gaius" then
 			local ndist = GetDistanceToObject(null)
@@ -327,6 +342,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				--yield("/vnav stop")
 			end
 		end
+		--]]
 	end
 	--if GetCharacterCondition(34) == false then --fix autoqueue just shitting out
 		--yield("/send U")
