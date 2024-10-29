@@ -42,6 +42,7 @@ WAR SCH SMN MNK
 
 --]]
 yield("/echo please get ready for G.O.O.N ing time")
+--yield("/bmrai ui") --open this in case we need to set the preset. at least until we can slash command it.
 
 jigglecounter = 0
 x1 = GetPlayerRawXPos()
@@ -62,17 +63,29 @@ if isLeader() then
 	yield("/echo I am the party leader i guess")
 end
 
+----------------------------------
+----------------------------------
+----------------------------------
 --------EDITABLE SETTINGS!---------
-duty_counter = 11	 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
+duty_counter = 0	 --set it to 0 if its the first run of the "day"
+					 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
 					 --just set it to whatever the last "current duty count" was from echos
-					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day
-					 --set it to 0 if its the first run of the "day"
-echo_level = 3 		 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
+					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day		 
+
 feedme = 4745		 --itemID for food to eat. use simple tweaks ShowID to find it (turn it on and hover over item, it will be the number on the left in the square [] brackets)
 feedmeitem = "Orange Juice"  --add the <hq> if its HQ
-hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
 --feedmeitem = "Baked Eggplant<hq>"  --remove the <hq> if its not HQ
-debug_counter = 4 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
+
+bm_preset = "AutoDuty" --if you set it to "none" it wont use bmr. this is for the preset to use.
+--bm_preset = "none" --if you set it to "none" it wont use bmr. this is for the preset to use.
+
+--debug
+hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
+echo_level = 3 		 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
+debug_counter = 0 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
+----------------------------------
+----------------------------------
+----------------------------------
 ----------------------------------
 
 --dont touch these ones
@@ -81,6 +94,13 @@ entered_duty = 0
 equip_counter = 0
 inprae = 0
 maxzone = 0
+
+if bm_preset ~= "none" then
+	yield("/bmrai setpresetname "..bm_preset)
+	yield("/bmrai followtarget on")
+	yield("/bmrai follow Slot1")
+	yield("/rotation Cancel") --turn off RSR in case it is on
+end
 
 --decide if we are going to bailout - logic stolen from Ritsuko <3
 function leaveDuty()
@@ -111,7 +131,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			maxzone = zoneleft
 		end
 		inprae = maxzone - zoneleft
-		if inprae > hardened_sock then
+		if inprae > hardened_sock and GetCharacterCondition(26) == false then
 			yield("/echo We bailed from duty -> "..duty_counter)
 			NavRebuild()
 			while not NavIsReady() do
