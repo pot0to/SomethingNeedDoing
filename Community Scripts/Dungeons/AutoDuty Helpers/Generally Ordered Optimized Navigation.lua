@@ -63,7 +63,7 @@ if isLeader() then
 end
 
 --------EDITABLE SETTINGS!---------
-duty_counter = 48	 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
+duty_counter = 59	 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
 					 --just set it to whatever the last "current duty count" was from echos
 					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day
 					 --set it to 0 if its the first run of the "day"
@@ -78,31 +78,47 @@ hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
 maxjiggle = 15 -- = how much time before we jiggle the char in prae
 entered_duty = 0
 equip_counter = 0
-bailout_i_guess = 0
+inprae = 0
+maxzone = 0
+
+--decide if we are going to bailout - logic stolen from Ritsuko <3
+function leaveDuty()
+    yield("/ad stop")
+    while IsInZone(zoneid) do
+        if IsAddonVisible("SelectYesno") then
+            yield("/click SelectYesno Yes")
+        else
+            yield("/leaveduty")
+        end
+        yield("/wait 2")
+    end
+    return
+end
 
 while 1 == 1 do
 	yield("/wait 1.5") --the big wait. run the entire fucking script every ? seconds
 	
-	--decide if we are going to bailout - logic stolen from Ritsuko <3
-	im_tired = GetContentTimeLeft()
-	if type(im_tired) == "number" and im_tired  > 100  then
-		if im_tired > bailout_i_guess then
-			bailout_i_guess = im_tired --this basically sets the initial value. its not obvious but sometimes the value is 0 so this needs to be done.
-		end
-		gooning = bailout_i_guess - bailout		--now we see how long we goonign for. 
-	end
-	if gooning > hardened_sock then --too much gooning its time to get new socks from the armoire
-		yield("/p meh")
-		NavRebuild()
-		while not NavIsReady() do
-			yield("/wait 1")
-		end
-		leaveDuty()	
-	end
 --safe check ifs
 if IsPlayerAvailable() then
 if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
 --
+	--decide if we are going to bailout - logic stolen from Ritsuko <3
+	zoneleft = GetContentTimeLeft()
+	if type(zoneleft) == "number" and zoneleft > 100 then
+		if zoneleft > maxzone then
+			maxzone = zoneleft
+		end
+		inprae = maxzone - zoneleft
+		if inprae > hardened_sock then
+			yield("/echo We bailed from duty -> "..duty_counter)
+			NavRebuild()
+			while not NavIsReady() do
+				yield("/wait 1")
+			end
+			leaveDuty()
+		end
+	end
+
 	--is there some bullshit and yesalready was disabled outside of the duty?
 	if GetCharacterCondition(34) == false then yield("/callback SelectYesno true 0") end
 	
