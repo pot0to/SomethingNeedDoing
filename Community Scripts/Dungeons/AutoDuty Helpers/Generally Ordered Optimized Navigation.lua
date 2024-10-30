@@ -429,7 +429,9 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	end
 	if (GetZoneID() == 1044 or GetZoneID() == 1048) and entered_duty == 0 then
 		entered_duty = 1
-		duty_counter = duty_counter + 1
+		if duty_counter < 20 and GetZoneID() ~= 1048 then --don't count yesterday's last decumana in the counter!
+			duty_counter = duty_counter + 1
+		end
 		if debug_counter == 0 then
 			if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter) end
 		end
@@ -439,7 +441,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		
 	end
 	if os.date("!*t").hour > 8 and os.date("!*t").hour < 10 and duty_counter > 20 then --theres no way we can do 20 prae in 1 hour so this should cover rollover from the previous day
-		duty_counter = 1
+		duty_counter = 0
 		if echo_level < 4 then yield("/echo We are starting over the duty counter, we passed daily reset time!") end
 	end
 	if stopcuckingme > 2 and GetCharacterCondition(34) == false and imthecaptainnow == 1 then
