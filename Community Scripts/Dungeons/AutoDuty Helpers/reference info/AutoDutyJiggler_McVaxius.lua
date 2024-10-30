@@ -17,13 +17,13 @@ while wheahehhahehhaheohuahoeuhaosdflkj == 1 do
 	end
 	if (x1 - GetPlayerRawXPos()) == 0 and (y1 - GetPlayerRawYPos()) == 0 and (z1 - GetPlayerRawZPos()) == 0 then
 		yield("/echo We havent moved in 20 seconds. its time to slap the machine or jiggle it a bit")
-		yield("/pcall SelectYesno true 0")
+		yield("/callback SelectYesno true 0")
 		yield("/wait 1")
-		yield("/pcall Repair true 0")
+		yield("/callback Repair true 0")
 		yield("/wait 1")
-		yield("/pcall Repair true 1")
+		yield("/callback Repair true 1")
 		yield("/wait 3")
-		yield("/pcall SelectYesno true 0")
+		yield("/callback SelectYesno true 0")
 		yield("/wait 1")
 		while not NavIsReady() do
 			yield("/echo waiting on navmesh to finish rebuilding the mesh")

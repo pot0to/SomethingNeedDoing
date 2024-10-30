@@ -25,7 +25,7 @@ Simpletweaks -> enable auto equip recommended
 
 Known issues:
 1. "Race Condition with trade windows"
-Something i need to confirm and report -> Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a, if i use pcall method they will keep trying until they finish delivering gil.  however
+Something i need to confirm and report -> Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a, if i use callback method they will keep trying until they finish delivering gil.  however
 if i use the dropbox method I am 99% sure it will just kind of sit there thinking its processing a dropbox queue but in fact its just sitting there doing nothing if any of the trade windows are open
 while other clients are trying and failing to open one with the char from account A.
 
@@ -63,7 +63,7 @@ bagmans_take = 1000000 -- how much gil remaining should the bagma(e)n shave off 
 dropboxhack = 1 --for bagman type 2 - if gil isnt being changed after a while. we will force a trade window because maybe there was a race condition as mentione above
 tonyception = 0 --0 = dont be fancy, 1 = we have multiple fat tonies in the table and therefore we need to give 1 gil at the end of the trade so tony will leave and the next tony can come
 bagman_type = 0 --[[
-0 = pcalls (gil only, a bit sloppy too with no multi tony support), 
+0 = callbacks (gil only, a bit sloppy too with no multi tony support), 
 1 = dropbox with table config, 
 2 = dropbox but all salvage and all but bagmans take of gil, 
 3 = table config w bagman cut, 
@@ -222,7 +222,7 @@ local function shake_hands()
 	--DEBUG
 	--yield("/echo our return mode will be "..franchise_owners[1][2])
 	
-	--pcall way to transfer gil only. we can't pcall other methods
+	--callback way to transfer gil only. we can't callback other methods
 	while get_to_the_choppa == 0 do
 		if (GetGil() < (bagmans_take + 1)) and (tony_type == 0 or tony_type == 2) then
 			get_to_the_choppa = 1
@@ -233,7 +233,7 @@ local function shake_hands()
 			yield("/trade")
 			yield("/wait 0.5")
 			yield("/wait 0.5")
-			yield("/pcall Trade true 2")
+			yield("/callback Trade true 2")
 			--verification of target before doing the following. otherwise hit escape!
 			tradename = GetNodeText("Trade", 20)
 			if tradename ~= fat_tony then
@@ -242,13 +242,13 @@ local function shake_hands()
 			end
 			if tradename == fat_tony then
 				if GetGil() > 999999 then
-					yield("/pcall InputNumeric true 1000000 <wait.1>") --this is just in case we want to specify/calculate the amount
+					yield("/callback InputNumeric true 1000000 <wait.1>") --this is just in case we want to specify/calculate the amount
 				end
 				if GetGil() < 1000000 then
 					snaccman = GetGil() - bagmans_take
-					yield("/pcall InputNumeric true ".. snaccman .." <wait.1>") --this is just in case we want to specify/calculate the amount
+					yield("/callback InputNumeric true ".. snaccman .." <wait.1>") --this is just in case we want to specify/calculate the amount
 				end
-				yield("/pcall Trade true 0")
+				yield("/callback Trade true 0")
 				yield("/wait 4")
 			end
 		end
@@ -431,7 +431,7 @@ for i=1,#franchise_owners do
 			yield("/wait 0.5")
 			--very interesting discovery
 			--1= personal, 0 = fc, 2 = apartment
-			yield("/pcall TeleportHousingFriend true "..tonys_house)
+			yield("/callback TeleportHousingFriend true "..tonys_house)
 			ZoneTransition()
 		end
 		
@@ -447,7 +447,7 @@ for i=1,#franchise_owners do
 			visland_stop_moving()
 			if tony_type == 2 then
 				yield("/interact")
-				yield("/pcall SelectYesNo true 0")  --this doesnt work. just use yesalready. putting it here for later in case someone else sorts it out i can update.
+				yield("/callback SelectYesNo true 0")  --this doesnt work. just use yesalready. putting it here for later in case someone else sorts it out i can update.
 				yield("/wait 5")
 			end
 			approach_tony()

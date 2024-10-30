@@ -57,7 +57,7 @@ end
 --Generic map opener. it will just open whatever appears at top of this list
 yield("/gaction decipher")
 yield("/wait 1")
-yield("/pcall SelectIconString true 0")
+yield("/callback SelectIconString true 0")
 safewait()
 
 yield("target zone -> "..GetFlagZone())

@@ -39,9 +39,9 @@ FirstRun = 0
  yield("/send E")
  yield("<wait.0.5>")
  yield("/pinteract <wait.1>")
- yield("/pcall SelectString true 0")
- yield("/pcall TelepotTown false 11 2u")
- yield("/pcall TelepotTown false 11 2u")
+ yield("/callback SelectString true 0")
+ yield("/callback TelepotTown false 11 2u")
+ yield("/callback TelepotTown false 11 2u")
 
  yield("<wait.5>")
  yield("/ac Sprint")
@@ -67,12 +67,12 @@ FirstRun = 0
 	yield("/automove")
 	yield("<wait.5>")
 	yield("/send NUMPAD0")
-	yield("/pcall SelectString true 0 <wait.1>")
-	yield("/pcall SelectString true 0 <wait.1>")
+	yield("/callback SelectString true 0 <wait.1>")
+	yield("/callback SelectString true 0 <wait.1>")
 
 buycount = 0
 while (buycount < 15) do
-	yield("/pcall FreeCompanyExchange false 2 22u")
+	yield("/callback FreeCompanyExchange false 2 22u")
 	yield("<wait.2>")
 	buycount = buycount + 1
 end

@@ -45,13 +45,13 @@ while (mgf_counter < mgf_sucks) do
     yield("/wait 0.35")
     yield("/interact")
     yield("/wait 1")
-    yield("/pcall FGSEnterDialog true 0")
-    yield("/pcall FGSEnterDialog true -2")
+    yield("/callback FGSEnterDialog true 0")
+    yield("/callback FGSEnterDialog true -2")
     yield("/wait 1")
-    yield("/pcall ContentsFinderConfirm true 8")
-    yield("/pcall ContentsFinderConfirm true -2")
-    yield("/pcall FGSSpectatorMenu true 3")
-    yield("/pcall FGSExitDialog true 0")
+    yield("/callback ContentsFinderConfirm true 8")
+    yield("/callback ContentsFinderConfirm true -2")
+    yield("/callback FGSSpectatorMenu true 3")
+    yield("/callback FGSExitDialog true 0")
     --1197 gold saucer blunderville reg area
     --1165 fail guys area
     if  (GetZoneID()==1165 and in_saucer == 1) then
