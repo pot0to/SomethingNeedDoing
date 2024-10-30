@@ -17,7 +17,7 @@ throw everything into %AppData%\XIVLauncher\pluginConfigs\SomethingNeedDoing\
 
 What is working?
 	Fishing
-		Geting Fisher Levels and determining who is the lowest level fisher - we cant safely AYS RELOG yet..
+		Geting Fisher Levels and determining who is the lowest level fisher
 		Fully cycling ocean fishing to the char with lowest level of fishing job
 	Outputting to log file if Red Onion Helm Detected
 	Updating Inventories, FC, Chocobo saddlebags for Atools by opening them.
@@ -105,20 +105,20 @@ if automarketfix ~= "no" then
 	yield("/wait 2")
 	yield("/xlenableprofile "..automarketfix)
 	--]]
-	yield("/am stop ")
+	yield("/am stop ") --this is all we need to stop the bells from being inoperable hahah this is it hahahahahah
 end
 --------------------------
 yield("/echo Script breakers disabled")		
 FUTA_processors = {} -- Initialize variable
 
 -- 3D Table   {}[i][j][k]
-----  -> --?- -> not possible yet/partially implemented
-----  -> --X- -> not implemented
-----  -> --Y- -> not implemented
+----  -> --Y- -> implemented
+----  -> --N- -> not implemented yet - might be replaced with another feature. dont worry about it.
+----  -> --?- -> not possible yet/partially implemented - might be replaced with another feature. dont worry about it.
 FUTA_defaults = {
     {
         {"Firstname Lastname@Server", 0}, 			--Y--{}[i][1][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
-        {"FISH", 0},								--?--{}[i][2][1..2]--level, 0 = dont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
+        {"FISH", 0},								--Y--{}[i][2][1..2]--level, 0 = dont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
 		{"CLEAN", 100, 0, 0, 50},					--Y--{}[i][3][1..5]--chance to do random cleaning/100 if 100 it will be changed to 11 after 1 run, process_gc_rank = 0=no,1=yes. expert_hack = 0=no,1=yes. clean_inventory = 0=no, >0 check inventory slots free and try to clean out inventory.
 		{"FUEL", 0, 0},								--Y--{}[i][4][1..3]--fuel safety stock trigger, fuel to buy up to i[4][3] amount when hitting i[4][2] amount or lower leave i[4][2] at 0 if you dont want it to process this
 		{"TT", 0, 0},								--N--{}[i][5][1..3]--minutes of TT, npc to play 1= roe 2= manservant

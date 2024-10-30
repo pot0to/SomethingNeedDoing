@@ -1,7 +1,7 @@
 --this should be in the (Automaton) enhance duty/start end as /pcraft run start_gooning, obviously make the script in SND for this to work.
 --set this to run when entering a duty
 
-yield("/wait 2")
+yield("/wait 1")
 
 --loop wait for is char ready 
 while IsPlayerAvailable() == false do
@@ -11,8 +11,8 @@ end
 
 yield("/ad stop")
 
-yield("/wait 2")
-yield("/hold W <wait.2.0>")
+yield("/wait 1")
+yield("/hold W <wait.1.0>")
 yield("/release W")
 
 --yield("/echo ad start")

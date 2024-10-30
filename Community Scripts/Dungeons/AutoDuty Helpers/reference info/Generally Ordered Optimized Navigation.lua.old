@@ -31,7 +31,7 @@ Enhanced Duty start/end
 	duty start -> /pcraft run start_gooning
 	duty end -> /ad stop
 	leave duty -> 10 seconds
-Use whatever path you want. but i reccommend the included path file for all party members. W2W Ritsuko etc.
+Use whatever path you want. but i reccommend the included path file for tank and others. Credit to @Akasha and @Ritsuko for the path files.  tank tries to w2w, tank2 does not.  tank3 is the path im currently using on all 4 chars. thanks @Erdelf
 
 recommended party:
 war dps dps sch
@@ -42,7 +42,6 @@ WAR SCH SMN MNK
 
 --]]
 yield("/echo please get ready for G.O.O.N ing time")
---yield("/bmrai ui") --open this in case we need to set the preset. at least until we can slash command it.
 
 jigglecounter = 0
 x1 = GetPlayerRawXPos()
@@ -63,113 +62,30 @@ if isLeader() then
 	yield("/echo I am the party leader i guess")
 end
 
-----------------------------------
-----------------------------------
-----------------------------------
 --------EDITABLE SETTINGS!---------
-duty_counter = 0	 --set it to 0 if its the first run of the "day"
-					 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
-					 --just set it to whatever the last "current duty count" was from echos
-					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day		 
-
-feedme = 4745		 --itemID for food to eat. use simple tweaks ShowID to find it (turn it on and hover over item, it will be the number on the left in the square [] brackets)
-feedmeitem = "Orange Juice"  --add the <hq> if its HQ
---feedmeitem = "Baked Eggplant<hq>"  --remove the <hq> if its not HQ
-
---bm_preset = "AutoDuty" --if you set it to "none" it wont use bmr. this is for the preset to use.
-bm_preset = "none" --if you set it to "none" it wont use bmr and instead it will use RSR. this is for the preset to use.
-
---debug
-hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
-echo_level = 3 		 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
-debug_counter = 0 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
-----------------------------------
-----------------------------------
-----------------------------------
+duty_counter = 69 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
+			     --just set it to whatever the last "current duty count" was from echos
+				 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day
+				 --set it to 0 if its the first run of the "day"
+echo_level = 3 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
 ----------------------------------
 
 --dont touch these ones
 maxjiggle = 15 -- = how much time before we jiggle the char in prae
 entered_duty = 0
-equip_counter = 0
-inprae = 0
-maxzone = 0
 
-function force_rotation()
-	if bm_preset == "none" then
-		yield("/bmrai setpresetname Deactivate") --turn off bm rotation
-		yield("/rotation Auto")
-	end
-
-	if bm_preset ~= "none" then
-		yield("/bmrai setpresetname "..bm_preset)
-		yield("/bmrai followtarget on")
-		yield("/bmrai follow Slot1")
-		yield("/rotation Cancel") --turn off RSR in case it is on
-	end
-	
-	yield("/bmrai on")
-end
-
-force_rotation()
---decide if we are going to bailout - logic stolen from Ritsuko <3
-function leaveDuty()
-    yield("/ad stop")
-    while IsInZone(1044) do
-        if IsAddonVisible("SelectYesno") then
-            --yield("/click SelectYesno Yes")
-			yield("/callback SelectYesno true 0")
-        else
-            yield("/leaveduty")
-        end
-        yield("/wait 2")
-    end
-    return
-end
 
 while 1 == 1 do
-	yield("/wait 1.5") --the big wait. run the entire fucking script every ? seconds
-	
 --safe check ifs
 if IsPlayerAvailable() then
 if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
 --
-	--decide if we are going to bailout - logic stolen from Ritsuko <3
-	zoneleft = GetContentTimeLeft()
-	if type(zoneleft) == "number" and zoneleft > 100 then
-		if zoneleft > maxzone then
-			maxzone = zoneleft
-			--force_rotation() --refresh the rotationtype when we do this
-		end
-		inprae = maxzone - zoneleft
-		if inprae > hardened_sock and GetCharacterCondition(26) == false then
-			yield("/echo We bailed from duty -> "..duty_counter)
-			NavRebuild()
-			while not NavIsReady() do
-				yield("/wait 1")
-			end
-			leaveDuty()
-		end
-	end
-
-	if GetCharacterCondition(34) == false then yield("/callback SelectYesno true 0") end	--is there some bullshit and yesalready was disabled outside of the duty? 
-	maxzone = 0--reset the timer for inside prae
-
-	--Food check!
-	statoos = GetStatusTimeRemaining(48)
-	---yield("/echo "..statoos)
-	if type(GetItemCount(feedme)) == "number" then
-		if GetItemCount(feedme) > 0 and statoos < 90 and GetCharacterCondition(34) == false then --refresh food if we are below 15 minutes left
-			yield("/item "..feedmeitem)
-			yield("/echo Attempting to eat "..feedmeitem)
-			yield("/wait 0.5")
-		end
-	end
-
-	--Do we need repairs? only check outside of duty.
+	--is there some bullshit and yesalready was disabled?
+	yield("/callback SelectYesno true 0")
+	--Do we need repairs?
 	--check every 0.3 seconds 8 times so total looop is 2.4 seconds
 	goat = 0
-	while goat < 9 and GetCharacterCondition(34) == false do
+	while goat < 9 do
 		goat = goat + 1
 		yield("/wait 0.3")
 		if GetCharacterCondition(34) == false then
@@ -219,7 +135,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		end
 		--reenter the inn room
 		--if (GetZoneID() ~= 177 and GetZoneID() ~= 178) and GetCharacterCondition(34) == false and NeedsRepair(50) == false then
-		if (GetZoneID() ~= 177 and GetZoneID() ~= 178 and GetZoneID() ~= 179) and GetCharacterCondition(34) == false and IsPlayerAvailable() then
+		if (GetZoneID() ~= 177 and GetZoneID() ~= 178 and GetZoneID() ~= 179) and GetCharacterCondition(34) == false then
 			yield("/send ESCAPE")
 			yield("/ad stop") --seems to be needed or we get stuck in repair genjutsu
 			yield("/target Antoinaut") --gridania
@@ -228,7 +144,8 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/wait 1")
 			yield("/lockon on")
 			yield("/automove")
-			yield("/wait 2.5")
+			yield("/wait 2")
+			yield("/wait 0.5")
 			yield("/callback _Notification true 0 17")
 			yield("/callback ContentsFinderConfirm true 9")
 			yield("/interact")
@@ -257,21 +174,28 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--check if we are stuck somewhere.
 	--first ensure we are in the duty and not in combat
 
-	if GetZoneID() == 1044 and GetCharacterCondition(26) == false and IsPlayerAvailable() then --Praetorium
+	if GetCharacterCondition(4) == true and GetCharacterCondition(34) == true then --target stuff while on magitek if we don't thave a target. trying to fix this bullashit
+		--if type(GetTargetName()) ~= "string" then
+			TargetClosestEnemy()
+			yield("/send KEY_2")
+			yield("/wait 1.5")
+		---end
+	end
+
+
+	if GetZoneID() == 1044 and GetCharacterCondition(26) == false then --Praetorium
 		maxjiggle = 6
 		flurb = "????"
 		for flurby = 1,30 do
-			if IsPlayerAvailable() then
-				if GetNodeText("_ToDoList", flurby, 3) == "Arrive at the command chamber: 0/1" then flurb = "Arrive at the command chamber: 0/1" end
-				if GetNodeText("_ToDoList", flurby, 3) == "Clear the command chamber: 0/1" then flurb = "Clear the command chamber: 0/1" end
-				if GetNodeText("_ToDoList", flurby, 3) == "Arrive at the Laboratorium Primum: 0/1" then flurb = "Arrive at the Laboratorium Primum: 0/1" end
-				if GetNodeText("_ToDoList", flurby, 3) == "Clear the Laboratorium Primum: 0/1" then flurb = "Clear the Laboratorium Primum: 0/1" end
-				if GetNodeText("_ToDoList", flurby, 3) == "Arrive on the Echelon: 0/1" then flurb = "Arrive on the Echelon: 0/1" end
-				if GetNodeText("_ToDoList", flurby, 3) == "Defeat Gaius van Baelsar: 0/1" then flurb = "Defeat Gaius van Baelsar: 0/1" end
-			end
+			if GetNodeText("_ToDoList", flurby, 3) == "Arrive at the command chamber: 0/1" then flurb = "Arrive at the command chamber: 0/1" end
+			if GetNodeText("_ToDoList", flurby, 3) == "Clear the command chamber: 0/1" then flurb = "Clear the command chamber: 0/1" end
+			if GetNodeText("_ToDoList", flurby, 3) == "Arrive at the Laboratorium Primum: 0/1" then flurb = "Arrive at the Laboratorium Primum: 0/1" end
+			if GetNodeText("_ToDoList", flurby, 3) == "Clear the Laboratorium Primum: 0/1" then flurb = "Clear the Laboratorium Primum: 0/1" end
+			if GetNodeText("_ToDoList", flurby, 3) == "Arrive on the Echelon: 0/1" then flurb = "Arrive on the Echelon: 0/1" end
+			if GetNodeText("_ToDoList", flurby, 3) == "Defeat Gaius van Baelsar: 0/1" then flurb = "Defeat Gaius van Baelsar: 0/1" end
 			yield("/wait 0.3")
 		end
-		if flurb == "Clear the Laboratorium Primum: 0/1"  and GetCharacterCondition(26) == false and IsPlayerAvailable() then
+		if flurb == "Clear the Laboratorium Primum: 0/1"  and GetCharacterCondition(26) == false then
 			flurb = GetNodeText("_ToDoList", 25, 3)
 --this doesnt work the way i intended so removing it for now.
 			--[[yield("/target Shortcut")
@@ -292,14 +216,10 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			end
 			--]]
 		end
-		if flurb == "Arrive on the Echelon: 0/1"  and GetCharacterCondition(26) == false  and IsPlayerAvailable() then
+		if flurb == "Arrive on the Echelon: 0/1"  and GetCharacterCondition(26) == false then
 			maxjiggle = 20
 		end
-	--safe check ifs part 3
-	if IsPlayerAvailable() then
-	if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(26)) == "boolean" and type(GetCharacterCondition(4)) == "boolean" then
-	--
-		if flurb == "Defeat Gaius van Baelsar: 0/1" and GetCharacterCondition(26) == false and GetCharacterCondition(34) == true and IsPlayerAvailable() then
+		if flurb == "Defeat Gaius van Baelsar: 0/1" and GetCharacterCondition(26) == false then
 			maxjiggle = 20
 			yield("/target Magitek")
 			yield("/wait 0.5")
@@ -308,11 +228,9 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/interact")
 			yield("/hold W <wait.2.0>")
 			yield("/release W")
-			yield("/wait 0.5")
 			yield("/interact")
-			yield("/wait 0.5")
-			if type(GetTargetName()) == "string" and GetTargetName() == "Shortcut" and GetCharacterCondition(26) == false and IsPlayerAvailable() then
-				yield("/ad stop")
+			if type(GetTargetName()) == "string" and GetTargetName() == "Shortcut" then
+				--yield("/ad stop")
 				yield("/interact")
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 				yield("/wait 10")
@@ -320,20 +238,13 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 				yield("/bmrai on")
 				yield("/rotation auto")
 			end
-			if type(GetTargetName()) == "string" and GetCharacterCondition(26) == false and IsPlayerAvailable() then
+			if type(GetTargetName()) == "string" and GetCharacterCondition(26) == false then
 				yield("/interact")
 				yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
 			end
-			if type(GetTargetName()) ~= "string" and GetCharacterCondition(26) == false and IsPlayerAvailable() then
-				yield("/wait 1.5")
-				yield("/target Gaius")
-				yield("/wait 1.5")
-			end
+			yield("/target Gauis")
+			yield("/wait 0.5")
 		end
-		--
-		end
-		end
-		--
 		if echo_level < 3 then yield("/echo Prae Duty Progress -> "..flurb) end
 	end
 
@@ -342,7 +253,6 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--if GetZoneID() == 1044 and not HasTarget() then
 	--	TargetClosestEnemy(30)
 	--end
-			
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		if math.abs(x1 - GetPlayerRawXPos()) < 3 and math.abs(y1 - GetPlayerRawYPos()) < 3 and math.abs(z1 - GetPlayerRawZPos()) < 3 then
 			if echo_level < 4 then yield("/echo we havent moved very much something is up ") end
@@ -351,17 +261,16 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		if jigglecounter > maxjiggle and GetZoneID() == 1044 then --we stuck for 30+ seconds somewhere in praetorium
 			if echo_level < 4 then yield("/echo attempting to restart AD and hope for the best") end
 			jigglecounter = 0
-			yield("/ad stop")
+			--yield("/ad stop")
 			yield("/wait 2")
 			yield("/return")
 			yield("/wait 1")
 			yield("/callback SelectYesno true 0")
 			yield("/wait 12")
-			yield("/ad start")
+			--yield("/ad start")
 			yield("/wait 2")
 		end
 	end
-			
 --[[
 		local mytarget = GetTargetName()
 		if type(mytarget) == "string" and mytarget ~= "Phantom Gaius" then
@@ -371,7 +280,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			if (deltadist > 1 or deltadist < -1) and gdist < 100 then
 				if echo_level < 1 then yield("/echo targeting nearby enemy!") end
 				TargetClosestEnemy()
-				--yield("/vnav stop")
+				yield("/vnav stop")
 			end
 		end
 		--]]
@@ -381,30 +290,18 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	--end
 	
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
-		equip_counter = equip_counter + 1
-		if equip_counter > 50 then 
-			yield("/equiprecommended")
-			yield("/wait 0.5")
-			equip_counter = 0
-		end
+		yield("/equiprecommended")
 		--TargetClosestEnemy()
-		--yield("/ac \"Fester\"") --i dont think we need this.
+		yield("/ac \"Fester\"")
 	end
-	if GetCharacterCondition(4) == true then --target stuff while on magitek if we don't thave a target. trying to fix this bullashit
-		--if type(GetTargetName()) ~= "string" then
-			TargetClosestEnemy()
-			yield("/send KEY_2")
-			yield("/wait 0.5")
-		---end
-	end
-
+	
 	if GetCharacterCondition(4) == false and GetCharacterCondition(26) == true then
 		if type(GetTargetName()) ~= "string" then
 			TargetClosestEnemy()
-			--yield("/vnav stop")
-			--yield("/ad pause")
+			yield("/vnav stop")
+			yield("/ad pause")
 			yield("/wait 0.5")
-			--[[jigglecounter = 0 -- we reset the jiggle counter while we are in combat. combat is good means we are doing something productive
+			jigglecounter = 0 -- we reset the jiggle counter while we are in combat. combat is good means we are doing something productive
 			if echo_level < 1 then yield("/echo stopping vnav for combat") end
 			if echo_level < 1 then yield("/echo pausing AD for combat") end
 			yield("/vnavmesh moveto "..GetTargetRawXPos().." "..GetTargetRawYPos().." "..GetTargetRawZPos())
@@ -412,7 +309,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			yield("/vnav stop")
 			yield("/wait 0.5")
 			yield("/ad resume")
-			if echo_level < 1 then yield("/echo resuming AD") end--]]
+			if echo_level < 1 then yield("/echo resuming AD") end
 		end
 	end
 	
@@ -421,6 +318,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		y1 = GetPlayerRawYPos()
 		z1 = GetPlayerRawZPos()
 	end
+    yield("/wait 0.5")
 
 	stopcuckingme = stopcuckingme + 1
 	--autoqueue at the end because its least important thing
@@ -430,18 +328,12 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	if (GetZoneID() == 1044 or GetZoneID() == 1048) and entered_duty == 0 then
 		entered_duty = 1
 		duty_counter = duty_counter + 1
-		if debug_counter == 0 then
-			if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter) end
-		end
-		if debug_counter > 0 then
-			if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter.." Runs since last crash -> "..(duty_counter-debug_counter)) end
-		end
-		
+		if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter) end
 	end
 	if os.date("!*t").hour > 8 and os.date("!*t").hour < 10 and duty_counter > 20 then --theres no way we can do 20 prae in 1 hour so this should cover rollover from the previous day
 		duty_counter = 1
 		if echo_level < 4 then yield("/echo We are starting over the duty counter, we passed daily reset time!") end
-	end
+	end--]]
 	if stopcuckingme > 2 and GetCharacterCondition(34) == false and imthecaptainnow == 1 then
 		yield("/finder")
 		yield("/wait 0.5")
