@@ -429,7 +429,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	end
 	if (GetZoneID() == 1044 or GetZoneID() == 1048) and entered_duty == 0 then
 		entered_duty = 1
-		if duty_counter < 20 and GetZoneID() ~= 1048 then --don't count yesterday's last decumana in the counter!
+		if (duty_counter < 20 and GetZoneID() ~= 1048) or GetZoneID() == 1044 then --don't count yesterday's last decumana in the counter!
 			duty_counter = duty_counter + 1
 		end
 		if debug_counter == 0 then
