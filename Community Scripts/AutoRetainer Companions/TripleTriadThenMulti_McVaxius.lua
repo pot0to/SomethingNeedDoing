@@ -42,7 +42,7 @@ function open_aetheryte()
  yield("/send E")
  yield("/wait 0.5")
  yield("/pinteract <wait.1>")
- yield("/pcall SelectString true 0")
+ yield("/callback SelectString true 0")
 end
 
 --teleport to Ishgard when name plate is ready
@@ -62,10 +62,10 @@ yield("/echo Set the number of matches and Enable TT after!!!")
 yield("/echo Set the number of matches and Enable TT after!!!")
 yield("/echo Set the number of matches and Enable TT after!!!")
 
---pcall teleport to the last vigil
+--callback teleport to the last vigil
 open_aetheryte()
-yield("/pcall TelepotTown false 11 8u")
-yield("/pcall TelepotTown false 11 8u")
+yield("/callback TelepotTown false 11 8u")
+yield("/callback TelepotTown false 11 8u")
 
 yield("/visland execonce tthouse")
 visland_stop_moving()

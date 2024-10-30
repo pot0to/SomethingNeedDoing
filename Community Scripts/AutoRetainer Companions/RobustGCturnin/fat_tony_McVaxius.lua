@@ -132,7 +132,7 @@ for i=1,#franchise_owners do
 	--are we on the right server already?
 	yield("/li "..tonys_turf)
 	yield("/wait 2")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	yield("/wait 2")
 	CharacterSafeWait()
 	yield("/echo Processing Tony "..i.."/"..#franchise_owners)
@@ -143,7 +143,7 @@ for i=1,#franchise_owners do
 			if tony_zoneID ~= GetZoneID() then --we are teleporting to Tony's spot
 				yield("/tp "..tonys_spot)
 				yield("/wait 2")
-				yield("/pcall SelectYesno true 0")
+				yield("/callback SelectYesno true 0")
 				ZoneTransition()
 			end
 	end
@@ -153,7 +153,7 @@ for i=1,#franchise_owners do
 		yield("/wait 0.5")
 		--very interesting discovery
 		--1= personal, 0 = fc, 2 = apartment
-		yield("/pcall TeleportHousingFriend true "..tonys_house)
+		yield("/callback TeleportHousingFriend true "..tonys_house)
 		ZoneTransition()
 	end
 	geel = GetGil() --get the initial geel value
@@ -170,7 +170,7 @@ for i=1,#franchise_owners do
 		visland_stop_moving()
 		if tony_type == 2 then
 			yield("/interact")
-			yield("/pcall SelectYesno true 0")
+			yield("/callback SelectYesno true 0")
 			yield("/wait 5")
 		end
 		approach_tony()

@@ -35,7 +35,7 @@ while gosecondtime > 0 do
 end
 
 yield("/xltoggleprofile Artisan")
-yield("/pcall SynthesisSimple true -1")
+yield("/callback SynthesisSimple true -1")
 yield("<wait.5.0>")
 yield("/stopcrafting")
 yield("<wait.5.0>")
