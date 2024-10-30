@@ -67,7 +67,7 @@ end
 ----------------------------------
 ----------------------------------
 --------EDITABLE SETTINGS!---------
-duty_counter = 0	 --set it to 0 if its the first run of the "day"
+duty_counter = 27	 --set it to 0 if its the first run of the "day"
 					 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
 					 --just set it to whatever the last "current duty count" was from echos
 					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day		 
@@ -424,12 +424,13 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 
 	stopcuckingme = stopcuckingme + 1
 	--autoqueue at the end because its least important thing
-	if not (GetZoneID() == 1044 or GetZoneID() == 1048) then
+	zonecheck = GetZoneID()
+	if not (zonecheck == 1044 or zonecheck == 1048) then
 		entered_duty = 0
 	end
-	if (GetZoneID() == 1044 or GetZoneID() == 1048) and entered_duty == 0 then
+	if (zonecheck == 1044 or zonecheck == 1048) and entered_duty == 0 then
 		entered_duty = 1
-		if (duty_counter < 20 and GetZoneID() ~= 1048) or GetZoneID() == 1044 then --don't count yesterday's last decumana in the counter!
+		if (duty_counter < 20 and zonecheck ~= 1048) or zonecheck == 1044 or (zonecheck == 1048 and duty_counter > 98) then --don't count yesterday's last decumana in the counter!
 			duty_counter = duty_counter + 1
 		end
 		if debug_counter == 0 then
