@@ -69,7 +69,7 @@ end
 -----------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
 --------EDITABLE SETTINGS!---------------------------------------------------------------------------------------
-duty_counter = 30	 --set it to 0 if its the first run of the "day"
+duty_counter = 0	 --set it to 0 if its the first run of the "day"
 					 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
 					 --just set it to whatever the last "current duty count" was from echos
 					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day		 
@@ -434,7 +434,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 
 	stopcuckingme = stopcuckingme + 1
 	--autoqueue at the end because its least important thing
-	if type(GetZoneID()) == "boolean" then
+	if type(GetZoneID()) == "number" then
 		zonecheck = GetZoneID()
 		if not (zonecheck == 1044 or zonecheck == 1048) then
 			entered_duty = 0
