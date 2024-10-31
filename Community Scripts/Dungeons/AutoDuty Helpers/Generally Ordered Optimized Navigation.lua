@@ -451,7 +451,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		end
 		
 	end
-	if os.date("!*t").hour > 8 and os.date("!*t").hour < 10 and duty_counter > 20 then --theres no way we can do 20 prae in 1 hour so this should cover rollover from the previous day
+	if os.date("!*t").hour > 6 and os.date("!*t").hour < 8 and duty_counter > 20 then --theres no way we can do 20 prae in 1 hour so this should cover rollover from the previous day
 		duty_counter = 0
 		if echo_level < 4 then yield("/echo We are starting over the duty counter, we passed daily reset time!") end
 	end
