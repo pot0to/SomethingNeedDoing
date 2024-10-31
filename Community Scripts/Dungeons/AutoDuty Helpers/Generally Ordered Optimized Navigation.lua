@@ -69,7 +69,7 @@ end
 -----------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
 --------EDITABLE SETTINGS!---------------------------------------------------------------------------------------
-duty_counter = 0	 --set it to 0 if its the first run of the "day"
+duty_counter = 30	 --set it to 0 if its the first run of the "day"
 					 --change this if you want to restart a "run" at a higher counter level becuase you were alreaday running it.
 					 --just set it to whatever the last "current duty count" was from echos
 					 --i.e. if you saw "This is duty # -> 17"  from the echo window , then set it to 17 before you resume your run for the day		 
@@ -434,88 +434,91 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 
 	stopcuckingme = stopcuckingme + 1
 	--autoqueue at the end because its least important thing
-	zonecheck = GetZoneID()
-	if not (zonecheck == 1044 or zonecheck == 1048) then
-		entered_duty = 0
-	end
-	if (zonecheck == 1044 or zonecheck == 1048) and entered_duty == 0 then
-		entered_duty = 1
-		if (duty_counter < 20 and zonecheck ~= 1048) or zonecheck == 1044 or (zonecheck == 1048 and duty_counter > 98) then --don't count yesterday's last decumana in the counter!
-			duty_counter = duty_counter + 1
+	if type(GetZoneID()) == "boolean" then
+		zonecheck = GetZoneID()
+		if not (zonecheck == 1044 or zonecheck == 1048) then
+			entered_duty = 0
 		end
-		if debug_counter == 0 then
-			if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter) end
+		if (zonecheck == 1044 or zonecheck == 1048) and entered_duty == 0 then
+			entered_duty = 1
+			if (duty_counter < 20 and zonecheck ~= 1048) or zonecheck == 1044 or (zonecheck == 1048 and duty_counter > 98) then --don't count yesterday's last decumana in the counter!
+				duty_counter = duty_counter + 1
+			end
+			if debug_counter == 0 then
+				if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter) end
+			end
+			if debug_counter > 0 then
+				if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter.." Runs since last crash -> "..(duty_counter-debug_counter)) end
+			end
+			
 		end
-		if debug_counter > 0 then
-			if echo_level < 4 then yield("/echo This is duty # -> "..duty_counter.." Runs since last crash -> "..(duty_counter-debug_counter)) end
-		end
-		
 	end
 	if os.date("!*t").hour > 6 and os.date("!*t").hour < 8 and duty_counter > 20 then --theres no way we can do 20 prae in 1 hour so this should cover rollover from the previous day
 		duty_counter = 0
 		if echo_level < 4 then yield("/echo We are starting over the duty counter, we passed daily reset time!") end
 	end
-	if stopcuckingme > 2 and GetCharacterCondition(34) == false and imthecaptainnow == 1 and (GetZoneID() == 177 or GetZoneID() == 178 or GetZoneID() == 179) and not NeedsRepair(tornclothes) then
-		yield("/finder")
-		yield("/wait 0.5")
-		whoops = 0
-		boops = 0
-		did_we_clear_it = 0
-        while not IsAddonVisible("ContentsFinder") and whoops == 0 do
-            yield("/waitaddon ContentsFinder")
-            yield("/wait 0.5")
-			boops = boops + 1
-			if boops > 10 then whoops = 1 end
-		end -- safety check before callback
-		if IsAddonVisible("ContentsFinder") then did_we_clear_it = 1 end
-        yield("/wait 1")
-		yield("/callback ContentsFinder true 12 1")
-		yield("/send ESCAPE")
-		--[[
-		--first we must unselect the duty that is selected. juuust in case
-		if GetNodeText("ContentsFinder", 14) == "The Praetorium" then
-			yield("/callback ContentsFinder true 3 15")
-		end
-		if GetNodeText("ContentsFinder", 14) == "Porta Decumana" then
-			yield("/callback ContentsFinder true 3 4")
-		end
-		--]]
-		if echo_level < 2 then yield("/echo attempting to trigger duty finder") end
-	    --yield("/callback ContentsFinder true 12 1")
-		if did_we_clear_it == 1 then  --we need to make sure we cleared CF before we try to queue for something.
-		whoops = 0
-		boops = 0
-			if duty_counter < 99 then
-				--OpenRegularDuty(1044) --Praetorium	
-				if echo_level < 3 then yield("/echo Trying to start Praetorium") end
-				while not IsAddonVisible("ContentsFinder") and whoops == 0 do
-					OpenRegularDuty(16) --Praetorium	
-					yield("/waitaddon ContentsFinder")
-					yield("/wait 0.5")
-					boops = boops + 1
-					if boops > 10 then whoops = 1 end
-				end -- safety check before callback
-				yield("/wait 3")
+	if IsPlayerAvailable() then
+		if stopcuckingme > 2 and GetCharacterCondition(34) == false and imthecaptainnow == 1 and (GetZoneID() == 177 or GetZoneID() == 178 or GetZoneID() == 179) and not NeedsRepair(tornclothes) then
+			yield("/finder")
+			yield("/wait 0.5")
+			whoops = 0
+			boops = 0
+			did_we_clear_it = 0
+			while not IsAddonVisible("ContentsFinder") and whoops == 0 do
+				yield("/waitaddon ContentsFinder")
+				yield("/wait 0.5")
+				boops = boops + 1
+				if boops > 10 then whoops = 1 end
+			end -- safety check before callback
+			if IsAddonVisible("ContentsFinder") then did_we_clear_it = 1 end
+			yield("/wait 1")
+			yield("/callback ContentsFinder true 12 1")
+			yield("/send ESCAPE")
+			--[[
+			--first we must unselect the duty that is selected. juuust in case
+			if GetNodeText("ContentsFinder", 14) == "The Praetorium" then
 				yield("/callback ContentsFinder true 3 15")
 			end
-			if duty_counter > 98 then
-				if echo_level < 3 then yield("/echo Trying to start Porta") end
-				while not IsAddonVisible("ContentsFinder") and whoops == 0 do
-					OpenRegularDuty(830) --Decumana
-					yield("/waitaddon ContentsFinder")
-					yield("/wait 0.5")
-					boops = boops + 1
-					if boops > 10 then whoops = 1 end
-				end -- safety check before callback
-				yield("/wait 3")
-				--OpenRegularDuty(1048) --Decumana
+			if GetNodeText("ContentsFinder", 14) == "Porta Decumana" then
 				yield("/callback ContentsFinder true 3 4")
 			end
-			yield("/callback ContentsFinder true 12 0")
-			stopcuckingme = 0
+			--]]
+			if echo_level < 2 then yield("/echo attempting to trigger duty finder") end
+			--yield("/callback ContentsFinder true 12 1")
+			if did_we_clear_it == 1 then  --we need to make sure we cleared CF before we try to queue for something.
+			whoops = 0
+			boops = 0
+				if duty_counter < 99 then
+					--OpenRegularDuty(1044) --Praetorium	
+					if echo_level < 3 then yield("/echo Trying to start Praetorium") end
+					while not IsAddonVisible("ContentsFinder") and whoops == 0 do
+						OpenRegularDuty(16) --Praetorium	
+						yield("/waitaddon ContentsFinder")
+						yield("/wait 0.5")
+						boops = boops + 1
+						if boops > 10 then whoops = 1 end
+					end -- safety check before callback
+					yield("/wait 3")
+					yield("/callback ContentsFinder true 3 15")
+				end
+				if duty_counter > 98 then
+					if echo_level < 3 then yield("/echo Trying to start Porta") end
+					while not IsAddonVisible("ContentsFinder") and whoops == 0 do
+						OpenRegularDuty(830) --Decumana
+						yield("/waitaddon ContentsFinder")
+						yield("/wait 0.5")
+						boops = boops + 1
+						if boops > 10 then whoops = 1 end
+					end -- safety check before callback
+					yield("/wait 3")
+					--OpenRegularDuty(1048) --Decumana
+					yield("/callback ContentsFinder true 3 4")
+				end
+				yield("/callback ContentsFinder true 12 0")
+				stopcuckingme = 0
+			end
 		end
 	end
-	
 
 --safe check ends
 end
