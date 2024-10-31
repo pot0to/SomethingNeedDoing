@@ -19,6 +19,10 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-10-30",
+        "- Added various AutoDuty IPC functions()\n");
+
+        DisplayChangelog(
         "2024-10-25",
         "- Added GetItemsToDiscard()\n");
 
