@@ -199,7 +199,7 @@ while repeated_guildhest < repeat_guildhest do
 	--char conditions
 	--34 duty
 	--91 queueing
-	--yield("/pcall ContentsFinder true 12 0") is the same for both queuein and cancelling queue . facepalm
+	--yield("/callback ContentsFinder true 12 0") is the same for both queuein and cancelling queue . facepalm
 
 	readytoqueue = 1 --always be ready unless pulling data from statuses indicates otherwise
 
@@ -238,7 +238,7 @@ while repeated_guildhest < repeat_guildhest do
 		if readytoqueue == 1 and GetCharacterCondition(34) == false and GetCharacterCondition(91) == false then
 			yield("/dutyfinder")
 			yield("/wait 1")
-			yield("/pcall ContentsFinder true 12 0")
+			yield("/callback ContentsFinder true 12 0")
 			yield("/wait 2")
 			write_astrope_status("queue")
 		end
@@ -251,7 +251,7 @@ while repeated_guildhest < repeat_guildhest do
 			--cancel queue if we are queued and need to cancel
 			yield("/dutyfinder")
 			yield("/wait 1")
-			yield("/pcall ContentsFinder true 12 0")
+			yield("/callback ContentsFinder true 12 0")
 			yield("/wait 2")
 			write_astrope_status("waiting")
 		end
@@ -263,7 +263,7 @@ while repeated_guildhest < repeat_guildhest do
 		if (astrope[masterindex][3] == "waiting" or astrope[masterindex][3] == "queue") and GetCharacterCondition(34) == false and GetCharacterCondition(91) == false then
 			yield("/dutyfinder")
 			yield("/wait 1")
-			yield("/pcall ContentsFinder true 12 0")
+			yield("/callback ContentsFinder true 12 0")
 			yield("/wait 2")
 			write_astrope_status("queue")
 		end

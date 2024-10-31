@@ -25,9 +25,9 @@ yield("/lockon on")
 yield("/automove on <wait.2>")
 
 yield("/pinteract <wait.2>")
-yield("/pcall SelectString true 0")
-yield("/pcall TelepotTown false 11 3u <wait.1>") -- Arcanists' Guild
-yield("/pcall TelepotTown false 11 3u <wait.1>")
+yield("/callback SelectString true 0")
+yield("/callback TelepotTown false 11 3u <wait.1>") -- Arcanists' Guild
+yield("/callback TelepotTown false 11 3u <wait.1>")
 yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
 
 -- from Arcanists' Guild to Ocean Fishing
@@ -56,9 +56,9 @@ yield("<wait.1.0>")
 yield("/targetnpc <wait.1>")
 yield("/lockon on")
 yield("/pinteract <wait.2>")
-yield("/pcall SelectString true 0")
-yield("/pcall TelepotTown false 11 6u <wait.1>") -- Hawkers' Alley
-yield("/pcall TelepotTown false 11 6u <wait.1>")
+yield("/callback SelectString true 0")
+yield("/callback TelepotTown false 11 6u <wait.1>") -- Hawkers' Alley
+yield("/callback TelepotTown false 11 6u <wait.1>")
 yield("/waitaddon _ActionBar <maxwait.600><wait.5>")
 
 yield("/visland execonce Hawkers_Alley_Bell_wait")  -- a path from Hawkers alley to bell

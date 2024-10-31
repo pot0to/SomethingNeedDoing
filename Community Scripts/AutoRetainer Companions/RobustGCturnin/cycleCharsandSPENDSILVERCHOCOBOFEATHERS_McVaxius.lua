@@ -44,22 +44,22 @@ for i=1,#franchise_owners do
 		yield("/wait 2")
 		yield("/interact")
 		yield("/wait 2")
-		yield("/pcall SelectIconString true 6")
+		yield("/callback SelectIconString true 6")
 		yield("/wait 3")
-		yield("/pcall SelectString true 6")
+		yield("/callback SelectString true 6")
 		yield("/wait 3")
-		yield("/pcall ShopExchangeItem true 0 0 1 3u")
+		yield("/callback ShopExchangeItem true 0 0 1 3u")
 		yield("/wait 3")
 		if how_many > 1 then
-			yield("/pcall ShopExchangeItem true 0 21 1 3u")
+			yield("/callback ShopExchangeItem true 0 21 1 3u")
 			yield("/wait 3")
 		end
 		if how_many > 2 then
-			yield("/pcall ShopExchangeItem true 0 22 1 3u")
+			yield("/callback ShopExchangeItem true 0 22 1 3u")
 			yield("/wait 3")
 		end
 		if how_many > 3 then
-			yield("/pcall ShopExchangeItem true 0 23 1 3u")
+			yield("/callback ShopExchangeItem true 0 23 1 3u")
 			yield("/wait 3")
 		end
 		ungabunga()

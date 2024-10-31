@@ -108,10 +108,10 @@ function become_feesher()
 		yield("/wait 2")
 		yield("/interact")
 		yield("/wait 2")
-		yield("/pcall SelectIconString true 1 <wait.2>")
-		yield("/pcall SelectString true 0 <wait.2>")
-		yield("/pcall Shop true 0 4 1 <wait.1.0>")
-		yield("/pcall Shop true -1 <wait.1.0>")
+		yield("/callback SelectIconString true 1 <wait.2>")
+		yield("/callback SelectString true 0 <wait.2>")
+		yield("/callback Shop true 0 4 1 <wait.1.0>")
+		yield("/callback Shop true -1 <wait.1.0>")
 		visland_stop_moving()
 		ungabunga()
 	end
@@ -132,13 +132,13 @@ end
 
 function ungabunga()
 	yield("/send ESCAPE <wait.1.5>")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	yield("/send ESCAPE <wait.1.5>")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	yield("/send ESCAPE <wait.1.5>")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	yield("/send ESCAPE <wait.1>")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	yield("/wait 3")
 end
 
@@ -160,11 +160,11 @@ function ungabungabunga()
 		tobungaorunga = 0
 		while tobungaorunga == 0 do
 			yield("/send ESCAPE <wait.1.5>")
-			yield("/pcall SelectYesno true 0")
+			yield("/callback SelectYesno true 0")
 			yield("/send ESCAPE <wait.1.5>")
-			yield("/pcall SelectYesno true 0")
+			yield("/callback SelectYesno true 0")
 			yield("/send ESCAPE <wait.1.5>")
-			yield("/pcall SelectYesno true 0")
+			yield("/callback SelectYesno true 0")
 			yield("/send ESCAPE <wait.1>")
 			yield("/wait 3")
 			if IsPlayerAvailable() == true then
@@ -227,12 +227,12 @@ function ZoneTransition()
         yield("/echo Are we ready? -> "..iswoah.."/20")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
-		if 	iswoah == 5 then yield("/pcall SelectYesno true 0") end
-		if 	iswoah == 10 then yield("/pcall SelectYesno true 0") end
-		if 	iswoah == 15 then yield("/pcall SelectYesno true 0") end
+		if 	iswoah == 5 then yield("/callback SelectYesno true 0") end
+		if 	iswoah == 10 then yield("/callback SelectYesno true 0") end
+		if 	iswoah == 15 then yield("/callback SelectYesno true 0") end
 		if 	iswoah == 20 then
 			iswehehe = false
-			yield("/pcall SelectYesno true 0")
+			yield("/callback SelectYesno true 0")
 		end
     until not iswehehe
 	iswoah = 0
@@ -242,12 +242,12 @@ function ZoneTransition()
         yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
-		if 	iswoah == 5 then yield("/pcall SelectYesno true 0") end
-		if 	iswoah == 10 then yield("/pcall SelectYesno true 0") end
-		if 	iswoah == 15 then yield("/pcall SelectYesno true 0") end
+		if 	iswoah == 5 then yield("/callback SelectYesno true 0") end
+		if 	iswoah == 10 then yield("/callback SelectYesno true 0") end
+		if 	iswoah == 15 then yield("/callback SelectYesno true 0") end
 		if 	iswoah == 20 then
 			iswehehe = true
-			yield("/pcall SelectYesno true 0")
+			yield("/callback SelectYesno true 0")
 		end
     until iswehehe
 end
@@ -312,12 +312,12 @@ function visland_stop_moving()
 	 yield("/equipguud")
 	 yield("/equiprecommended")
 	 yield("/character")
-	 yield("/pcall Character true 15")
+	 yield("/callback Character true 15")
 	 yield("/wait 0.5")
-	 yield("/pcall SelectYesno true 0")
+	 yield("/callback SelectYesno true 0")
 	 yield("/character")
-	 yield("/pcall Character true 15")
-	 yield("/pcall SelectYesno true 0")
+	 yield("/callback Character true 15")
+	 yield("/callback SelectYesno true 0")
 	 yield("/wait 3")
  end
  muuv = 1
@@ -350,9 +350,9 @@ function visland_stop_moving()
  if do_we_force_equip == 1 then
 	 yield("/character")
 	 yield("/wait 1")
-	 yield("/pcall Character true 12")
+	 yield("/callback Character true 12")
 	 yield("/wait 1")
-	 yield("/pcall RecommendEquip true 0")
+	 yield("/callback RecommendEquip true 0")
 	 yield("/wait 1")
  end
 end
@@ -362,7 +362,7 @@ function return_to_limsa_bell()
 	ZoneTransition()
 	yield("/wait 2")
 	yield("/wait 1")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	PathfindAndMoveTo(-125.440284729, 18.0, 21.004405975342, false)
 	visland_stop_moving() --added so we don't accidentally end before we get to the inn person
 end
@@ -446,10 +446,10 @@ function return_fc_entrance()
 	visland_stop_moving()
 	yield("/interact")
 	yield("/wait 1")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	yield("/interact")
 	yield("/wait 1")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	--commented out this garbage finally
 --[[
 	yield("/hold W <wait.1.0>")
@@ -491,7 +491,7 @@ function return_fc_entrance()
 	yield("/release Q")
 	yield("/interact")
 	yield("/wait 1")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	--]]
 end
 
@@ -612,7 +612,7 @@ function enter_workshop()
 		visland_stop_moving()
 		yield("/interact")
 		yield("/wait 1")
-		yield("/pcall SelectString true 0")
+		yield("/callback SelectString true 0")
 		yield("/wait 5")
 	end
 end
@@ -699,7 +699,7 @@ function try_to_buy_fuel(restock_amt)
 	yield("/automove off")
 	yield("/interact")
 	yield("/wait 2")
-	yield("/pcall SelectIconString true 0")
+	yield("/callback SelectIconString true 0")
 	yield("/wait 2")
 	--buy exactly restock_amt final value for fuel
 	--grab current fuel total
@@ -711,10 +711,10 @@ function try_to_buy_fuel(restock_amt)
 		if (restock_amt - curFuel) < 99 then
 			buyamt = restock_amt - curFuel
 		end
-		yield("/pcall FreeCompanyCreditShop false 0 0u "..buyamt.."u") 
-		yield("/pcall SelectYesno true 0")
+		yield("/callback FreeCompanyCreditShop false 0 0u "..buyamt.."u") 
+		yield("/callback SelectYesno true 0")
 		yield("/wait 1")
-		--yield("/pcall SelectYesno true 0")
+		--yield("/callback SelectYesno true 0")
 		oldFuel = curFuel
 		curFuel = GetItemCount(10155)
 		yield("/echo Current Fuel -> "..curFuel.." Old Fuel -> "..oldFuel)

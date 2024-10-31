@@ -189,7 +189,7 @@ while (VCnum < VCtotal) do
 end
 yield("<wait.5.0>")
 yield("/xltoggleprofile Artisan")
-yield("/pcall SynthesisSimple true -1")
+yield("/callback SynthesisSimple true -1")
 yield("<wait.5.0>")
 yield("/stopcrafting")
 yield("<wait.5.0>")

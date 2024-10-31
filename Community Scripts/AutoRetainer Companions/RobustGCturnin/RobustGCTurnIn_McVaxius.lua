@@ -130,7 +130,7 @@ YesAlready -> YesNo -> Save changes to crest design?
 
 Optional:
 YesAlready -> YesNo -> /Purchase the action .*/ 
-(if you add above. remove the wait 2 and the line for yesno pcall for buying buffs)
+(if you add above. remove the wait 2 and the line for yesno callback for buying buffs)
 
 --some ideas for next version
 --https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
@@ -271,9 +271,9 @@ function Final_GC_Cleaning()
 		yield("/wait 1")
 		yield("/interact")
 		yield("/wait 2")
-		yield("/pcall SelectString true 0 <wait.1>")
+		yield("/callback SelectString true 0 <wait.1>")
 		yield("/wait 2")
-		yield("/pcall GrandCompanySupplyList true 0 1 2")
+		yield("/callback GrandCompanySupplyList true 0 1 2")
 		yield("/wait 2")
 		yield("/send ESCAPE <wait.1.5>")
 		yield("/send ESCAPE <wait.1.5>")
@@ -287,9 +287,9 @@ function Final_GC_Cleaning()
 			yield("/wait 1")
 			yield("/interact")
 			yield("/wait 2")
-			yield("/pcall SelectString true 1")
+			yield("/callback SelectString true 1")
 			yield("/wait 3")
-			yield("/pcall GrandCompanyRankUp true 0")
+			yield("/callback GrandCompanyRankUp true 0")
 			yield("/wait 1")
 			yield("/send ESCAPE <wait.1.5>")
 			yield("/send ESCAPE <wait.1.5>")
@@ -418,9 +418,9 @@ if process_emblem == 1 or process_tags > 0 then
 			yield("<wait.2>")
 			yield("/interact")
 			yield("<wait.3>")
-			yield("/pcall FreeCompanyCrestEditor true 5 0 0")
+			yield("/callback FreeCompanyCrestEditor true 5 0 0")
 			yield("<wait.2>")
-			yield("/pcall FreeCompanyCrestEditor false 0")
+			yield("/callback FreeCompanyCrestEditor false 0")
 			yield("<wait.2>")
 		end
 
@@ -487,14 +487,14 @@ if process_fc_buffs == 1 then
 			yield("<wait.2>")
 			--yield("/send NUMPAD0")
 			yield("/interact")
-			yield("/pcall SelectString true 0 <wait.1>")
-			yield("/pcall SelectString true 0 <wait.1>")
+			yield("/callback SelectString true 0 <wait.1>")
+			yield("/callback SelectString true 0 <wait.1>")
 
 			buycount = 0
 			while (buycount < 15) do
-				yield("/pcall FreeCompanyExchange false 2 22u")
+				yield("/callback FreeCompanyExchange false 2 22u")
 				yield("<wait.1>")
-				yield("/pcall SelectYesno true 0")
+				yield("/callback SelectYesno true 0")
 				yield("<wait.1>")
 				buycount = buycount + 1
 			end
@@ -503,10 +503,10 @@ if process_fc_buffs == 1 then
 		end
 		yield("/echo FC Seal Buff II")
 		yield("/freecompanycmd <wait.1>")
-		yield("/pcall FreeCompany false 0 4u <wait.1>")
-		yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
-		yield("/pcall ContextMenu true 0 0 1u 0 0 <wait.1>")
-		yield("/pcall SelectYesno true 0 <wait.1>")
+		yield("/callback FreeCompany false 0 4u <wait.1>")
+		yield("/callback FreeCompanyAction false 1 0u <wait.1>")
+		yield("/callback ContextMenu true 0 0 1u 0 0 <wait.1>")
+		yield("/callback SelectYesno true 0 <wait.1>")
 			--if we are tp to inn. we will go to gridania yo
 		if chars_FCBUFF[i][2] ~= 2 then
 			if chars_FCBUFF[i][2] == 3 then
@@ -554,18 +554,18 @@ if process_players > 0 then
 		if config_sell == 1 then
 			yield("/maincommand Item Settings")
 			yield("/wait 0.5")
-			yield("/pcall ConfigCharaItem true 18 288 0 u0")
-			yield("/pcall ConfigCharaItem true 0")
+			yield("/callback ConfigCharaItem true 18 288 0 u0")
+			yield("/callback ConfigCharaItem true 0")
 			yield("/wait 0.5")
-			yield("/pcall ConfigCharacter true 1")
+			yield("/callback ConfigCharacter true 1")
 		end
 		if config_sell == 2 then
 			yield("/maincommand Item Settings")
 			yield("/wait 0.5")
-			yield("/pcall ConfigCharaItem true 18 288 1 u0")
-			yield("/pcall ConfigCharaItem true 0")
+			yield("/callback ConfigCharaItem true 18 288 1 u0")
+			yield("/callback ConfigCharaItem true 0")
 			yield("/wait 0.5")
-			yield("/pcall ConfigCharacter true 1")
+			yield("/callback ConfigCharacter true 1")
 		end
 		if auto_eqweep == 1 then
 			if are_we_dol() then

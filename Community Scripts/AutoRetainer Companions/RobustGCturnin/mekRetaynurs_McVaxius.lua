@@ -59,12 +59,12 @@ function visland_stop_moving()
  yield("/equipguud")
  yield("/equiprecommended")
  yield("/character")
- yield("/pcall Character true 15")
+ yield("/callback Character true 15")
  yield("/wait 0.5")
- yield("/pcall SelectYesno true 0")
+ yield("/callback SelectYesno true 0")
  yield("/character")
- yield("/pcall Character true 15")
- yield("/pcall SelectYesno true 0")
+ yield("/callback Character true 15")
+ yield("/callback SelectYesno true 0")
  yield("/wait 3")
  muuv = 1
  muuvX = GetPlayerRawXPos()
@@ -125,11 +125,11 @@ yield("/target Syneyhil")
 yield("/wait 2")
 yield("/interact")
 yield("/wait 2")
-yield("/pcall SelectIconString true 1 <wait.2>")
-yield("/pcall SelectString true 0 <wait.2>")
-yield("/pcall Shop true 0 4 1 <wait.1.0>")  --the 1 on the end is quantity i thnk we can do 2, but i dont wanna mess with that
-yield("/pcall Shop true 0 4 1 <wait.1.0>")
-yield("/pcall Shop true -1 <wait.1.0>")
+yield("/callback SelectIconString true 1 <wait.2>")
+yield("/callback SelectString true 0 <wait.2>")
+yield("/callback Shop true 0 4 1 <wait.1.0>")  --the 1 on the end is quantity i thnk we can do 2, but i dont wanna mess with that
+yield("/callback Shop true 0 4 1 <wait.1.0>")
+yield("/callback Shop true -1 <wait.1.0>")
 visland_stop_moving()
 
 --get to vocate and mek 2 retainers.
@@ -140,12 +140,12 @@ function mekkitnaow()
 	yield("/wait 2")
 	yield("/interact")
 	yield("/wait 10") -- give it some time to reach the retainer screen.
-	--yield("/pcall _CharaMakeProgress true 0 1 0 Elezen 2")
-	yield("/pcall _CharaMakeProgress true -13 -1")
-	yield("/pcall _CharaMakeProgress true 0 0 0 Hyur 1")
-	yield("/pcall _CharaMakeProgress true -16 1")
+	--yield("/callback _CharaMakeProgress true 0 1 0 Elezen 2")
+	yield("/callback _CharaMakeProgress true -13 -1")
+	yield("/callback _CharaMakeProgress true 0 0 0 Hyur 1")
+	yield("/callback _CharaMakeProgress true -16 1")
 	--this is where it fails. it does not click the checkbox to continue. we stop for now ;p
-	yield("/pcall _CharaMakeFeature false 100") -- confirm to next step
+	yield("/callback _CharaMakeFeature false 100") -- confirm to next step
 end
 
 function nemmitnaow()
@@ -192,7 +192,7 @@ function nemmitnaow()
 	executeScriptFromURL(apiUrl)
 
 	yield("/wait 10") -- give it some time to leave the retainer screen.
-	yield("/pcall InputString true 0 "..nemmy.." ") -- Hire this retainer?
+	yield("/callback InputString true 0 "..nemmy.." ") -- Hire this retainer?
 end
 
 mekkitnaow() --retainer 1
@@ -298,75 +298,75 @@ repeat
   yield("/wait 0.1")
 until IsAddonVisible("SelectString") 
 
-yield("/pcall SelectString true 0") -- Hire a retainer
+yield("/callback SelectString true 0") -- Hire a retainer
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("SelectYesno") 
 
-yield("/pcall SelectYesno true 0") -- Hire a retainer Yes/No
+yield("/callback SelectYesno true 0") -- Hire a retainer Yes/No
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("SelectYesno") 
 
-yield("/pcall SelectYesno true 0") -- Load char
+yield("/callback SelectYesno true 0") -- Load char
 
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("CharaMakeDataImport") 
-yield("/pcall CharaMakeDataImport true 102 "..saveNumber.." false") -- select first file 0 first 1 second
+yield("/callback CharaMakeDataImport true 102 "..saveNumber.." false") -- select first file 0 first 1 second
 
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("_CharaMakeFeature") 
 
-yield("/pcall _CharaMakeFeature false 100") -- confirm to next step
+yield("/callback _CharaMakeFeature false 100") -- confirm to next step
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("CharaMakeDataExport") 
 
-yield("/pcall CharaMakeDataExport true 101 "..saveNumber.." ".. saveFileName) -- save to first file
+yield("/callback CharaMakeDataExport true 101 "..saveNumber.." ".. saveFileName) -- save to first file
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("SelectOk") 
 
-yield("/pcall SelectOk true 0") -- ok
+yield("/callback SelectOk true 0") -- ok
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("SelectYesno") 
 
-yield("/pcall SelectYesno true 0") -- Finalize your retainer's appearance?
+yield("/callback SelectYesno true 0") -- Finalize your retainer's appearance?
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("SelectString") 
 
-yield("/pcall SelectString true "..personality) -- select first one polite, Rough, Serious, Carefree, Independent, Lively, Nothing
+yield("/callback SelectString true "..personality) -- select first one polite, Rough, Serious, Carefree, Independent, Lively, Nothing
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("SelectYesno") 
 
-yield("/pcall SelectYesno true 0") -- Hire this retainer?
+yield("/callback SelectYesno true 0") -- Hire this retainer?
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("InputString") 
 
-yield("/pcall InputString true 0 "..retainerNameText.." ") -- Hire this retainer?
+yield("/callback InputString true 0 "..retainerNameText.." ") -- Hire this retainer?
 yield("/e "..retainerNameText)
 
 repeat
   yield("/wait 0.1")
 until IsAddonVisible("SelectYesno") 
 
-yield("/pcall SelectYesno true 0")
+yield("/callback SelectYesno true 0")
 
 end
 

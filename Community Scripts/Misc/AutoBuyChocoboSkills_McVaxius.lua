@@ -19,11 +19,11 @@ while GetLevel() < 51 do
             if GetCharacterCondition(34)==true then
                 if GetCharacterCondition(35)==false then
                     yield("/echo Attempt to buy chocobro skills")
-                    --insert pcalls here
+                    --insert callbacks here
                     --open menu?
                     --browse to buy tab?
-                    yield("/pcall BuddySkill false 14 2 0")
-                    yield("/pcall Buddy false 14 2 0")
+                    yield("/callback BuddySkill false 14 2 0")
+                    yield("/callback Buddy false 14 2 0")
                 end
             end
         end

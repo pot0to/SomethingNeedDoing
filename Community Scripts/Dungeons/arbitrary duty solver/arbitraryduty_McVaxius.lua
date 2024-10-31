@@ -152,22 +152,22 @@ end
 
 local function distance(x1, y1, z1, x2, y2, z2)
     -- Following block to error trap some issues when changing areas
-    local success, x1_num = pcall(tonumber, x1)
+    local success, x1_num = callback(tonumber, x1)
     if not success then yield("/echo Failed to convert x1: " .. tostring(x1) .. " to number") end
 
-    local success, y1_num = pcall(tonumber, y1)
+    local success, y1_num = callback(tonumber, y1)
     if not success then yield("/echo Failed to convert y1: " .. tostring(y1) .. " to number") end
 
-    local success, z1_num = pcall(tonumber, z1)
+    local success, z1_num = callback(tonumber, z1)
     if not success then yield("/echo Failed to convert z1: " .. tostring(z1) .. " to number") end
 
-    local success, x2_num = pcall(tonumber, x2)
+    local success, x2_num = callback(tonumber, x2)
     if not success then yield("/echo Failed to convert x2: " .. tostring(x2) .. " to number") end
 
-    local success, y2_num = pcall(tonumber, y2)
+    local success, y2_num = callback(tonumber, y2)
     if not success then yield("/echo Failed to convert y2: " .. tostring(y2) .. " to number") end
 
-    local success, z2_num = pcall(tonumber, z2)
+    local success, z2_num = callback(tonumber, z2)
     if not success then yield("/echo Failed to convert z2: " .. tostring(z2) .. " to number") end
 
 	--[[yield("/echo x1_num: " .. tostring(x1_num))
@@ -502,8 +502,8 @@ local function arbitrary_duty()
 		deathCounter = deathCounter + 1
 	end
 	if IsPlayerDead() and deathCounter > 30 and (dutyloaded == 1 or GetCharacterCondition(26) == false) then
-		yield("/pcall _Notification false 0 0 \"ed\" ")  --brings up the window if its closed for some reason
-		yield("/pcall SelectYesno true 0")
+		yield("/callback _Notification false 0 0 \"ed\" ")  --brings up the window if its closed for some reason
+		yield("/callback SelectYesno true 0")
 	end
 	
 	searchNearestWP() --just in case we stuck somewhere for 10 seconds + duty is loaded we will search for nearestWP
@@ -926,24 +926,24 @@ while repeated_trial < (repeat_trial + 1) do
 		if repeat_type == 0 then --4 Real players (or scripts haha) using duty finder
 			yield("/finder")
 			yield("/echo attempting to trigger duty finder")
-			yield("/pcall ContentsFinder true 12 0")
+			yield("/callback ContentsFinder true 12 0")
 		end
 		if repeat_type == 1 then --just you using duty support
-			--("/pcall DawnStory true 20") open the window.. how?
+			--("/callback DawnStory true 20") open the window.. how?
 			--we use simpletweaks
 			yield("/maincommand Duty Support")
 			yield("/wait 2")
 			--yield("/echo attempting to trigger duty support")
-			--yield("/pcall DawnStory true 11 0") --change tab to first tab
-			--yield("/pcall DawnStory true 12 35")--select port decumana
+			--yield("/callback DawnStory true 11 0") --change tab to first tab
+			--yield("/callback DawnStory true 12 35")--select port decumana
 			--yield("/wait 2")
-			yield("/pcall DawnStory true 14") --START THE DUTY
+			yield("/callback DawnStory true 14") --START THE DUTY
 		end
 		if repeat_type == 2 then --just you using GC Squad guy
 			yield("/target Sergeant")
 			yield("/wait 1")
 			yield("/interact")
-			yield("/pcall SelectString true 1 <wait.1>")
+			yield("/callback SelectString true 1 <wait.1>")
 			--*TBD once i get char up to test strings with
 		end
 	
@@ -988,15 +988,15 @@ while repeated_trial < (repeat_trial + 1) do
 						break
 					  end
 					end
-					yield("/pcall Repair true 0")
+					yield("/callback Repair true 0")
 					yield("/wait 0.1")
 					if IsAddonVisible("SelectYesno") then
-					  yield("/pcall SelectYesno true 0")
+					  yield("/callback SelectYesno true 0")
 					  yield("/wait 1")
 					end
 					while GetCharacterCondition(39) do yield("/wait 1")
 					yield("/wait 1")
-					yield("/pcall Repair true -1")
+					yield("/callback Repair true -1")
 					  minicounter = minicounter + 1
 					  if minicounter > 20 then
 						minicounter = 0
