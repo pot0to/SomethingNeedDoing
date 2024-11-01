@@ -382,7 +382,7 @@ while weirdvar == 1 do
 			--if we in combat and target is <3 yalms dont nav anywhere.
 			if GetCharacterCondition(26) == true and type(GetTargetName()) == "string" and string.len(GetTargetName()) > 1 then
 				if distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(GetTargetName()),GetObjectRawYPos(GetTargetName()),GetObjectRawZPos(GetTargetName())) < 3 then
-					yield("/nvav stop")
+					yield("/vnav stop")
 				end
 			end
 
