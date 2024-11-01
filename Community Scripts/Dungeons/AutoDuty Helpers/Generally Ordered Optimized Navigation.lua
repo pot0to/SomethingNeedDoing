@@ -42,6 +42,10 @@ WAR SCH SMN/MCH MNK
 or 
 WAR SCH MCH MCH
 
+
+Some issues:
+for some people the duty selection/start stuff doesn't work.  the only way around this is to write some kind of search algo to find the index for prae/decu this is not ideal and will add like 5-10 seconds to script start for party leaders.
+
 --]]
 yield("/echo please get ready for G.O.O.N ing time")
 --yield("/bmrai ui") --open this in case we need to set the preset. at least until we can slash command it.
