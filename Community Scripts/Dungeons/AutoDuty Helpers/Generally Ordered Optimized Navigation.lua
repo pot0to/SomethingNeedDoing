@@ -87,13 +87,13 @@ bm_preset = "none" --if you set it to "none" it wont use bmr and instead it will
 hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
 echo_level = 3 		 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
 debug_counter = 0 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
+maxjiggle = 15 --how much default time before we jiggle the char in prae
 -----------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
 
 --dont touch these ones
-maxjiggle = 15 -- = how much time before we jiggle the char in prae
 entered_duty = 0
 equip_counter = 0
 inprae = 0
