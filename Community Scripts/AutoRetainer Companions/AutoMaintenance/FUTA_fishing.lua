@@ -24,6 +24,8 @@ function fishing()
 	while NeedsRepair(50) and GetItemCount(1) > 4999 do
 		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
 		visland_stop_moving()
+		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
+		visland_stop_moving()
 		yield("/target Merchant & Mender")
 		yield("/wait 1")
 		yield("/lockon on")
@@ -44,6 +46,8 @@ function fishing()
 	 
 	--check if we have less than 3 versatile lures and more than 20000 gil if not we buy 20 of them!
 	while GetItemCount(29717) < 3 and GetItemCount(1) > 20000 do
+		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
+		visland_stop_moving()
 		PathfindAndMoveTo(-397.46423339844,3.0999958515167,78.562309265137,false) 
 		visland_stop_moving()
 		yield("/target Merchant & Mender")
@@ -68,6 +72,8 @@ function fishing()
 	fzown = GetZoneID()
 
 	--dryskthota
+	PathfindAndMoveTo(-409.42459106445,3.9999997615814,74.483444213867,false) 
+	visland_stop_moving()
 	PathfindAndMoveTo(-409.42459106445,3.9999997615814,74.483444213867,false) 
 	visland_stop_moving()
 	yield("/wait 1")
