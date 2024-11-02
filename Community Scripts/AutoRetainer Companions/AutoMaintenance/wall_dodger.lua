@@ -29,14 +29,46 @@ housing_zones =
 979 	--empyreum
 }
 
-if isblu == 0 then
-	zoyn = GetZoneID()
-	badzoyn = 1
-	for i=1,#housing_zones do
-		if housing_zones[i] == zoyn then
-			badzoyn = 0   --dont tp if we in a housing zone.
-		end
+zoyn = GetZoneID()
+badzoyn = 1
+for i=1,#housing_zones do
+	if housing_zones[i] == zoyn then
+		badzoyn = 0   --dont tp if we in a housing zone.
 	end
+end
+
+if isblu == 0 then
+	if badzoyn == 0 then --we are already in a housing zone. let's enter the nearby entrance
+		yield("/echo Jumping towards entrance a bit")
+	
+--		yield("/ays m d") --turn ar off for now
+--		yield("/ays reset") --reset ar shenanigans for now
+		yield("/target entrance")
+		yield("/wait 0.5")
+
+		yield("/target entrance")
+		yield("/interact")
+		yield("/lockon on")
+		yield("/automove on")
+		yield("/wait 0.5")
+		yield("/gaction jump")
+
+		yield("/hold W <wait.0.5>")
+		yield("/gaction jump")
+		yield("/release W")
+		yield("/interact")
+		yield("/wait 0.5")
+
+		yield("/target entrance")
+		yield("/interact")
+		yield("/lockon on")
+		yield("/automove on")
+		yield("/wait 0.5")
+		yield("/gaction jump")
+
+--		yield("/ays m e") --turn ar back on
+	end
+
 	if badzoyn == 1 then
 		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 		yield("/ays m d") --turn ar off for now
