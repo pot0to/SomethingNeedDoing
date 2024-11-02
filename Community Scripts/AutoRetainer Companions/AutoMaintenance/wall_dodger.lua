@@ -45,20 +45,26 @@ if isblu == 0 then
 --		yield("/ays reset") --reset ar shenanigans for now
 		yield("/target entrance")
 		yield("/wait 0.5")
+		yield("/hold Q")
 
 		yield("/target entrance")
 		yield("/interact")
 		yield("/lockon on")
 		yield("/automove on")
+		yield("/release Q")
+		yield("/hold E")
 		yield("/wait 0.5")
 		yield("/gaction jump")
 
+		yield("/release E")
 		yield("/hold W <wait.0.5>")
 		yield("/gaction jump")
 		yield("/release W")
 		yield("/interact")
+		yield("/hold Q")
 		yield("/wait 0.5")
 
+		yield("/release Q")
 		yield("/target entrance")
 		yield("/interact")
 		yield("/lockon on")
