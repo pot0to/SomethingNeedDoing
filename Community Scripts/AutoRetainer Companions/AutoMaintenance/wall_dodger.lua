@@ -58,6 +58,7 @@ if isblu == 0 then
 
 		yield("/target entrance")
 		yield("/interact")
+		yield("/callback SelectYesno true 0")
 		yield("/lockon on")
 		yield("/automove on")
 		yield("/release Q")
@@ -73,6 +74,7 @@ if isblu == 0 then
 		yield("/gaction jump")
 		yield("/release W")
 		yield("/interact")
+		yield("/callback SelectYesno true 0")
 		yield("/hold Q")
 		yield("/wait 0.5")
 	end		
@@ -84,10 +86,12 @@ if isblu == 0 then
 		yield("/interact")
 		yield("/lockon on")
 		yield("/automove on")
+		yield("/callback SelectYesno true 0")
 		yield("/wait 0.5")
 	end		
 	bz()
 	if badzoyn == 0 then --we are already in a housing zone. let's enter the nearby entrance
+		yield("/callback SelectYesno true 0")
 		yield("/gaction jump")
 --		yield("/ays m e") --turn ar back on
 	end
