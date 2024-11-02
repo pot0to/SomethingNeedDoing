@@ -20,6 +20,7 @@ yield("/echo BLU -> "..tonumber(GetLevel(25)))
 
 isblu = tonumber(GetLevel(25))
 
+--we can add cosmic,s9,buttcheeks,etc as they get added to the game
 housing_zones = 
 {
 136, 	--mist
