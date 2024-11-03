@@ -92,7 +92,7 @@ itworksonmymachine = 0 --0 means use ad start, 1 means use the callback and snd 
 hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
 echo_level = 3 		 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
 debug_counter = 0 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
-maxjiggle = 15 --how much default time before we jiggle the char in prae
+maxjiggle = 15 --how much default time (# of loops of the script) before we jiggle the char in prae
 -----------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
@@ -466,10 +466,10 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 		if stopcuckingme > 2 and GetCharacterCondition(34) == false and imthecaptainnow == 1 and (GetZoneID() == 177 or GetZoneID() == 178 or GetZoneID() == 179) and not NeedsRepair(tornclothes) then
 			whoops = 0
 			boops = 0
+			did_we_clear_it = 0
 			if itworksonmymachine == 1 or duty_counter == 99 or duty_counter == 0 then --we only have to clear the DF if we are clearing the DF, we should probably do it before switching to decu or back to prae
 				yield("/finder")
 				yield("/wait 0.5")
-				did_we_clear_it = 0
 				while not IsAddonVisible("ContentsFinder") and whoops == 0 do
 					yield("/waitaddon ContentsFinder")
 					yield("/wait 0.5")
