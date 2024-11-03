@@ -16,7 +16,9 @@ function fartknocker()
 end
 
 --don't run this on chars with blu level > 0. they might be actual play chars and it would be annoying to move randomly on login
-yield("/echo BLU -> "..tonumber(GetLevel(25)))
+yield("/echo BLU level -> "..tonumber(GetLevel(25)).." above 0 means we won't do anything")
+yield("/echo Stopping am just in case bell interaction got borked from the last char due to bailout etc")
+yield("/am stop")
 
 isblu = tonumber(GetLevel(25))
 
@@ -24,16 +26,31 @@ isblu = tonumber(GetLevel(25))
 housing_zones = 
 {
 136, 	--mist
+282, 	--mist private cottage
+283, 	--mist private house
+284, 	--mist private mansion
 340, 	--lavender beds
+342, 	--lavender beds private cottage
+343, 	--lavender beds private house
+344, 	--lavender beds private mansion
 341, 	--goblet
+345, 	--goblet private cottage
+346, 	--goblet private house
+347, 	--goblet private mansion
 641, 	--shirogane
-979 	--empyreum
+649, 	--shirogane private cottage
+650, 	--shirogane private house
+651, 	--shirogane private mansion
+979, 	--empyreum
+980, 	--empyreum private cottage
+981, 	--empyreum private house
+982 	--empyreum private mansion
 }
 
-zoyn = GetZoneID()
-badzoyn = 1
+badzoyn = 1 --this needs to be global
 
 function bz()
+	zoyn = GetZoneID()
 	badzoyn = 1
 	for i=1,#housing_zones do
 		if housing_zones[i] == zoyn then
