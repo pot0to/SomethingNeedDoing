@@ -44,7 +44,11 @@ WAR SCH MCH MCH
 
 
 Some issues:
-for some people the duty selection/start stuff doesn't work.  the only way around this is to write some kind of search algo to find the index for prae/decu this is not ideal and will add like 5-10 seconds to script start for party leaders.
+*for some people the duty selection/start stuff doesn't work.
+the only way around this is to write some kind of search algo to find the index for prae/decu this is not ideal and will add like 5-10 seconds to script start for party leaders.
+more on this.... 2024 10 31 - looks like this isnt even reliable and is actually crashy....... lets table it for now
+
+*timezones for ostime maybe not correct for some users.. im in EST if that helps anyone adjusting it (GMT-5) google says ostime is UTC time so maybe its already correct?
 
 --]]
 yield("/echo please get ready for G.O.O.N ing time")
