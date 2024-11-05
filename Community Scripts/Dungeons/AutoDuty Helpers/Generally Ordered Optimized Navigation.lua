@@ -41,14 +41,10 @@ reccommend setup:
 WAR SCH SMN/MCH MNK
 or 
 WAR SCH MCH MCH
+or
+BLU BLU BLU BLU or some combination of BST/BLU
 
-
-Some issues:
-*for some people the duty selection/start stuff doesn't work.
-the only way around this is to write some kind of search algo to find the index for prae/decu this is not ideal and will add like 5-10 seconds to script start for party leaders.
-more on this.... 2024 10 31 - looks like this isnt even reliable and is actually crashy....... lets table it for now
-
-*timezones for ostime maybe not correct for some users.. im in EST if that helps anyone adjusting it (GMT-5) google says ostime is UTC time so maybe its already correct?
+(yeah right hahaha.)
 
 --]]
 yield("/echo please get ready for G.O.O.N ing time")
@@ -61,7 +57,7 @@ z1 = GetPlayerRawZPos()
 
 stopcuckingme = 0    --counter for checking whento pop duty
 
---if its a cross world party everyoner will make a queue attempt
+--if its a cross world party everyone will make a queue attempt
 function isLeader()
     return (GetCharacterName() == GetPartyMemberName(GetPartyLeadIndex()))
 end
@@ -91,11 +87,12 @@ tornclothes = 25 --pct to try to repair at
 --bm_preset = "AutoDuty" --if you set it to "none" it wont use bmr. this is for the preset to use.
 bm_preset = "none" --if you set it to "none" it wont use bmr and instead it will use RSR. this is for the preset to use.
 
---debug
+--debug/dont-touch-settings-unless-you-know-whats-up
+itworksonmymachine = 0 --0 means use ad start, 1 means use the callback and snd function method(s) for queueing into porta/prae
 hardened_sock = 1200 		 --bailout from duty in 1200 seconds (20 minutes)
 echo_level = 3 		 --3 only show important stuff, 2 show the progress messages, 1 show more, 0 show all
 debug_counter = 0 --if this is >0 then subtract from the total duties . useful for checking for crashes just enter in the duty_counter value+1 of the last crash, so if you crashed at duty counter 5, enter in a 6 for this value
-maxjiggle = 15 --how much default time before we jiggle the char in prae
+maxjiggle = 15 --how much default time (# of loops of the script) before we jiggle the char in prae
 -----------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
@@ -467,21 +464,23 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	end
 	if IsPlayerAvailable() then
 		if stopcuckingme > 2 and GetCharacterCondition(34) == false and imthecaptainnow == 1 and (GetZoneID() == 177 or GetZoneID() == 178 or GetZoneID() == 179) and not NeedsRepair(tornclothes) then
-			yield("/finder")
-			yield("/wait 0.5")
 			whoops = 0
 			boops = 0
 			did_we_clear_it = 0
-			while not IsAddonVisible("ContentsFinder") and whoops == 0 do
-				yield("/waitaddon ContentsFinder")
+			if itworksonmymachine == 1 or duty_counter == 99 or duty_counter == 0 then --we only have to clear the DF if we are clearing the DF, we should probably do it before switching to decu or back to prae
+				yield("/finder")
 				yield("/wait 0.5")
-				boops = boops + 1
-				if boops > 10 then whoops = 1 end
-			end -- safety check before callback
-			if IsAddonVisible("ContentsFinder") then did_we_clear_it = 1 end
-			yield("/wait 1")
-			yield("/callback ContentsFinder true 12 1")
-			yield("/send ESCAPE")
+				while not IsAddonVisible("ContentsFinder") and whoops == 0 do
+					yield("/waitaddon ContentsFinder")
+					yield("/wait 0.5")
+					boops = boops + 1
+					if boops > 10 then whoops = 1 end
+				end -- safety check before callback
+				if IsAddonVisible("ContentsFinder") then did_we_clear_it = 1 end
+				yield("/wait 1")
+				yield("/callback ContentsFinder true 12 1")
+				yield("/send ESCAPE")
+			end
 			--[[
 			--first we must unselect the duty that is selected. juuust in case
 			if GetNodeText("ContentsFinder", 14) == "The Praetorium" then
@@ -493,34 +492,48 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 			--]]
 			if echo_level < 2 then yield("/echo attempting to trigger duty finder") end
 			--yield("/callback ContentsFinder true 12 1")
-			if did_we_clear_it == 1 then  --we need to make sure we cleared CF before we try to queue for something.
+			if did_we_clear_it == 1 or itworksonmymachine == 0 then  --we need to make sure we cleared CF before we try to queue for something.
 			whoops = 0
 			boops = 0
 				if duty_counter < 99 then
 					--OpenRegularDuty(1044) --Praetorium	
 					if echo_level < 3 then yield("/echo Trying to start Praetorium") end
-					while not IsAddonVisible("ContentsFinder") and whoops == 0 do
-						OpenRegularDuty(16) --Praetorium	
-						yield("/waitaddon ContentsFinder")
+					if itworksonmymachine == 0 then
+						yield("/ad stop")
 						yield("/wait 0.5")
-						boops = boops + 1
-						if boops > 10 then whoops = 1 end
-					end -- safety check before callback
-					yield("/wait 3")
-					yield("/callback ContentsFinder true 3 15")
+						yield("/ad queue The Praetorium")
+					end
+					if itworksonmymachine == 1 then
+						while not IsAddonVisible("ContentsFinder") and whoops == 0 do
+							OpenRegularDuty(16) --Praetorium	
+							yield("/waitaddon ContentsFinder")
+							yield("/wait 0.5")
+							boops = boops + 1
+							if boops > 10 then whoops = 1 end
+						end -- safety check before callback
+						yield("/wait 3")
+						yield("/callback ContentsFinder true 3 15")
+					end
 				end
 				if duty_counter > 98 then
 					if echo_level < 3 then yield("/echo Trying to start Porta") end
-					while not IsAddonVisible("ContentsFinder") and whoops == 0 do
-						OpenRegularDuty(830) --Decumana
-						yield("/waitaddon ContentsFinder")
+					if itworksonmymachine == 0 then
+						yield("/ad stop")
 						yield("/wait 0.5")
-						boops = boops + 1
-						if boops > 10 then whoops = 1 end
-					end -- safety check before callback
-					yield("/wait 3")
-					--OpenRegularDuty(1048) --Decumana
-					yield("/callback ContentsFinder true 3 4")
+						yield("/ad queue Porta Decumana")
+					end
+					if itworksonmymachine == 1 then
+						while not IsAddonVisible("ContentsFinder") and whoops == 0 do
+							OpenRegularDuty(830) --Decumana
+							yield("/waitaddon ContentsFinder")
+							yield("/wait 0.5")
+							boops = boops + 1
+							if boops > 10 then whoops = 1 end
+						end -- safety check before callback
+						yield("/wait 3")
+						--OpenRegularDuty(1048) --Decumana
+						yield("/callback ContentsFinder true 3 4")
+					end
 				end
 				yield("/callback ContentsFinder true 12 0")
 				stopcuckingme = 0

@@ -132,5 +132,8 @@ if isblu == 0 then
 
 		yield("/ays m e") --turn ar back on
 	end
+	
+	
+	yield("/wait 1")
+	yield("/callback SelectYesno true 0")
 end
-
