@@ -6,6 +6,8 @@ loop wait for is char ready
 setup automaton -> enhanced login -> run while AR is active. 
 /pcraft run moveforwardabit
 or whatever you called it.
+
+also TURN OF SIMPLE teleport in autoretainer. it is not needed and will cause problems with this script
 --]]
 
 function fartknocker()
