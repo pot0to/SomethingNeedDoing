@@ -83,6 +83,7 @@ feedmeitem = "Orange Juice"  --add the <hq> if its HQ
 --feedmeitem = "Baked Eggplant<hq>"  --remove the <hq> if its not HQ
 
 tornclothes = 25 --pct to try to repair at
+finickyclothes = 0 --0 = dont auto equip, 1 = autoequip, useful if you have bis that isnt max level, default set to NOT equip so peopel can manage their BIS
 
 --bm_preset = "AutoDuty" --if you set it to "none" it wont use bmr. this is for the preset to use.
 bm_preset = "none" --if you set it to "none" it wont use bmr and instead it will use RSR. this is for the preset to use.
@@ -397,7 +398,7 @@ if type(GetCharacterCondition(34)) == "boolean" and type(GetCharacterCondition(2
 	
 	if GetCharacterCondition(34) == true and GetCharacterCondition(26) == false then
 		equip_counter = equip_counter + 1
-		if equip_counter > 50 then 
+		if equip_counter > 50 and finickyclothes == 1 then 
 			yield("/equiprecommended")
 			yield("/wait 0.5")
 			equip_counter = 0

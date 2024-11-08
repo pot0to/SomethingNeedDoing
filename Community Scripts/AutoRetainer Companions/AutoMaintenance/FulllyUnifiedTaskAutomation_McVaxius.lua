@@ -106,6 +106,7 @@ if automarketfix ~= "no" then
 	yield("/xlenableprofile "..automarketfix)
 	--]]
 	yield("/am stop ") --this is all we need to stop the bells from being inoperable hahah this is it hahahahahah
+	yield("/automarket stop ") --this is all we need to stop the bells from being inoperable hahah this is it hahahahahah
 end
 --------------------------
 yield("/echo Script breakers disabled")		
