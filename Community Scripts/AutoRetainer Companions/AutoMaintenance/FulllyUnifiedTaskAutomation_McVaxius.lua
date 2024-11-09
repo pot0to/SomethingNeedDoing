@@ -66,6 +66,7 @@ discard_type = 0 --0 = dont discard, 1 = discard, 2 = discard only if "CLEAN"[3]
 log_gcranks = 9 --log the gc ranks of each char if they are below this rank on all 3. that way we can catch the "lower" one from the main one they are in. set it to 0 to disable the check
 automarketfix = "autobot" -- try to xldisable profile automarket. however if you set this to "no" it wont do it.  the reason for this is eventually automarket just does some weird stuff and wont let you access retainer bells
 equip_from_table = 0 --0 is no, 1 is yes
+illegalcleaningresetvalue = 3 --this is the pct chance it will try to do a "selling/repricing" after completing AR tasks. it is also the value it sets after a cleaning is done/triggered. 3% might actually be kind of high if you have lots of chars . i might lower it to 1 for myself.
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -413,9 +414,9 @@ if wheeequeheeheheheheheehhhee == 0 then
             zungazunga()
             -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
             if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
-                FUTA_processors[hoo_arr_weeeeee][3][2] = 5 --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
+                FUTA_processors[hoo_arr_weeeeee][3][2] = illegalcleaningresetvalue --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
                 tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
-                yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to 5")
+                yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to "..illegalcleaningresetvalue)
             end
         end
     end
