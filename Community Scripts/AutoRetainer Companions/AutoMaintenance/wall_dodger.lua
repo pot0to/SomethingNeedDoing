@@ -6,6 +6,8 @@ loop wait for is char ready
 setup automaton -> enhanced login -> run while AR is active. 
 /pcraft run moveforwardabit
 or whatever you called it.
+
+also TURN OF SIMPLE teleport in autoretainer. it is not needed and will cause problems with this script
 --]]
 
 function fartknocker()
@@ -54,7 +56,8 @@ function bz()
 	badzoyn = 1
 	for i=1,#housing_zones do
 		if housing_zones[i] == zoyn then
-			badzoyn = 0   --dont tp if we in a housing zone.
+			--badzoyn = 0   --dont tp if we in a housing zone.
+			badzoyn = 1230   --just disable this stuff for now
 		end
 	end
 end
@@ -72,7 +75,6 @@ if isblu == 0 then
 	if badzoyn == 0 then --we are already in a housing zone. let's enter the nearby entrance
 
 		yield("/hold Q")
-
 		yield("/target entrance")
 		yield("/interact")
 		yield("/callback SelectYesno true 0")
