@@ -11,6 +11,13 @@ you need to turn off 2 sections of SND in config
 Yes already configs -> try to add all of the menus to get to the important bits, for list tab
 
 UNDER LISTS -> brackets means target specific dont just blindly copy paste teh whoel thing in
+UNDER LISTS -> brackets means target specific dont just blindly copy paste teh whoel thing in
+UNDER LISTS -> brackets means target specific dont just blindly copy paste teh whoel thing in
+UNDER LISTS -> brackets means target specific dont just blindly copy paste teh whoel thing in
+UNDER LISTS -> brackets means target specific dont just blindly copy paste teh whoel thing in
+I repeat. do not enter these into "YesNo"
+non indented text is folder names not needed but nice to have
+
 Costa Del Sol Leves (section name)
     /Fieldcraft.*/
     /A Recipe for Disaster.*/
