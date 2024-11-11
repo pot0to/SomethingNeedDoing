@@ -1,3 +1,24 @@
+--untested exclusion list. you figure it out. ;)
+miqotes_have_fleas = 
+{
+"Large Buttcheeks@you",
+"Black'friday deals@friday",
+"Nut'every Day'november@truth"
+}
+if miqotes_have_fleas[1] ~= "Large Buttcheeks@you" then
+	potential_futa_hater = GetCharacterName(true)
+	not_on_my_watch_pervert = 0
+	yield("/wait 0.5")
+	for i=1,#miqotes_have_fleas do
+		if potential_futa_hater == miqotes_have_fleas[i] then not_on_my_watch_pervert = 1 end
+	end
+	yield("/wait 0.5")
+	if not_on_my_watch_pervert == 1 then
+		yield("/echo Not on my watch pervert!")
+		yield("/pcraft stop")
+	end
+end
+
 --[[
 Fully Unified Task Automation (F.U.T.A.)
 
