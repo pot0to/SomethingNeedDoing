@@ -1,8 +1,9 @@
---[[needs bunch of stuff ill document later maybe
-put the sea pickles into chocobo
-turnoff addon errors
-
+--[[
 CONFIGUJATION:
+put the sea pickles into chocobo, unless you have tons of them
+
+you need simpletweaks /target fix
+
 you need to turn off 2 sections of SND in config
 /target
 /waitaddon
@@ -18,7 +19,8 @@ Costa Del Sol Leves (section name)
     /Sounds Fishy.*/
     (Guildleves)
     (F'abodji) Yes
-    (Daca Jinjahl) /Food Chain Reaction.*/              <-------------------OPTIONAL if you have the seapickles in large quantities
+Quarrymill
+    (Daca Jinjahl) /Food Chain Reaction.*/
     (Daca Jinjahl) Yes
     (Daca Jinjahl) Blind Ambition
     (Daca Jinjahl) The Long and the Shortcrust
