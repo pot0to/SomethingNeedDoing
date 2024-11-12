@@ -1,24 +1,3 @@
---untested exclusion list. you figure it out. ;)
-miqotes_have_fleas = 
-{
-"Large Buttcheeks@you",
-"Black'friday deals@friday",
-"Nut'every Day'november@truth"
-}
-if miqotes_have_fleas[1] ~= "Large Buttcheeks@you" then
-	potential_futa_hater = GetCharacterName(true)
-	not_on_my_watch_pervert = 0
-	yield("/wait 0.5")
-	for i=1,#miqotes_have_fleas do
-		if potential_futa_hater == miqotes_have_fleas[i] then not_on_my_watch_pervert = 1 end
-	end
-	yield("/wait 0.5")
-	if not_on_my_watch_pervert == 1 then
-		yield("/echo Not on my watch pervert!")
-		yield("/pcraft stop")
-	end
-end
-
 --[[
 Fully Unified Task Automation (F.U.T.A.)
 
@@ -99,6 +78,29 @@ re_organize_return_locations = 0 -- only set this one time and run the script so
 --yield("/wintitle Final Fantasy XIV")   --FOR HACKY FISHIN SWITCHER WITH AHK
 --yield("/wait 5")
 --yield("/waitaddon _ActionBar <maxwait.600><wait.2>")
+
+--EXCLUSION LIST START--
+--untested exclusion list. you figure it out. ;)
+miqotes_have_fleas = 
+{
+"Large Buttcheeks@you",
+"Black'friday deals@friday",
+"Nut'every Day'november@truth"
+}
+if miqotes_have_fleas[1] ~= "Large Buttcheeks@you" then
+	potential_futa_hater = GetCharacterName(true)
+	not_on_my_watch_pervert = 0
+	yield("/wait 0.5")
+	for i=1,#miqotes_have_fleas do
+		if potential_futa_hater == miqotes_have_fleas[i] then not_on_my_watch_pervert = 1 end
+	end
+	yield("/wait 0.5")
+	if not_on_my_watch_pervert == 1 then
+		yield("/echo Not on my watch pervert!")
+		yield("/pcraft stop")
+	end
+end
+--EXCLUSION LIST END--
 
 --update atools w fc and inventory
 yield("/echo Fully Unified Task Automation (F.U.T.A.) Initializing .....")
