@@ -1,8 +1,39 @@
---needs bunch of stuff ill document later maybe
---put the sea pickles into chocobo
---turnoff addon errors
+--[[
+CONFIGUJATION:
+put the sea pickles into chocobo, unless you have tons of them
+
+you need simpletweaks /target fix
+
+you need to turn off 2 sections of SND in config
+/target
+/waitaddon
+
+Yes already configs -> try to add all of the menus to get to the important bits, for list tab
+
+UNDER LISTS -> brackets means target specific dont just blindly copy paste teh whoel thing in
+UNDER LISTS -> brackets means target specific dont just blindly copy paste teh whoel thing in
+UNDER LISTS -> brackets means target specific dont just blindly copy paste teh whoel thing in
+UNDER LISTS -> brackets means target specific dont just blindly copy paste teh whoel thing in
+UNDER LISTS -> brackets means target specific dont just blindly copy paste teh whoel thing in
+I repeat. do not enter these into "YesNo"
+non indented text is folder names not needed but nice to have
+
+Costa Del Sol Leves (section name)
+    /Fieldcraft.*/
+    /A Recipe for Disaster.*/
+    /Just Call Me Late for Dinner.*/
+    /Kitchen.*/
+    /Sounds Fishy.*/
+    (Guildleves)
+    (F'abodji) Yes
+Quarrymill
+    (Daca Jinjahl) /Food Chain Reaction.*/
+    (Daca Jinjahl) Yes
+    (Daca Jinjahl) Blind Ambition
+    (Daca Jinjahl) The Long and the Shortcrust
 
 
+--]]
 --beter code for handling leves thanks to mootykins  https://discord.com/channels/1001823907193552978/1196163718216679514/1275953553088708700
 --[[ 
 local known_quests = {
