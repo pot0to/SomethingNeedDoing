@@ -3,11 +3,10 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
+using ECommons.Automation;
 using ECommons.ChatMethods;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using System;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Channels;
 
 namespace SomethingNeedDoing.Managers;
@@ -16,7 +15,7 @@ internal class ChatManager : IDisposable
 {
     private readonly Channel<string> chatBoxMessages = Channel.CreateUnbounded<string>();
 
-    [Signature("48 89 5C 24 ?? 57 48 83 EC 20 48 8B FA 48 8B D9 45 84 C9")]
+    [Signature("48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 48 8B F2 48 8B F9 45 84 C9")]
     private readonly ProcessChatBoxDelegate processChatBox = null!;
 
     public ChatManager()
@@ -73,54 +72,6 @@ internal class ChatManager : IDisposable
     private void FrameworkUpdate(IFramework framework)
     {
         if (chatBoxMessages.Reader.TryRead(out var message))
-        {
-            SendMessageInternal(message);
-        }
-    }
-
-    private unsafe void SendMessageInternal(string message)
-    {
-        var framework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance();
-        var uiModule = framework->GetUIModule();
-
-        using var payload = new ChatPayload(message);
-        var payloadPtr = Marshal.AllocHGlobal(400);
-        Marshal.StructureToPtr(payload, payloadPtr, false);
-
-        processChatBox(uiModule, payloadPtr, IntPtr.Zero, 0);
-
-        Marshal.FreeHGlobal(payloadPtr);
-    }
-
-    [StructLayout(LayoutKind.Explicit)]
-    private readonly struct ChatPayload : IDisposable
-    {
-        [FieldOffset(0)]
-        private readonly IntPtr textPtr;
-
-        [FieldOffset(16)]
-        private readonly ulong textLen;
-
-        [FieldOffset(8)]
-        private readonly ulong unk1;
-
-        [FieldOffset(24)]
-        private readonly ulong unk2;
-
-        internal ChatPayload(string text)
-        {
-            var stringBytes = Encoding.UTF8.GetBytes(text);
-            textPtr = Marshal.AllocHGlobal(stringBytes.Length + 30);
-
-            Marshal.Copy(stringBytes, 0, textPtr, stringBytes.Length);
-            Marshal.WriteByte(textPtr + stringBytes.Length, 0);
-
-            textLen = (ulong)(stringBytes.Length + 1);
-
-            unk1 = 64;
-            unk2 = 0;
-        }
-
-        public void Dispose() => Marshal.FreeHGlobal(textPtr);
+            Chat.Instance.SendMessage(message);
     }
 }

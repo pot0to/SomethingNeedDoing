@@ -1,450 +1,434 @@
-﻿using ECommons.SimpleGui;
-using ImGuiNET;
-using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
-using Lumina.Text;
-using Lumina.Text.Expressions;
-using Lumina.Text.Payloads;
-using SomethingNeedDoing.Interface;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Numerics;
-using System.Text;
-using System.Text.Json;
+﻿//using ECommons.SimpleGui;
+//using ImGuiNET;
+//using Lumina.Excel;
+//using Lumina.Excel.Sheets;
+//using Lumina.Text;
+//using Lumina.Text.Expressions;
+//using Lumina.Text.Payloads;
+//using SomethingNeedDoing.Interface;
+//using System;
+//using System.Collections.Generic;
+//using System.Net.Http;
+//using System.Numerics;
+//using System.Text;
+//using System.Text.Json;
 
-namespace SomethingNeedDoing.Excel;
+//namespace SomethingNeedDoing.Excel;
 
-public class ExcelModule
-{
-    public readonly string[] Sheets;
-    public readonly Dictionary<string, RawExcelSheet?> SheetsCache = [];
-    public readonly Dictionary<string, SheetDefinition?> SheetDefinitions = [];
+//public class ExcelModule
+//{
+//    public readonly string[] Sheets;
+//    public readonly Dictionary<string, RawExcelSheet?> SheetsCache = [];
+//    public readonly Dictionary<string, SheetDefinition?> SheetDefinitions = [];
 
-    private HttpClient _httpClient = new();
+//    private readonly HttpClient _httpClient = new();
 
-    public ExcelModule()
-    {
-        Sheets = [.. Svc.Data.Excel.GetSheetNames()];
-    }
+//    public ExcelModule()
+//    {
+//        Sheets = [.. Svc.Data.Excel.SheetNames];
+//    }
 
-    public RawExcelSheet? GetSheet(string name, bool skipCache = false)
-    {
-        if (skipCache) return Svc.Data.Excel.GetSheetRaw(name);
-        if (SheetsCache.TryGetValue(name, out var sheet)) return sheet;
+//    public RawExcelSheet? GetSheet(string name, bool skipCache = false)
+//    {
+//        if (skipCache) return Svc.Data.Excel.GetRawSheet(name);
+//        if (SheetsCache.TryGetValue(name, out var sheet)) return sheet;
 
-        sheet = Svc.Data.Excel.GetSheetRaw(name);
-        SheetsCache[name] = sheet;
+//        sheet = Svc.Data.Excel.GetRawSheet(name);
+//        SheetsCache[name] = sheet;
 
-        if (!SheetDefinitions.ContainsKey(name))
-        {
-            ResolveSheetDefinition(name);
-        }
+//        if (!SheetDefinitions.ContainsKey(name))
+//        {
+//            ResolveSheetDefinition(name);
+//        }
 
-        return sheet;
-    }
+//        return sheet;
+//    }
 
-    public void ReloadAllSheets()
-    {
-        SheetsCache.Clear();
-        //foreach (var window in Windows) window.Reload();
-    }
+//    public void ReloadAllSheets()
+//    {
+//        SheetsCache.Clear();
+//        //foreach (var window in Windows) window.Reload();
+//    }
 
-    public void OpenNewWindow(string? sheet = null, int? scrollTo = null)
-    {
-        EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == ExcelWindow.WindowName)!.IsOpen = true;
-    }
+//    public void OpenNewWindow(string? sheet = null, int? scrollTo = null) => EzConfigGui.GetWindow<ExcelWindow>()!.IsOpen = true;
 
-    private void ResolveSheetDefinition(string name)
-    {
-        var url = $"https://raw.githubusercontent.com/xivapi/SaintCoinach/master/SaintCoinach/Definitions/{name}.json";
+//    private void ResolveSheetDefinition(string name)
+//    {
+//        var url = $"https://raw.githubusercontent.com/xivapi/SaintCoinach/master/SaintCoinach/Definitions/{name}.json";
 
-        _httpClient.GetAsync(url).ContinueWith(t =>
-        {
-            try
-            {
-                var result = t.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var json = result.Content.ReadAsStringAsync().Result;
+//        _httpClient.GetAsync(url).ContinueWith(t =>
+//        {
+//            try
+//            {
+//                var result = t.Result;
+//                if (result.IsSuccessStatusCode)
+//                {
+//                    var json = result.Content.ReadAsStringAsync().Result;
 
-                    var sheetDefinition = JsonSerializer.Deserialize<SheetDefinition>(json);
-                    if (sheetDefinition is null)
-                    {
-                        Svc.Log.Error("Failed to deserialize sheet definition");
-                        return;
-                    }
+//                    var sheetDefinition = JsonSerializer.Deserialize<SheetDefinition>(json);
+//                    if (sheetDefinition is null)
+//                    {
+//                        Svc.Log.Error("Failed to deserialize sheet definition");
+//                        return;
+//                    }
 
-                    Svc.Log.Debug("Resolved sheet definition: {sheetName} -> {sheetDefinition}",
-                              name,
-                              sheetDefinition);
+//                    Svc.Log.Debug($"Resolved sheet definition: {name} -> {sheetDefinition}");
+//                    SheetDefinitions[name] = sheetDefinition;
+//                }
+//                else
+//                {
+//                    Svc.Log.Error($"Request for sheet definition failed: {name} -> {result.StatusCode}");
+//                    SheetDefinitions[name] = null;
+//                }
+//            }
+//            catch (Exception e)
+//            {
+//                Svc.Log.Error(e, "Failed to resolve sheet definition");
+//            }
+//        });
+//    }
 
-                    SheetDefinitions[name] = sheetDefinition;
-                }
-                else
-                {
-                    Svc.Log.Error("Request for sheet definition failed: {sheetName} -> {statusCode}",
-                              name,
-                              result.StatusCode);
+//    // Abstracted here so we can show previous of what links are
+//    internal void DrawEntry(ExcelWindow sourceWindow, RawExcelSheet sheet, int row, int col, object data, ConverterDefinition? converter, bool insideLink = false)
+//    {
+//        switch (converter)
+//        {
+//            // Was originally 'link when link.Target != null', Rider wants me to turn it into this monstrous thing
+//            case LinkConverterDefinition { Target: not null } link:
+//                {
+//                    var targetRow = 0;
+//                    try
+//                    {
+//                        targetRow = Convert.ToInt32(data);
+//                    }
+//                    catch
+//                    {
+//                        // ignored
+//                    }
 
-                    SheetDefinitions[name] = null;
-                }
-            }
-            catch (Exception e)
-            {
-                Svc.Log.Error(e, "Failed to resolve sheet definition");
-            }
-        });
-    }
+//                    if (insideLink && ImGui.IsKeyDown(ImGuiKey.ModAlt))
+//                    {
+//                        // Draw what the link points to
+//                        var targetSheet = GetSheet(link.Target);
+//                        var targetRowObj = targetSheet.GetRow((uint)targetRow);
+//                        var sheetDef = SheetDefinitions.TryGetValue(link.Target, out var definition) ? definition : null;
 
-    // Abstracted here so we can show previous of what links are
-    internal void DrawEntry(ExcelWindow sourceWindow, RawExcelSheet sheet, int row, int col, object data, ConverterDefinition? converter, bool insideLink = false)
-    {
-        switch (converter)
-        {
-            // Was originally 'link when link.Target != null', Rider wants me to turn it into this monstrous thing
-            case LinkConverterDefinition { Target: not null } link:
-                {
-                    var targetRow = 0;
-                    try
-                    {
-                        targetRow = Convert.ToInt32(data);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
+//                        if (sheetDef is not null)
+//                        {
+//                            var targetCol = sheetDef.DefaultColumn is not null ? sheetDef.GetColumnForName(sheetDef.DefaultColumn) ?? 0 : 0;
+//                            var targetData = targetRowObj?.ReadColumnRaw(targetCol);
 
-                    if (insideLink && ImGui.IsKeyDown(ImGuiKey.ModAlt))
-                    {
-                        // Draw what the link points to
-                        var targetSheet = GetSheet(link.Target);
-                        var targetRowObj = targetSheet?.GetRow((uint)targetRow);
-                        var sheetDef = SheetDefinitions.TryGetValue(link.Target, out var definition)
-                                           ? definition
-                                           : null;
+//                            if (targetData is not null)
+//                            {
+//                                DrawEntry(
+//                                    sourceWindow,
+//                                    targetSheet!,
+//                                    targetRow,
+//                                    targetCol,
+//                                    targetData,
+//                                    sheetDef.GetConverterForColumn(targetCol),
+//                                    true
+//                                );
+//                                return;
+//                            }
+//                        }
+//                    }
 
-                        if (sheetDef is not null)
-                        {
-                            var targetCol = sheetDef.DefaultColumn is not null
-                                                ? sheetDef.GetColumnForName(sheetDef.DefaultColumn) ?? 0
-                                                : 0;
-                            var targetData = targetRowObj?.ReadColumnRaw(targetCol);
+//                    DrawLink(sourceWindow, link.Target, targetRow, row, col);
+//                    break;
+//                }
 
-                            if (targetData is not null)
-                            {
-                                DrawEntry(
-                                    sourceWindow,
-                                    targetSheet!,
-                                    targetRow,
-                                    targetCol,
-                                    targetData,
-                                    sheetDef.GetConverterForColumn(targetCol),
-                                    true
-                                );
-                                return;
-                            }
-                        }
-                    }
+//            case IconConverterDefinition:
+//                {
+//                    var iconId = 0u;
+//                    try
+//                    {
+//                        iconId = Convert.ToUInt32(data);
+//                    }
+//                    catch
+//                    {
+//                        // ignored
+//                    }
 
-                    DrawLink(sourceWindow, link.Target, targetRow, row, col);
-                    break;
-                }
+//                    var icon = Svc.Texture.GetFromGameIcon(iconId).GetWrapOrEmpty();
+//                    if (icon is not null)
+//                    {
+//                        var path = icon.ImGuiHandle;
+//                        var handle = icon.ImGuiHandle;
+//                        if (handle == IntPtr.Zero) break;
 
-            case IconConverterDefinition:
-                {
-                    var iconId = 0u;
-                    try
-                    {
-                        iconId = Convert.ToUInt32(data);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
+//                        Vector2 ScaleSize(float maxY)
+//                        {
+//                            var size = new Vector2(icon!.Width, icon.Height);
+//                            if (size.Y > maxY) size *= maxY / size.Y;
+//                            return size;
+//                        }
 
-                    var icon = Svc.Texture.GetFromGameIcon(iconId).GetWrapOrEmpty();
-                    if (icon is not null)
-                    {
-                        var path = icon.ImGuiHandle;
-                        var handle = icon.ImGuiHandle;
-                        if (handle == IntPtr.Zero) break;
+//                        var lineSize = ScaleSize(Service.Configuration.LineHeightImages ? ImGui.GetTextLineHeight() * 2 : 512);
+//                        ImGui.Image(handle, lineSize);
 
-                        Vector2 ScaleSize(float maxY)
-                        {
-                            var size = new Vector2(icon!.Width, icon.Height);
-                            if (size.Y > maxY) size *= maxY / size.Y;
-                            return size;
-                        }
+//                        var shouldShowMagnum = ImGui.IsKeyDown(ImGuiKey.ModAlt) && ImGui.IsItemHovered();
+//                        if (shouldShowMagnum)
+//                        {
+//                            var magnumSize = ScaleSize(1024);
+//                            ImGui.BeginTooltip();
+//                            ImGui.Image(handle, magnumSize);
+//                            ImGui.EndTooltip();
+//                        }
 
-                        var lineSize = ScaleSize(Service.Configuration.LineHeightImages ? ImGui.GetTextLineHeight() * 2 : 512);
-                        ImGui.Image(handle, lineSize);
+//                        if (ImGui.BeginPopupContextItem($"{row}_{col}"))
+//                        {
+//                            ImGui.MenuItem("Icon", false);
 
-                        var shouldShowMagnum = ImGui.IsKeyDown(ImGuiKey.ModAlt) && ImGui.IsItemHovered();
-                        if (shouldShowMagnum)
-                        {
-                            var magnumSize = ScaleSize(1024);
-                            ImGui.BeginTooltip();
-                            ImGui.Image(handle, magnumSize);
-                            ImGui.EndTooltip();
-                        }
+//                            if (ImGui.MenuItem("Copy icon ID"))
+//                            {
+//                                ImGui.SetClipboardText(iconId.ToString());
+//                            }
 
-                        if (ImGui.BeginPopupContextItem($"{row}_{col}"))
-                        {
-                            ImGui.MenuItem("Icon", false);
+//                            if (ImGui.MenuItem("Copy icon path"))
+//                            {
+//                                ImGui.SetClipboardText(Svc.Texture.GetIconPath(iconId));
+//                            }
 
-                            if (ImGui.MenuItem("Copy icon ID"))
-                            {
-                                ImGui.SetClipboardText(iconId.ToString());
-                            }
+//                            ImGui.EndPopup();
+//                        }
+//                    }
+//                    else
+//                    {
+//                        ImGui.BeginDisabled();
+//                        ImGui.TextUnformatted($"(couldn't load icon {iconId})");
+//                        ImGui.EndDisabled();
+//                    }
 
-                            if (ImGui.MenuItem("Copy icon path"))
-                            {
-                                ImGui.SetClipboardText(Svc.Texture.GetIconPath(iconId));
-                            }
+//                    break;
+//                }
 
-                            ImGui.EndPopup();
-                        }
-                    }
-                    else
-                    {
-                        ImGui.BeginDisabled();
-                        ImGui.TextUnformatted($"(couldn't load icon {iconId})");
-                        ImGui.EndDisabled();
-                    }
+//            case TomestoneConverterDefinition:
+//                {
+//                    // FIXME this allocates memory like a motherfucker, cache this
+//                    var dataInt = Convert.ToUInt32(data);
+//                    var tomestone = dataInt > 0 ? FindRow<TomestonesItem>(x => x.Tomestones.Value.RowId == dataInt) : null;
 
-                    break;
-                }
+//                    if (tomestone is null)
+//                    {
+//                        DrawLink(
+//                            sourceWindow,
+//                            "Item",
+//                            (int)dataInt,
+//                            row,
+//                            col
+//                        );
+//                    }
+//                    else
+//                    {
+//                        DrawLink(
+//                            sourceWindow,
+//                            "Item",
+//                            (int)tomestone.Value.Item.RowId,
+//                            row,
+//                            col
+//                        );
+//                    }
 
-            case TomestoneConverterDefinition:
-                {
-                    // FIXME this allocates memory like a motherfucker, cache this
-                    var dataInt = Convert.ToUInt32(data);
-                    var tomestone = dataInt > 0
-                                        ? Svc.Data.GetExcelSheet<TomestonesItem>()!
-                                            .FirstOrDefault(x => x.Tomestones.Row == dataInt)
-                                        : null;
+//                    break;
+//                }
 
-                    if (tomestone is null)
-                    {
-                        DrawLink(
-                            sourceWindow,
-                            "Item",
-                            (int)dataInt,
-                            row,
-                            col
-                        );
-                    }
-                    else
-                    {
-                        DrawLink(
-                            sourceWindow,
-                            "Item",
-                            (int)tomestone.Item.Row,
-                            row,
-                            col
-                        );
-                    }
+//            case ComplexLinkConverterDefinition complex:
+//                {
+//                    var targetRow = 0;
+//                    try
+//                    {
+//                        targetRow = Convert.ToInt32(data);
+//                    }
+//                    catch
+//                    {
+//                        // ignored
+//                    }
 
-                    break;
-                }
+//                    var resolvedLinks = complex.ResolveComplexLink(
+//                        this,
+//                        sheet,
+//                        row,
+//                        targetRow
+//                    );
 
-            case ComplexLinkConverterDefinition complex:
-                {
-                    var targetRow = 0;
-                    try
-                    {
-                        targetRow = Convert.ToInt32(data);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
+//                    foreach (var link in resolvedLinks)
+//                    {
+//                        DrawLink(sourceWindow, link.Link, link.TargetRow, row, col);
+//                    }
 
-                    var resolvedLinks = complex.ResolveComplexLink(
-                        this,
-                        sheet,
-                        row,
-                        targetRow
-                    );
+//                    break;
+//                }
 
-                    foreach (var link in resolvedLinks)
-                    {
-                        DrawLink(sourceWindow, link.Link, link.TargetRow, row, col);
-                    }
+//            default:
+//                {
+//                    string? str;
 
-                    break;
-                }
+//                    try
+//                    {
+//                        str = data.ToString();
+//                        if (data is SeString seString)
+//                        {
+//                            str = DisplaySeString(seString);
+//                        }
+//                    }
+//                    catch
+//                    {
+//                        // Some sheets (like CustomTalkDefineClient) have broken SeString, so let's catch that
+//                        break;
+//                    }
 
-            default:
-                {
-                    string? str;
+//                    if (str is null) break;
 
-                    try
-                    {
-                        str = data.ToString();
-                        if (data is SeString seString)
-                        {
-                            str = DisplaySeString(seString);
-                        }
-                    }
-                    catch
-                    {
-                        // Some sheets (like CustomTalkDefineClient) have broken SeString, so let's catch that
-                        break;
-                    }
+//                    ImGui.TextUnformatted(str);
 
-                    if (str is null) break;
+//                    if (ImGui.BeginPopupContextItem($"{row}_{col}"))
+//                    {
+//                        var fileExists = false;
+//                        try
+//                        {
+//                            fileExists = Svc.Data.FileExists(str);
+//                        }
+//                        catch
+//                        {
+//                            // ignored
+//                        }
 
-                    ImGui.TextUnformatted(str);
+//                        if (ImGui.MenuItem("Copy"))
+//                        {
+//                            ImGui.SetClipboardText(str);
+//                        }
 
-                    if (ImGui.BeginPopupContextItem($"{row}_{col}"))
-                    {
-                        var fileExists = false;
-                        try
-                        {
-                            fileExists = Svc.Data.FileExists(str);
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
+//                        ImGui.EndPopup();
+//                    }
 
-                        if (ImGui.MenuItem("Copy"))
-                        {
-                            ImGui.SetClipboardText(str);
-                        }
+//                    break;
+//                }
+//        }
+//    }
 
-                        ImGui.EndPopup();
-                    }
+//    private void DrawLink(ExcelWindow sourceWindow, string link, int targetRow, int row, int col)
+//    {
+//        var text = $"{link}#{targetRow}" + $"##{row}_{col}";
 
-                    break;
-                }
-        }
-    }
+//        if (ImGui.Button(text))
+//        {
+//            sourceWindow.OpenSheet(link, targetRow);
+//        }
 
-    private void DrawLink(ExcelWindow sourceWindow, string link, int targetRow, int row, int col)
-    {
-        var text = $"{link}#{targetRow}" + $"##{row}_{col}";
+//        if (ImGui.BeginPopupContextItem($"{row}_{col}"))
+//        {
+//            if (ImGui.MenuItem("Open in new window"))
+//            {
+//                OpenNewWindow(link, targetRow);
+//            }
 
-        if (ImGui.Button(text))
-        {
-            sourceWindow.OpenSheet(link, targetRow);
-        }
+//            ImGui.EndPopup();
+//        }
 
-        if (ImGui.BeginPopupContextItem($"{row}_{col}"))
-        {
-            if (ImGui.MenuItem("Open in new window"))
-            {
-                OpenNewWindow(link, targetRow);
-            }
+//        // Hack to preview a link
+//        var targetSheet = GetSheet(link);
+//        if (
+//            targetSheet is not null
+//            && SheetDefinitions.TryGetValue(link, out var sheetDef)
+//            && sheetDef is not null)
+//        {
+//            var targetRowObj = targetSheet.GetRow((uint)targetRow);
+//            var targetCol = sheetDef.DefaultColumn is not null
+//                                ? sheetDef.GetColumnForName(sheetDef.DefaultColumn) ?? 0
+//                                : 0;
 
-            ImGui.EndPopup();
-        }
+//            var data = targetRowObj?.ReadColumnRaw(targetCol);
+//            if (data is not null && ImGui.IsItemHovered())
+//            {
+//                ImGui.BeginTooltip();
+//                DrawEntry(
+//                    sourceWindow,
+//                    targetSheet,
+//                    targetRow,
+//                    targetCol,
+//                    data,
+//                    sheetDef.GetConverterForColumn(targetCol),
+//                    true
+//                );
+//                ImGui.EndTooltip();
+//            }
+//        }
+//    }
 
-        // Hack to preview a link
-        var targetSheet = GetSheet(link);
-        if (
-            targetSheet is not null
-            && SheetDefinitions.TryGetValue(link, out var sheetDef)
-            && sheetDef is not null)
-        {
-            var targetRowObj = targetSheet.GetRow((uint)targetRow);
-            var targetCol = sheetDef.DefaultColumn is not null
-                                ? sheetDef.GetColumnForName(sheetDef.DefaultColumn) ?? 0
-                                : 0;
+//    public string DisplayObject(object obj)
+//    {
+//        if (obj is SeString seString)
+//        {
+//            return DisplaySeString(seString);
+//        }
 
-            var data = targetRowObj?.ReadColumnRaw(targetCol);
-            if (data is not null && ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                DrawEntry(
-                    sourceWindow,
-                    targetSheet,
-                    targetRow,
-                    targetCol,
-                    data,
-                    sheetDef.GetConverterForColumn(targetCol),
-                    true
-                );
-                ImGui.EndTooltip();
-            }
-        }
-    }
+//        return obj.ToString() ?? "";
+//    }
 
-    public string DisplayObject(object obj)
-    {
-        if (obj is SeString seString)
-        {
-            return DisplaySeString(seString);
-        }
+//    private static void XmlRepr(StringBuilder sb, BaseExpression expr)
+//    {
+//        switch (expr)
+//        {
+//            case PlaceholderExpression ple:
+//                sb.Append('<').Append(ple.ExpressionType).Append(" />");
+//                break;
+//            case IntegerExpression ie:
+//                sb.Append('<').Append(ie.ExpressionType).Append('>');
+//                sb.Append(ie.Value);
+//                sb.Append("</").Append(ie.ExpressionType).Append('>');
+//                break;
+//            case StringExpression se:
+//                sb.Append('<').Append(se.ExpressionType).Append('>');
+//                XmlRepr(sb, se.Value);
+//                sb.Append("</").Append(se.ExpressionType).Append('>');
+//                break;
+//            case ParameterExpression pae:
+//                sb.Append('<').Append(pae.ExpressionType).Append('>');
+//                sb.Append("<operand>");
+//                XmlRepr(sb, pae.Operand);
+//                sb.Append("</operand>");
+//                sb.Append("</").Append(pae.ExpressionType).Append('>');
+//                break;
+//            case BinaryExpression pae:
+//                sb.Append('<').Append(pae.ExpressionType).Append('>');
+//                sb.Append("<operand1>");
+//                XmlRepr(sb, pae.Operand1);
+//                sb.Append("</operand1>");
+//                sb.Append("<operand2>");
+//                XmlRepr(sb, pae.Operand2);
+//                sb.Append("</operand2>");
+//                sb.Append("</").Append(pae.ExpressionType).Append('>');
+//                break;
+//        }
+//    }
 
-        return obj.ToString() ?? "";
-    }
+//    private static void XmlRepr(StringBuilder sb, SeString s)
+//    {
+//        foreach (var payload in s.Payloads)
+//        {
+//            if (payload is TextPayload t)
+//            {
+//                sb.Append(t.RawString);
+//            }
+//            else if (!payload.Expressions.Any())
+//            {
+//                sb.Append($"<{payload.PayloadType} />");
+//            }
+//            else
+//            {
+//                sb.Append($"<{payload.PayloadType}>");
+//                foreach (var expr in payload.Expressions)
+//                    XmlRepr(sb, expr);
+//                sb.Append($"<{payload.PayloadType}>");
+//            }
+//        }
+//    }
 
-    private static void XmlRepr(StringBuilder sb, BaseExpression expr)
-    {
-        switch (expr)
-        {
-            case PlaceholderExpression ple:
-                sb.Append('<').Append(ple.ExpressionType).Append(" />");
-                break;
-            case IntegerExpression ie:
-                sb.Append('<').Append(ie.ExpressionType).Append('>');
-                sb.Append(ie.Value);
-                sb.Append("</").Append(ie.ExpressionType).Append('>');
-                break;
-            case StringExpression se:
-                sb.Append('<').Append(se.ExpressionType).Append('>');
-                XmlRepr(sb, se.Value);
-                sb.Append("</").Append(se.ExpressionType).Append('>');
-                break;
-            case ParameterExpression pae:
-                sb.Append('<').Append(pae.ExpressionType).Append('>');
-                sb.Append("<operand>");
-                XmlRepr(sb, pae.Operand);
-                sb.Append("</operand>");
-                sb.Append("</").Append(pae.ExpressionType).Append('>');
-                break;
-            case BinaryExpression pae:
-                sb.Append('<').Append(pae.ExpressionType).Append('>');
-                sb.Append("<operand1>");
-                XmlRepr(sb, pae.Operand1);
-                sb.Append("</operand1>");
-                sb.Append("<operand2>");
-                XmlRepr(sb, pae.Operand2);
-                sb.Append("</operand2>");
-                sb.Append("</").Append(pae.ExpressionType).Append('>');
-                break;
-        }
-    }
-
-    private static void XmlRepr(StringBuilder sb, SeString s)
-    {
-        foreach (var payload in s.Payloads)
-        {
-            if (payload is TextPayload t)
-            {
-                sb.Append(t.RawString);
-            }
-            else if (!payload.Expressions.Any())
-            {
-                sb.Append($"<{payload.PayloadType} />");
-            }
-            else
-            {
-                sb.Append($"<{payload.PayloadType}>");
-                foreach (var expr in payload.Expressions)
-                    XmlRepr(sb, expr);
-                sb.Append($"<{payload.PayloadType}>");
-            }
-        }
-    }
-
-    public static string DisplaySeString(SeString s)
-    {
-        var sb = new StringBuilder();
-        XmlRepr(sb, s);
-        return sb.ToString();
-    }
-}
+//    public static string DisplaySeString(SeString s)
+//    {
+//        var sb = new StringBuilder();
+//        XmlRepr(sb, s);
+//        return sb.ToString();
+//    }
+//}

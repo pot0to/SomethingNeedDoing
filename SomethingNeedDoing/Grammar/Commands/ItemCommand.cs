@@ -85,10 +85,5 @@ internal class ItemCommand : MacroCommand
             : inventoryManager->GetInventoryItemCount(itemID, isHQ);
     }
 
-    private uint SearchItemId(string itemName)
-    {
-        var sheet = Svc.Data.GetExcelSheet<Sheets.Item>()!;
-        var item = sheet.FirstOrDefault(r => r.Name.ToString().Equals(itemName, System.StringComparison.InvariantCultureIgnoreCase));
-        return item == null ? throw new MacroCommandError("Item not found") : item.RowId;
-    }
+    private uint SearchItemId(string itemName) => FindRow<Sheets.Item>(x => x.Name.ToString().Equals(itemName, System.StringComparison.InvariantCultureIgnoreCase))!.Value.RowId;
 }

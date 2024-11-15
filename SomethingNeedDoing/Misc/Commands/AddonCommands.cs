@@ -32,7 +32,7 @@ public class AddonCommands
     public unsafe void OpenRegularDuty(uint cfcID) => AgentContentsFinder.Instance()->OpenRegularDuty(cfcID);
     public unsafe void SelectDuty(uint dutyCode)
     {
-        if (!GenericHelpers.TryGetAddonByName<AtkUnitBase>("ContentsFinder", out var addon) || !GenericHelpers.IsAddonReady(addon))
+        if (!TryGetAddonByName<AtkUnitBase>("ContentsFinder", out var addon) || !GenericHelpers.IsAddonReady(addon))
             return;
 
         var componentList = addon->GetNodeById(52)->GetAsAtkComponentList();
@@ -75,11 +75,11 @@ public class AddonCommands
     public unsafe void SetDFExplorerMode(bool state) => ContentsFinder.Instance()->IsExplorerMode = state;
     public unsafe void SetDFLimitedLeveling(bool state) => ContentsFinder.Instance()->IsLimitedLevelingRoulette = state;
 
-    public unsafe int GetDiademAetherGaugeBarCount() => GenericHelpers.TryGetAddonByName<AtkUnitBase>("HWDAetherGauge", out var addon) ? addon->AtkValues[1].Int / 200 : 0;
+    public unsafe int GetDiademAetherGaugeBarCount() => TryGetAddonByName<AtkUnitBase>("HWDAetherGauge", out var addon) ? addon->AtkValues[1].Int / 200 : 0;
 
     public unsafe int GetDDPassageProgress()
     {
-        if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("DeepDungeonMap", out var addon))
+        if (TryGetAddonByName<AtkUnitBase>("DeepDungeonMap", out var addon))
         {
             var key = addon->GetNodeById(7)->ChildNode->PrevSiblingNode;
             var image = key->GetAsAtkComponentNode()->Component->UldManager.NodeList[1]->GetAsAtkImageNode();
@@ -89,8 +89,8 @@ public class AddonCommands
         return 0;
     }
 
-    public unsafe bool IsAddonVisible(string addonName) => GenericHelpers.TryGetAddonByName<AtkUnitBase>(addonName, out var addon) && addon->IsVisible;
-    public unsafe bool IsAddonReady(string addonName) => GenericHelpers.TryGetAddonByName<AtkUnitBase>(addonName, out var addon) && GenericHelpers.IsAddonReady(addon);
+    public unsafe bool IsAddonVisible(string addonName) => TryGetAddonByName<AtkUnitBase>(addonName, out var addon) && addon->IsVisible;
+    public unsafe bool IsAddonReady(string addonName) => TryGetAddonByName<AtkUnitBase>(addonName, out var addon) && GenericHelpers.IsAddonReady(addon);
 
     public unsafe bool IsNodeVisible(string addonName, params int[] ids)
     {
@@ -280,5 +280,5 @@ public class AddonCommands
             : Marshal.PtrToStringUTF8((nint)textPtr) ?? string.Empty;
     }
 
-    public unsafe int GetNodeListCount(string addonName) => GenericHelpers.TryGetAddonByName<AtkUnitBase>(addonName, out var addon) ? addon->UldManager.NodeListCount : 0;
+    public unsafe int GetNodeListCount(string addonName) => TryGetAddonByName<AtkUnitBase>(addonName, out var addon) ? addon->UldManager.NodeListCount : 0;
 }

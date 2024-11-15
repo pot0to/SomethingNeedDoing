@@ -1,4 +1,3 @@
-using ECommons;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using SomethingNeedDoing.Exceptions;
@@ -49,7 +48,7 @@ internal class RecipeCommand : MacroCommand
         await PerformWait(token);
     }
 
-    private unsafe bool AddonSynthesisIsOpen() => GenericHelpers.TryGetAddonByName<AtkUnitBase>("Synthesis", out _);
+    private unsafe bool AddonSynthesisIsOpen() => TryGetAddonByName<AtkUnitBase>("Synthesis", out _);
 
     private unsafe void OpenRecipeNote(uint recipeID)
     {
@@ -63,19 +62,16 @@ internal class RecipeCommand : MacroCommand
     private uint SearchRecipeId(string recipeName)
     {
         var sheet = Svc.Data.GetExcelSheet<Sheets.Recipe>()!;
-        var recipes = sheet.Where(r => r.ItemResult.Value?.Name.ToString().ToLowerInvariant() == recipeName).ToList();
+        var recipes = sheet.Where(r => r.ItemResult.Value.Name.ToString().Equals(recipeName, System.StringComparison.InvariantCultureIgnoreCase)).ToList();
 
         switch (recipes.Count)
         {
             case 0: throw new MacroCommandError("Recipe not found");
             case 1: return recipes.First().RowId;
             default:
-                var jobId = Svc.ClientState.LocalPlayer?.ClassJob.Id;
+                var jobId = Svc.ClientState.LocalPlayer?.ClassJob.RowId;
 
                 var recipe = recipes.FirstOrDefault(r => GetClassJobID(r) == jobId);
-                if (recipe == default)
-                    return recipes.First().RowId;
-
                 return recipe.RowId;
         }
     }

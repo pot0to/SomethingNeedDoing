@@ -1,12 +1,13 @@
 ﻿using Dalamud.Game.ClientState.Fates;
 using ECommons;
+using ECommons.MathHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -35,12 +36,11 @@ public class WorldStateCommands
     }
 
     public int GetZoneID() => Svc.ClientState.TerritoryType;
-    public string GetZoneName(uint zoneID) => Svc.Data.GetExcelSheet<TerritoryType>()?.FirstOrDefault(t => t.RowId == zoneID)?.PlaceName.ToString() ?? "";
-
+    public string GetZoneName(uint zoneID) => GetRow<TerritoryType>(zoneID)!.Value.PlaceName.Value.ToString() ?? "";
     public unsafe float GetFlagXCoord() => AgentMap.Instance()->FlagMapMarker.XFloat;
     public unsafe float GetFlagYCoord() => AgentMap.Instance()->FlagMapMarker.YFloat;
     public unsafe float GetFlagZone() => AgentMap.Instance()->FlagMapMarker.TerritoryId;
-    public unsafe void SetMapFlag(uint territory, float worldX, float worldY, float worldZ) => AgentMap.Instance()->SetFlagMapMarker(territory, Svc.Data.GetExcelSheet<TerritoryType>()!.GetRow(territory)!.Map.Value!.RowId, new Vector3(worldX, worldY, worldZ));
+    public unsafe void SetMapFlag(uint territory, float worldX, float worldY, float worldZ) => AgentMap.Instance()->SetFlagMapMarker(territory, GetRow<TerritoryType>(territory)!.Value.Map.Value!.RowId, new Vector3(worldX, worldY, worldZ));
 
     public unsafe byte GetActiveWeatherID() => EnvManager.Instance()->ActiveWeather;
 
@@ -64,12 +64,7 @@ public class WorldStateCommands
         .FirstOrDefault();
 
     public unsafe bool IsInFate() => FateManager.Instance()->CurrentFate is not null;
-    public unsafe string GetFateState(ushort fateID)
-    {
-        var fate = FateManager.Instance()->GetFateById(fateID);
-        var state = (FateState)fate->State;
-        return state.ToString();
-    }
+    public unsafe string GetFateState(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->State.ToString();
     public unsafe int GetFateStartTimeEpoch(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->StartTimeEpoch;
     public unsafe float GetFateDuration(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Duration;
     public unsafe string GetFateName(ushort fateID) => FateManager.Instance()->GetFateById(fateID)->Name.ToString();
@@ -105,9 +100,9 @@ public class WorldStateCommands
 
     #region OceanFishing
     public unsafe uint GetCurrentOceanFishingRoute() => EventFramework.Instance()->GetInstanceContentOceanFishing()->CurrentRoute;
-    public byte GetCurrentOceanFishingTimeOfDay() => Svc.Data.GetExcelSheet<IKDRoute>()?.GetRow(GetCurrentOceanFishingRoute())?.Time[GetCurrentOceanFishingZone()].Value?.Unknown0 ?? 0;
+    public byte GetCurrentOceanFishingTimeOfDay() => Svc.Data.GetExcelSheet<IKDRoute>()?.GetRow(GetCurrentOceanFishingRoute()).Time[GetCurrentOceanFishingZone()].Value.Unknown0 ?? 0;
     public unsafe int GetCurrentOceanFishingStatus() => (int)EventFramework.Instance()->GetInstanceContentOceanFishing()->Status;
-    public unsafe uint GetCurrentOceanFishingZone() => EventFramework.Instance()->GetInstanceContentOceanFishing()->CurrentZone;
+    public unsafe Number GetCurrentOceanFishingZone() => EventFramework.Instance()->GetInstanceContentOceanFishing()->CurrentZone;
     public float GetCurrentOceanFishingZoneTimeLeft() => GetContentTimeLeft() - GetCurrentOceanFishingTimeOffset();
     public unsafe uint GetCurrentOceanFishingTimeOffset() => EventFramework.Instance()->GetInstanceContentOceanFishing()->TimeOffset;
     public unsafe uint GetCurrentOceanFishingWeatherID() => EventFramework.Instance()->GetInstanceContentOceanFishing()->WeatherId;
@@ -115,12 +110,12 @@ public class WorldStateCommands
     public unsafe uint GetCurrentOceanFishingMission1Type() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission1Type;
     public unsafe uint GetCurrentOceanFishingMission2Type() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission2Type;
     public unsafe uint GetCurrentOceanFishingMission3Type() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission3Type;
-    public unsafe byte GetCurrentOceanFishingMission1Goal() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission1Type())?.Unknown1 ?? 0;
-    public unsafe byte GetCurrentOceanFishingMission2Goal() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission2Type())?.Unknown1 ?? 0;
-    public unsafe byte GetCurrentOceanFishingMission3Goal() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission3Type())?.Unknown1 ?? 0;
-    public unsafe string GetCurrentOceanFishingMission1Name() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission1Type())?.Unknown0.RawString ?? "";
-    public unsafe string GetCurrentOceanFishingMission2Name() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission2Type())?.Unknown0.RawString ?? "";
-    public unsafe string GetCurrentOceanFishingMission3Name() => Svc.Data.GetExcelSheet<IKDPlayerMissionCondition>()?.GetRow(GetCurrentOceanFishingMission3Type())?.Unknown0.RawString ?? "";
+    public unsafe byte GetCurrentOceanFishingMission1Goal() => GetRow<IKDPlayerMissionCondition>(GetCurrentOceanFishingMission1Type())!.Value.Unknown1;
+    public unsafe byte GetCurrentOceanFishingMission2Goal() => GetRow<IKDPlayerMissionCondition>(GetCurrentOceanFishingMission2Type())!.Value.Unknown1;
+    public unsafe byte GetCurrentOceanFishingMission3Goal() => GetRow<IKDPlayerMissionCondition>(GetCurrentOceanFishingMission3Type())!.Value.Unknown1;
+    public unsafe string GetCurrentOceanFishingMission1Name() => GetRow<IKDPlayerMissionCondition>(GetCurrentOceanFishingMission1Type())!.Value.Unknown0.ToString() ?? "";
+    public unsafe string GetCurrentOceanFishingMission2Name() => GetRow<IKDPlayerMissionCondition>(GetCurrentOceanFishingMission2Type())!.Value.Unknown0.ToString() ?? "";
+    public unsafe string GetCurrentOceanFishingMission3Name() => GetRow<IKDPlayerMissionCondition>(GetCurrentOceanFishingMission3Type())!.Value.Unknown0.ToString() ?? "";
     public unsafe uint GetCurrentOceanFishingMission1Progress() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission1Progress;
     public unsafe uint GetCurrentOceanFishingMission2Progress() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission2Progress;
     public unsafe uint GetCurrentOceanFishingMission3Progress() => EventFramework.Instance()->GetInstanceContentOceanFishing()->Mission3Progress;
@@ -184,8 +179,7 @@ public class WorldStateCommands
     }
     public (float, float) GetAetheryteRawPos(uint aetheryteID)
     {
-        var pos = GenericHelpers.FindRow<MapMarker>(m => m?.DataType == 3 && m.DataKey.Row == aetheryteID);
-        if (pos == null) return (0f, 0f);
-        else return (Utils.ConvertMapMarkerToRawPosition(pos.X), Utils.ConvertMapMarkerToRawPosition(pos.Y));
+        var pos = FindRow<MapMarker>(m => m.DataType == 3 && m.DataKey.RowId == aetheryteID);
+        return pos == null ? (0f, 0f) : (Utils.ConvertMapMarkerToRawPosition(pos.Value.X), Utils.ConvertMapMarkerToRawPosition(pos.Value.Y));
     }
 }

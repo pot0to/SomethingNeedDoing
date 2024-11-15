@@ -1,7 +1,4 @@
-﻿using Dalamud.Game;
-using Dalamud.Utility;
-using ECommons.Logging;
-using ExdSheets;
+﻿using ECommons.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using ImGuiNET;
@@ -71,22 +68,4 @@ internal class Utils
         var rawPosition = ((float)(pos - 1024.0) / num);
         return rawPosition;
     }
-
-    //public static Sheet<T> GetSheet<T>(ClientLanguage? language = null) where T : struct, ISheetRow<T>
-    //    => Service.Module.GetSheet<T>((language ?? Svc.ClientState.ClientLanguage).ToLumina());
-
-    //public static int GetRowCount<T>() where T : struct, ISheetRow<T>
-    //    => GetSheet<T>().Count;
-
-    //public static T? GetRow<T>(uint rowId, ClientLanguage? language = null) where T : struct, ISheetRow<T>
-    //    => GetSheet<T>(language).TryGetRow(rowId);
-
-    //public static T? GetRow<T>(uint rowId, ushort subRowId, ClientLanguage? language = null) where T : struct, ISheetRow<T>
-    //    => GetSheet<T>(language).TryGetRow(rowId, subRowId);
-
-    //public static T? FindRow<T>(Func<T, bool> predicate) where T : struct, ISheetRow<T>
-    //     => GetSheet<T>().FirstOrDefault(predicate);
-
-    //public static T[] FindRows<T>(Func<T, bool> predicate) where T : struct, ISheetRow<T>
-    //    => GetSheet<T>().Where(predicate).ToArray();
 }

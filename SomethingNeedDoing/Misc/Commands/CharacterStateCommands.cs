@@ -5,7 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -28,14 +28,14 @@ public class CharacterStateCommands
         return list;
     }
 
-    public bool IsPlayerAvailable() => Player.Interactable && !GenericHelpers.IsOccupied();
+    public bool IsPlayerAvailable() => Player.Interactable && !IsOccupied();
 
     public unsafe bool HasStatus(string statusName)
     {
         statusName = statusName.ToLowerInvariant();
         var sheet = Svc.Data.GetExcelSheet<Sheets.Status>()!;
         var statusIDs = sheet
-            .Where(row => row.Name.RawString.Equals(statusName, StringComparison.InvariantCultureIgnoreCase))
+            .Where(row => row.Name.ExtractText().Equals(statusName, StringComparison.InvariantCultureIgnoreCase))
             .Select(row => row.RowId)
             .ToArray()!;
 
@@ -60,7 +60,7 @@ public class CharacterStateCommands
 
     public string GetCharacterName(bool includeWorld = false)
         => Svc.ClientState.LocalPlayer == null ? "null"
-        : includeWorld ? $"{Svc.ClientState.LocalPlayer.Name}@{Svc.ClientState.LocalPlayer.HomeWorld.GameData!.Name}"
+        : includeWorld ? $"{Svc.ClientState.LocalPlayer.Name}@{Svc.ClientState.LocalPlayer.HomeWorld.Value.Name}"
         : Svc.ClientState.LocalPlayer.Name.ToString();
 
     public bool IsInZone(int zoneID) => Svc.ClientState.TerritoryType == zoneID;
@@ -75,17 +75,17 @@ public class CharacterStateCommands
 
     public unsafe bool IsMoving() => AgentMap.Instance()->IsPlayerMoving == 1;
 
-    public bool IsPlayerOccupied() => GenericHelpers.IsOccupied();
+    public bool IsPlayerOccupied() => IsOccupied();
 
     public unsafe uint GetGil() => InventoryManager.Instance()->GetGil();
 
-    public uint GetClassJobId() => Svc.ClientState.LocalPlayer!.ClassJob.Id;
+    public uint GetClassJobId() => Svc.ClientState.LocalPlayer!.ClassJob.RowId;
     public uint GetHP() => Svc.ClientState.LocalPlayer?.CurrentHp ?? 0;
     public uint GetMaxHP() => Svc.ClientState.LocalPlayer?.MaxHp ?? 0;
     public uint GetMP() => Svc.ClientState.LocalPlayer?.CurrentMp ?? 0;
     public uint GetMaxMP() => Svc.ClientState.LocalPlayer?.MaxMp ?? 0;
-    public uint GetCurrentWorld() => Svc.ClientState.LocalPlayer?.CurrentWorld.Id ?? 0;
-    public uint GetHomeWorld() => Svc.ClientState.LocalPlayer?.HomeWorld.Id ?? 0;
+    public uint GetCurrentWorld() => Svc.ClientState.LocalPlayer?.CurrentWorld.RowId ?? 0;
+    public uint GetHomeWorld() => Svc.ClientState.LocalPlayer?.HomeWorld.RowId ?? 0;
 
     public float GetPlayerRawXPos(string character = "")
     {
@@ -140,7 +140,7 @@ public class CharacterStateCommands
 
     public unsafe int GetLevel(int expArrayIndex = -1)
     {
-        if (expArrayIndex == -1) expArrayIndex = Svc.ClientState.LocalPlayer!.ClassJob.GameData!.ExpArrayIndex;
+        if (expArrayIndex == -1) expArrayIndex = Svc.ClientState.LocalPlayer?.ClassJob.Value.ExpArrayIndex ?? 0;
         return UIState.Instance()->PlayerState.ClassJobLevels[expArrayIndex];
     }
 
@@ -169,8 +169,8 @@ public class CharacterStateCommands
     public unsafe void SetFlamesGCRank(byte rank) => PlayerState.Instance()->GCRankImmortalFlames = rank;
     public unsafe void SetAddersGCRank(byte rank) => PlayerState.Instance()->GCRankTwinAdders = rank;
 
-    public unsafe bool HasFlightUnlocked(uint territory = 0) => PlayerState.Instance()->IsAetherCurrentZoneComplete(Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(territory != 0 ? territory : Svc.ClientState.TerritoryType)?.Unknown32 ?? 0);
-    public unsafe bool TerritorySupportsMounting() => Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(Player.Territory)?.Unknown32 != 0;
+    public unsafe bool HasFlightUnlocked(uint territory = 0) => PlayerState.Instance()->IsAetherCurrentZoneComplete(Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(territory != 0 ? territory : Svc.ClientState.TerritoryType).Unknown4 ?? 0);
+    public unsafe bool TerritorySupportsMounting() => Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(Player.Territory).Unknown4 != 0;
     public unsafe bool InSanctuary() => TerritoryInfo.Instance()->InSanctuary;
 
     public unsafe bool HasWeeklyBingoJournal() => PlayerState.Instance()->HasWeeklyBingoJournal;
@@ -179,16 +179,16 @@ public class CharacterStateCommands
     public unsafe int WeeklyBingoNumPlacedStickers() => PlayerState.Instance()->WeeklyBingoNumPlacedStickers;
     public unsafe int GetWeeklyBingoTaskStatus(int wonderousTailsIndex) => (int)PlayerState.Instance()->GetWeeklyBingoTaskStatus(wonderousTailsIndex);
     public unsafe uint GetWeeklyBingoOrderDataKey(int wonderousTailsIndex) => PlayerState.Instance()->WeeklyBingoOrderData[wonderousTailsIndex];
-    public unsafe uint GetWeeklyBingoOrderDataType(uint wonderousTailsKey) => (Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey)?.Type).GetValueOrDefault();
-    public unsafe uint GetWeeklyBingoOrderDataData(uint wonderousTailsKey) => (Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey)?.Data).GetValueOrDefault();
-    public unsafe string GetWeeklyBingoOrderDataText(uint wonderousTailsKey) => Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey)?.Text.Value?.Description ?? string.Empty;
+    public unsafe uint GetWeeklyBingoOrderDataType(uint wonderousTailsKey) => (Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey).Type).GetValueOrDefault();
+    public unsafe uint GetWeeklyBingoOrderDataData(uint wonderousTailsKey) => (Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey).Data).GetValueOrDefault().RowId;
+    public unsafe string GetWeeklyBingoOrderDataText(uint wonderousTailsKey) => Svc.Data.GetExcelSheet<WeeklyBingoOrderData>()?.GetRow(wonderousTailsKey).Text.Value.Description.ToString() ?? string.Empty;
 
     public bool IsAetheryteUnlocked(uint id) => Svc.AetheryteList.Any(x => x.AetheryteId == id);
     public List<uint> GetAetheryteList() => Svc.AetheryteList.Select(x => x.AetheryteId).ToList();
     public List<uint> GetAetherytesInZone(uint zoneID) => Svc.AetheryteList.Where(x => x.TerritoryId == zoneID).Select(x => x.AetheryteId).ToList();
-    public string GetAetheryteName(uint aetheryteID) => Svc.AetheryteList.FirstOrDefault(x => x.AetheryteId == aetheryteID)?.AetheryteData.GameData?.PlaceName.Value?.Name ?? string.Empty;
+    public string GetAetheryteName(uint aetheryteID) => Svc.AetheryteList.FirstOrDefault(x => x.AetheryteId == aetheryteID)?.AetheryteData.Value.PlaceName.Value.Name.ExtractText() ?? string.Empty;
 
     public unsafe bool IsFriendOnline(byte* name, ushort worldId) => InfoProxyFriendList.Instance()->GetEntryByName(name, worldId)->State != InfoProxyCommonList.CharacterData.OnlineStatus.Offline;
 
-    public unsafe float GetJobExp(uint classjob) => PlayerState.Instance()->ClassJobExperience[GenericHelpers.GetRow<ClassJob>(classjob)?.ExpArrayIndex ?? 0];
+    public unsafe float GetJobExp(uint classjob) => PlayerState.Instance()->ClassJobExperience[GetRow<ClassJob>(classjob)?.ExpArrayIndex ?? 0];
 }

@@ -134,13 +134,10 @@ internal class ActionCommand : MacroCommand
         var actions = Svc.Data.GetExcelSheet<Sheets.Action>()!;
         foreach (var row in actions)
         {
-            var job = row.ClassJob?.Value?.ClassJobCategory?.Value;
-            if (job == null)
-                continue;
-
+            var job = row.ClassJob.Value.ClassJobCategory.Value;
             if (job.CRP || job.BSM || job.ARM || job.GSM || job.LTW || job.WVR || job.ALC || job.CUL)
             {
-                var name = row.Name.RawString.ToLowerInvariant();
+                var name = row.Name.ExtractText().ToLowerInvariant();
                 if (name.Length == 0)
                     continue;
 
@@ -151,7 +148,7 @@ internal class ActionCommand : MacroCommand
         var craftActions = Svc.Data.GetExcelSheet<Sheets.CraftAction>()!;
         foreach (var row in craftActions)
         {
-            var name = row.Name.RawString.ToLowerInvariant();
+            var name = row.Name.ExtractText().ToLowerInvariant();
             if (name.Length == 0)
                 continue;
 
@@ -187,14 +184,14 @@ internal class ActionCommand : MacroCommand
         var actions = Svc.Data.GetExcelSheet<Sheets.Action>()!;
         foreach (var actionID in actionIDs)
         {
-            var name = actions.GetRow(actionID)!.Name.RawString.ToLowerInvariant();
+            var name = actions.GetRow(actionID)!.Name.ExtractText().ToLowerInvariant();
             CraftingQualityActionNames.Add(name);
         }
 
         var craftActions = Svc.Data.GetExcelSheet<Sheets.CraftAction>()!;
         foreach (var craftID in craftIDs)
         {
-            var name = craftActions.GetRow(craftID)!.Name.RawString.ToLowerInvariant();
+            var name = craftActions.GetRow(craftID)!.Name.ExtractText().ToLowerInvariant();
             CraftingQualityActionNames.Add(name);
         }
     }

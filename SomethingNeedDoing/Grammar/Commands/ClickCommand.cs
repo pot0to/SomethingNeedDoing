@@ -54,7 +54,7 @@ internal class ClickCommand : MacroCommand
         {
             unsafe
             {
-                if (!GenericHelpers.TryGetAddonByName<AtkUnitBase>(addonName, out var addon)) throw new MacroCommandError($"Addon {addonName} not found.");
+                if (!TryGetAddonByName<AtkUnitBase>(addonName, out var addon)) throw new MacroCommandError($"Addon {addonName} not found.");
                 var type = typeof(AddonMaster).GetNestedType(addonName) ?? throw new NullReferenceException($"Type {addonName} not found");
                 var m = Activator.CreateInstance(type, [(nint)addon]) ?? throw new InvalidOperationException($"Could not create instance of type {type}");
                 if (methodName.Contains('.'))

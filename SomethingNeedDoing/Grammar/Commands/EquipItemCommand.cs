@@ -3,7 +3,7 @@ using ECommons.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
@@ -77,7 +77,7 @@ internal class EquipItemCommand : MacroCommand
             ]);
         if (pos == null)
         {
-            DuoLog.Error($"Failed to find item {Svc.Data.GetExcelSheet<Item>()?.GetRow(itemId)?.Name} (ID: {itemId}) in inventory");
+            DuoLog.Error($"Failed to find item {GetRow<Item>(itemId)!.Value.Name} (ID: {itemId}) in inventory");
             return;
         }
 

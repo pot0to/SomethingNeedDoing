@@ -1,5 +1,6 @@
-﻿using FFXIVClientStructs.FFXIV.Client.Game;
-using Lumina.Excel.GeneratedSheets;
+﻿using ECommons.MathHelpers;
+using FFXIVClientStructs.FFXIV.Client.Game;
+using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -34,7 +35,7 @@ public class InventoryCommands
        => includeHQ ? InventoryManager.Instance()->GetInventoryItemCount((uint)itemID, true) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000)
        : InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000);
 
-    public unsafe uint GetItemCountInContainer(uint itemID, uint container) => GetItemInInventory(itemID, (InventoryType)container)->Quantity;
+    public unsafe Number GetItemCountInContainer(uint itemID, uint container) => GetItemInInventory(itemID, (InventoryType)container)->Quantity;
 
     public unsafe int GetInventoryFreeSlotCount()
     {

@@ -1,5 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.Game;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using Lumina.Text;
 using System;
 using System.Collections.Generic;
@@ -24,15 +24,15 @@ internal class QuestCommands
         return list;
     }
 
-    private static readonly Dictionary<uint, Quest>? QuestSheet = Svc.Data?.GetExcelSheet<Quest>()?.Where(x => x.Id.RawString.Length > 0).ToDictionary(i => i.RowId, i => i);
+    private static readonly Dictionary<uint, Quest>? QuestSheet = Svc.Data?.GetExcelSheet<Quest>()?.Where(x => x.Id.ToString().Length > 0).ToDictionary(i => i.RowId, i => i);
     public static string GetQuestNameByID(ushort id)
     {
         if (id > 0)
         {
             var digits = id.ToString().Length;
-            if (QuestSheet!.Any(x => Convert.ToInt16(x.Value.Id.RawString.GetLast(digits)) == id))
+            if (QuestSheet!.Any(x => Convert.ToInt16(x.Value.Id.ToString().GetLast(digits)) == id))
             {
-                return QuestSheet!.First(x => Convert.ToInt16(x.Value.Id.RawString.GetLast(digits)) == id).Value.Name.RawString.Replace("", "").Trim();
+                return QuestSheet!.First(x => Convert.ToInt16(x.Value.Id.ToString().GetLast(digits)) == id).Value.Name.ToString().Replace("", "").Trim();
             }
         }
         return "";
@@ -43,7 +43,7 @@ internal class QuestCommands
     public unsafe bool IsQuestComplete(ushort id) => QuestManager.IsQuestComplete(id);
     public unsafe byte GetQuestSequence(ushort id) => QuestManager.GetQuestSequence(id);
 
-    private readonly List<SeString> questNames = Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.Select(x => x.Name).ToList();
+    private readonly List<string> questNames = Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.Select(x => x.Name.ToString()).ToList();
     public uint? GetQuestIDByName(string name)
     {
         var matchingRows = questNames.Select((n, i) => (n, i)).Where(t => !string.IsNullOrEmpty(t.n) && IsMatch(name, t.n)).ToList();
@@ -54,7 +54,7 @@ internal class QuestCommands
         return matchingRows.Count > 0 ? Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.GetRow((uint)matchingRows.First().i)!.RowId : null;
     }
 
-    public string GetQuestAlliedSociety(uint id) => Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage)!.FirstOrDefault(x => x.RowId == id)?.BeastTribe.Value?.Name ?? "";
+    public string GetQuestAlliedSociety(uint id) => Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage).FirstOrDefault(x => x.RowId == id).BeastTribe.Value.Name.ToString();
 
     public unsafe MonsterNoteRankInfo GetMonsterNoteRankInfo(int index) => MonsterNoteManager.Instance()->RankData[index];
 

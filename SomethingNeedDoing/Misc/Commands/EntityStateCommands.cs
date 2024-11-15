@@ -2,7 +2,7 @@
 using ECommons.GameFunctions;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -26,8 +26,6 @@ internal class EntityStateCommands
         return list;
     }
 
-
-
     public float GetDistanceToPoint(float x, float y, float z) => Vector3.Distance(Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero, new Vector3(x, y, z));
 
     #region Target
@@ -49,7 +47,7 @@ internal class EntityStateCommands
     public float GetDistanceToTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero, Svc.Targets.Target?.Position ?? Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero);
 
     public unsafe bool TargetHasStatus(uint statusID) => ((Character*)Svc.Targets.Target?.Address!)->GetStatusManager()->HasStatus(statusID);
-    public unsafe uint GetTargetFateID() => Svc.Targets.Target != null ? Svc.Targets.Target.Struct()->FateId : 0;
+    public unsafe uint GetTargetFateID() => Svc.Targets.Target != null ? Svc.Targets.Target.Struct()->FateId : 0u;
     public unsafe bool IsTargetMounted()
     {
         var target = Svc.Targets.Target;
@@ -69,7 +67,7 @@ internal class EntityStateCommands
         return true;
     }
     public unsafe bool IsTargetInCombat() => ((Character*)Svc.Targets.Target?.Address!)->InCombat;
-    public byte GetTargetHuntRank() => (byte)(Svc.Targets.Target != null ? Svc.Data.GetExcelSheet<NotoriousMonster>()?.FirstOrDefault(x => x.BNpcBase.Value!.RowId == Svc.Targets.Target.DataId)?.Rank ?? 0 : 0);
+    public byte GetTargetHuntRank() => (byte)(Svc.Targets.Target != null ? FindRow<NotoriousMonster>(x => x.BNpcBase.Value!.RowId == Svc.Targets.Target.DataId)!.Value.Rank : 0);
     public float GetTargetHitboxRadius() => Svc.Targets.Target?.HitboxRadius ?? 0;
     public bool HasTarget() => Svc.Targets.Target != null;
     #endregion
@@ -88,7 +86,7 @@ internal class EntityStateCommands
     public void ClearFocusTarget() => Svc.Targets.FocusTarget = null;
     public float GetDistanceToFocusTarget() => Vector3.Distance(Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero, Svc.Targets.FocusTarget?.Position ?? Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero);
     public unsafe bool FocusTargetHasStatus(uint statusID) => ((Character*)Svc.Targets.FocusTarget?.Address!)->GetStatusManager()->HasStatus(statusID);
-    public unsafe uint GetFocusTargetFateID() => Svc.Targets.FocusTarget != null ? Svc.Targets.FocusTarget.Struct()->FateId : 0;
+    public unsafe uint GetFocusTargetFateID() => Svc.Targets.FocusTarget != null ? Svc.Targets.FocusTarget.Struct()->FateId : 0u;
     #endregion
 
     #region Any Object
@@ -103,7 +101,7 @@ internal class EntityStateCommands
     public float GetObjectHPP(string name) => GetObjectHP(name) / GetObjectMaxHP(name) * 100;
     public float GetObjectRotation(string name) => (float)(GetGameObjectFromName(name)?.Rotation * (180 / Math.PI) ?? 0);
     public unsafe bool ObjectHasStatus(string name, uint statusID) => ((Character*)GetGameObjectFromName(name)?.Address!)->GetStatusManager()->HasStatus(statusID);
-    public unsafe uint GetObjectFateID(string name) => GetGameObjectFromName(name) != null ? GetGameObjectFromName(name).Struct()->FateId : 0;
+    public unsafe uint GetObjectFateID(string name) => GetGameObjectFromName(name) != null ? GetGameObjectFromName(name).Struct()->FateId : 0u;
     public bool DoesObjectExist(string name) => GetGameObjectFromName(name) != null;
     public unsafe bool IsObjectMounted(string name)
     {
@@ -125,7 +123,7 @@ internal class EntityStateCommands
     }
     public uint GetObjectDataID(string name) => GetGameObjectFromName(name)?.DataId ?? 0;
     public unsafe bool IsObjectInCombat(string name) => ((Character*)GetGameObjectFromName(name)?.Address!)->InCombat;
-    public byte GetObjectHuntRank(string name) => Svc.Data.GetExcelSheet<NotoriousMonster>()?.FirstOrDefault(x => x.BNpcBase.Value!.RowId == GetObjectDataID(name))?.Rank ?? 0;
+    public byte GetObjectHuntRank(string name) => Svc.Data.GetExcelSheet<NotoriousMonster>()?.FirstOrDefault(x => x.BNpcBase.Value!.RowId == GetObjectDataID(name)).Rank ?? 0;
     public float GetObjectHitboxRadius(string name) => GetGameObjectFromName(name)?.HitboxRadius ?? 0;
     #endregion
 
