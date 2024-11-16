@@ -34,7 +34,7 @@ tony_y = 42069420
 tony_z = 42069420
 
 --[[
-tony firstname, lastname, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell 2 = limsa bell
+tony firstname, lastname, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell 2 = limsa bell, 3 = fc entrance no move after
 ]]
 
 local franchise_owners = {
@@ -191,20 +191,12 @@ for i=1,#franchise_owners do
 			--added 5 second wait here because sometimes they get stuck.
 			yield("/wait 5")
 			if franchise_owners[i][3] == 0 then
-				yield("/tp Estate Hall")
-				yield("/wait 1")
-				--yield("/waitaddon Nowloading <maxwait.15>")
-				yield("/wait 15")
-				yield("/waitaddon NamePlate <maxwait.600><wait.5>")
-				--normal small house shenanigans
-				yield("/hold W <wait.1.0>")
-				yield("/release W")
-				yield("/target Entrance <wait.1>")
-				yield("/lockon on")
-				yield("/automove on <wait.2.5>")
-				yield("/automove off <wait.1.5>")
-				yield("/hold Q <wait.2.0>")
-				yield("/release Q")
+				return_to_fc()			
+				yield("/wait 5")
+				return_fc_entrance()
+			end
+			if franchise_owners[i][3] == 3 then --return to fc without returning to entrance
+				return_to_fc()			
 			end
 			--retainer bell nearby shenanigans
 			if franchise_owners[i][3] == 1 then
