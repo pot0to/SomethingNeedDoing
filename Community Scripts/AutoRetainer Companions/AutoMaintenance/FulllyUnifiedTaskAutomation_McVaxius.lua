@@ -419,7 +419,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 	--CLEAN--
 	----------------------------
     -- Start of processing things when there is no fishing   
-	if HasPlugin("AutoBot") do  --only clean if we actually have "the" plugin
+	if HasPlugin("AutoBot") then  --only clean if we actually have "the" plugin
 		if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
 			cleanrand = getRandomNumber(0, 99)
 			yield("/echo rolling dice to see if we do a repricing -> "..cleanrand.." out of chance -> "..FUTA_processors[hoo_arr_weeeeee][3][2])
