@@ -419,30 +419,32 @@ if wheeequeheeheheheheheehhhee == 0 then
 	--CLEAN--
 	----------------------------
     -- Start of processing things when there is no fishing   
-	if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
-		cleanrand = getRandomNumber(0, 99)
-		yield("/echo rolling dice to see if we do a repricing -> "..cleanrand.." out of chance -> "..FUTA_processors[hoo_arr_weeeeee][3][2])
-        if cleanrand < FUTA_processors[hoo_arr_weeeeee][3][2] then
-			wheeequeheeheheheheheehhhee = 1  --re using this var because we can and it means the same thing at end of script
-            yield("/echo Debug: Inventory cleaning adjustment started")
-			--kneecapping AR for now because it interferes with am
-			yield("/ays multi d")
-			yield("/wait 1")
-			yield("/ays reset")
-			yield("/wait 1")
-			yield("/ays multi d")
-			yield("/wait 5")
-			clean_inventory()
---			yield("/echo Debug:Debug:Debug:Debug:Debug:Debug:Debug:")
-            zungazunga()
-            -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
-            if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
-                FUTA_processors[hoo_arr_weeeeee][3][2] = illegalcleaningresetvalue --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
-                tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
-                yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to "..illegalcleaningresetvalue)
-            end
-        end
-    end
+	if HasPlugin("AutoBot") do  --only clean if we actually have "the" plugin
+		if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
+			cleanrand = getRandomNumber(0, 99)
+			yield("/echo rolling dice to see if we do a repricing -> "..cleanrand.." out of chance -> "..FUTA_processors[hoo_arr_weeeeee][3][2])
+			if cleanrand < FUTA_processors[hoo_arr_weeeeee][3][2] then
+				wheeequeheeheheheheheehhhee = 1  --re using this var because we can and it means the same thing at end of script
+				yield("/echo Debug: Inventory cleaning adjustment started")
+				--kneecapping AR for now because it interferes with am
+				yield("/ays multi d")
+				yield("/wait 1")
+				yield("/ays reset")
+				yield("/wait 1")
+				yield("/ays multi d")
+				yield("/wait 5")
+				clean_inventory()
+	--			yield("/echo Debug:Debug:Debug:Debug:Debug:Debug:Debug:")
+				zungazunga()
+				-- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
+				if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
+					FUTA_processors[hoo_arr_weeeeee][3][2] = illegalcleaningresetvalue --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
+					tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
+					yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to "..illegalcleaningresetvalue)
+				end
+			end
+		end
+	end
 	 --In case we just ran it and need to avoid double triggering it
 	if FUTA_processors[hoo_arr_weeeeee][3][2] == -1 then
 		yield("/echo Debug: Inventory cleaning adjustment completed -> -1 changed to 11")
