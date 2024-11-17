@@ -67,6 +67,7 @@ log_gcranks = 9 --log the gc ranks of each char if they are below this rank on a
 automarketfix = "autobot" -- try to xldisable profile automarket. however if you set this to "no" it wont do it.  the reason for this is eventually automarket just does some weird stuff and wont let you access retainer bells
 equip_from_table = 0 --0 is no, 1 is yes
 illegalcleaningresetvalue = 3 --this is the pct chance it will try to do a "selling/repricing" after completing AR tasks. it is also the value it sets after a cleaning is done/triggered. 3% might actually be kind of high if you have lots of chars . i might lower it to 1 for myself.
+dontforceillegalcleaning = 1 --this is so it doesnt force a 100% chance to illegally clean after a gc cleaning. this is probably best if you have giant empire you want to delay cleanings as much as possible
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -469,7 +470,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 			yield("/ays itemsell") --npc AND retainer selling
 		end
 		if (GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning) and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 then
-			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then 
+			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 and dontforceillegalcleaning == 0 then 
 				FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV - but only if we are even allowing it on this one
 			end
 			yield("/echo Yes we need to clean inventory and turnin GC stuff!")
