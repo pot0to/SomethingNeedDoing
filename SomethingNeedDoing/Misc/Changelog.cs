@@ -19,6 +19,11 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2024-11-18",
+        "- Blind fix for populating craft action names\n" +
+        "- Added sheets back to the excel viewer. It's not very usable at the moment.");
+
+        DisplayChangelog(
         "2024-10-30",
         "- Added various AutoDuty IPC functions()\n");
 

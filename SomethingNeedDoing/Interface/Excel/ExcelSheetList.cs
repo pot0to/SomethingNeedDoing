@@ -8,16 +8,15 @@ using System.Threading.Tasks;
 namespace SomethingNeedDoing.Interface.Excel;
 public sealed class ExcelSheetList
 {
-    private int _selectedItem;
     public event Action<int>? SelectedItemChanged;
     public int SelectedItem
     {
-        get => _selectedItem;
+        get;
         set
         {
-            if (_selectedItem != value)
+            if (field != value)
             {
-                _selectedItem = value;
+                field = value;
                 SelectedItemChanged?.Invoke(value);
             }
         }
@@ -68,7 +67,7 @@ public sealed class ExcelSheetList
         {
             if (ImGui.Selectable(_sheets[id], SelectedItem == id))
             {
-                SelectedItem = id;
+                SelectedItem = SelectedItem != id ? id : default;
                 if (_curSourceList != _recents)
                 {
                     _recents.Remove(id);
@@ -123,7 +122,7 @@ public sealed class ExcelSheetList
         _curFilteredSheets.AddRange(await FilterAsync(_curSourceList, (sheet) => match(_sheets[sheet].ToLowerInvariant())));
     }
 
-    public async Task<T[]> FilterAsync<T>(IEnumerable<T> sourceEnumerable, Func<T, Task<bool>> predicateAsync)
+    private async Task<T[]> FilterAsync<T>(IEnumerable<T> sourceEnumerable, Func<T, Task<bool>> predicateAsync)
         => (await Task.WhenAll(
             sourceEnumerable.Select(v => predicateAsync(v).ContinueWith(
                 task => new { Predicate = task.Result, Value = v }))))

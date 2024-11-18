@@ -1,18 +1,8 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using Lumina;
-using Lumina.Data.Structs.Excel;
 using Lumina.Excel;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
 using SomethingNeedDoing.Interface.Excel;
-using SomethingNeedDoing.Misc;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Interface;
 
@@ -41,9 +31,9 @@ public class ExcelWindow : Window
         using var ch = ImRaii.Child($"{nameof(ExcelSheetDisplay)}");
         if (ch)
         {
-            //var sheet = Svc.Data.GetExcelSheet<RawRow>(null, _sheetList._sheets[_sheetList.SelectedItem]);
-            //if (_sheetList.SelectedItem != 0)
-            //    _sheetDisplay.Draw(sheet);
+            var sheet = Svc.Data.GetExcelSheet<RawRow>(null, _sheetList._sheets[_sheetList.SelectedItem]);
+            if (_sheetList.SelectedItem != 0)
+                _sheetDisplay.Draw(sheet);
         }
     }
 }

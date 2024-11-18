@@ -1,4 +1,5 @@
 using Dalamud.Game.ClientState.Conditions;
+using ECommons;
 using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Modifiers;
 using SomethingNeedDoing.Misc;
@@ -131,29 +132,8 @@ internal class ActionCommand : MacroCommand
 
     private static void PopulateCraftingNames()
     {
-        var actions = Svc.Data.GetExcelSheet<Sheets.Action>()!;
-        foreach (var row in actions)
-        {
-            var job = row.ClassJob.Value.ClassJobCategory.Value;
-            if (job.CRP || job.BSM || job.ARM || job.GSM || job.LTW || job.WVR || job.ALC || job.CUL)
-            {
-                var name = row.Name.ExtractText().ToLowerInvariant();
-                if (name.Length == 0)
-                    continue;
-
-                CraftingActionNames.Add(name);
-            }
-        }
-
-        var craftActions = Svc.Data.GetExcelSheet<Sheets.CraftAction>()!;
-        foreach (var row in craftActions)
-        {
-            var name = row.Name.ExtractText().ToLowerInvariant();
-            if (name.Length == 0)
-                continue;
-
-            CraftingActionNames.Add(name);
-        }
+        CraftingActionNames.AddRange(FindRows<Sheets.Action>(x => x.ActionCategory.RowId == 7 && !x.Name.IsEmpty).Select(x => x.Name.ExtractText().ToLowerInvariant()));
+        CraftingActionNames.AddRange(FindRows<Sheets.CraftAction>(x => !x.Name.IsEmpty).Select(x => x.Name.ExtractText().ToLowerInvariant()));
     }
 
     private static void PopulateCraftingQualityActionNames()
