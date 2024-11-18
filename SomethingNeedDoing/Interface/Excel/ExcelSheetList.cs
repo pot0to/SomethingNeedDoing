@@ -11,7 +11,7 @@ public sealed class ExcelSheetList
     public event Action<int>? SelectedItemChanged;
     public int SelectedItem
     {
-        get;
+        get => field;
         set
         {
             if (field != value)
