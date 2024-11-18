@@ -44,6 +44,10 @@ which you can copy paste en masse, just remove the last comma from last row
 for bagman its similar
 
 ="{"""&F2&"@"&P2&""""&", 0, 0,"&""""&R2&""""&"},"
+
+Todo:
+movement back to entrance -> update method to get to entrance, and add an option to skip pathing and just tp to entrance.
+
 ]]
 
 --Start because nobody read the instructions at the top <3
@@ -90,7 +94,7 @@ yield("/echo "..GetPlayerRawXPos().." "..GetPlayerRawYPos().." "..GetPlayerRawZP
 ]]
 
 --[[
-BAGMAN firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, TONY firstnamelastname  (no server this time)
+BAGMAN firstnamelastname@server, meeting locationtype, returnhome 1 = yes 0 = no, 0 = fc entrance 1 = nearby bell, 3 = fc entrance no move after, TONY firstnamelastname  (no server this time)
 ]]
 
 local franchise_owners = {
@@ -475,14 +479,12 @@ for i=1,#franchise_owners do
 			yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 			--normal small house shenanigans
 			if franchise_owners[i][3] == 0 then
-				yield("/hold W <wait.1.0>")
-				yield("/release W")
-				yield("/target Entrance <wait.1>")
-				yield("/lockon on")
-				yield("/automove on <wait.2.5>")
-				yield("/automove off <wait.1.5>")
-				yield("/hold Q <wait.2.0>")
-				yield("/release Q")
+				return_to_fc()			
+				yield("/wait 5")
+				return_fc_entrance()
+			end
+			if franchise_owners[i][3] == 3 then --return to fc without returning to entrance
+				return_to_fc()			
 			end
 			--retainer bell nearby shenanigans
 			if franchise_owners[i][3] == 1 then

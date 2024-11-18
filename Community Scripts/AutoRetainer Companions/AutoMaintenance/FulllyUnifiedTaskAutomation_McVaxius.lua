@@ -67,6 +67,7 @@ log_gcranks = 9 --log the gc ranks of each char if they are below this rank on a
 automarketfix = "autobot" -- try to xldisable profile automarket. however if you set this to "no" it wont do it.  the reason for this is eventually automarket just does some weird stuff and wont let you access retainer bells
 equip_from_table = 0 --0 is no, 1 is yes
 illegalcleaningresetvalue = 3 --this is the pct chance it will try to do a "selling/repricing" after completing AR tasks. it is also the value it sets after a cleaning is done/triggered. 3% might actually be kind of high if you have lots of chars . i might lower it to 1 for myself.
+dontforceillegalcleaning = 1 --this is so it doesnt force a 100% chance to illegally clean after a gc cleaning. this is probably best if you have giant empire you want to delay cleanings as much as possible
 ------------------------------------------
 --Config and change back after done!------
 ------------------------------------------
@@ -419,30 +420,32 @@ if wheeequeheeheheheheheehhhee == 0 then
 	--CLEAN--
 	----------------------------
     -- Start of processing things when there is no fishing   
-	if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
-		cleanrand = getRandomNumber(0, 99)
-		yield("/echo rolling dice to see if we do a repricing -> "..cleanrand.." out of chance -> "..FUTA_processors[hoo_arr_weeeeee][3][2])
-        if cleanrand < FUTA_processors[hoo_arr_weeeeee][3][2] then
-			wheeequeheeheheheheheehhhee = 1  --re using this var because we can and it means the same thing at end of script
-            yield("/echo Debug: Inventory cleaning adjustment started")
-			--kneecapping AR for now because it interferes with am
-			yield("/ays multi d")
-			yield("/wait 1")
-			yield("/ays reset")
-			yield("/wait 1")
-			yield("/ays multi d")
-			yield("/wait 5")
-			clean_inventory()
---			yield("/echo Debug:Debug:Debug:Debug:Debug:Debug:Debug:")
-            zungazunga()
-            -- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
-            if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
-                FUTA_processors[hoo_arr_weeeeee][3][2] = illegalcleaningresetvalue --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
-                tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
-                yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to "..illegalcleaningresetvalue)
-            end
-        end
-    end
+	if HasPlugin("AutoBot") then  --only clean if we actually have "the" plugin
+		if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then
+			cleanrand = getRandomNumber(0, 99)
+			yield("/echo rolling dice to see if we do a repricing -> "..cleanrand.." out of chance -> "..FUTA_processors[hoo_arr_weeeeee][3][2])
+			if cleanrand < FUTA_processors[hoo_arr_weeeeee][3][2] then
+				wheeequeheeheheheheheehhhee = 1  --re using this var because we can and it means the same thing at end of script
+				yield("/echo Debug: Inventory cleaning adjustment started")
+				--kneecapping AR for now because it interferes with am
+				yield("/ays multi d")
+				yield("/wait 1")
+				yield("/ays reset")
+				yield("/wait 1")
+				yield("/ays multi d")
+				yield("/wait 5")
+				clean_inventory()
+	--			yield("/echo Debug:Debug:Debug:Debug:Debug:Debug:Debug:")
+				zungazunga()
+				-- If [3] was 100, we set it back down to 10 because 100 means a one-time guaranteed cleaning
+				if FUTA_processors[hoo_arr_weeeeee][3][2] > 99 then
+					FUTA_processors[hoo_arr_weeeeee][3][2] = illegalcleaningresetvalue --for easier find replace shenanigans  [2] = 11 -> [2] = 99, for example
+					tablebunga(FUTA_config_file, "FUTA_processors", folderPath)
+					yield("/echo Debug: Inventory cleaning adjustment completed -> and 100 chance changed to "..illegalcleaningresetvalue)
+				end
+			end
+		end
+	end
 	 --In case we just ran it and need to avoid double triggering it
 	if FUTA_processors[hoo_arr_weeeeee][3][2] == -1 then
 		yield("/echo Debug: Inventory cleaning adjustment completed -> -1 changed to 11")
@@ -467,7 +470,7 @@ if wheeequeheeheheheheheehhhee == 0 then
 			yield("/ays itemsell") --npc AND retainer selling
 		end
 		if (GetInventoryFreeSlotCount() < FUTA_processors[hoo_arr_weeeeee][3][5] and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 or GetItemCount(21072) < venture_cleaning) and FUTA_processors[hoo_arr_weeeeee][3][5] > 0 then
-			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 then 
+			if FUTA_processors[hoo_arr_weeeeee][3][2] > 0 and dontforceillegalcleaning == 0 then 
 				FUTA_processors[hoo_arr_weeeeee][3][2] = 100 --queue up a "clean" after next set of QV - but only if we are even allowing it on this one
 			end
 			yield("/echo Yes we need to clean inventory and turnin GC stuff!")
