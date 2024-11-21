@@ -838,8 +838,8 @@ function FUTA_return()
 		yield("/wait 8")
 	end
 	
-	--options 1 and 2 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
-	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 1 then
+	--options 1 and 2 and 7 are fc estate entrance or fc state bell so thats only time we will tp to fc estate
+	if FUTA_processors[hoo_arr_weeeeee][1][2] == 0 or FUTA_processors[hoo_arr_weeeeee][1][2] == 1 or FUTA_processors[hoo_arr_weeeeee][1][2] == 7 then
 		return_to_fc()
 	end
 	
