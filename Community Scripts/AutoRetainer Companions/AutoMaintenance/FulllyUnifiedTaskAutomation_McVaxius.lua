@@ -143,7 +143,7 @@ FUTA_processors = {} -- Initialize variable
 ----  -> --?- -> not possible yet/partially implemented - might be replaced with another feature. dont worry about it.
 FUTA_defaults = {
     {
-        {"Firstname Lastname@Server", 0}, 			--Y--{}[i][1][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home
+        {"Firstname Lastname@Server", 0}, 			--Y--{}[i][1][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home, 7 fc entrance and do nothing else
         {"FISH", 0},								--Y--{}[i][2][1..2]--level, 0 = dont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
 		{"CLEAN", 100, 0, 0, 50},					--Y--{}[i][3][1..5]--chance to do random cleaning/100 if 100 it will be changed to 11 after 1 run, process_gc_rank = 0=no,1=yes. expert_hack = 0=no,1=yes. clean_inventory = 0=no, >0 check inventory slots free and try to clean out inventory., set [5] to -1 if you want to disable gc cleaning for this char
 		{"FUEL", 0, 0},								--Y--{}[i][4][1..3]--fuel safety stock trigger, fuel to buy up to i[4][3] amount when hitting i[4][2] amount or lower leave i[4][2] at 0 if you dont want it to process this
