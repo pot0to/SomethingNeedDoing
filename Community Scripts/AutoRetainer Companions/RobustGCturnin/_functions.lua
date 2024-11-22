@@ -386,7 +386,8 @@ function return_to_fc()
 	yield("/li fc") --new way notice the brackets --this also respects house regisrtations in lifestream
 	yield("/wait 1")
 	--yield("/waitaddon Nowloading <maxwait.15>")
-	yield("/wait 15")
+	ZoneTransition()
+--	yield("/wait 15")
 	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 end
 
@@ -395,7 +396,8 @@ function return_to_lair()
 	yield("/tp Estate Hall (Private)")
 	yield("/wait 1")
 	--yield("/waitaddon Nowloading <maxwait.15>")
-	yield("/wait 15")
+--	yield("/wait 15")
+	ZoneTransition()
 	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 end
 
