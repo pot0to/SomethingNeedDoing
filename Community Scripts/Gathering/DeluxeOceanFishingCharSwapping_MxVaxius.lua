@@ -202,6 +202,8 @@ function fishing()
 	--dryskthota
 	PathfindAndMoveTo(-409.42459106445,3.9999997615814,74.483444213867,false) 
 	visland_stop_moving()
+	PathfindAndMoveTo(-409.42459106445,3.9999997615814,74.483444213867,false) 
+	visland_stop_moving()
 	yield("/wait 1")
 	fishqtest = false
 	toolong = 0
