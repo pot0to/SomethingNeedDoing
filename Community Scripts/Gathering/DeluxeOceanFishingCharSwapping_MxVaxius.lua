@@ -143,9 +143,9 @@ function fishing()
 	yield("/wait 3")
 
 	yield("/pinteract <wait.2>")
-	yield("/pcall SelectString true 0")
-	yield("/pcall TelepotTown false 11 3u <wait.1>") -- Arcanists' Guild
-	yield("/pcall TelepotTown false 11 3u <wait.1>")
+	yield("/callback SelectString true 0")
+	yield("/callback TelepotTown false 11 3u <wait.1>") -- Arcanists' Guild
+	yield("/callback TelepotTown false 11 3u <wait.1>")
 	yield("/wait 10")
 	]]
 
@@ -163,11 +163,11 @@ function fishing()
 		yield("/wait 1")
 		yield("/pinteract")
 		yield("/wait 1")
-		yield("/pcall SelectIconString true 1")
+		yield("/callback SelectIconString true 1")
 		yield("/wait 1")
-		yield("/pcall Repair true 0")
+		yield("/callback Repair true 0")
 		yield("/wait 1")
-		yield("/pcall Repair true 1")
+		yield("/callback Repair true 1")
 		yield("/wait 1")
 		ungabunga()
 	end
@@ -276,7 +276,7 @@ function fishing()
 		--try to exit the completion window faster
 		if IsAddonVisible("IKDResult") then
 			yield("/wait 15")
-			yield("/pcall IKDResult false 0")
+			yield("/callback IKDResult false 0")
 		end
 		if GetCharacterCondition(33)==true then
 			if GetCharacterCondition(34)==true then
