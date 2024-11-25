@@ -54,7 +54,7 @@ public class InventoryCommands
     public unsafe uint GetItemIdInSlot(uint container, uint slot)
         => InventoryManager.Instance()->GetInventoryContainer((InventoryType)container)->GetInventorySlot((ushort)slot)->ItemId;
 
-    public unsafe uint GetItemCountInSlot(uint container, uint slot)
+    public unsafe int GetItemCountInSlot(uint container, uint slot)
         => InventoryManager.Instance()->GetInventoryContainer((InventoryType)container)->GetInventorySlot((ushort)slot)->Quantity;
 
     public unsafe List<uint> GetItemIdsInContainer(uint container)

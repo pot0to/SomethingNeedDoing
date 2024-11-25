@@ -54,13 +54,14 @@ public sealed class ExcelSheetDisplay
         foreach (var r in clipper.Rows)
         {
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{sheet.GetRow((uint)r).RowId}");
+            var rowId = sheet.GetRowAt(r).RowId;
+            ImGui.TextUnformatted($"{rowId}");
             for (var c = 0; c < sheet.Columns.Count; c++)
             {
                 ImGui.TableNextColumn();
                 ImGui.AlignTextToFramePadding();
 #pragma warning disable SeStringRenderer
-                ImGuiHelpers.CompileSeStringWrapped(ReadCell(sheet, r, c));
+                ImGuiHelpers.CompileSeStringWrapped(ReadCell(sheet, (int)rowId, c));
 #pragma warning restore SeStringRenderer
             }
         }
