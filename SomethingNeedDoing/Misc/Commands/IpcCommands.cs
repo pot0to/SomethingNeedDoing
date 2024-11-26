@@ -17,6 +17,7 @@ public class IpcCommands
     private readonly Artisan artisan;
     private readonly AutoRetainer autoretainer;
     private readonly ARDiscard ardiscard;
+    private readonly VislandIPC visland;
 
     public List<string> ListAllFunctions()
     {
@@ -35,7 +36,6 @@ public class IpcCommands
     internal IpcCommands()
     {
         _autoRetainerApi = new();
-        VislandIPC.Init();
         NavmeshIPC.Init();
         DeliverooIPC.Init();
         PandorasBoxIPC.Init();
@@ -46,6 +46,7 @@ public class IpcCommands
         artisan = new();
         autoretainer = new();
         ardiscard = new();
+        visland = new();
         AutoDutyIPC.Init();
     }
 
@@ -83,7 +84,11 @@ public class IpcCommands
     #endregion
 
     #region visland
-    public unsafe bool IsVislandRouteRunning() => VislandIPC.IsRouteRunning!.InvokeFunc();
+    public bool IsVislandRouteRunning() => visland.IsRouteRunning();
+    public bool VislandIsRoutePaused() => visland.IsRoutePaused();
+    public void VislandSetRoutePaused(bool state) => visland.SetRoutePaused(state);
+    public void VislandStopRoute() => visland.StopRoute();
+    public void VislandStartRoute(string route, bool once) => visland.StartRoute(route, once);
     #endregion
 
     #region navmesh

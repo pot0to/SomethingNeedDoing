@@ -1,12 +1,16 @@
-﻿using Dalamud.Plugin.Ipc;
+﻿using ECommons.EzIpcManager;
+using System;
 
 namespace SomethingNeedDoing.IPC;
-
-internal static class VislandIPC
+#nullable disable
+public class VislandIPC
 {
-    private const string IsRouteRunningStr = "visland.IsRouteRunning";
+    public const string Name = "visland";
+    public VislandIPC() => EzIPC.Init(this, Name, SafeWrapper.AnyException);
 
-    internal static ICallGateSubscriber<bool>? IsRouteRunning;
-
-    internal static void Init() => IsRouteRunning = Svc.PluginInterface.GetIpcSubscriber<bool>(IsRouteRunningStr);
+    [EzIPC] public Func<bool> IsRouteRunning;
+    [EzIPC] public Func<bool> IsRoutePaused;
+    [EzIPC] public Action<bool> SetRoutePaused;
+    [EzIPC] public Action StopRoute;
+    [EzIPC] public Action<string, bool> StartRoute;
 }
