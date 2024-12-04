@@ -90,7 +90,7 @@ internal partial class MacroManager : IDisposable
                 }
 
                 State = LoopState.Running;
-                if (await ProcessMacro(macro, token))
+                if (await Task.Run(() => ProcessMacro(macro, token)))
                 {
                     macroStack.Pop().Dispose();
                 }
