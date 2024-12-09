@@ -130,7 +130,7 @@ if automarketfix ~= "no" then
 	yield("/wait 2")
 	yield("/xlenableprofile "..automarketfix)
 	--]]
-	yield("/am stop ") --this is all we need to stop the bells from being inoperable hahah this is it hahahahahah
+	--yield("/am stop ") --this is all we need to stop the bells from being inoperable hahah this is it hahahahahah --deprecated i think
 	yield("/automarket stop ") --this is all we need to stop the bells from being inoperable hahah this is it hahahahahah
 end
 --------------------------
