@@ -1,15 +1,49 @@
 ﻿using Dalamud.Interface;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility.Raii;
+using ECommons.ImGuiMethods;
 using ImGuiNET;
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Misc;
 
 internal static class ImGuiUtils
 {
     public static readonly Vector4 ShadedColor = new(0.68f, 0.68f, 0.68f, 1.0f);
+
+    public static void DrawLink(string label, string title, string url)
+    {
+        ImGui.TextUnformatted(label);
+
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+
+            using var tooltip = ImRaii.Tooltip();
+            if (tooltip.Success)
+            {
+                ImGuiEx.Text(ImGuiColors.DalamudWhite, title);
+
+                var pos = ImGui.GetCursorPos();
+                ImGui.GetWindowDrawList().AddText(
+                    UiBuilder.IconFont, 12,
+                    ImGui.GetWindowPos() + pos + new Vector2(2),
+                    ImGuiColors.DalamudGrey.ToUintColour(),
+                    FontAwesomeIcon.ExternalLinkAlt.ToIconString()
+                );
+                ImGui.SetCursorPos(pos + new Vector2(20, 0));
+                ImGuiEx.Text(ImGuiColors.DalamudGrey, url);
+            }
+        }
+
+        if (ImGui.IsItemClicked())
+        {
+            Task.Run(() => Dalamud.Utility.Util.OpenLink(url));
+        }
+    }
 
     public static void URLLink(string URL, string textToShow = "", bool showTooltip = true, ImFontPtr? iconFont = null)
     {

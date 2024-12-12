@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using static ECommons.GenericHelpers;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -29,7 +28,7 @@ internal class CallbackCommand : MacroCommand
         this.valueArgs = valueArgs;
     }
 
-    public unsafe static CallbackCommand Parse(string text)
+    public static unsafe CallbackCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
 
@@ -90,20 +89,12 @@ internal class CallbackCommand : MacroCommand
         return new CallbackCommand(addonGroup.Value, boolArg, valueArgs, waitModifier);
     }
 
-    public async override Task Execute(ActiveMacro macro, CancellationToken token)
+    public override async Task Execute(ActiveMacro macro, CancellationToken token)
     {
         unsafe
         {
             if (TryGetAddonByName<AtkUnitBase>(addon, out var addonArg))
-            {
-                if (IsAddonReady(addonArg))
-                    Callback.Fire(addonArg, updateState, [.. valueArgs]);
-                else
-                {
-                    if (Service.Configuration.StopMacroIfAddonNotFound)
-                        throw new MacroCommandError($"Addon {addon} not ready.");
-                }
-            }
+                Callback.Fire(addonArg, updateState, [.. valueArgs]);
             else
             {
                 if (Service.Configuration.StopMacroIfAddonNotFound)
