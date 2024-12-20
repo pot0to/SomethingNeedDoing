@@ -6,7 +6,7 @@ if daddy walks by, do the emote, or if basic bitch is nearby do a diff one.
 Table format:
 name, emote, wait time after emote, repeat interval, distance to react at
 
-REMEMB ERNO @server for name
+REMEMBER NO @server for name
 
 
 ]]--
@@ -51,6 +51,8 @@ while hhhnnnggg == 1 do
 		yield("/wait 0.3") -- this should be safe for cycling between elements of table while calling SND functions
 		if HHNNGG > hhnnngs[hng][3] then -- if we are above the repeat interval actually check to see if we should do this
 			if hhhnnnggG(hnnggg, hnngggg, hnnggggg, GetObjectRawXPos(hhnnngs[hng][1]), GetObjectRawYPos(hhnnngs[hng][1]), GetObjectRawZPos(hhnnngs[hng][1])) < hhnnngs[hng][5] then
+				yield("/target "..hhnnngs[hng][1])
+				yield("/wait 0.5")
 				yield(hhnnngs[hng][2])
 				yield("/echo attempting to do this -> "..hhnnngs[hng][2])
 				yield("/wait "..hhnnngs[hng][3])
