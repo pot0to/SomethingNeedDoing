@@ -85,5 +85,20 @@ internal class ItemCommand : MacroCommand
             : inventoryManager->GetInventoryItemCount(itemID, isHQ);
     }
 
-    private uint SearchItemId(string itemName) => FindRow<Sheets.Item>(x => x.Name.ToString().Equals(itemName, System.StringComparison.InvariantCultureIgnoreCase))!.Value.RowId;
+    private uint SearchItemId(string itemName)
+    {
+        var item = FindRow<Sheets.Item>(x => x.Name.ToString().Equals(itemName, System.StringComparison.InvariantCultureIgnoreCase))!.Value.RowId;
+        if (item != 0)
+        {
+            Svc.Log.Info("Item name found in Item sheet.");
+            return item;
+        }
+
+        var eventItem = FindRow<Sheets.EventItem>(x => x.Name.ExtractText().Equals(itemName, System.StringComparison.InvariantCultureIgnoreCase))!.Value.RowId;
+        if (eventItem != 0)
+        {
+            return eventItem;
+        }
+        return 0;
+    }
 }

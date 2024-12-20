@@ -107,13 +107,4 @@ public class InventoryCommands
 
 
     public List<uint> GetTradeableWhiteItemIDs() => Svc.Data.GetExcelSheet<Item>()!.Where(x => !x.IsUntradable && x.Rarity == (byte)ItemRarity.White).Select(x => x.RowId).ToList();
-
-    public unsafe void UseItem(uint itemID)
-    {
-        var agent = AgentInventoryContext.Instance();
-        if (agent == null)
-            throw new MacroCommandError("AgentInventoryContext not found");
-
-        var result = agent->UseItem(itemID);
-    }
 }
