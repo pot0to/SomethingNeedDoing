@@ -90,7 +90,6 @@ internal class ItemCommand : MacroCommand
         var item = FindRow<Sheets.Item>(x => x.Name.ToString().Equals(itemName, System.StringComparison.InvariantCultureIgnoreCase))!.Value.RowId;
         if (item != 0)
         {
-            Svc.Log.Info("Item name found in Item sheet.");
             return item;
         }
 
