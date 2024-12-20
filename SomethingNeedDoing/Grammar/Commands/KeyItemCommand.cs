@@ -8,11 +8,11 @@ using System.Threading;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
-internal class ItemCommand : MacroCommand
+internal class KeyItemCommand : MacroCommand
 {
-    public static string[] Commands => ["item"];
+    public static string[] Commands => ["keyitem"];
     public static string Description => "Use an item, stopping the macro if the item is not present.";
-    public static string[] Examples => ["/item Calamari Ripieni", "/item Calamari Ripieni <hq> <wait.3>"];
+    public static string[] Examples => ["/keyitem Wondrous Tails", "/keyitem Gazelleskin Treasure Map"];
 
     private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -23,13 +23,13 @@ internal class ItemCommand : MacroCommand
     private readonly string itemName;
     private readonly ItemQualityModifier itemQualityMod;
 
-    private ItemCommand(string text, string itemName, WaitModifier wait, ItemQualityModifier itemQualityMod) : base(text, wait)
+    private KeyItemCommand(string text, string itemName, WaitModifier wait, ItemQualityModifier itemQualityMod) : base(text, wait)
     {
         this.itemName = itemName.ToLowerInvariant();
         this.itemQualityMod = itemQualityMod;
     }
 
-    public static ItemCommand Parse(string text)
+    public static KeyItemCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
         _ = ItemQualityModifier.TryParse(ref text, out var itemQualityModifier);
@@ -40,7 +40,7 @@ internal class ItemCommand : MacroCommand
 
         var nameValue = ExtractAndUnquote(match, "name");
 
-        return new ItemCommand(text, nameValue, waitModifier, itemQualityModifier);
+        return new KeyItemCommand(text, nameValue, waitModifier, itemQualityModifier);
     }
 
     public override async System.Threading.Tasks.Task Execute(ActiveMacro macro, CancellationToken token)
@@ -48,9 +48,9 @@ internal class ItemCommand : MacroCommand
         Svc.Log.Debug($"Executing: {Text}");
 
         var itemId = SearchItemId(itemName);
-        Svc.Log.Debug($"Item found: {itemId}");
+        Svc.Log.Debug($"KeyItem found: {itemId}");
 
-        var count = GetInventoryItemCount(itemId, itemQualityMod.IsHq);
+        var count = GetInventoryItemCount(itemId);
         Svc.Log.Debug($"Item Count: {count}");
         if (count == 0)
         {
@@ -59,31 +59,28 @@ internal class ItemCommand : MacroCommand
             return;
         }
 
-        UseItem(itemId, itemQualityMod.IsHq);
+        UseItem(itemId);
         await PerformWait(token);
     }
 
-    private unsafe void UseItem(uint itemID, bool isHQ = false)
+    private unsafe void UseItem(uint itemID)
     {
         var agent = AgentInventoryContext.Instance();
         if (agent == null)
             throw new MacroCommandError("AgentInventoryContext not found");
-
-        if (isHQ)
-            itemID += 1_000_000;
 
         var result = agent->UseItem(itemID);
         if (result != 0 && Service.Configuration.StopMacroIfCantUseItem)
             throw new MacroCommandError("Failed to use item");
     }
 
-    private unsafe int GetInventoryItemCount(uint itemID, bool isHQ)
+    private unsafe int GetInventoryItemCount(uint itemID)
     {
         var inventoryManager = InventoryManager.Instance();
         return inventoryManager == null
             ? throw new MacroCommandError("InventoryManager not found")
-            : inventoryManager->GetInventoryItemCount(itemID, isHQ);
+            : inventoryManager->GetInventoryItemCount(itemID);
     }
 
-    private uint SearchItemId(string itemName) => FindRow<Sheets.Item>(x => x.Name.ToString().Equals(itemName, System.StringComparison.InvariantCultureIgnoreCase))!.Value.RowId;
+    private uint SearchItemId(string itemName) => FindRow<Sheets.EventItem>(x => x.Name.ExtractText().Equals(itemName, System.StringComparison.InvariantCultureIgnoreCase))!.Value.RowId;
 }

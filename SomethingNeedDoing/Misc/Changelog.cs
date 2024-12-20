@@ -20,7 +20,7 @@ internal class Changelog
 
         DisplayChangelog(
         "2024-12-19",
-        "- Added UseItem(uint itemId)\n");
+        "- Added /keyitem\n");
 
         DisplayChangelog(
         "2024-11-27",
