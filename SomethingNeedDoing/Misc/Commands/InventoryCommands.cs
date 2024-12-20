@@ -1,9 +1,6 @@
 ﻿using ECommons.MathHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Excel.Sheets;
-using SomethingNeedDoing.Exceptions;
-using SomethingNeedDoing.Grammar.Commands;
 using System.Collections.Generic;
 using System.Reflection;
 
