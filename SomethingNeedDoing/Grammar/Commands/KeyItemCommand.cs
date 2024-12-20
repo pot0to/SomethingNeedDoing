@@ -11,7 +11,7 @@ namespace SomethingNeedDoing.Grammar.Commands;
 internal class KeyItemCommand : MacroCommand
 {
     public static string[] Commands => ["keyitem"];
-    public static string Description => "Use an item, stopping the macro if the item is not present.";
+    public static string Description => "Use a key item, stopping the macro if the item is not present.";
     public static string[] Examples => ["/keyitem Wondrous Tails", "/keyitem Gazelleskin Treasure Map"];
 
     private static readonly Regex Regex = new($@"^/{string.Join("|", Commands)}\s+(?<name>.*?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -21,18 +21,15 @@ internal class KeyItemCommand : MacroCommand
     public static UseItemDelegate UseItemSig = null!;
 
     private readonly string itemName;
-    private readonly ItemQualityModifier itemQualityMod;
 
-    private KeyItemCommand(string text, string itemName, WaitModifier wait, ItemQualityModifier itemQualityMod) : base(text, wait)
+    private KeyItemCommand(string text, string itemName, WaitModifier wait) : base(text, wait)
     {
         this.itemName = itemName.ToLowerInvariant();
-        this.itemQualityMod = itemQualityMod;
     }
 
     public static KeyItemCommand Parse(string text)
     {
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
-        _ = ItemQualityModifier.TryParse(ref text, out var itemQualityModifier);
 
         var match = Regex.Match(text);
         if (!match.Success)
@@ -40,7 +37,7 @@ internal class KeyItemCommand : MacroCommand
 
         var nameValue = ExtractAndUnquote(match, "name");
 
-        return new KeyItemCommand(text, nameValue, waitModifier, itemQualityModifier);
+        return new KeyItemCommand(text, nameValue, waitModifier);
     }
 
     public override async System.Threading.Tasks.Task Execute(ActiveMacro macro, CancellationToken token)
