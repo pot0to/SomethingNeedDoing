@@ -39,11 +39,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="DalamudPackager" Version="11.0.0" />
-		<PackageReference Include="Lumina.Excel" Version="7.1.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.11.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.11.0" />
-		<PackageReference Include="NLua" Version="1.6.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.12.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.12.0" />
+		<PackageReference Include="NLua" Version="1.6.3" />
+		<PackageReference Include="YamlDotNet" Version="16.2.1" />
 		<Reference Include="Newtonsoft.Json">
 			<HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
 			<Private>false</Private>
@@ -77,5 +77,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
 		<ProjectReference Include="..\AutoRetainerAPI\AutoRetainerAPI\AutoRetainerAPI.csproj" />
+		<ProjectReference Include="..\OtterGui\OtterGui.csproj" />
 	</ItemGroup>
 </Project>

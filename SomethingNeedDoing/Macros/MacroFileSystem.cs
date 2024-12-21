@@ -1,0 +1,256 @@
+﻿using Dalamud.Interface;
+using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility.Raii;
+using ECommons.Configuration;
+using ECommons.ImGuiMethods;
+using ECommons.Logging;
+using ImGuiNET;
+using OtterGui;
+using OtterGui.Classes;
+using OtterGui.Filesystem;
+using OtterGui.FileSystem.Selector;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Numerics;
+
+namespace SomethingNeedDoing.Macros;
+public class MacroFileSystem : FileSystem<MacroFile>
+{
+    private readonly string FilePath = Path.Combine(Svc.PluginInterface.ConfigDirectory.FullName, "MacroFileSystem.json");
+    public readonly FileSystemSelector Selector = null!;
+    public bool Building;
+    public MacroFileSystem(OtterGuiHandler h)
+    {
+        EzConfig.OnSave += Save;
+        try
+        {
+            var info = new FileInfo(FilePath);
+            if (info.Exists)
+                Load(info, C.Files, ConvertToIdentifier, ConvertToName);
+            Selector = new(this, h);
+            BuildFileSystem();
+        }
+        catch (Exception e) { e.Log(); }
+    }
+
+    public void Dispose() => EzConfig.OnSave -= Save;
+
+    public void DoAdd(MacroFile file, string name)
+    {
+        CreateLeaf(Root, name, file);
+        C.Files.Add(file);
+        BuildFileSystem();
+    }
+
+    public void DoDelete(MacroFile file)
+    {
+        PluginLog.Debug($"Deleting {file.ID}");
+        C.Files.Remove(file);
+        if (FindLeaf(file, out var leaf))
+            Delete(leaf);
+        Save();
+        BuildFileSystem();
+    }
+
+    public bool FindLeaf(MacroFile file, out Leaf leaf)
+    {
+        leaf = Root.GetAllDescendants(ISortMode<MacroFile>.Lexicographical).OfType<Leaf>().FirstOrDefault(l => l.Value == file);
+        return leaf != null;
+    }
+
+    public bool TryFindMacroByName(string name, [NotNullWhen(returnValue: true)] out MacroFile? file)
+    {
+        file = Root.GetAllDescendants(ISortMode<MacroFile>.Lexicographical).OfType<Leaf>().FirstOrDefault(l => l.Name == name)?.Value;
+        return file != null && !file.IsNull();
+    }
+
+    public bool TryGetPathByID(Guid id, [NotNullWhen(returnValue: true)] out string? path)
+    {
+        if (FindLeaf(C.Files.FirstOrDefault(x => x.GUID == id), out var leaf))
+        {
+            path = leaf.FullName();
+            return true;
+        }
+        path = default;
+        return false;
+    }
+
+    private string ConvertToName(MacroFile file)
+    {
+        PluginLog.Debug($"Request conversion of {file.Name} {file.ID} to name");
+        return $"Unnamed " + file.ID;
+    }
+
+    private string ConvertToIdentifier(MacroFile file)
+    {
+        PluginLog.Debug($"Request conversion of {file.Name} {file.ID} to identifier");
+        return file.ID;
+    }
+
+    public void Save()
+    {
+        try
+        {
+            using var FileStream = new FileStream(FilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+            using var StreamWriter = new StreamWriter(FileStream);
+            SaveToFile(StreamWriter, SaveConverter, true);
+        }
+        catch (Exception ex)
+        {
+            PluginLog.Error($"Error saving {nameof(MacroFileSystem)}:");
+            ex.Log();
+        }
+    }
+
+    private (string, bool) SaveConverter(MacroFile file, string arg2)
+    {
+        PluginLog.LogVerbose($"Saving {file.Name} {file.ID}");
+        return (file.ID, true);
+    }
+
+    public void BuildFileSystem()
+    {
+        Building = true;
+        WipeFileSystem();
+        BuildDirectories(new DirectoryInfo(C.RootFolderPath), Root);
+        Building = false;
+    }
+
+    public void WipeFileSystem()
+    {
+        try
+        {
+            foreach (var x in Root.GetLeaves().ToList())
+                Delete(x);
+            foreach (var x in Root.GetSubFolders().ToList())
+                Delete(x);
+        }
+        catch (Exception e) { e.Log(); }
+    }
+
+    private void BuildDirectories(DirectoryInfo directoryInfo, Folder virtualDirectory)
+    {
+        try
+        {
+            foreach (var childInfo in directoryInfo.GetDirectories())
+            {
+                var (virtualChild, _) = FindOrCreateFolder(virtualDirectory, childInfo.Name);
+                BuildDirectories(childInfo, virtualChild);
+            }
+
+            foreach (var childFile in directoryInfo.GetFiles())
+                CreateLeaf(virtualDirectory, childFile.Name, new MacroFile { File = childFile });
+        }
+        catch (Exception e) { e.Log(); }
+    }
+
+    public class FileSystemSelector : FileSystemSelector<MacroFile, FileSystemSelector.State>
+    {
+        private string NewName = "";
+        private string ClipboardText = null;
+        private MacroFile CloneStatus = null;
+        public override ISortMode<MacroFile> SortMode => ISortMode<MacroFile>.FoldersFirst;
+
+        public FileSystemSelector(MacroFileSystem fs, OtterGuiHandler h) : base(fs, Svc.KeyState, h.Logger, (e) => e.Log())
+        {
+            AddButton(NewMacroButton, 0);
+            AddButton(ImportButton, 10);
+            AddButton(CopyToClipboardButton, 20);
+            AddButton(DeleteButton, 1000);
+        }
+
+        protected override uint CollapsedFolderColor => ImGuiColors.DalamudViolet.ToUint();
+        protected override uint ExpandedFolderColor => CollapsedFolderColor;
+
+        protected override void DrawLeafName(Leaf leaf, in State state, bool selected)
+        {
+            var flag = selected ? ImGuiTreeNodeFlags.Selected | LeafFlags : LeafFlags;
+            using var _ = ImRaii.TreeNode(leaf.Name + $"                                                       ", flag);
+        }
+
+        private void CopyToClipboardButton(Vector2 vector)
+        {
+            if (!ImGuiUtil.DrawDisabledButton(FontAwesomeIcon.Recycle.ToIconString(), vector, "Rebuild Directory", false, true)) return;
+            FS.BuildFileSystem();
+        }
+
+        private void ImportButton(Vector2 size)
+        {
+            if (!ImGuiUtil.DrawDisabledButton(FontAwesomeIcon.FileImport.ToIconString(), size, "Try to import a macro from your clipboard.", false,
+                    true))
+                return;
+
+            try
+            {
+                CloneStatus = null;
+                ClipboardText = Paste();
+                ImGui.OpenPopup("##NewMacro");
+            }
+            catch
+            {
+                Notify.Error("Could not import data from clipboard.");
+            }
+        }
+
+        private void DeleteButton(Vector2 vector) => DeleteSelectionButton(vector, new DoubleModifier(ModifierHotkey.Control), "macro", "macros", FS.DoDelete);
+
+        private void NewMacroButton(Vector2 size)
+        {
+            if (ImGuiUtil.DrawDisabledButton(FontAwesomeIcon.Plus.ToIconString(), size, "Create a new macro", false, true))
+            {
+                ClipboardText = null;
+                CloneStatus = null;
+                ImGui.OpenPopup("##NewMacro");
+            }
+        }
+
+        private void DrawNewMacroPopup()
+        {
+            if (!ImGuiUtil.OpenNameField("##NewMacro", ref NewName)) return;
+
+            if (NewName == "")
+            {
+                Notify.Error($"Name can not be empty!");
+                return;
+            }
+
+            if (ClipboardText != null)
+            {
+                try
+                {
+                    var newFile = EzConfig.DefaultSerializationFactory.Deserialize<MacroFile>(ClipboardText);
+                    if (!newFile.IsNull())
+                        FS.DoAdd(newFile, NewName);
+                    else
+                        Notify.Error($"Invalid clipboard data");
+                }
+                catch (Exception e)
+                {
+                    e.LogVerbose();
+                    Notify.Error($"Error: {e.Message}");
+                }
+            }
+            else if (CloneStatus != null) { }
+            else
+            {
+                try
+                {
+                    FS.DoAdd(new MacroFile() { File = new FileInfo(NewName) }, NewName);
+                }
+                catch (Exception e)
+                {
+                    e.LogVerbose();
+                    Notify.Error($"This name already exists!");
+                }
+            }
+
+            NewName = string.Empty;
+        }
+
+        protected override void DrawPopups() => DrawNewMacroPopup();
+
+        public record struct State { }
+        protected override bool ApplyFilters(IPath path) => FilterValue.Length > 0 && !path.FullName().Contains(FilterValue, StringComparison.OrdinalIgnoreCase);
+    }
+}

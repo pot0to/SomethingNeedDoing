@@ -1,6 +1,7 @@
 using NLua.Exceptions;
-using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Commands;
+using SomethingNeedDoing.Macros;
+using SomethingNeedDoing.Macros.Exceptions;
 using SomethingNeedDoing.Misc;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace SomethingNeedDoing.Managers;
 internal partial class MacroManager : IDisposable
 {
     private readonly Stack<ActiveMacro> macroStack = new();
-    private CancellationTokenSource eventLoopTokenSource = new();
+    private readonly CancellationTokenSource eventLoopTokenSource = new();
     private readonly ManualResetEvent loggedInWaiter = new(false);
     private readonly ManualResetEvent pausedWaiter = new(true);
 
@@ -123,7 +124,7 @@ internal partial class MacroManager : IDisposable
 
         try
         {
-            ActiveMacroName = macro.Node.Name;
+            ActiveMacroName = macro.File.Name;
             step = macro.GetCurrentStep();
 
             if (step == null)
@@ -200,12 +201,12 @@ internal sealed partial class MacroManager
     public (string Name, int StepIndex)[] MacroStatus
         => macroStack
             .ToArray() // Collection was modified after the enumerator was instantiated.
-            .Select(macro => (macro.Node.Name, macro.StepIndex + 1))
+            .Select(macro => (macro.File.Name, macro.StepIndex + 1))
             .ToArray();
 
-    public void EnqueueMacro(MacroNode node)
+    public void EnqueueMacro(MacroFile file)
     {
-        macroStack.Push(new ActiveMacro(node));
+        macroStack.Push(new ActiveMacro(file));
         pausedWaiter.Set();
     }
 

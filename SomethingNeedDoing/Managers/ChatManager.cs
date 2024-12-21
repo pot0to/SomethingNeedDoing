@@ -36,7 +36,7 @@ internal class ChatManager : IDisposable
         => Svc.Chat.Print(new XivChatEntry()
         {
             Type = Service.Configuration.ChatType,
-            Message = $"[{SomethingNeedDoingPlugin.Prefix}] {message}",
+            Message = $"[{Plugin.Prefix}] {message}",
         });
 
     public void PrintColor(string message, UIColor color)
@@ -45,7 +45,7 @@ internal class ChatManager : IDisposable
             Type = Service.Configuration.ChatType,
             Message = new SeString(
                 new UIForegroundPayload((ushort)color),
-                new TextPayload($"[{SomethingNeedDoingPlugin.Prefix}] {message}"),
+                new TextPayload($"[{Plugin.Prefix}] {message}"),
                 UIForegroundPayload.UIForegroundOff),
         });
 
@@ -53,7 +53,7 @@ internal class ChatManager : IDisposable
         => Svc.Chat.Print(new XivChatEntry()
         {
             Type = Service.Configuration.ErrorChatType,
-            Message = $"[{SomethingNeedDoingPlugin.Prefix}] {message}",
+            Message = $"[{Plugin.Prefix}] {message}",
         });
 
 

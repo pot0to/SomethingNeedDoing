@@ -31,7 +31,7 @@ internal static class ImGuiUtils
                 ImGui.GetWindowDrawList().AddText(
                     UiBuilder.IconFont, 12,
                     ImGui.GetWindowPos() + pos + new Vector2(2),
-                    ImGuiColors.DalamudGrey.ToUintColour(),
+                    ColorVecToUInt(ImGuiColors.DalamudGrey),
                     FontAwesomeIcon.ExternalLinkAlt.ToIconString()
                 );
                 ImGui.SetCursorPos(pos + new Vector2(20, 0));

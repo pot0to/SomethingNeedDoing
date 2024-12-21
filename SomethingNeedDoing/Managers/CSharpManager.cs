@@ -38,7 +38,7 @@ public class CSharpManager
         else
         {
             ms.Seek(0, SeekOrigin.Begin);
-            if (DalamudReflector.TryGetDalamudPlugin(SomethingNeedDoingPlugin.Name, out var plugin, out var alc))
+            if (DalamudReflector.TryGetDalamudPlugin(Plugin.Name, out var plugin, out var alc))
             {
                 var assembly = alc.LoadFromStream(ms);
 
