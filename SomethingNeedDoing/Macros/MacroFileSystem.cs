@@ -40,12 +40,14 @@ public class MacroFileSystem : FileSystem<MacroFile>
     {
         CreateLeaf(Root, name, file);
         C.Files.Add(file);
+        file.Create();
         BuildFileSystem();
     }
 
     public void DoDelete(MacroFile file)
     {
         PluginLog.Debug($"Deleting {file.ID}");
+        file.Delete();
         C.Files.Remove(file);
         if (FindLeaf(file, out var leaf))
             Delete(leaf);
@@ -156,7 +158,7 @@ public class MacroFileSystem : FileSystem<MacroFile>
         {
             AddButton(NewMacroButton, 0);
             AddButton(ImportButton, 10);
-            AddButton(CopyToClipboardButton, 20);
+            AddButton(RebuildDirectoryButton, 20);
             AddButton(DeleteButton, 1000);
         }
 
@@ -169,7 +171,7 @@ public class MacroFileSystem : FileSystem<MacroFile>
             using var _ = ImRaii.TreeNode(leaf.Name + $"                                                       ", flag);
         }
 
-        private void CopyToClipboardButton(Vector2 vector)
+        private void RebuildDirectoryButton(Vector2 vector)
         {
             if (!ImGuiUtil.DrawDisabledButton(FontAwesomeIcon.Recycle.ToIconString(), vector, "Rebuild Directory", false, true)) return;
             FS.BuildFileSystem();

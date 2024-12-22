@@ -38,8 +38,18 @@ public class MacroFile
     }
 
     public void ChangeExtension(Language language) => System.IO.File.Move(Path, System.IO.Path.ChangeExtension(Path, language.LanguageToFileExtension()));
-
     public void Write(string text) => System.IO.File.WriteAllText(Path, text);
+    public void Create()
+    {
+        if (!System.IO.Path.HasExtension(Path))
+            System.IO.File.Create(Path + ".txt").Dispose();
+        else
+            System.IO.File.Create(Path).Dispose();
+    }
+    public void Delete()
+    {
+        if (Exists) System.IO.File.Delete(Path);
+    }
 
     public void Run()
     {
