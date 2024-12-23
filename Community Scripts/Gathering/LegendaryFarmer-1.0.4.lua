@@ -114,7 +114,7 @@ paths_to_scrip                        = { --paths to scrip exchnage, leave it as
     { -258.09,  16.079, 42.089,  129 }, -- Path to Scrip Exchange/Collectable Appraiser
     { 142.15,   13.74,  -105.39, 132 },
     { 149.349,  4,      -18.722, 130 },
-    { -158.019, 0.922, -37.884, 1186} -- vnav cordinates for the 4th additional location appraiser (here one in solution 9)/4th location
+    {  -158.019, 0.922, -37.884, 1186 } -- vnav cordinates for the 4th additional location appraiser (here one in solution 9)/4th location
 
 }
 --Collecable Appraiser and Scrip Exchange Settings
@@ -125,7 +125,7 @@ scrip_overcap_limit      = 3900          --when should you stop turnin in, to av
 collectible_item_table   =
 {
     --MINER
-    --orange scips --39 for orange scrips
+    --orange scrips --39 for orange scrips
     { 0, 43922, 8, 39 }, --ra'kaznar ore
     { 1, 43923, 8, 39 }, --ash soil
     { 3, 43921, 8, 39 }, --magnesite ore
@@ -135,14 +135,15 @@ collectible_item_table   =
     { 3, 43928, 9, 39 }, --dark mahagony
 
     --MINER
-    --white scips --38 for white scrips
+    --purple scrips --38 for purple scrips
     { 4, 44233, 8, 38 }, --white gold ore
-    { 5, 43920, 8, 38 }, --gold ore
+    { 5, 43920, 8, 38 }, --titanium gold ore
     { 6, 43919, 8, 38 }, --dark amber
     --BOTANIST
     { 4, 44234, 9, 38 }, --acacia bark
     { 5, 43927, 9, 38 }, --kukuru beans
     { 6, 43926, 9, 38 }  --mountain flax
+
 }
 --scrip_exchange_category,scrip_exchange_subcategory,scrip_exchange_item_to_buy_row, collectible_scrip_price (follow examples shared here) change as needed
 min_scrip_for_exchange   = 20
@@ -450,7 +451,9 @@ function PathToScrip()
         until (zoneid == GetZoneID()) and (not GetCharacterCondition(27)) and (not GetCharacterCondition(45)) and (not GetCharacterCondition(51))
         yield("/wait " .. interval_rate * 10)
         yield("/li " .. additional_scrip_exchange_sublocation)
-        yield("/wait " .. interval_rate * 30)
+        repeat
+            yield("/wait " .. interval_rate * 30)
+        until not LifestreamIsBusy()
         MoveTo(x, y, z, 0.1, false)
         yield("/wait " .. interval_rate * 10)
     else
@@ -523,7 +526,9 @@ function PathToMB()
         until (zoneid == GetZoneID()) and (not GetCharacterCondition(27)) and (not GetCharacterCondition(45)) and (not GetCharacterCondition(51))
         yield("/wait " .. interval_rate * 10)
         yield("/li " .. additional_scrip_exchange_sublocation)
-        yield("/wait " .. interval_rate * 30)
+        repeat
+            yield("/wait " .. interval_rate * 30)
+        until not LifestreamIsBusy()
         MoveTo(x, y, z, 0.1, false)
         yield("/wait " .. interval_rate * 10)
     else
