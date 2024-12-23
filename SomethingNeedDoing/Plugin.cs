@@ -58,6 +58,7 @@ public sealed class Plugin : IDalamudPlugin
         EzConfigGui.Init(new Windows.Macros().Draw);
         EzConfigGui.WindowSystem.AddWindow(new HelpWindow());
         EzConfigGui.WindowSystem.AddWindow(new ExcelWindow());
+        Svc.PluginInterface.UiBuilder.OpenMainUi += EzConfigGui.Window.Toggle;
 
         EzCmd.Add(Command, OnChatCommand, "Open a window to edit various settings.");
         Aliases.ToList().ForEach(a => EzCmd.Add(a, OnChatCommand, $"{Command} Alias"));
@@ -130,6 +131,7 @@ public sealed class Plugin : IDalamudPlugin
         _autoRetainerApi.OnCharacterPostprocessStep -= CheckCharacterPostProcess;
         _autoRetainerApi.OnCharacterReadyToPostProcess -= DoCharacterPostProcess;
 
+        Svc.PluginInterface.UiBuilder.OpenMainUi -= EzConfigGui.Window.Toggle;
         Service.MacroManager?.Dispose();
         Service.GameEventManager?.Dispose();
         Service.ChatManager?.Dispose();

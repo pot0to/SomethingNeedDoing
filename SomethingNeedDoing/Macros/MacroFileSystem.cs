@@ -22,8 +22,6 @@ public class MacroFileSystem : FileSystem<MacroFile>
     public bool Building { get; private set; }
     public MacroFileSystem(OtterGuiHandler h)
     {
-        Changed += OnChange;
-        EzConfig.OnSave += Save;
         try
         {
             var info = new FileInfo(FilePath);
@@ -31,6 +29,9 @@ public class MacroFileSystem : FileSystem<MacroFile>
                 Load(info, C.Files, ConvertToIdentifier, ConvertToName);
             Selector = new(this, h);
             BuildFileSystem();
+
+            Changed += OnChange;
+            EzConfig.OnSave += Save;
         }
         catch (Exception e) { e.Log(); }
     }
