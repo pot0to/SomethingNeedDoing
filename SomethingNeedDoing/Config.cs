@@ -1,8 +1,10 @@
 using Dalamud.Game.Text;
 using ECommons.Configuration;
+using ECommons.Logging;
 using Newtonsoft.Json;
 using SomethingNeedDoing.Macros;
 using SomethingNeedDoing.Misc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using YamlDotNet.Serialization;
@@ -42,7 +44,6 @@ public class Config : IEzConfig
     public int BeepCount { get; set; } = 3;
     public bool UseSNDTargeting { get; set; } = true;
 
-    public MacroNode? ARCharacterPostProcessMacro { get; set; }
     public List<ulong> ARCharacterPostProcessExcludedCharacters { get; set; } = [];
 
     public bool StopMacroIfActionTimeout { get; set; } = true;
@@ -67,11 +68,6 @@ public class Config : IEzConfig
     /// </summary>
     public string[] LuaRequirePaths { get; set; } = [];
 
-    /// <summary>
-    /// Loads the configuration.
-    /// </summary>
-    /// <param name="configDirectory">Configuration directory.</param>
-    /// <returns>A configuration.</returns>
     internal static Config Load(DirectoryInfo configDirectory)
     {
         var pluginConfigPath = new FileInfo(Path.Combine(configDirectory.Parent!.FullName, $"SomethingNeedDoing.json"));
@@ -162,29 +158,11 @@ public interface IMigration
 public class V2 : IMigration
 {
     public int Version => 2;
-    private Config _temp;
     public void Migrate(ref Config config)
     {
-        _temp = config;
-        config.RootFolder = new Config().RootFolder;
+        PluginLog.Information($"Starting {nameof(IMigration)}{nameof(V2)}");
         config.RootFolder.Name = "Macros";
-        WriteNode(_temp.RootFolder);
-        //config.BuildDirectory(config.RootFolderPath);
-        foreach (var tn in _temp.GetAllNodes())
-        {
-            if (tn is not MacroNode tNode || tNode.Language != Language.Native) continue;
-            foreach (var cn in config.GetAllNodes())
-            {
-                if (cn is MacroNode cNode)
-                {
-                    if (tNode.Name == cNode.Name) // could technically do contents matching and relative path matching too
-                    {
-                        cNode.CraftingLoop = tNode.CraftingLoop;
-                        cNode.CraftLoopCount = tNode.CraftLoopCount;
-                    }
-                }
-            }
-        }
+        WriteNode(config.RootFolder);
     }
 
     private void WriteNode(INode node, string? path = null)
@@ -200,6 +178,7 @@ public class V2 : IMigration
         else if (node is MacroNode macroNode)
         {
             var file = new FileInfo(Path.Combine(path ?? Svc.PluginInterface.GetPluginConfigDirectory(), macroNode.Name + macroNode.Language.LanguageToFileExtension()));
+            PluginLog.Information($"Writing macro {macroNode.Name} to file @ {file.FullName}");
             File.WriteAllText(file.FullName, macroNode.Contents);
         }
     }

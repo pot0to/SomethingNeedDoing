@@ -25,11 +25,11 @@ public sealed class Plugin : IDalamudPlugin
     internal static Plugin P = null!;
     internal static Config C => P.Config;
     internal static MacroFileSystem FS => P.OtterGuiHandler.MacroFileSystem;
-    internal Config Config = null!;
-    internal Config _legacyConf = null!;
-    internal OtterGuiHandler OtterGuiHandler = null!;
-    internal AutoRetainerApi _autoRetainerApi = null!;
-    private FileSystemWatcher _watcher = null!;
+    private readonly Config Config = null!;
+    private readonly Config _legacyConf = null!;
+    private readonly OtterGuiHandler OtterGuiHandler = null!;
+    private readonly AutoRetainerApi _autoRetainerApi = null!;
+    private readonly FileSystemWatcher _watcher = null!;
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -38,47 +38,44 @@ public sealed class Plugin : IDalamudPlugin
         Service.Plugin = this;
         ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions, Module.DalamudReflector);
 
-        _ = new TickScheduler(() =>
+        _legacyConf = Config.Load(Svc.PluginInterface.ConfigDirectory); // must be done before EzConfig migration
+        if (_legacyConf != default)
         {
-            _legacyConf = Config.Load(Svc.PluginInterface.ConfigDirectory); // must be done before EzConfig migration
-            if (_legacyConf != default)
-            {
-                var migration = new V2();
-                migration.Migrate(ref _legacyConf);
-            }
+            var migration = new V2();
+            migration.Migrate(ref _legacyConf);
+        }
 
-            EzConfig.DefaultSerializationFactory = new ConfigFactory();
-            EzConfig.Migrate<Config>();
-            Service.Configuration = Config = EzConfig.Init<Config>();
+        EzConfig.DefaultSerializationFactory = new ConfigFactory();
+        EzConfig.Migrate<Config>();
+        Service.Configuration = Config = EzConfig.Init<Config>();
 
-            Service.ChatManager = new ChatManager();
-            Service.GameEventManager = new GameEventManager();
-            Service.MacroManager = new MacroManager();
-            OtterGuiHandler = new();
-            _autoRetainerApi = new();
+        Service.ChatManager = new ChatManager();
+        Service.GameEventManager = new GameEventManager();
+        Service.MacroManager = new MacroManager();
+        OtterGuiHandler = new();
+        _autoRetainerApi = new();
 
-            EzConfigGui.Init(new Windows.Macros().Draw);
-            EzConfigGui.WindowSystem.AddWindow(new HelpWindow());
-            EzConfigGui.WindowSystem.AddWindow(new ExcelWindow());
+        EzConfigGui.Init(new Windows.Macros().Draw);
+        EzConfigGui.WindowSystem.AddWindow(new HelpWindow());
+        EzConfigGui.WindowSystem.AddWindow(new ExcelWindow());
 
-            EzCmd.Add(Command, OnChatCommand, "Open a window to edit various settings.");
-            Aliases.ToList().ForEach(a => EzCmd.Add(a, OnChatCommand, $"{Command} Alias"));
+        EzCmd.Add(Command, OnChatCommand, "Open a window to edit various settings.");
+        Aliases.ToList().ForEach(a => EzCmd.Add(a, OnChatCommand, $"{Command} Alias"));
 
-            _autoRetainerApi.OnCharacterPostprocessStep += CheckCharacterPostProcess;
-            _autoRetainerApi.OnCharacterReadyToPostProcess += DoCharacterPostProcess;
-            _ = new EzFrameworkUpdate(CheckForMacroCompletion);
-            _watcher = new FileSystemWatcher
-            {
-                Path = Service.Configuration.RootFolderPath,
-                IncludeSubdirectories = true,
-            };
+        _autoRetainerApi.OnCharacterPostprocessStep += CheckCharacterPostProcess;
+        _autoRetainerApi.OnCharacterReadyToPostProcess += DoCharacterPostProcess;
+        _ = new EzFrameworkUpdate(CheckForMacroCompletion);
+        _watcher = new FileSystemWatcher
+        {
+            Path = Service.Configuration.RootFolderPath,
+            IncludeSubdirectories = true,
+        };
 
-            _watcher.Changed += OnFileChanged;
-            _watcher.Created += OnFileChanged;
-            _watcher.Deleted += OnFileChanged;
-            _watcher.Renamed += OnFileChanged;
-            _watcher.EnableRaisingEvents = true;
-        });
+        _watcher.Changed += OnFileChanged;
+        _watcher.Created += OnFileChanged;
+        _watcher.Deleted += OnFileChanged;
+        _watcher.Renamed += OnFileChanged;
+        _watcher.EnableRaisingEvents = true;
     }
 
     private void OnFileChanged(object sender, FileSystemEventArgs e)

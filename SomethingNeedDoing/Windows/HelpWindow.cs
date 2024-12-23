@@ -396,31 +396,6 @@ internal class HelpWindow : Window
 
         if (ImGui.CollapsingHeader("AutoRetainer"))
         {
-            var selected = string.Empty;
-            ImGui.TextUnformatted("Script to run on AutoRetainer CharacterPostProcess");
-            ImGui.SetNextItemWidth(300);
-            using (var combo = ImRaii.Combo("##CharacterPostProcessMacroSelection", Service.Configuration.ARCharacterPostProcessMacro?.Name ?? string.Empty))
-            {
-                if (combo)
-                {
-                    if (ImGui.Selectable("##EmptySelection"))
-                    {
-                        selected = string.Empty;
-                        Service.Configuration.ARCharacterPostProcessMacro = null;
-                        Service.Configuration.Save();
-                    }
-                    foreach (var node in Service.Configuration.GetAllNodes().OfType<MacroNode>())
-                    {
-                        if (ImGui.Selectable(node.Name))
-                        {
-                            selected = node.Name;
-                            Service.Configuration.ARCharacterPostProcessMacro = Service.Configuration.GetAllNodes().OfType<MacroNode>().First(m => m.Name == selected);
-                            Service.Configuration.Save();
-                        }
-                    }
-                }
-            }
-
             if (Service.Configuration.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
             {
                 if (ImGui.Button("Remove current character from exclusion list"))

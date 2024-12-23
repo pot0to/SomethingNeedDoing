@@ -32,13 +32,13 @@ public class Macros : Window
         //TitleBarButtons.Add(LockButton);
     }
 
-    private static MacroFile? Selected => P.OtterGuiHandler.MacroFileSystem.Selector.Selected;
+    private static MacroFile? Selected => FS.Selector.Selected;
 
     public override bool DrawConditions() => !FS.Building;
 
     public override void Draw()
     {
-        P.OtterGuiHandler.MacroFileSystem.Selector.Draw(200f);
+        FS.Selector.Draw(200f);
         ImGui.SameLine();
         using var group = ImRaii.Group();
         DrawStateHeader();
