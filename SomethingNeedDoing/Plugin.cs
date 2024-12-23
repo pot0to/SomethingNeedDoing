@@ -3,6 +3,7 @@ using Dalamud.Plugin;
 using ECommons;
 using ECommons.Configuration;
 using ECommons.EzEventManager;
+using ECommons.Logging;
 using ECommons.Schedulers;
 using ECommons.SimpleGui;
 using SomethingNeedDoing.Interface;
@@ -80,7 +81,11 @@ public sealed class Plugin : IDalamudPlugin
         });
     }
 
-    private void OnFileChanged(object sender, FileSystemEventArgs e) => FS.BuildFileSystem();
+    private void OnFileChanged(object sender, FileSystemEventArgs e)
+    {
+        PluginLog.Debug($"File {e.ChangeType}: {e.FullPath}");
+        FS.BuildFileSystem();
+    }
 
     private void CheckCharacterPostProcess()
     {

@@ -19,9 +19,10 @@ public class MacroFileSystem : FileSystem<MacroFile>
 {
     private readonly string FilePath = Path.Combine(Svc.PluginInterface.ConfigDirectory.FullName, "MacroFileSystem.json");
     public readonly FileSystemSelector Selector = null!;
-    public bool Building;
+    public bool Building { get; private set; }
     public MacroFileSystem(OtterGuiHandler h)
     {
+        Changed += OnChange;
         EzConfig.OnSave += Save;
         try
         {
@@ -34,10 +35,15 @@ public class MacroFileSystem : FileSystem<MacroFile>
         catch (Exception e) { e.Log(); }
     }
 
-    public void Dispose() => EzConfig.OnSave -= Save;
+    public void Dispose()
+    {
+        EzConfig.OnSave -= Save;
+        Changed -= OnChange;
+    }
 
     public void DoAdd(MacroFile file, string name)
     {
+        PluginLog.Debug($"Adding {file.ID}");
         CreateLeaf(Root, name, file);
         C.Files.Add(file);
         file.Create();
@@ -49,15 +55,20 @@ public class MacroFileSystem : FileSystem<MacroFile>
         PluginLog.Debug($"Deleting {file.ID}");
         file.Delete();
         C.Files.Remove(file);
-        if (FindLeaf(file, out var leaf))
+        if (TryFindLeaf(file, out var leaf))
             Delete(leaf);
-        Save();
         BuildFileSystem();
     }
 
-    public bool FindLeaf(MacroFile file, out Leaf leaf)
+    public bool TryFindLeaf(MacroFile file, [NotNullWhen(returnValue: true)] out Leaf? leaf)
     {
         leaf = Root.GetAllDescendants(ISortMode<MacroFile>.Lexicographical).OfType<Leaf>().FirstOrDefault(l => l.Value == file);
+        return leaf != null;
+    }
+
+    public bool TryFindLeaf(Func<MacroFile, bool> predicate, [NotNullWhen(returnValue: true)] out Leaf? leaf)
+    {
+        leaf = Root.GetAllDescendants(ISortMode<MacroFile>.Lexicographical).OfType<Leaf>().FirstOrDefault(l => predicate(l.Value));
         return leaf != null;
     }
 
@@ -69,13 +80,31 @@ public class MacroFileSystem : FileSystem<MacroFile>
 
     public bool TryGetPathByID(Guid id, [NotNullWhen(returnValue: true)] out string? path)
     {
-        if (FindLeaf(C.Files.FirstOrDefault(x => x.GUID == id), out var leaf))
+        if (TryFindLeaf(C.Files.FirstOrDefault(x => x.GUID == id), out var leaf))
         {
             path = leaf.FullName();
             return true;
         }
         path = default;
         return false;
+    }
+
+    private void OnChange(FileSystemChangeType type, IPath changedObject, IPath? previousParent, IPath? newParent)
+    {
+        // logic for other change types could be handled here, but it's easier to do elsewhere since we're dealing with the actual file and don't have to find it from a path.
+        switch (type)
+        {
+            case FileSystemChangeType.ObjectMoved:
+                // changedObject has the new location, the OS filesystem must be updated accordingly. Find the file in the vfs at the new location and update it in the rfs.
+                var prev = previousParent.GetFilePathFromFolder(changedObject.Name);
+                var dest = changedObject.GetOSPath();
+                if (TryFindLeaf(l => l.Path == dest, out var leaf))
+                    leaf.Value.Move(prev, dest);
+                else
+                    PluginLog.Error($"Unable to find file @ {dest}, real filesystem has not been updated to match the virtual filesystem.");
+                break;
+        }
+        Save();
     }
 
     private string ConvertToName(MacroFile file)
@@ -179,8 +208,7 @@ public class MacroFileSystem : FileSystem<MacroFile>
 
         private void ImportButton(Vector2 size)
         {
-            if (!ImGuiUtil.DrawDisabledButton(FontAwesomeIcon.FileImport.ToIconString(), size, "Try to import a macro from your clipboard.", false,
-                    true))
+            if (!ImGuiUtil.DrawDisabledButton(FontAwesomeIcon.FileImport.ToIconString(), size, "Try to import a macro from your clipboard.", false, true))
                 return;
 
             try
@@ -255,4 +283,13 @@ public class MacroFileSystem : FileSystem<MacroFile>
         public record struct State { }
         protected override bool ApplyFilters(IPath path) => FilterValue.Length > 0 && !path.FullName().Contains(FilterValue, StringComparison.OrdinalIgnoreCase);
     }
+}
+
+public static class IPathExtensions
+{
+    /// <remarks> Meant for passing in an IPath that is a file, not folder, to generate an OS path. Swaps hardcoded `/` separator to OS default.</remarks>
+    public static string GetOSPath(this FileSystem<MacroFile>.IPath path) => Path.Combine(C.RootFolderPath, path.FullName().Replace('/', Path.DirectorySeparatorChar));
+
+    /// <remarks> Meant for passing in a parent + name to generate an OS path. Swaps hardcoded `/` separator to OS default.</remarks>
+    public static string GetFilePathFromFolder(this FileSystem<MacroFile>.IPath? path, string fileName) => path != null ? $"{path.GetOSPath()}{Path.DirectorySeparatorChar}{fileName}" : $"{C.RootFolderPath}{Path.DirectorySeparatorChar}{fileName}";
 }
