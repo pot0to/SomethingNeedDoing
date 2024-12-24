@@ -1,5 +1,4 @@
 fix some exceptions when adding/removing files
-ensure config importing works
 get rid of chatmanager
 fix up help menu
 	- lua should be more like an actual docs
