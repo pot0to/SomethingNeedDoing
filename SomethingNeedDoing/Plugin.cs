@@ -17,10 +17,10 @@ namespace SomethingNeedDoing;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    public static string Name => "Something Need Doing (Expanded Edition)";
-    public static string Prefix => "SND";
-    public const string Command = "/somethingneeddoing";
-    public static string[] Aliases => ["/snd", "/pcraft"];
+    internal string Name => "Something Need Doing (Expanded Edition)";
+    internal string Prefix => "SND";
+    private const string Command = "/somethingneeddoing";
+    internal string[] Aliases => ["/snd", "/pcraft"];
 
     internal static Plugin P = null!;
     internal static Config C => P.Config;
@@ -34,6 +34,7 @@ public sealed class Plugin : IDalamudPlugin
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
         P = this;
+        var x = P.Aliases;
         pluginInterface.Create<Service>();
         Service.Plugin = this;
         ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions, Module.DalamudReflector);
@@ -55,7 +56,7 @@ public sealed class Plugin : IDalamudPlugin
         OtterGuiHandler = new();
         _autoRetainerApi = new();
 
-        EzConfigGui.Init(new Windows.Macros().Draw);
+        EzConfigGui.Init(new Windows.MacrosUI().Draw);
         EzConfigGui.WindowSystem.AddWindow(new HelpWindow());
         EzConfigGui.WindowSystem.AddWindow(new ExcelWindow());
         Svc.PluginInterface.UiBuilder.OpenMainUi += EzConfigGui.Window.Toggle;

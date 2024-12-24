@@ -2,7 +2,6 @@ using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Plugin.Services;
-using Dalamud.Utility.Signatures;
 using ECommons.Automation;
 using ECommons.ChatMethods;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -32,7 +31,7 @@ internal class ChatManager : IDisposable
         => Svc.Chat.Print(new XivChatEntry()
         {
             Type = Service.Configuration.ChatType,
-            Message = $"[{Prefix}] {message}",
+            Message = $"[{P.Prefix}] {message}",
         });
 
     public void PrintColor(string message, UIColor color)
@@ -41,7 +40,7 @@ internal class ChatManager : IDisposable
             Type = Service.Configuration.ChatType,
             Message = new SeString(
                 new UIForegroundPayload((ushort)color),
-                new TextPayload($"[{Prefix}] {message}"),
+                new TextPayload($"[{P.Prefix}] {message}"),
                 UIForegroundPayload.UIForegroundOff),
         });
 
@@ -49,9 +48,8 @@ internal class ChatManager : IDisposable
         => Svc.Chat.Print(new XivChatEntry()
         {
             Type = Service.Configuration.ErrorChatType,
-            Message = $"[{Prefix}] {message}",
+            Message = $"[{P.Prefix}] {message}",
         });
-
 
     public async void SendMessage(string message) => await chatBoxMessages.Writer.WriteAsync(message);
 

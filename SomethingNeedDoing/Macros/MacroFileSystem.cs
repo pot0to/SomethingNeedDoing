@@ -251,8 +251,8 @@ public class MacroFileSystem : FileSystem<MacroFile>
                 try
                 {
                     var newFile = EzConfig.DefaultSerializationFactory.Deserialize<MacroFile>(ClipboardText);
-                    if (!newFile.IsNull())
-                        FS.DoAdd(newFile, NewName);
+                    if (!newFile?.IsNull() ?? false)
+                        FS.DoAdd(newFile!, NewName);
                     else
                         Notify.Error($"Invalid clipboard data");
                 }

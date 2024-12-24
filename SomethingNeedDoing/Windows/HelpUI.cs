@@ -28,8 +28,8 @@ internal class HelpWindow : Window
     private readonly (string Name, string Description, string? Example)[] cliData =
     [
         ("help", "Show this window.", null),
-        ("run", "Run a macro, the name must be unique.", $"{Plugin.Aliases[0]} run MyMacro"),
-        ("run loop #", "Run a macro and then loop N times, the name must be unique. Only the last /loop in the macro is replaced", $"{Plugin.Aliases[0]} run loop 5 MyMacro"),
+        ("run", "Run a macro, the name must be unique.", $"{Aliases[0]} run MyMacro"),
+        ("run loop #", "Run a macro and then loop N times, the name must be unique. Only the last /loop in the macro is replaced", $"{Aliases[0]} run loop 5 MyMacro"),
         ("pause", "Pause the currently executing macro.", null),
         ("pause loop", "Pause the currently executing macro at the next /loop.", null),
         ("resume", "Resume the currently paused macro.", null),
@@ -516,7 +516,7 @@ internal class HelpWindow : Window
 
         foreach (var (name, desc, example) in cliData)
         {
-            ImGui.TextUnformatted($"{Plugin.Aliases[0]} {name}");
+            ImGui.TextUnformatted($"{P.Aliases[0]} {name}");
             using var colour = ImRaii.PushColor(ImGuiCol.Text, ImGuiUtils.ShadedColor);
             ImGui.TextWrapped($"- Description: {desc}");
             if (example != null)

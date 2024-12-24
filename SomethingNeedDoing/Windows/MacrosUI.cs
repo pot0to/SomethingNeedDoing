@@ -15,9 +15,9 @@ using System.Numerics;
 using System.Text;
 
 namespace SomethingNeedDoing.Windows;
-public class Macros : Window
+public class MacrosUI : Window
 {
-    public Macros() : base($"Something Need Doing {Service.Plugin.GetType().Assembly.GetName().Version}###SomethingNeedDoing")
+    public MacrosUI() : base($"Something Need Doing {Service.Plugin.GetType().Assembly.GetName().Version}###SomethingNeedDoing")
     {
         Size = new Vector2(525, 600);
         SizeCondition = ImGuiCond.FirstUseEver;
