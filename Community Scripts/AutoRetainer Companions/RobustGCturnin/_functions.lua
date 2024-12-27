@@ -292,7 +292,7 @@ end
 
 function TargetedInteract(target)
     yield("/target "..target.." <wait.0.5>")
-    yield("/pinteract <wait.1>")
+    yield("/interact <wait.1>")
 end
 
 function DidWeLoadcorrectly()
