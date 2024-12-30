@@ -210,6 +210,7 @@ function fishing()
 	fishqtest = GetCharacterCondition(91)
 	while (type(fishqtest) == "boolean" and fishqtest == false) do
 		yield("/target Dryskthota")
+		yield("/wait 2")
 		yield("/interact <wait.2>")
 		yield("/wait 1")
 		ungabunga()
