@@ -4,7 +4,6 @@ using ECommons;
 using ECommons.Configuration;
 using ECommons.EzEventManager;
 using ECommons.Logging;
-using ECommons.Schedulers;
 using ECommons.SimpleGui;
 using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.Macros;
@@ -30,6 +29,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly OtterGuiHandler OtterGuiHandler = null!;
     private readonly AutoRetainerApi _autoRetainerApi = null!;
     private readonly FileSystemWatcher _watcher = null!;
+    //private readonly FileSystemWatcher _configWatcher = null!;
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -57,7 +57,7 @@ public sealed class Plugin : IDalamudPlugin
         _autoRetainerApi = new();
 
         EzConfigGui.Init(new Windows.MacrosUI().Draw);
-        EzConfigGui.WindowSystem.AddWindow(new HelpWindow());
+        EzConfigGui.WindowSystem.AddWindow(new HelpUI());
         EzConfigGui.WindowSystem.AddWindow(new ExcelWindow());
         Svc.PluginInterface.UiBuilder.OpenMainUi += EzConfigGui.Window.Toggle;
 
@@ -67,6 +67,8 @@ public sealed class Plugin : IDalamudPlugin
         _autoRetainerApi.OnCharacterPostprocessStep += CheckCharacterPostProcess;
         _autoRetainerApi.OnCharacterReadyToPostProcess += DoCharacterPostProcess;
         _ = new EzFrameworkUpdate(CheckForMacroCompletion);
+        //_configWatcher = new FileSystemWatcher { Path = EzConfig.DefaultConfigurationFileName, EnableRaisingEvents = true };
+        //_configWatcher.Changed += (_, _) => { EzConfig.Save(); };
         _watcher = new FileSystemWatcher
         {
             Path = Service.Configuration.RootFolderPath,
@@ -88,6 +90,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private void CheckCharacterPostProcess()
     {
+        return;
         if (Service.Configuration.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
             Svc.Log.Info("Skipping post process macro for current character.");
         else
@@ -97,17 +100,17 @@ public sealed class Plugin : IDalamudPlugin
     private bool RunningPostProcess;
     private void DoCharacterPostProcess()
     {
-        var macro = C.Files.FirstOrDefault(x => x.UseInARPostProcess);
-        if (macro != default)
-        {
-            RunningPostProcess = true;
-            Service.MacroManager.EnqueueMacro(macro);
-        }
-        else
-        {
-            RunningPostProcess = false;
-            _autoRetainerApi.FinishCharacterPostProcess();
-        }
+        //var macro = C.Files.FirstOrDefault(x => x.UseInARPostProcess);
+        //if (macro != default)
+        //{
+        //    RunningPostProcess = true;
+        //    Service.MacroManager.EnqueueMacro(macro);
+        //}
+        //else
+        //{
+        //    RunningPostProcess = false;
+        //    _autoRetainerApi.FinishCharacterPostProcess();
+        //}
     }
 
     private void CheckForMacroCompletion()
@@ -126,6 +129,8 @@ public sealed class Plugin : IDalamudPlugin
         _watcher.Created -= OnFileChanged;
         _watcher.Deleted -= OnFileChanged;
         _watcher.Renamed -= OnFileChanged;
+        //_configWatcher.Changed -= (_, _) => { EzConfig.Save(); };
+        //_configWatcher.Dispose();
         _watcher.Dispose();
         FS.Dispose();
 
@@ -252,7 +257,7 @@ public sealed class Plugin : IDalamudPlugin
         }
         else if (arguments == "help")
         {
-            EzConfigGui.GetWindow<HelpWindow>()!.Toggle();
+            EzConfigGui.GetWindow<HelpUI>()!.Toggle();
             return;
         }
         else if (arguments == "excel")

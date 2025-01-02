@@ -1,7 +1,4 @@
-﻿using Dalamud.Game.ClientState.Fates;
-using ECommons;
-using ECommons.MathHelpers;
-using FFXIVClientStructs.FFXIV.Client.Game.Event;
+﻿using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;

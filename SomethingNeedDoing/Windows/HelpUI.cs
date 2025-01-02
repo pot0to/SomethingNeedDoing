@@ -21,15 +21,15 @@ using System.Reflection;
 
 namespace SomethingNeedDoing.Interface;
 
-internal class HelpWindow : Window
+internal class HelpUI : Window
 {
     public static new readonly string WindowName = "Something Need Doing Help";
 
     private readonly (string Name, string Description, string? Example)[] cliData =
     [
         ("help", "Show this window.", null),
-        ("run", "Run a macro, the name must be unique.", $"{Aliases[0]} run MyMacro"),
-        ("run loop #", "Run a macro and then loop N times, the name must be unique. Only the last /loop in the macro is replaced", $"{Aliases[0]} run loop 5 MyMacro"),
+        ("run", "Run a macro, the name must be unique.", $"{P.Aliases[0]} run MyMacro"),
+        ("run loop #", "Run a macro and then loop N times, the name must be unique. Only the last /loop in the macro is replaced", $"{P.Aliases[0]} run loop 5 MyMacro"),
         ("pause", "Pause the currently executing macro.", null),
         ("pause loop", "Pause the currently executing macro at the next /loop.", null),
         ("resume", "Resume the currently paused macro.", null),
@@ -41,7 +41,7 @@ internal class HelpWindow : Window
 
     private List<string> luaRequirePathsBuffer = [];
 
-    public HelpWindow() : base(WindowName)
+    public HelpUI() : base(WindowName)
     {
         Flags |= ImGuiWindowFlags.NoScrollbar;
 

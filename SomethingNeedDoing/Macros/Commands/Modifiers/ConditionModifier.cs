@@ -1,5 +1,4 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.UI;
-using System;
 using System.Text.RegularExpressions;
 
 namespace SomethingNeedDoing.Macros.Commands.Modifiers;

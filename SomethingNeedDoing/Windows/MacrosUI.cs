@@ -66,7 +66,7 @@ public class MacrosUI : Window
 
         ImGui.SameLine();
         if (ImGuiX.IconButton(FontAwesomeIcon.QuestionCircle, "Help"))
-            EzConfigGui.GetWindow<HelpWindow>()!.Toggle();
+            EzConfigGui.GetWindow<HelpUI>()!.Toggle();
         ImGui.SameLine();
         if (ImGuiX.IconButton(FontAwesomeIcon.FileExcel, "Excel Browser"))
             EzConfigGui.GetWindow<ExcelWindow>()!.Toggle();
@@ -148,9 +148,8 @@ public class MacrosUI : Window
     {
         using var child = ImRaii.Child("##Panel", -Vector2.One, true);
         if (!child || Selected == null) return;
-
         ImGui.TextUnformatted("Macro Editor");
-        ImGui.TextUnformatted($"{Selected.Name}\n{Selected.Path}\n{Selected.RelativePath}\n{Selected.RelativePath.Replace(Path.DirectorySeparatorChar, '/')}");
+
         using var disabled = ImRaii.Disabled(Service.MacroManager.State == LoopState.Running);
 
         if (ImGuiEx.IconButton(FontAwesomeIcon.Play, "Run"))
@@ -183,10 +182,7 @@ public class MacrosUI : Window
 
             ImGui.SameLine();
             if (ImGuiX.IconButton(FontAwesomeIcon.Sync, sb.ToString()))
-            {
                 Selected.CraftingLoop ^= true;
-                Service.Configuration.Save();
-            }
 
             if (craftLoopEnabled)
                 ImGui.PopStyleColor(3);
@@ -208,7 +204,6 @@ public class MacrosUI : Window
                         loops = v_max;
 
                     Selected.CraftLoopCount = loops;
-                    Service.Configuration.Save();
                 }
 
                 ImGui.PopItemWidth();
@@ -220,7 +215,7 @@ public class MacrosUI : Window
             .Push(ImGuiCol.ButtonHovered, ImGuiColors.HealerGreen, Selected.UseInARPostProcess)
             .Push(ImGuiCol.ButtonActive, ImGuiColors.ParsedGreen, Selected.UseInARPostProcess))
             if (ImGuiX.IconButton(FontAwesomeIcon.Faucet, "use in ar post process"))
-                Selected.SetAsPostProcessMacro(!Selected.UseInARPostProcess);
+                Selected.UseInARPostProcess ^= true;
 
         ImGui.SameLine();
         var buttonSize = ImGuiHelpers.GetButtonSize(FontAwesomeIcon.FileImport.ToIconString());
@@ -242,7 +237,7 @@ public class MacrosUI : Window
         if (Selected.Exists)
         {
             var contents = Selected.Contents;
-            if (ImGui.InputTextMultiline($"##{Selected.Name}-editor", ref contents, 100_000, new Vector2(-1, -1)))
+            if (ImGui.InputTextMultiline($"##{Selected.Name}-editor", ref contents, 1_000_000, new Vector2(-1, -1)))
                 Selected.Write(contents);
         }
     }

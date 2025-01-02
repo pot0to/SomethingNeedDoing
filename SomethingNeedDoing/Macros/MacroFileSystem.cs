@@ -10,6 +10,7 @@ using OtterGui.Classes;
 using OtterGui.Filesystem;
 using OtterGui.FileSystem.Selector;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Numerics;
@@ -20,6 +21,7 @@ public class MacroFileSystem : FileSystem<MacroFile>
     private readonly string FilePath = Path.Combine(Svc.PluginInterface.ConfigDirectory.FullName, "MacroFileSystem.json");
     public readonly FileSystemSelector Selector = null!;
     public bool Building { get; private set; }
+    public List<MacroFile> Files => Root.GetAllDescendants(ISortMode<MacroFile>.Lexicographical).OfType<Leaf>().Select(x => x.Value).ToList();
     public MacroFileSystem(OtterGuiHandler h)
     {
         try
@@ -79,16 +81,16 @@ public class MacroFileSystem : FileSystem<MacroFile>
         return file != null && !file.IsNull();
     }
 
-    public bool TryGetPathByID(Guid id, [NotNullWhen(returnValue: true)] out string? path)
-    {
-        if (TryFindLeaf(C.Files.FirstOrDefault(x => x.GUID == id), out var leaf))
-        {
-            path = leaf.FullName();
-            return true;
-        }
-        path = default;
-        return false;
-    }
+    //public bool TryGetPathByID(Guid id, [NotNullWhen(returnValue: true)] out string? path)
+    //{
+    //    if (TryFindLeaf(C.Files.FirstOrDefault(x => x.GUID == id), out var leaf))
+    //    {
+    //        path = leaf.FullName();
+    //        return true;
+    //    }
+    //    path = default;
+    //    return false;
+    //}
 
     private void OnChange(FileSystemChangeType type, IPath changedObject, IPath? previousParent, IPath? newParent)
     {
@@ -144,8 +146,17 @@ public class MacroFileSystem : FileSystem<MacroFile>
     public void BuildFileSystem()
     {
         Building = true;
+        //foreach (var f1 in C.Files)
+        //{
+        //    if (TryFindLeaf(x => x.Path == f1.Path, out var leaf))
+        //    {
+
+        //    }
+        //}
+        C.Files = Files;
         WipeFileSystem();
         BuildDirectories(new DirectoryInfo(C.RootFolderPath), Root);
+        C.Save();
         Building = false;
     }
 
