@@ -92,7 +92,7 @@ YesAlready -> YesNo -> Save changes to crest design?
 
 Optional:
 YesAlready -> YesNo -> /Purchase the action .*/ 
-(if you add above. remove the wait 2 and the line for yesno pcall for buying buffs)
+(if you add above. remove the wait 2 and the line for yesno callback for buying buffs)
 
 --some ideas for next version
 --https://discord.com/channels/1001823907193552978/1196163718216679514/1215227696607531078
@@ -136,11 +136,11 @@ function Final_GC_Cleaning()
 		while GetStatusTimeRemaining(414) == 0 and numeric_fcpoynts > 7000 and GetItemCount(1) > 16000 do
 			--fire off the buff if they exist
 			yield("/echo FC Seal Buff II")
-			--yield("/pcall FreeCompanyAction false 1 0u <wait.1>")
+			--yield("/callback FreeCompanyAction false 1 0u <wait.1>")
 			castattempt = 0
 			--credit to https://github.com/WigglyMuffin/SNDScripts/blob/main/vac_functions.lua  for finding the nodetext for this one :~D
 			yield("/freecompanycmd <wait.1>")
-			yield("/pcall FreeCompany false 0 4u <wait.1>")
+			yield("/callback FreeCompany false 0 4u <wait.1>")
 			if purchase_attempts > 1 then
 				search_boof = "Seal Sweetener"
 				yield("/echo FC not ready for Seal Sweetener II")
@@ -153,11 +153,11 @@ function Final_GC_Cleaning()
 				yield("/wait 0.3")
 				if type(node_text) == "string" and node_text == search_boof and castattempt == 0 then --we hit it. time to cast it
 					castattempt = 1
-					yield("/pcall FreeCompanyAction false 1 "..zz.."u <wait.1>")
+					yield("/callback FreeCompanyAction false 1 "..zz.."u <wait.1>")
 				end
 			end
-			yield("/pcall ContextMenu true 0 0 1u 0 0 <wait.1>")
-			yield("/pcall SelectYesno true 0 <wait.1>")
+			yield("/callback ContextMenu true 0 0 1u 0 0 <wait.1>")
+			yield("/callback SelectYesno true 0 <wait.1>")
 			
 			--if seal buff fails to work then trigger buy seal buff from npc routine, but only do this if we can failsafe ourselves with 16k gil and 7k fc points
 			if GetStatusTimeRemaining(414) == 0 then
@@ -173,9 +173,9 @@ function Final_GC_Cleaning()
 						yield("/wait 2")
 						yield("/interact")
 						yield("/wait 2")
-						yield("/pcall SelectString true 1 <wait.1>")
+						yield("/callback SelectString true 1 <wait.1>")
 						yield("/wait 2")
-						yield("/pcall SelectYesno true 0")
+						yield("/callback SelectYesno true 0")
 						zungazunga()
 						yield("/wait 2")
 						yield("/target \"OIC Quartermaster\"")
@@ -186,19 +186,19 @@ function Final_GC_Cleaning()
 						yield("/wait 2")
 						yield("/interact")
 						yield("/wait 2")
-						yield("/pcall SelectString true 0 <wait.1>")
-						yield("/pcall SelectString true 0 <wait.1>")
+						yield("/callback SelectString true 0 <wait.1>")
+						yield("/callback SelectString true 0 <wait.1>")
 
 						buycount = 0
 						while (buycount < buymax) do
 							if purchase_attempts < 2 then
-								yield("/pcall FreeCompanyExchange false 2 22u")
+								yield("/callback FreeCompanyExchange false 2 22u")
 							end
 							if purchase_attempts > 1 then
-								yield("/pcall FreeCompanyExchange false 2 5u")
+								yield("/callback FreeCompanyExchange false 2 5u")
 							end
 							yield("/wait 1")
-							yield("/pcall SelectYesno true 0")
+							yield("/callback SelectYesno true 0")
 							yield("/wait 1")
 							buycount = buycount + 1
 						end
@@ -222,13 +222,13 @@ function Final_GC_Cleaning()
 		yield("/echo oh boy we forgot to click the squadron stuff before")
 		yield("/wait 10") --we forgot to enable squadrons
 		yield("/wait 1")
-		yield("/pcall SelectYesno true 0")
+		yield("/callback SelectYesno true 0")
 
 		yield("/wait 1")
-		yield("/pcall SelectYesno true 0")
+		yield("/callback SelectYesno true 0")
 
 		yield("/wait 1")
-		yield("/pcall SelectYesno true 0")
+		yield("/callback SelectYesno true 0")
 		yield("/wait 25")
 		yield("/deliveroo enable")
 	end
@@ -255,11 +255,11 @@ function Final_GC_Cleaning()
 		end
 	end
 	yield("/wait 1")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	yield("/wait 1")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 	yield("/wait 1")
-	yield("/pcall SelectYesno true 0")
+	yield("/callback SelectYesno true 0")
 
 	--added 5 second wait here because sometimes they get stuck.
 	yield("/wait 5")
@@ -331,12 +331,12 @@ function Final_GC_Cleaning()
 		yield("/target Personnel Officer")
 		yield("/wait 1")
 		yield("/send NUMPAD0")
-		yield("/pcall SelectString true 0 <wait.1>")
+		yield("/callback SelectString true 0 <wait.1>")
 		yield("/send NUMPAD0")
 		yield("/wait 1")
 		yield("/send NUMPAD0")
 		yield("/wait 1")
-		yield("/pcall GrandCompanySupplyList true 0 1 2")
+		yield("/callback GrandCompanySupplyList true 0 1 2")
 		yield("/wait 1")
 		yield("/send NUMPAD0")
 		yield("/wait 1")
@@ -354,9 +354,9 @@ function Final_GC_Cleaning()
 			yield("/wait 1")
 			yield("/interact")
 			yield("/wait 2")
-			yield("/pcall SelectString true 1")
+			yield("/callback SelectString true 1")
 			yield("/wait 3")
-			yield("/pcall GrandCompanyRankUp true 0")
+			yield("/callback GrandCompanyRankUp true 0")
 			yield("/wait 1")
 			yield("/send ESCAPE <wait.1.5>")
 			yield("/send ESCAPE <wait.1.5>")
@@ -430,18 +430,18 @@ function FUTA_robust_gc()
 	if config_sell == 1 then
 		yield("/maincommand Item Settings")
 		yield("/wait 0.5")
-		yield("/pcall ConfigCharaItem true 18 288 0 u0")
-		yield("/pcall ConfigCharaItem true 0")
+		yield("/callback ConfigCharaItem true 18 288 0 u0")
+		yield("/callback ConfigCharaItem true 0")
 		yield("/wait 0.5")
-		yield("/pcall ConfigCharacter true 1")
+		yield("/callback ConfigCharacter true 1")
 	end
 	if config_sell == 2 then
 		yield("/maincommand Item Settings")
 		yield("/wait 0.5")
-		yield("/pcall ConfigCharaItem true 18 288 1 u0")
-		yield("/pcall ConfigCharaItem true 0")
+		yield("/callback ConfigCharaItem true 18 288 1 u0")
+		yield("/callback ConfigCharaItem true 0")
 		yield("/wait 0.5")
-		yield("/pcall ConfigCharacter true 1")
+		yield("/callback ConfigCharacter true 1")
 	end
 	if auto_eqweep == 1 then
 		if are_we_dol() then
