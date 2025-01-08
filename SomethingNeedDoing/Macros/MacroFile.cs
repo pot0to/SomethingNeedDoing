@@ -1,11 +1,8 @@
-﻿using Lumina.Data.Files;
-using Newtonsoft.Json;
-using OtterGui.Filesystem;
+﻿using Newtonsoft.Json;
 using SomethingNeedDoing.Macros.Exceptions;
 using SomethingNeedDoing.Misc;
 using System;
 using System.IO;
-using static SomethingNeedDoing.Macros.IPathExtensions;
 
 namespace SomethingNeedDoing.Macros;
 public class MacroFile

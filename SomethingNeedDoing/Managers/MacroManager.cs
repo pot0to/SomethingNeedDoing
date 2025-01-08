@@ -124,7 +124,7 @@ internal partial class MacroManager : IDisposable
 
         try
         {
-            ActiveMacroName = macro.File.Name;
+            ActiveMacroName = macro.Node.Name;
             step = macro.GetCurrentStep();
 
             if (step == null)
@@ -201,12 +201,18 @@ internal sealed partial class MacroManager
     public (string Name, int StepIndex)[] MacroStatus
         => macroStack
             .ToArray() // Collection was modified after the enumerator was instantiated.
-            .Select(macro => (macro.File.Name, macro.StepIndex + 1))
+            .Select(macro => (macro.Node.Name, macro.StepIndex + 1))
             .ToArray();
 
     public void EnqueueMacro(MacroFile file)
     {
-        macroStack.Push(new ActiveMacro(file));
+        macroStack.Push(new ActiveMacro(new MacroNode(file)));
+        pausedWaiter.Set();
+    }
+
+    public void EnqueueMacro(MacroNode node)
+    {
+        macroStack.Push(new ActiveMacro(node));
         pausedWaiter.Set();
     }
 

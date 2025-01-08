@@ -17,6 +17,7 @@ using System.Text;
 namespace SomethingNeedDoing.Windows;
 public class MacrosUI : Window
 {
+    private readonly NodeDrawing NodesUI;
     public MacrosUI() : base($"Something Need Doing {Service.Plugin.GetType().Assembly.GetName().Version}###SomethingNeedDoing")
     {
         Size = new Vector2(525, 600);
@@ -30,6 +31,7 @@ public class MacrosUI : Window
         //    ShowTooltip = () => ImGui.SetTooltip("Lock window position and size"),
         //};
         //TitleBarButtons.Add(LockButton);
+        NodesUI = new NodeDrawing();
     }
 
     private static MacroFile? Selected => FS.Selector.Selected;
@@ -38,7 +40,15 @@ public class MacrosUI : Window
 
     public override void Draw()
     {
-        FS.Selector.Draw(200f);
+        using (var tabs = ImRaii.TabBar("MacrosSelector"))
+        {
+            using (var tab = ImRaii.TabItem("Native"))
+                if (tab)
+                    NodesUI.DisplayNodeTree();
+            using (var tab = ImRaii.TabItem("Disk"))
+                if (tab)
+                    FS.Selector.Draw(200f);
+        }
         ImGui.SameLine();
         using var group = ImRaii.Group();
         DrawStateHeader();
@@ -103,42 +113,43 @@ public class MacrosUI : Window
     public static void DrawRunningMacro()
     {
         ImGui.PushItemWidth(-1);
-
         var style = ImGui.GetStyle();
         var runningHeight = ImGui.CalcTextSize("CalcTextSize").Y * ImGuiHelpers.GlobalScale * 3 + style.FramePadding.Y * 2 + style.ItemSpacing.Y * 2;
-        if (ImGui.BeginListBox("##running-macros", new Vector2(-1, runningHeight)))
+        using (var runningMacros = ImRaii.ListBox("##running-macros", new Vector2(-1, runningHeight)))
         {
-            var macroStatus = Service.MacroManager.MacroStatus;
-            for (var i = 0; i < macroStatus.Length; i++)
+            if (runningMacros)
             {
-                var (name, stepIndex) = macroStatus[i];
-                var text = name;
-                if (i == 0 || stepIndex > 1)
-                    text += $" (step {stepIndex})";
-                ImGui.Selectable($"{text}##{Guid.NewGuid()}", i == 0);
+                var macroStatus = Service.MacroManager.MacroStatus;
+                for (var i = 0; i < macroStatus.Length; i++)
+                {
+                    var (name, stepIndex) = macroStatus[i];
+                    var text = name;
+                    if (i == 0 || stepIndex > 1)
+                        text += $" (step {stepIndex})";
+                    ImGui.Selectable($"{text}##{Guid.NewGuid()}", i == 0);
+                }
             }
-
-            ImGui.EndListBox();
         }
 
         var contentHeight = ImGui.CalcTextSize("CalcTextSize").Y * ImGuiHelpers.GlobalScale * 5 + style.FramePadding.Y * 2 + style.ItemSpacing.Y * 4;
         var macroContent = Service.MacroManager.CurrentMacroContent();
-        if (ImGui.BeginListBox("##current-macro", new Vector2(-1, contentHeight)))
+        using (var currentMacro = ImRaii.ListBox("##current-macro", new Vector2(-1, contentHeight)))
         {
-            var stepIndex = Service.MacroManager.CurrentMacroStep();
-            if (stepIndex == -1)
-                ImGui.Selectable("Looping", true);
-            else
+            if (currentMacro)
             {
-                for (var i = stepIndex; i < macroContent.Length; i++)
+                var stepIndex = Service.MacroManager.CurrentMacroStep();
+                if (stepIndex == -1)
+                    ImGui.Selectable("Looping", true);
+                else
                 {
-                    var step = macroContent[i];
-                    var isCurrentStep = i == stepIndex;
-                    ImGui.Selectable(step, isCurrentStep);
+                    for (var i = stepIndex; i < macroContent.Length; i++)
+                    {
+                        var step = macroContent[i];
+                        var isCurrentStep = i == stepIndex;
+                        ImGui.Selectable(step, isCurrentStep);
+                    }
                 }
             }
-
-            ImGui.EndListBox();
         }
 
         ImGui.PopItemWidth();
@@ -163,14 +174,9 @@ public class MacrosUI : Window
         if (Selected.Language == Language.Native)
         {
             var sb = new StringBuilder("Toggle CraftLoop");
-            var craftLoopEnabled = Selected.CraftingLoop;
 
-            if (craftLoopEnabled)
+            if (Selected.CraftingLoop)
             {
-                ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.HealerGreen);
-                ImGui.PushStyleColor(ImGuiCol.ButtonHovered, ImGuiColors.HealerGreen);
-                ImGui.PushStyleColor(ImGuiCol.ButtonActive, ImGuiColors.ParsedGreen);
-
                 sb.AppendLine(" (0=disabled, -1=infinite)");
                 sb.AppendLine($"When enabled, your macro is modified as follows:");
                 sb.AppendLine(
@@ -179,18 +185,19 @@ public class MacrosUI : Window
                     .Select(line => $"- {line}")
                     .Aggregate(string.Empty, (s1, s2) => $"{s1}\n{s2}"));
             }
-
-            ImGui.SameLine();
-            if (ImGuiX.IconButton(FontAwesomeIcon.Sync, sb.ToString()))
-                Selected.CraftingLoop ^= true;
-
-            if (craftLoopEnabled)
-                ImGui.PopStyleColor(3);
+            using (var craftLoopEnabled = ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.HealerGreen, Selected.CraftingLoop)
+                .Push(ImGuiCol.ButtonHovered, ImGuiColors.HealerGreen, Selected.CraftingLoop)
+                .Push(ImGuiCol.ButtonActive, ImGuiColors.ParsedGreen, Selected.CraftingLoop))
+            {
+                ImGui.SameLine();
+                if (ImGuiX.IconButton(FontAwesomeIcon.Sync, sb.ToString()))
+                    Selected.CraftingLoop ^= true;
+            }
 
             if (Selected.CraftingLoop)
             {
                 ImGui.SameLine();
-                ImGui.PushItemWidth(50);
+                ImGui.SetNextItemWidth(50);
 
                 var v_min = -1;
                 var v_max = 999;
@@ -205,8 +212,6 @@ public class MacrosUI : Window
 
                     Selected.CraftLoopCount = loops;
                 }
-
-                ImGui.PopItemWidth();
             }
         }
 

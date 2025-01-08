@@ -19,27 +19,36 @@ internal partial class ActiveMacro : IDisposable
     private Lua? lua;
     private LuaFunction? luaGenerator;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ActiveMacro"/> class.
-    /// </summary>
-    /// <param name="node">The node to run.</param>
+    //public ActiveMacro(MacroFile file)
+    //{
+    //    File = file;
+    //    if (file.Language == Language.Lua)
+    //    {
+    //        Steps = [];
+    //        return;
+    //    }
+    //    var contents = ModifyMacroForCraftLoop(file.Contents, file.CraftingLoop, file.CraftLoopCount);
+    //    Steps = MacroParser.Parse(contents).ToList();
+    //}
 
-    public ActiveMacro(MacroFile file)
+    public ActiveMacro(MacroNode node)
     {
-        File = file;
-        if (file.Language == Language.Lua)
+        Node = node;
+        if (node.Language == Language.Lua)
         {
             Steps = [];
             return;
         }
-        var contents = ModifyMacroForCraftLoop(file.Contents, file.CraftingLoop, file.CraftLoopCount);
+        var contents = ModifyMacroForCraftLoop(node.Contents, node.CraftingLoop, node.CraftLoopCount);
         Steps = MacroParser.Parse(contents).ToList();
     }
+
+    public MacroNode Node { get; private set; }
 
     /// <summary>
     /// Gets the underlying file.
     /// </summary>
-    public MacroFile File { get; private set; }
+    //public MacroFile File { get; private set; }
 
     /// <summary>
     /// Gets the command steps.
@@ -167,7 +176,7 @@ internal partial class ActiveMacro : IDisposable
     /// </summary>
     public void Loop()
     {
-        if (File.Language == Language.Lua)
+        if (Node.Language == Language.Lua)
             throw new MacroCommandError("Loop is not supported for Lua scripts");
 
         StepIndex = -1;
@@ -179,7 +188,7 @@ internal partial class ActiveMacro : IDisposable
     /// <returns>A command.</returns>
     public MacroCommand? GetCurrentStep()
     {
-        if (File.Language == Language.Lua)
+        if (Node.Language == Language.Lua)
         {
             if (lua == null)
                 InitLuaScript();
@@ -206,7 +215,7 @@ internal partial class ActiveMacro : IDisposable
 
     private void InitLuaScript()
     {
-        var script = File.Contents
+        var script = Node.Contents
             .Split(["\r\n", "\r", "\n"], StringSplitOptions.None)
             .Select(line => $"  {line}")
             .Join('\n');

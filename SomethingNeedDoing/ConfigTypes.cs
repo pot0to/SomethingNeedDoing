@@ -1,5 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SomethingNeedDoing.Macros;
+using SomethingNeedDoing.Macros.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -53,18 +55,40 @@ public class MacroNode : INode
     /// </summary>
     public int CraftLoopCount { get; set; } = 0;
     public Language Language { get; set; } = Language.Native;
+
+    public MacroNode() { }
+    public MacroNode(MacroFile file)
+    {
+        Name = file.Name;
+        FilePath = file.Path;
+        Contents = file.Contents;
+        Language = file.Language;
+    }
+
+    public void RunMacro()
+    {
+        try
+        {
+            Service.MacroManager.EnqueueMacro(this);
+        }
+        catch (MacroSyntaxError ex)
+        {
+            Service.ChatManager.PrintError($"{ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Service.ChatManager.PrintError($"Unexpected error");
+            Svc.Log.Error(ex, "Unexpected error");
+        }
+    }
 }
 
 public class FolderNode : INode
 {
-    /// <inheritdoc/>
     public string Name { get; set; } = string.Empty;
     public string FilePath { get; set; } = string.Empty;
     public string Gist { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets the children inside this folder.
-    /// </summary>
     [JsonProperty(ItemConverterType = typeof(ConcreteNodeConverter))]
     public List<INode> Children { get; } = [];
 }

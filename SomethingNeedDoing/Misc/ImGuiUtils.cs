@@ -47,17 +47,14 @@ internal static class ImGuiUtils
 
     public static void URLLink(string URL, string textToShow = "", bool showTooltip = true, ImFontPtr? iconFont = null)
     {
-        ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.Button]);
-        ImGui.Text(textToShow.Length > 0 ? textToShow : URL);
-        ImGui.PopStyleColor();
+        using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.Button]))
+            ImGui.TextUnformatted(textToShow.Length > 0 ? textToShow : URL);
 
         if (ImGui.IsItemHovered())
         {
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
             if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-            {
                 Process.Start(new ProcessStartInfo(URL) { UseShellExecute = true });
-            }
 
             AddUnderline(ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonHovered], 1.0f);
 
@@ -66,12 +63,11 @@ internal static class ImGuiUtils
                 ImGui.BeginTooltip();
                 if (iconFont != null)
                 {
-                    ImGui.PushFont(iconFont.Value);
-                    ImGui.Text("\uF0C1");
-                    ImGui.PopFont();
+                    using (var _ = ImRaii.PushFont(iconFont.Value))
+                        ImGui.TextUnformatted("\uF0C1");
                     ImGui.SameLine();
                 }
-                ImGui.Text(URL);
+                ImGui.TextUnformatted(URL);
                 ImGui.EndTooltip();
             }
         }
@@ -96,23 +92,18 @@ internal static class ImGuiUtils
 
     public static void TextLink(Action callback, string textToShow = "")
     {
-        ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonHovered]);
-        ImGui.Text(textToShow);
-        ImGui.PopStyleColor();
+        using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonHovered]))
+            ImGui.TextUnformatted(textToShow);
         if (ImGui.IsItemHovered())
         {
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
             if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-            {
                 callback.Invoke();
-            }
 
             AddUnderline(ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonHovered], 1.0f);
         }
         else
-        {
             AddUnderline(ImGui.GetStyle().Colors[(int)ImGuiCol.Button], 1.0f);
-        }
     }
 
     public static void AddUnderline(Vector4 color, float thickness)
@@ -134,7 +125,7 @@ internal static class ImGuiUtils
     public static void RightAlignTableText(string str)
     {
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(str).X - ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X));
-        ImGui.Text(str);
+        ImGui.TextUnformatted(str);
     }
 
     public static uint ColorVecToUInt(Vector4 color)
@@ -188,15 +179,14 @@ internal static class ImGuiUtils
                                         Math.Max(0f, ((titlebarHeight - iconSize.Y) / 2f) - 1f) + ImGui.GetScrollY());
 
             ImGui.SetCursorPos(buttonPos);
-            ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.DalamudWhite);
-            ImGui.Text(buttonText);
-            ImGui.PopStyleColor();
+            using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudWhite))
+                ImGui.TextUnformatted(buttonText);
 
             if (ImGui.IsItemHovered())
             {
                 //	Redraw the text in the hovered color
                 ImGui.SetCursorPos(buttonPos);
-                ImGui.Text(buttonText);
+                ImGui.TextUnformatted(buttonText);
 
                 //	Handle the click.
                 if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))

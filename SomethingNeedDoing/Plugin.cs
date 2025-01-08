@@ -3,14 +3,12 @@ using Dalamud.Plugin;
 using ECommons;
 using ECommons.Configuration;
 using ECommons.EzEventManager;
-using ECommons.Logging;
 using ECommons.SimpleGui;
 using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.Macros;
 using SomethingNeedDoing.Macros.Lua;
 using SomethingNeedDoing.Managers;
 using SomethingNeedDoing.Misc;
-using System.IO;
 
 namespace SomethingNeedDoing;
 
@@ -23,13 +21,11 @@ public sealed class Plugin : IDalamudPlugin
 
     internal static Plugin P = null!;
     internal static Config C => P.Config;
-    internal static MacroFileSystem FS => P.OtterGuiHandler.MacroFileSystem;
+    internal static MacroFileSystem FS => P._ottergui.MacroFileSystem;
     private readonly Config Config = null!;
-    private readonly Config _legacyConf = null!;
-    private readonly OtterGuiHandler OtterGuiHandler = null!;
+    //private readonly Config _legacyConf = null!;
+    private readonly OtterGuiHandler _ottergui = null!;
     private readonly AutoRetainerApi _autoRetainerApi = null!;
-    private readonly FileSystemWatcher _watcher = null!;
-    //private readonly FileSystemWatcher _configWatcher = null!;
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -39,12 +35,12 @@ public sealed class Plugin : IDalamudPlugin
         Service.Plugin = this;
         ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions, Module.DalamudReflector);
 
-        _legacyConf = Config.Load(Svc.PluginInterface.ConfigDirectory); // must be done before EzConfig migration
-        if (_legacyConf != default)
-        {
-            var migration = new V2();
-            migration.Migrate(ref _legacyConf);
-        }
+        //_legacyConf = Config.Load(Svc.PluginInterface.ConfigDirectory); // must be done before EzConfig migration
+        //if (_legacyConf != default)
+        //{
+        //    var migration = new V2();
+        //    migration.Migrate(ref _legacyConf);
+        //}
 
         EzConfig.DefaultSerializationFactory = new ConfigFactory();
         EzConfig.Migrate<Config>();
@@ -53,7 +49,7 @@ public sealed class Plugin : IDalamudPlugin
         Service.ChatManager = new ChatManager();
         Service.GameEventManager = new GameEventManager();
         Service.MacroManager = new MacroManager();
-        OtterGuiHandler = new();
+        _ottergui = new();
         _autoRetainerApi = new();
 
         EzConfigGui.Init(new Windows.MacrosUI().Draw);
@@ -67,34 +63,14 @@ public sealed class Plugin : IDalamudPlugin
         _autoRetainerApi.OnCharacterPostprocessStep += CheckCharacterPostProcess;
         _autoRetainerApi.OnCharacterReadyToPostProcess += DoCharacterPostProcess;
         _ = new EzFrameworkUpdate(CheckForMacroCompletion);
-        //_configWatcher = new FileSystemWatcher { Path = EzConfig.DefaultConfigurationFileName, EnableRaisingEvents = true };
-        //_configWatcher.Changed += (_, _) => { EzConfig.Save(); };
-        _watcher = new FileSystemWatcher
-        {
-            Path = Service.Configuration.RootFolderPath,
-            IncludeSubdirectories = true,
-        };
-
-        _watcher.Changed += OnFileChanged;
-        _watcher.Created += OnFileChanged;
-        _watcher.Deleted += OnFileChanged;
-        _watcher.Renamed += OnFileChanged;
-        _watcher.EnableRaisingEvents = true;
-    }
-
-    private void OnFileChanged(object sender, FileSystemEventArgs e)
-    {
-        PluginLog.Debug($"File {e.ChangeType}: {e.FullPath}");
-        FS.BuildFileSystem();
     }
 
     private void CheckCharacterPostProcess()
     {
-        return;
-        if (Service.Configuration.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
-            Svc.Log.Info("Skipping post process macro for current character.");
-        else
-            _autoRetainerApi.RequestCharacterPostprocess();
+        //if (Service.Configuration.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
+        //    Svc.Log.Info("Skipping post process macro for current character.");
+        //else
+        //    _autoRetainerApi.RequestCharacterPostprocess();
     }
 
     private bool RunningPostProcess;
@@ -125,13 +101,6 @@ public sealed class Plugin : IDalamudPlugin
 
     public void Dispose()
     {
-        _watcher.Changed -= OnFileChanged;
-        _watcher.Created -= OnFileChanged;
-        _watcher.Deleted -= OnFileChanged;
-        _watcher.Renamed -= OnFileChanged;
-        //_configWatcher.Changed -= (_, _) => { EzConfig.Save(); };
-        //_configWatcher.Dispose();
-        _watcher.Dispose();
         FS.Dispose();
 
         _autoRetainerApi.OnCharacterPostprocessStep -= CheckCharacterPostProcess;

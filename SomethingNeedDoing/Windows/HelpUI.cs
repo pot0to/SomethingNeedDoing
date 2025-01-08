@@ -416,7 +416,7 @@ internal class HelpUI : Window
 
         if (ImGui.CollapsingHeader("Lua"))
         {
-            ImGui.Text("Lua Required Paths:");
+            ImGui.TextUnformatted("Lua Required Paths:");
 
             // We need to pass Imgui a reference and we can't do that with lists, so temporarily demote our list to an array
             string[] paths = [.. luaRequirePathsBuffer];
