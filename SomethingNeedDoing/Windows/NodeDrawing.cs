@@ -102,7 +102,7 @@ internal class NodeDrawing
         using var ctx = ImRaii.ContextPopupItem($"{node.Name}ContextMenu");
         if (ctx)
         {
-            var name = node.FileName;
+            var name = node.Name;
             if (ImGui.InputText($"##rename", ref name, 100, ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 node.Name = GetUniqueNodeName(name);

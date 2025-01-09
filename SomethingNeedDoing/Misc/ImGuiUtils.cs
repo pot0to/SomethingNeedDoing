@@ -60,21 +60,20 @@ internal static class ImGuiUtils
 
             if (showTooltip)
             {
-                ImGui.BeginTooltip();
-                if (iconFont != null)
+                using (var _ = ImRaii.Tooltip())
                 {
-                    using (var _ = ImRaii.PushFont(iconFont.Value))
-                        ImGui.TextUnformatted("\uF0C1");
-                    ImGui.SameLine();
+                    if (iconFont != null)
+                    {
+                        using (var _ = ImRaii.PushFont(iconFont.Value))
+                            ImGui.TextUnformatted("\uF0C1");
+                        ImGui.SameLine();
+                    }
+                    ImGui.TextUnformatted(URL);
                 }
-                ImGui.TextUnformatted(URL);
-                ImGui.EndTooltip();
             }
         }
         else
-        {
             AddUnderline(ImGui.GetStyle().Colors[(int)ImGuiCol.Button], 1.0f);
-        }
     }
 
     public static unsafe void ClickToCopyText(string text, Vector4 colour = default, string? textCopy = null)
@@ -154,11 +153,10 @@ internal static class ImGuiUtils
         ImGui.TextDisabled(marker);
         if (ImGui.IsItemHovered())
         {
-            ImGui.BeginTooltip();
+            using var _ = ImRaii.Tooltip();
             ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
             ImGui.TextUnformatted(description);
             ImGui.PopTextWrapPos();
-            ImGui.EndTooltip();
         }
     }
 

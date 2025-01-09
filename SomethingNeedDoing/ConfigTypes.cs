@@ -11,23 +11,6 @@ namespace SomethingNeedDoing;
 public interface INode
 {
     public string Name { get; set; }
-    public string FilePath { get; set; }
-
-    public bool IsFileOrInFolder(string path)
-    {
-        if (File.Exists(path)) return path == FilePath;
-        else if (Directory.Exists(path))
-            foreach (var d in Directory.GetDirectories(path))
-                if (IsFileOrInFolder(d)) return true;
-        return false;
-    }
-
-    public string FileName => Path.GetFileNameWithoutExtension(FilePath);
-    public string Extension => Path.GetExtension(FilePath);
-    public string DirectoryName => Path.GetDirectoryName(FilePath) ?? string.Empty;
-    public string RelativePath => Path.GetRelativePath(Service.Configuration.RootFolderPath, FilePath);
-    public void Rename(string name) => File.Move(FilePath, Path.Combine(DirectoryName, name + Extension));
-    public bool Exists => File.Exists(FilePath);
 }
 
 public enum Language
@@ -86,8 +69,6 @@ public class MacroNode : INode
 public class FolderNode : INode
 {
     public string Name { get; set; } = string.Empty;
-    public string FilePath { get; set; } = string.Empty;
-    public string Gist { get; set; } = string.Empty;
 
     [JsonProperty(ItemConverterType = typeof(ConcreteNodeConverter))]
     public List<INode> Children { get; } = [];
