@@ -10,7 +10,6 @@ using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.Macros;
 using SomethingNeedDoing.Misc;
 using System;
-using System.IO;
 using System.Numerics;
 using System.Text;
 
@@ -18,7 +17,7 @@ namespace SomethingNeedDoing.Windows;
 public class MacrosUI : Window
 {
     private readonly NodeDrawing NodesUI;
-    public MacrosUI() : base($"Something Need Doing {Service.Plugin.GetType().Assembly.GetName().Version}###SomethingNeedDoing")
+    public MacrosUI() : base($"Something Need Doing {P.GetType().Assembly.GetName().Version}###SomethingNeedDoing")
     {
         Size = new Vector2(525, 600);
         SizeCondition = ImGuiCond.FirstUseEver;
@@ -26,7 +25,7 @@ public class MacrosUI : Window
         //LockButton = new()
         //{
         //    Click = OnLockButtonClick,
-        //    Icon = Service.Configuration.LockWindow ? FontAwesomeIcon.Lock : FontAwesomeIcon.LockOpen,
+        //    Icon = C.LockWindow ? FontAwesomeIcon.Lock : FontAwesomeIcon.LockOpen,
         //    IconOffset = new(3, 2),
         //    ShowTooltip = () => ImGui.SetTooltip("Lock window position and size"),
         //};
@@ -236,7 +235,7 @@ public class MacrosUI : Window
         }
 
         ImGui.SetNextItemWidth(-1);
-        var useMono = !Service.Configuration.DisableMonospaced;
+        var useMono = !C.DisableMonospaced;
         using var font = ImRaii.PushFont(UiBuilder.MonoFont, useMono);
 
         if (Selected.Exists)

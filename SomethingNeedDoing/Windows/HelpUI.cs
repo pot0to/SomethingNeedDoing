@@ -51,7 +51,7 @@ internal class HelpUI : Window
 
         clickNames = [.. ClickHelper.GetAvailableClicks()];
 
-        luaRequirePathsBuffer = new(Service.Configuration.LuaRequirePaths);
+        luaRequirePathsBuffer = new(C.LuaRequirePaths);
     }
 
     /// <inheritdoc/>
@@ -110,33 +110,33 @@ internal class HelpUI : Window
 
         if (ImGui.CollapsingHeader("Crafting skips"))
         {
-            var craftSkip = Service.Configuration.CraftSkip;
+            var craftSkip = C.CraftSkip;
             if (ImGui.Checkbox("Craft Skip", ref craftSkip))
             {
-                Service.Configuration.CraftSkip = craftSkip;
-                Service.Configuration.Save();
+                C.CraftSkip = craftSkip;
+                C.Save();
             }
 
             DisplayOption("- Skip craft actions when not crafting.");
 
             ImGui.Separator();
 
-            var smartWait = Service.Configuration.SmartWait;
+            var smartWait = C.SmartWait;
             if (ImGui.Checkbox("Smart Wait", ref smartWait))
             {
-                Service.Configuration.SmartWait = smartWait;
-                Service.Configuration.Save();
+                C.SmartWait = smartWait;
+                C.Save();
             }
 
             DisplayOption("- Intelligently wait for crafting actions to complete instead of using the <wait> or <unsafe> modifiers.");
 
             ImGui.Separator();
 
-            var qualitySkip = Service.Configuration.QualitySkip;
+            var qualitySkip = C.QualitySkip;
             if (ImGui.Checkbox("Quality Skip", ref qualitySkip))
             {
-                Service.Configuration.QualitySkip = qualitySkip;
-                Service.Configuration.Save();
+                C.QualitySkip = qualitySkip;
+                C.Save();
             }
 
             DisplayOption("- Skip quality increasing actions when the HQ chance is at 100%%. If you depend on durability increases from Manipulation towards the end of your macro, you will likely want to disable this.");
@@ -144,11 +144,11 @@ internal class HelpUI : Window
 
         if (ImGui.CollapsingHeader("Loop echo"))
         {
-            var loopEcho = Service.Configuration.LoopEcho;
+            var loopEcho = C.LoopEcho;
             if (ImGui.Checkbox("Craft and Loop Echo", ref loopEcho))
             {
-                Service.Configuration.LoopEcho = loopEcho;
-                Service.Configuration.Save();
+                C.LoopEcho = loopEcho;
+                C.Save();
             }
 
             DisplayOption("- /loop and /craft commands will always have an <echo> tag applied.");
@@ -157,7 +157,7 @@ internal class HelpUI : Window
         if (ImGui.CollapsingHeader("Action retry"))
         {
             ImGui.SetNextItemWidth(50);
-            var maxTimeoutRetries = Service.Configuration.MaxTimeoutRetries;
+            var maxTimeoutRetries = C.MaxTimeoutRetries;
             if (ImGui.InputInt("Action max timeout retries", ref maxTimeoutRetries, 0))
             {
                 if (maxTimeoutRetries < 0)
@@ -165,8 +165,8 @@ internal class HelpUI : Window
                 if (maxTimeoutRetries > 10)
                     maxTimeoutRetries = 10;
 
-                Service.Configuration.MaxTimeoutRetries = maxTimeoutRetries;
-                Service.Configuration.Save();
+                C.MaxTimeoutRetries = maxTimeoutRetries;
+                C.Save();
             }
 
             DisplayOption("- The number of times to re-attempt an action command when a timely response is not received.");
@@ -174,11 +174,11 @@ internal class HelpUI : Window
 
         if (ImGui.CollapsingHeader("Font"))
         {
-            var disableMonospaced = Service.Configuration.DisableMonospaced;
+            var disableMonospaced = C.DisableMonospaced;
             if (ImGui.Checkbox("Disable Monospaced fonts", ref disableMonospaced))
             {
-                Service.Configuration.DisableMonospaced = disableMonospaced;
-                Service.Configuration.Save();
+                C.DisableMonospaced = disableMonospaced;
+                C.Save();
             }
 
             DisplayOption("- Use the regular font instead of monospaced in the macro window. This may be handy for JP users so as to prevent missing unicode errors.");
@@ -186,18 +186,18 @@ internal class HelpUI : Window
 
         if (ImGui.CollapsingHeader("Craft loop"))
         {
-            var useCraftLoopTemplate = Service.Configuration.UseCraftLoopTemplate;
+            var useCraftLoopTemplate = C.UseCraftLoopTemplate;
             if (ImGui.Checkbox("Enable CraftLoop templating", ref useCraftLoopTemplate))
             {
-                Service.Configuration.UseCraftLoopTemplate = useCraftLoopTemplate;
-                Service.Configuration.Save();
+                C.UseCraftLoopTemplate = useCraftLoopTemplate;
+                C.Save();
             }
 
             DisplayOption($"- When enabled the CraftLoop template will replace various placeholders with values.");
 
             if (useCraftLoopTemplate)
             {
-                var craftLoopTemplate = Service.Configuration.CraftLoopTemplate;
+                var craftLoopTemplate = C.CraftLoopTemplate;
 
                 const string macroKeyword = "{{macro}}";
                 const string countKeyword = "{{count}}";
@@ -210,41 +210,41 @@ internal class HelpUI : Window
 
                 if (ImGui.InputTextMultiline("CraftLoopTemplate", ref craftLoopTemplate, 100_000, new Vector2(-1, 200)))
                 {
-                    Service.Configuration.CraftLoopTemplate = craftLoopTemplate;
-                    Service.Configuration.Save();
+                    C.CraftLoopTemplate = craftLoopTemplate;
+                    C.Save();
                 }
             }
             else
             {
-                var craftLoopFromRecipeNote = Service.Configuration.CraftLoopFromRecipeNote;
+                var craftLoopFromRecipeNote = C.CraftLoopFromRecipeNote;
                 if (ImGui.Checkbox("CraftLoop starts in the Crafting Log", ref craftLoopFromRecipeNote))
                 {
-                    Service.Configuration.CraftLoopFromRecipeNote = craftLoopFromRecipeNote;
-                    Service.Configuration.Save();
+                    C.CraftLoopFromRecipeNote = craftLoopFromRecipeNote;
+                    C.Save();
                 }
 
                 DisplayOption("- When enabled the CraftLoop option will expect the Crafting Log to be visible, otherwise the Synthesis window must be visible.");
 
-                var craftLoopEcho = Service.Configuration.CraftLoopEcho;
+                var craftLoopEcho = C.CraftLoopEcho;
                 if (ImGui.Checkbox("CraftLoop Craft and Loop echo", ref craftLoopEcho))
                 {
-                    Service.Configuration.CraftLoopEcho = craftLoopEcho;
-                    Service.Configuration.Save();
+                    C.CraftLoopEcho = craftLoopEcho;
+                    C.Save();
                 }
 
                 DisplayOption("- When enabled the /craft or /gate commands supplied by the CraftLoop option will have an echo modifier.");
 
                 ImGui.SetNextItemWidth(50);
-                var craftLoopMaxWait = Service.Configuration.CraftLoopMaxWait;
+                var craftLoopMaxWait = C.CraftLoopMaxWait;
                 if (ImGui.InputInt("CraftLoop maxwait", ref craftLoopMaxWait, 0))
                 {
                     if (craftLoopMaxWait < 0)
                         craftLoopMaxWait = 0;
 
-                    if (craftLoopMaxWait != Service.Configuration.CraftLoopMaxWait)
+                    if (craftLoopMaxWait != C.CraftLoopMaxWait)
                     {
-                        Service.Configuration.CraftLoopMaxWait = craftLoopMaxWait;
-                        Service.Configuration.Save();
+                        C.CraftLoopMaxWait = craftLoopMaxWait;
+                        C.Save();
                     }
                 }
 
@@ -257,68 +257,68 @@ internal class HelpUI : Window
             var names = Enum.GetNames<XivChatType>();
             var chatTypes = Enum.GetValues<XivChatType>();
 
-            var current = Array.IndexOf(chatTypes, Service.Configuration.ChatType);
+            var current = Array.IndexOf(chatTypes, C.ChatType);
             if (current == -1)
             {
-                current = Array.IndexOf(chatTypes, Service.Configuration.ChatType = XivChatType.Echo);
-                Service.Configuration.Save();
+                current = Array.IndexOf(chatTypes, C.ChatType = XivChatType.Echo);
+                C.Save();
             }
 
             ImGui.SetNextItemWidth(200f);
             if (ImGui.Combo("Normal chat channel", ref current, names, names.Length))
             {
-                Service.Configuration.ChatType = chatTypes[current];
-                Service.Configuration.Save();
+                C.ChatType = chatTypes[current];
+                C.Save();
             }
 
-            var currentError = Array.IndexOf(chatTypes, Service.Configuration.ErrorChatType);
+            var currentError = Array.IndexOf(chatTypes, C.ErrorChatType);
             if (currentError == -1)
             {
-                currentError = Array.IndexOf(chatTypes, Service.Configuration.ErrorChatType = XivChatType.Urgent);
-                Service.Configuration.Save();
+                currentError = Array.IndexOf(chatTypes, C.ErrorChatType = XivChatType.Urgent);
+                C.Save();
             }
 
             ImGui.SetNextItemWidth(200f);
             if (ImGui.Combo("Error chat channel", ref currentError, names, names.Length))
             {
-                Service.Configuration.ChatType = chatTypes[currentError];
-                Service.Configuration.Save();
+                C.ChatType = chatTypes[currentError];
+                C.Save();
             }
         }
 
         if (ImGui.CollapsingHeader("Error beeps"))
         {
-            var noisyErrors = Service.Configuration.NoisyErrors;
+            var noisyErrors = C.NoisyErrors;
             if (ImGui.Checkbox("Noisy errors", ref noisyErrors))
             {
-                Service.Configuration.NoisyErrors = noisyErrors;
-                Service.Configuration.Save();
+                C.NoisyErrors = noisyErrors;
+                C.Save();
             }
 
             DisplayOption("- When a check fails or error happens, some helpful beeps will play to get your attention.");
 
             ImGui.SetNextItemWidth(50f);
-            var beepFrequency = Service.Configuration.BeepFrequency;
+            var beepFrequency = C.BeepFrequency;
             if (ImGui.InputInt("Beep frequency", ref beepFrequency, 0))
             {
-                Service.Configuration.BeepFrequency = beepFrequency;
-                Service.Configuration.Save();
+                C.BeepFrequency = beepFrequency;
+                C.Save();
             }
 
             ImGui.SetNextItemWidth(50f);
-            var beepDuration = Service.Configuration.BeepDuration;
+            var beepDuration = C.BeepDuration;
             if (ImGui.InputInt("Beep duration", ref beepDuration, 0))
             {
-                Service.Configuration.BeepDuration = beepDuration;
-                Service.Configuration.Save();
+                C.BeepDuration = beepDuration;
+                C.Save();
             }
 
             ImGui.SetNextItemWidth(50f);
-            var beepCount = Service.Configuration.BeepCount;
+            var beepCount = C.BeepCount;
             if (ImGui.InputInt("Beep count", ref beepCount, 0))
             {
-                Service.Configuration.BeepCount = beepCount;
-                Service.Configuration.Save();
+                C.BeepCount = beepCount;
+                C.Save();
             }
 
             if (ImGui.Button("Beep test"))
@@ -333,83 +333,83 @@ internal class HelpUI : Window
 
         if (ImGui.CollapsingHeader("/action"))
         {
-            var stopMacro = Service.Configuration.StopMacroIfActionTimeout;
+            var stopMacro = C.StopMacroIfActionTimeout;
             if (ImGui.Checkbox("Stop macro if /action times out", ref stopMacro))
             {
-                Service.Configuration.StopMacroIfActionTimeout = stopMacro;
-                Service.Configuration.Save();
+                C.StopMacroIfActionTimeout = stopMacro;
+                C.Save();
             }
         }
 
         if (ImGui.CollapsingHeader("/item"))
         {
-            var stopMacroNotFound = Service.Configuration.StopMacroIfItemNotFound;
+            var stopMacroNotFound = C.StopMacroIfItemNotFound;
             if (ImGui.Checkbox("Stop macro if the item to use is not found", ref stopMacroNotFound))
             {
-                Service.Configuration.StopMacroIfItemNotFound = stopMacroNotFound;
-                Service.Configuration.Save();
+                C.StopMacroIfItemNotFound = stopMacroNotFound;
+                C.Save();
             }
 
-            var stopMacro = Service.Configuration.StopMacroIfCantUseItem;
+            var stopMacro = C.StopMacroIfCantUseItem;
             if (ImGui.Checkbox("Stop macro if you cannot use an item", ref stopMacro))
             {
-                Service.Configuration.StopMacroIfCantUseItem = stopMacro;
-                Service.Configuration.Save();
+                C.StopMacroIfCantUseItem = stopMacro;
+                C.Save();
             }
         }
 
         if (ImGui.CollapsingHeader("/target"))
         {
-            var defaultTarget = Service.Configuration.UseSNDTargeting;
+            var defaultTarget = C.UseSNDTargeting;
             if (ImGui.Checkbox("Use SND's targeting system.", ref defaultTarget))
             {
-                Service.Configuration.UseSNDTargeting = defaultTarget;
-                Service.Configuration.Save();
+                C.UseSNDTargeting = defaultTarget;
+                C.Save();
             }
 
             DisplayOption("- Override the behaviour of /target with SND's system.");
 
-            var stopMacro = Service.Configuration.StopMacroIfTargetNotFound;
+            var stopMacro = C.StopMacroIfTargetNotFound;
             if (ImGui.Checkbox("Stop macro if target not found (only applies to SND's targeting system).", ref stopMacro))
             {
-                Service.Configuration.StopMacroIfTargetNotFound = stopMacro;
-                Service.Configuration.Save();
+                C.StopMacroIfTargetNotFound = stopMacro;
+                C.Save();
             }
         }
 
         if (ImGui.CollapsingHeader("/waitaddon"))
         {
-            var stopMacro = Service.Configuration.StopMacroIfAddonNotFound;
+            var stopMacro = C.StopMacroIfAddonNotFound;
             if (ImGui.Checkbox("Stop macro if the requested addon is not found", ref stopMacro))
             {
-                Service.Configuration.StopMacroIfAddonNotFound = stopMacro;
-                Service.Configuration.Save();
+                C.StopMacroIfAddonNotFound = stopMacro;
+                C.Save();
             }
 
-            var stopMacroVisible = Service.Configuration.StopMacroIfAddonNotVisible;
+            var stopMacroVisible = C.StopMacroIfAddonNotVisible;
             if (ImGui.Checkbox("Stop macro if the requested addon is not visible", ref stopMacroVisible))
             {
-                Service.Configuration.StopMacroIfAddonNotVisible = stopMacroVisible;
-                Service.Configuration.Save();
+                C.StopMacroIfAddonNotVisible = stopMacroVisible;
+                C.Save();
             }
         }
 
         if (ImGui.CollapsingHeader("AutoRetainer"))
         {
-            if (Service.Configuration.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
+            if (C.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
             {
                 if (ImGui.Button("Remove current character from exclusion list"))
                 {
-                    Service.Configuration.ARCharacterPostProcessExcludedCharacters.RemoveAll(x => x == Svc.ClientState.LocalContentId);
-                    Service.Configuration.Save();
+                    C.ARCharacterPostProcessExcludedCharacters.RemoveAll(x => x == Svc.ClientState.LocalContentId);
+                    C.Save();
                 }
             }
             else
             {
                 if (ImGui.Button("Exclude current character"))
                 {
-                    Service.Configuration.ARCharacterPostProcessExcludedCharacters.Add(Svc.ClientState.LocalContentId);
-                    Service.Configuration.Save();
+                    C.ARCharacterPostProcessExcludedCharacters.Add(Svc.ClientState.LocalContentId);
+                    C.Save();
                 }
             }
         }
@@ -426,8 +426,8 @@ internal class HelpUI : Window
                 {
                     luaRequirePathsBuffer.RemoveAt(index);
 
-                    Service.Configuration.LuaRequirePaths = [.. luaRequirePathsBuffer];
-                    Service.Configuration.Save();
+                    C.LuaRequirePaths = [.. luaRequirePathsBuffer];
+                    C.Save();
                 }
 
                 ImGui.SameLine();
@@ -437,8 +437,8 @@ internal class HelpUI : Window
                     // Remove blank lines from the list
                     luaRequirePathsBuffer = luaRequirePathsBuffer.Where(str => !string.IsNullOrEmpty(str)).ToList();
 
-                    Service.Configuration.LuaRequirePaths = [.. luaRequirePathsBuffer];
-                    Service.Configuration.Save();
+                    C.LuaRequirePaths = [.. luaRequirePathsBuffer];
+                    C.Save();
                 }
             }
 

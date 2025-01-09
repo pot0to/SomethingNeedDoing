@@ -30,9 +30,7 @@ public sealed class Plugin : IDalamudPlugin
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
         P = this;
-        var x = P.Aliases;
         pluginInterface.Create<Service>();
-        Service.Plugin = this;
         ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions, Module.DalamudReflector);
 
         //_legacyConf = Config.Load(Svc.PluginInterface.ConfigDirectory); // must be done before EzConfig migration
@@ -44,7 +42,7 @@ public sealed class Plugin : IDalamudPlugin
 
         EzConfig.DefaultSerializationFactory = new ConfigFactory();
         EzConfig.Migrate<Config>();
-        Service.Configuration = Config = EzConfig.Init<Config>();
+        Config = EzConfig.Init<Config>();
 
         Service.ChatManager = new ChatManager();
         Service.GameEventManager = new GameEventManager();
@@ -67,7 +65,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private void CheckCharacterPostProcess()
     {
-        //if (Service.Configuration.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
+        //if (C.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
         //    Svc.Log.Info("Skipping post process macro for current character.");
         //else
         //    _autoRetainerApi.RequestCharacterPostprocess();
@@ -237,7 +235,7 @@ public sealed class Plugin : IDalamudPlugin
         else if (arguments.StartsWith("cfg"))
         {
             var args = arguments[4..].Trim().Split(" ");
-            Service.Configuration.SetProperty(args[0], args[1]);
+            C.SetProperty(args[0], args[1]);
             return;
         }
     }

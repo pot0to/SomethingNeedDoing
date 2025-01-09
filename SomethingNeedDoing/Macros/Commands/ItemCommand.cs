@@ -54,7 +54,7 @@ internal class ItemCommand : MacroCommand
         Svc.Log.Debug($"Item Count: {count}");
         if (count == 0)
         {
-            if (Service.Configuration.StopMacroIfItemNotFound)
+            if (C.StopMacroIfItemNotFound)
                 throw new MacroCommandError("You do not have that item");
             return;
         }
@@ -73,7 +73,7 @@ internal class ItemCommand : MacroCommand
             itemID += 1_000_000;
 
         var result = agent->UseItem(itemID);
-        if (result != 0 && Service.Configuration.StopMacroIfCantUseItem)
+        if (result != 0 && C.StopMacroIfCantUseItem)
             throw new MacroCommandError("Failed to use item");
     }
 

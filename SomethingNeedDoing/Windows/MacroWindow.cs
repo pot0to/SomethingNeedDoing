@@ -34,26 +34,26 @@
 //        LockButton = new()
 //        {
 //            Click = OnLockButtonClick,
-//            Icon = Service.Configuration.LockWindow ? FontAwesomeIcon.Lock : FontAwesomeIcon.LockOpen,
+//            Icon = C.LockWindow ? FontAwesomeIcon.Lock : FontAwesomeIcon.LockOpen,
 //            IconOffset = new(3, 2),
 //            ShowTooltip = () => ImGui.SetTooltip("Lock window position and size"),
 //        };
 //        TitleBarButtons.Add(LockButton);
-//        //Service.Configuration.BuildDirectory(Service.Configuration.RootFolderPath);
+//        //C.BuildDirectory(C.RootFolderPath);
 //    }
 
 //    private void OnLockButtonClick(ImGuiMouseButton m)
 //    {
 //        if (m == ImGuiMouseButton.Left)
 //        {
-//            Service.Configuration.LockWindow = !Service.Configuration.LockWindow;
-//            LockButton.Icon = Service.Configuration.LockWindow ? FontAwesomeIcon.Lock : FontAwesomeIcon.LockOpen;
+//            C.LockWindow = !C.LockWindow;
+//            LockButton.Icon = C.LockWindow ? FontAwesomeIcon.Lock : FontAwesomeIcon.LockOpen;
 //        }
 //    }
 
-//    private static FolderNode RootFolder => Service.Configuration.RootFolder;
+//    private static FolderNode RootFolder => C.RootFolder;
 
-//    public override void Update() => EzConfigGui.Window.Flags = Service.Configuration.LockWindow ? ImGuiWindowFlags.NoMove : 0;
+//    public override void Update() => EzConfigGui.Window.Flags = C.LockWindow ? ImGuiWindowFlags.NoMove : 0;
 //    public override void PreDraw() => ImGui.PushStyleColor(ImGuiCol.ResizeGrip, 0);
 //    public override void PostDraw() => ImGui.PopStyleColor();
 
@@ -73,19 +73,19 @@
 //    {
 //        if (ImGuiX.IconButton(FontAwesomeIcon.Plus, "Add macro"))
 //        {
-//            File.Create(Path.Combine(Service.Configuration.RootFolderPath, GetUniqueFileName()));
+//            File.Create(Path.Combine(C.RootFolderPath, GetUniqueFileName()));
 //            //var newNode = new MacroNode { Name = GetUniqueNodeName("Untitled macro") };
 //            //RootFolder.Children.Add(newNode);
-//            //Service.Configuration.Save();
+//            //C.Save();
 //        }
 
 //        ImGui.SameLine();
 //        if (ImGuiX.IconButton(FontAwesomeIcon.FolderPlus, "Add folder"))
 //        {
-//            Directory.CreateDirectory(Path.Combine(Service.Configuration.RootFolderPath, GetUniqueFolderName()));
+//            Directory.CreateDirectory(Path.Combine(C.RootFolderPath, GetUniqueFolderName()));
 //            //var newNode = new FolderNode { Name = GetUniqueNodeName("Untitled folder") };
 //            //RootFolder.Children.Add(newNode);
-//            //Service.Configuration.Save();
+//            //C.Save();
 //        }
 
 //        ImGui.SameLine();
@@ -99,14 +99,14 @@
 //                node.Language = Language.Lua;
 
 //            node.Contents = text;
-//            Service.Configuration.Save();
+//            C.Save();
 //        }
 //    }
 
 //    private void DisplayNodeTree()
 //    {
 //        DrawHeader();
-//        DisplayDirectory(Service.Configuration.RootFolderPath);
+//        DisplayDirectory(C.RootFolderPath);
 //        //DisplayNode(RootFolder);
 //    }
 
@@ -149,7 +149,7 @@
 //    }
 
 //    private INode GetNodeFromPath(string path)
-//        => Service.Configuration.GetAllNodes().ToList().FirstOrDefault(n => n.FilePath == path) ?? null!;
+//        => C.GetAllNodes().ToList().FirstOrDefault(n => n.FilePath == path) ?? null!;
 
 //    private void DisplayNode(INode node)
 //    {
@@ -214,7 +214,7 @@
 //                else
 //                    node.Rename(name);
 //                //node.Name = GetUniqueNodeName(name);
-//                //Service.Configuration.Save();
+//                //C.Save();
 //            }
 
 //            if (node is MacroNode macroNode)
@@ -228,7 +228,7 @@
 //                    File.Create(folderNode.FilePath + $"Untitled macro.txt");
 //                    //var newNode = new MacroNode { Name = GetUniqueNodeName("Untitled macro") };
 //                    //folderNode.Children.Add(newNode);
-//                    //Service.Configuration.Save();
+//                    //C.Save();
 //                }
 
 //                ImGui.SameLine();
@@ -237,7 +237,7 @@
 //                    Directory.CreateDirectory(folderNode.FilePath + $"Untitled folder");
 //                    //var newNode = new FolderNode { Name = GetUniqueNodeName("Untitled folder") };
 //                    //folderNode.Children.Add(newNode);
-//                    //Service.Configuration.Save();
+//                    //C.Save();
 //                }
 //            }
 
@@ -256,10 +256,10 @@
 //                        File.Delete(macro.FilePath);
 //                    if (node is FolderNode folder)
 //                        Directory.Delete(folder.FilePath, true);
-//                    //if (Service.Configuration.TryFindParent(node, out var parentNode))
+//                    //if (C.TryFindParent(node, out var parentNode))
 //                    //{
 //                    //    parentNode!.Children.Remove(node);
-//                    //    Service.Configuration.Save();
+//                    //    C.Save();
 //                    //}
 //                }
 
@@ -272,7 +272,7 @@
 //            ImGui.TextUnformatted($"Extension: {Path.GetExtension(node.FilePath)}");
 //            ImGui.TextUnformatted($"Full Path: {Path.GetFullPath(node.FilePath)}");
 //            ImGui.TextUnformatted($"Path Root: {Path.GetPathRoot(node.FilePath)}");
-//            ImGui.TextUnformatted($"Rel. Path: {Path.GetRelativePath(Service.Configuration.RootFolderPath, node.FilePath)}");
+//            ImGui.TextUnformatted($"Rel. Path: {Path.GetRelativePath(C.RootFolderPath, node.FilePath)}");
 //            ImGui.TextUnformatted($"Renamed:   {Path.Combine(Path.GetDirectoryName(node.FilePath), "untitled.txt")}");
 //        }
 //    }
@@ -392,7 +392,7 @@
 //        if (activeFile is null)
 //            return;
 
-//        activeMacroNode = Service.Configuration.GetAllNodes().FirstOrDefault(n => n is MacroNode m && m.FilePath == activeFile, null) as MacroNode
+//        activeMacroNode = C.GetAllNodes().FirstOrDefault(n => n is MacroNode m && m.FilePath == activeFile, null) as MacroNode
 //            ?? new MacroNode { Name = Path.GetFileName(activeFile), FilePath = activeFile, Language = Path.GetExtension(activeFile).FileExtensionToLanguage() };
 //        ImGui.TextUnformatted("Macro Editor");
 //        ImGui.TextUnformatted($"{activeMacroNode.FilePath.Replace(Svc.PluginInterface.ConfigDirectory.FullName, string.Empty)}");
@@ -448,7 +448,7 @@
 //            if (ImGuiX.IconButton(FontAwesomeIcon.Sync, sb.ToString()))
 //            {
 //                activeMacroNode.CraftingLoop ^= true;
-//                Service.Configuration.Save();
+//                C.Save();
 //            }
 
 //            if (craftLoopEnabled)
@@ -471,7 +471,7 @@
 //                        loops = v_max;
 
 //                    activeMacroNode.CraftLoopCount = loops;
-//                    Service.Configuration.Save();
+//                    C.Save();
 //                }
 
 //                ImGui.PopItemWidth();
@@ -490,11 +490,11 @@
 
 //            File.WriteAllText(activeMacroNode.FilePath, text);
 //            //activeMacroNode.Contents = text;
-//            //Service.Configuration.Save();
+//            //C.Save();
 //        }
 
 //        ImGui.SetNextItemWidth(-1);
-//        var useMono = !Service.Configuration.DisableMonospaced;
+//        var useMono = !C.DisableMonospaced;
 //        using var font = ImRaii.PushFont(UiBuilder.MonoFont, useMono);
 
 //        var contents = File.ReadAllText(activeMacroNode.FilePath); // FIX: if activefile is opened and deleted this will throw
@@ -505,18 +505,18 @@
 //    private string GetUniqueFileName(int count = 0)
 //    {
 //        var fileName = count == 0 ? $"Untitled macro.txt" : $"Untitled macro ({count}).txt";
-//        return File.Exists(Path.Combine(Service.Configuration.RootFolderPath, fileName)) ? GetUniqueFileName(count + 1) : fileName;
+//        return File.Exists(Path.Combine(C.RootFolderPath, fileName)) ? GetUniqueFileName(count + 1) : fileName;
 //    }
 
 //    private string GetUniqueFolderName(int count = 0)
 //    {
 //        var dirName = count == 0 ? $"Untitled folder" : $"Untitled Folder ({count})";
-//        return Directory.Exists(Path.Combine(Service.Configuration.RootFolderPath, dirName)) ? GetUniqueFolderName(count + 1) : dirName;
+//        return Directory.Exists(Path.Combine(C.RootFolderPath, dirName)) ? GetUniqueFolderName(count + 1) : dirName;
 //    }
 
 //    private string GetUniqueNodeName(string name)
 //    {
-//        var nodeNames = Service.Configuration.GetAllNodes()
+//        var nodeNames = C.GetAllNodes()
 //            .Select(node => node.Name)
 //            .ToList();
 
@@ -565,18 +565,18 @@
 //            var targetNode = node;
 //            if (!nullPtr && payload.IsDelivery() && draggedNode != null)
 //            {
-//                if (!Service.Configuration.TryFindParent(draggedNode, out var draggedNodeParent))
+//                if (!C.TryFindParent(draggedNode, out var draggedNodeParent))
 //                    throw new Exception($"Could not find parent of node \"{draggedNode.Name}\"");
 
 //                if (targetNode is FolderNode targetFolderNode)
 //                {
 //                    draggedNodeParent!.Children.Remove(draggedNode);
 //                    targetFolderNode.Children.Add(draggedNode);
-//                    Service.Configuration.Save();
+//                    C.Save();
 //                }
 //                else
 //                {
-//                    if (!Service.Configuration.TryFindParent(targetNode, out var targetNodeParent))
+//                    if (!C.TryFindParent(targetNode, out var targetNodeParent))
 //                        throw new Exception($"Could not find parent of node \"{targetNode.Name}\"");
 
 //                    var targetNodeIndex = targetNodeParent!.Children.IndexOf(targetNode);
@@ -591,7 +591,7 @@
 
 //                    draggedNodeParent!.Children.Remove(draggedNode);
 //                    targetNodeParent.Children.Insert(targetNodeIndex, draggedNode);
-//                    Service.Configuration.Save();
+//                    C.Save();
 //                }
 
 //                draggedNode = null;

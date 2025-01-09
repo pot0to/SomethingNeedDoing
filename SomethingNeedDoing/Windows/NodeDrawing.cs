@@ -25,7 +25,7 @@ internal class NodeDrawing
         {
             var newNode = new MacroNode { Name = GetUniqueNodeName("Untitled macro") };
             C.RootFolder.Children.Add(newNode);
-            Service.Configuration.Save();
+            C.Save();
         }
 
         ImGui.SameLine();
@@ -33,7 +33,7 @@ internal class NodeDrawing
         {
             var newNode = new FolderNode { Name = GetUniqueNodeName("Untitled folder") };
             C.RootFolder.Children.Add(newNode);
-            Service.Configuration.Save();
+            C.Save();
         }
 
         ImGui.SameLine();
@@ -47,7 +47,7 @@ internal class NodeDrawing
                 node.Language = Language.Lua;
 
             node.Contents = text;
-            Service.Configuration.Save();
+            C.Save();
         }
     }
 
@@ -106,7 +106,7 @@ internal class NodeDrawing
             if (ImGui.InputText($"##rename", ref name, 100, ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 node.Name = GetUniqueNodeName(name);
-                Service.Configuration.Save();
+                C.Save();
             }
 
             if (node is MacroNode macroNode)
@@ -119,7 +119,7 @@ internal class NodeDrawing
                 {
                     var newNode = new MacroNode { Name = GetUniqueNodeName("Untitled macro") };
                     folderNode.Children.Add(newNode);
-                    Service.Configuration.Save();
+                    C.Save();
                 }
 
                 ImGui.SameLine();
@@ -127,7 +127,7 @@ internal class NodeDrawing
                 {
                     var newNode = new FolderNode { Name = GetUniqueNodeName("Untitled folder") };
                     folderNode.Children.Add(newNode);
-                    Service.Configuration.Save();
+                    C.Save();
                 }
             }
 
@@ -140,10 +140,10 @@ internal class NodeDrawing
                 ImGui.SameLine();
                 if (ImGuiX.IconButton(FontAwesomeIcon.TrashAlt, "Delete"))
                 {
-                    if (Service.Configuration.TryFindParent(node, out var parentNode))
+                    if (C.TryFindParent(node, out var parentNode))
                     {
                         parentNode!.Children.Remove(node);
-                        Service.Configuration.Save();
+                        C.Save();
                     }
                 }
 
@@ -154,7 +154,7 @@ internal class NodeDrawing
 
     private string GetUniqueNodeName(string name)
     {
-        var nodeNames = Service.Configuration.GetAllNodes()
+        var nodeNames = C.GetAllNodes()
             .Select(node => node.Name)
             .ToList();
 
@@ -203,18 +203,18 @@ internal class NodeDrawing
             var targetNode = node;
             if (!nullPtr && payload.IsDelivery() && draggedNode != null)
             {
-                if (!Service.Configuration.TryFindParent(draggedNode, out var draggedNodeParent))
+                if (!C.TryFindParent(draggedNode, out var draggedNodeParent))
                     throw new Exception($"Could not find parent of node \"{draggedNode.Name}\"");
 
                 if (targetNode is FolderNode targetFolderNode)
                 {
                     draggedNodeParent!.Children.Remove(draggedNode);
                     targetFolderNode.Children.Add(draggedNode);
-                    Service.Configuration.Save();
+                    C.Save();
                 }
                 else
                 {
-                    if (!Service.Configuration.TryFindParent(targetNode, out var targetNodeParent))
+                    if (!C.TryFindParent(targetNode, out var targetNodeParent))
                         throw new Exception($"Could not find parent of node \"{targetNode.Name}\"");
 
                     var targetNodeIndex = targetNodeParent!.Children.IndexOf(targetNode);
@@ -229,7 +229,7 @@ internal class NodeDrawing
 
                     draggedNodeParent!.Children.Remove(draggedNode);
                     targetNodeParent.Children.Insert(targetNodeIndex, draggedNode);
-                    Service.Configuration.Save();
+                    C.Save();
                 }
 
                 draggedNode = null;

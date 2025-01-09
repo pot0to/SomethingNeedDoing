@@ -23,7 +23,7 @@ public class Internal
 
     public string? InternalGetMacroText(string name)
     {
-        return Service.Configuration
+        return C
             .GetAllNodes()
             .OfType<MacroNode>()
             .FirstOrDefault(node =>
@@ -34,8 +34,8 @@ public class Internal
             .Join('\n');
     }
 
-    public void SetSNDProperty(string key, string value) => Service.Configuration.SetProperty(key, value);
-    public object? GetSNDProperty(string key) => Service.Configuration.GetProperty(key);
+    public void SetSNDProperty(string key, string value) => C.SetProperty(key, value);
+    public object? GetSNDProperty(string key) => C.GetProperty(key);
     public bool IsPauseLoopSet() => Service.MacroManager.PauseAtLoop;
     public bool IsStopLoopSet() => Service.MacroManager.StopAtLoop;
     public string GetActiveMacroName() => Service.MacroManager.ActiveMacroName;

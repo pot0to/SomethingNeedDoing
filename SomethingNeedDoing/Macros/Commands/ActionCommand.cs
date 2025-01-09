@@ -68,7 +68,7 @@ internal class ActionCommand : MacroCommand
 
         if (IsCraftingAction(actionName))
         {
-            if (Service.Configuration.CraftSkip)
+            if (C.CraftSkip)
             {
                 if (CraftingState.Instance.IsNotCrafting())
                 {
@@ -83,7 +83,7 @@ internal class ActionCommand : MacroCommand
                 }
             }
 
-            if (Service.Configuration.QualitySkip && IsSkippableCraftingQualityAction(actionName) && CraftingState.Instance.HasMaxQuality())
+            if (C.QualitySkip && IsSkippableCraftingQualityAction(actionName) && CraftingState.Instance.HasMaxQuality())
             {
                 Svc.Log.Debug($"Max quality skip: {Text}");
                 return;
@@ -93,7 +93,7 @@ internal class ActionCommand : MacroCommand
 
             Service.ChatManager.SendMessage(Text);
 
-            if (Service.Configuration.SmartWait)
+            if (C.SmartWait)
             {
                 Svc.Log.Debug("Smart wait");
 
@@ -105,7 +105,7 @@ internal class ActionCommand : MacroCommand
                 else
                 {
                     // Wait for the data update
-                    if (!DataWaiter.WaitOne(SafeCraftMaxWait) && Service.Configuration.StopMacroIfActionTimeout)
+                    if (!DataWaiter.WaitOne(SafeCraftMaxWait) && C.StopMacroIfActionTimeout)
                         throw new MacroActionTimeoutError("Did not receive a timely response");
                 }
 
@@ -116,7 +116,7 @@ internal class ActionCommand : MacroCommand
             {
                 await PerformWait(token);
 
-                if (!unsafeMod.IsUnsafe && !DataWaiter.WaitOne(SafeCraftMaxWait) && Service.Configuration.StopMacroIfActionTimeout)
+                if (!unsafeMod.IsUnsafe && !DataWaiter.WaitOne(SafeCraftMaxWait) && C.StopMacroIfActionTimeout)
                     throw new MacroActionTimeoutError("Did not receive a timely response");
             }
         }

@@ -145,7 +145,7 @@ internal partial class MacroManager : IDisposable
         }
         catch (MacroActionTimeoutError ex)
         {
-            var maxRetries = Service.Configuration.MaxTimeoutRetries;
+            var maxRetries = C.MaxTimeoutRetries;
             var message = $"Failure while running {step} (step {macro.StepIndex + 1}): {ex.Message}";
             if (attempt < maxRetries)
             {
@@ -184,12 +184,12 @@ internal partial class MacroManager : IDisposable
 
     private void PlayErrorSound()
     {
-        if (!Service.Configuration.NoisyErrors)
+        if (!C.NoisyErrors)
             return;
 
-        var count = Service.Configuration.BeepCount;
-        var frequency = Service.Configuration.BeepFrequency;
-        var duration = Service.Configuration.BeepDuration;
+        var count = C.BeepCount;
+        var frequency = C.BeepFrequency;
+        var duration = C.BeepDuration;
 
         for (var i = 0; i < count; i++)
             Console.Beep(frequency, duration);

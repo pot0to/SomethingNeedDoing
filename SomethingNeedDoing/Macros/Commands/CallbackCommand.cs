@@ -97,7 +97,7 @@ internal class CallbackCommand : MacroCommand
                 Callback.Fire(addonArg, updateState, [.. valueArgs]);
             else
             {
-                if (Service.Configuration.StopMacroIfAddonNotFound)
+                if (C.StopMacroIfAddonNotFound)
                     throw new MacroCommandError($"Addon {addon} not found.");
             }
         }

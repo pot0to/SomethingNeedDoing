@@ -26,7 +26,7 @@ internal class LoopCommand : MacroCommand
         loopsRemaining = loopCount >= 0 ? loopCount : MaxLoops;
         startingLoops = loopsRemaining;
 
-        if (Service.Configuration.LoopTotal && loopsRemaining != 0 && loopsRemaining != MaxLoops)
+        if (C.LoopTotal && loopsRemaining != 0 && loopsRemaining != MaxLoops)
             loopsRemaining -= 1;
 
         echoMod = echo;
@@ -55,12 +55,12 @@ internal class LoopCommand : MacroCommand
 
         if (loopsRemaining == MaxLoops)
         {
-            if (echoMod.PerformEcho || Service.Configuration.LoopEcho)
+            if (echoMod.PerformEcho || C.LoopEcho)
                 Service.ChatManager.PrintMessage("Looping");
         }
         else
         {
-            if (echoMod.PerformEcho || Service.Configuration.LoopEcho)
+            if (echoMod.PerformEcho || C.LoopEcho)
             {
                 if (loopsRemaining == 0)
                     Service.ChatManager.PrintMessage("No loops remaining");

@@ -1,7 +1,6 @@
 ﻿using NLua;
 using SomethingNeedDoing.Grammar;
 using SomethingNeedDoing.Grammar.Commands;
-using SomethingNeedDoing.Macros;
 using SomethingNeedDoing.Macros.Exceptions;
 using SomethingNeedDoing.Macros.Lua;
 using System;
@@ -72,9 +71,9 @@ internal partial class ActiveMacro : IDisposable
         if (!craftLoop)
             return contents;
 
-        if (Service.Configuration.UseCraftLoopTemplate)
+        if (C.UseCraftLoopTemplate)
         {
-            var template = Service.Configuration.CraftLoopTemplate;
+            var template = C.CraftLoopTemplate;
 
             if (craftCount == 0)
                 return contents;
@@ -89,13 +88,13 @@ internal partial class ActiveMacro : IDisposable
                 .Replace("{{count}}", craftCount.ToString());
         }
 
-        var maxwait = Service.Configuration.CraftLoopMaxWait;
+        var maxwait = C.CraftLoopMaxWait;
         var maxwaitMod = maxwait > 0 ? $" <maxwait.{maxwait}>" : string.Empty;
 
-        var echo = Service.Configuration.CraftLoopEcho;
+        var echo = C.CraftLoopEcho;
         var echoMod = echo ? $" <echo>" : string.Empty;
 
-        var craftGateStep = Service.Configuration.CraftLoopFromRecipeNote
+        var craftGateStep = C.CraftLoopFromRecipeNote
             ? $"/craft {craftCount}{echoMod}"
             : $"/gate {craftCount - 1}{echoMod}";
 
@@ -110,7 +109,7 @@ internal partial class ActiveMacro : IDisposable
 
         var sb = new StringBuilder();
 
-        if (Service.Configuration.CraftLoopFromRecipeNote)
+        if (C.CraftLoopFromRecipeNote)
         {
             if (craftCount == -1)
             {
@@ -278,7 +277,7 @@ internal partial class ActiveMacro : IDisposable
         foreach (var p in typeof(Svc).GetProperties())
             lua[p.Name] = p.GetValue(typeof(Svc));
 
-        foreach (var path in Service.Configuration.LuaRequirePaths)
+        foreach (var path in C.LuaRequirePaths)
             lua.DoString($"table.insert(snd.require.paths, '{path}')");
 
         var results = lua.DoString(script);

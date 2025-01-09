@@ -49,10 +49,10 @@ internal class WaitAddonCommand : MacroCommand
 
         var (addonPtr, isVisible) = await LinearWait(AddonCheckInterval, maxWait, IsAddonVisible, token);
 
-        if (addonPtr == IntPtr.Zero && Service.Configuration.StopMacroIfAddonNotFound)
+        if (addonPtr == IntPtr.Zero && C.StopMacroIfAddonNotFound)
             throw new MacroCommandError("Addon not found");
 
-        if (!isVisible && Service.Configuration.StopMacroIfAddonNotVisible)
+        if (!isVisible && C.StopMacroIfAddonNotVisible)
             throw new MacroCommandError("Addon not visible");
 
         await PerformWait(token);

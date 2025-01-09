@@ -64,7 +64,7 @@ internal class GateCommand : MacroCommand
     {
         Svc.Log.Debug($"Executing: {Text}");
 
-        if (echoMod.PerformEcho || Service.Configuration.LoopEcho)
+        if (echoMod.PerformEcho || C.LoopEcho)
         {
             if (craftsRemaining == 0)
             {

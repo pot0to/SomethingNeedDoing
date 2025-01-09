@@ -58,7 +58,7 @@ internal class TargetCommand : MacroCommand
             .Skip(listIndex)
             .FirstOrDefault();
 
-        if (target == default && Service.Configuration.StopMacroIfTargetNotFound)
+        if (target == default && C.StopMacroIfTargetNotFound)
             throw new MacroCommandError("Could not find target");
         if (target != default)
             Svc.Targets.Target = target;

@@ -39,7 +39,7 @@ internal class TargetEnemyCommand : MacroCommand
         var target = Svc.Objects.OrderBy(DistanceToObject).FirstOrDefault(o => o.IsTargetable && o.IsHostile() && !o.IsDead);
         Svc.Log.Info("executing");
 
-        if (target == default && Service.Configuration.StopMacroIfTargetNotFound)
+        if (target == default && C.StopMacroIfTargetNotFound)
             throw new MacroCommandError("Could not find target");
 
         if (target != default)

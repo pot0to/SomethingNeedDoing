@@ -30,14 +30,14 @@ internal class ChatManager : IDisposable
     public void PrintMessage(string message)
         => Svc.Chat.Print(new XivChatEntry()
         {
-            Type = Service.Configuration.ChatType,
+            Type = C.ChatType,
             Message = $"[{P.Prefix}] {message}",
         });
 
     public void PrintColor(string message, UIColor color)
         => Svc.Chat.Print(new XivChatEntry()
         {
-            Type = Service.Configuration.ChatType,
+            Type = C.ChatType,
             Message = new SeString(
                 new UIForegroundPayload((ushort)color),
                 new TextPayload($"[{P.Prefix}] {message}"),
@@ -47,7 +47,7 @@ internal class ChatManager : IDisposable
     public void PrintError(string message)
         => Svc.Chat.Print(new XivChatEntry()
         {
-            Type = Service.Configuration.ErrorChatType,
+            Type = C.ErrorChatType,
             Message = $"[{P.Prefix}] {message}",
         });
 

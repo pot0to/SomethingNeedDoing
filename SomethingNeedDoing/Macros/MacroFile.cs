@@ -18,7 +18,7 @@ public class MacroFile
 
     [JsonIgnore] public required FileInfo File;
     [JsonIgnore] internal string Path => System.IO.Path.Combine(C.RootFolderPath, Name.Replace('/', System.IO.Path.DirectorySeparatorChar));
-    [JsonIgnore] internal string RelativePath => System.IO.Path.GetRelativePath(Service.Configuration.RootFolderPath, Path);
+    [JsonIgnore] internal string RelativePath => System.IO.Path.GetRelativePath(C.RootFolderPath, Path);
     [JsonIgnore] internal bool HasRelativePath => RelativePath.Contains(System.IO.Path.DirectorySeparatorChar);
     [JsonIgnore] internal string FileSystemRelativePath => RelativePath.Replace(System.IO.Path.DirectorySeparatorChar, '/').Replace(@"\\", "/");
     [JsonIgnore] internal bool Exists => System.IO.File.Exists(Path);
