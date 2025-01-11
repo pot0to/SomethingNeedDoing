@@ -1,22 +1,18 @@
 ﻿using Dalamud.Interface;
-using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using ECommons.ImGuiMethods;
 using ECommons.SimpleGui;
 using ImGuiNET;
 using SomethingNeedDoing.Interface;
-using SomethingNeedDoing.Macros;
 using SomethingNeedDoing.Misc;
 using System;
 using System.Numerics;
-using System.Text;
 
 namespace SomethingNeedDoing.Windows;
 public class MacrosUI : Window
 {
-    private readonly NodeDrawing NodesUI;
+    private static NodeDrawing NodesUI = null!;
     public MacrosUI() : base($"Something Need Doing {P.GetType().Assembly.GetName().Version}###SomethingNeedDoing")
     {
         Size = new Vector2(525, 600);
@@ -33,26 +29,31 @@ public class MacrosUI : Window
         NodesUI = new NodeDrawing();
     }
 
-    private static MacroFile? Selected => FS.Selector.Selected;
-
     public override bool DrawConditions() => !FS.Building;
 
     public override void Draw()
     {
-        using (var tabs = ImRaii.TabBar("MacrosSelector"))
-        {
-            using (var tab = ImRaii.TabItem("Native"))
-                if (tab)
-                    NodesUI.DisplayNodeTree();
-            using (var tab = ImRaii.TabItem("Disk"))
-                if (tab)
-                    FS.Selector.Draw(200f);
-        }
-        ImGui.SameLine();
-        using var group = ImRaii.Group();
-        DrawStateHeader();
-        DrawRunningMacro();
-        DrawSelected();
+        using var tabs = ImRaii.TabBar("MacrosSelector");
+        using (var tab = ImRaii.TabItem("Native"))
+            if (tab)
+            {
+                NodesUI.DisplayNodeTree();
+                ImGui.SameLine();
+                using var group = ImRaii.Group();
+                DrawStateHeader();
+                DrawRunningMacro();
+                NodesUI.DrawSelected();
+            }
+        using (var tab = ImRaii.TabItem("Disk"))
+            if (tab)
+            {
+                FS.Selector.Draw(200f);
+                ImGui.SameLine();
+                using var group = ImRaii.Group();
+                DrawStateHeader();
+                DrawRunningMacro();
+                FS.Selector.DrawSelected();
+            }
     }
 
     private static void DrawStateHeader()
@@ -152,112 +153,5 @@ public class MacrosUI : Window
         }
 
         ImGui.PopItemWidth();
-    }
-
-    public static void DrawSelected()
-    {
-        using var child = ImRaii.Child("##Panel", -Vector2.One, true);
-        if (!child || Selected == null) return;
-        ImGui.TextUnformatted("Macro Editor");
-
-        using var disabled = ImRaii.Disabled(Service.MacroManager.State == LoopState.Running);
-
-        if (ImGuiEx.IconButton(FontAwesomeIcon.Play, "Run"))
-            Selected.Run();
-
-        ImGui.SameLine();
-        var lang = Selected.Language;
-        if (ImGuiX.Enum("Language", ref lang))
-            Selected.ChangeExtension(lang);
-
-        if (Selected.Language == Language.Native)
-        {
-            var sb = new StringBuilder("Toggle CraftLoop");
-
-            if (Selected.CraftingLoop)
-            {
-                sb.AppendLine(" (0=disabled, -1=infinite)");
-                sb.AppendLine($"When enabled, your macro is modified as follows:");
-                sb.AppendLine(
-                    ActiveMacro.ModifyMacroForCraftLoop("[YourMacro]", true, Selected.CraftLoopCount)
-                    .Split(["\r\n", "\r", "\n"], StringSplitOptions.None)
-                    .Select(line => $"- {line}")
-                    .Aggregate(string.Empty, (s1, s2) => $"{s1}\n{s2}"));
-            }
-            using (var craftLoopEnabled = ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.HealerGreen, Selected.CraftingLoop)
-                .Push(ImGuiCol.ButtonHovered, ImGuiColors.HealerGreen, Selected.CraftingLoop)
-                .Push(ImGuiCol.ButtonActive, ImGuiColors.ParsedGreen, Selected.CraftingLoop))
-            {
-                ImGui.SameLine();
-                if (ImGuiX.IconButton(FontAwesomeIcon.Sync, sb.ToString()))
-                    Selected.CraftingLoop ^= true;
-            }
-
-            if (Selected.CraftingLoop)
-            {
-                ImGui.SameLine();
-                ImGui.SetNextItemWidth(50);
-
-                var v_min = -1;
-                var v_max = 999;
-                var loops = Selected.CraftLoopCount;
-                if (ImGui.InputInt("##CraftLoopCount", ref loops, 0) || MouseWheelInput(ref loops))
-                {
-                    if (loops < v_min)
-                        loops = v_min;
-
-                    if (loops > v_max)
-                        loops = v_max;
-
-                    Selected.CraftLoopCount = loops;
-                }
-            }
-        }
-
-        ImGui.SameLine();
-        using (var colour = ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.HealerGreen, Selected.UseInARPostProcess)
-            .Push(ImGuiCol.ButtonHovered, ImGuiColors.HealerGreen, Selected.UseInARPostProcess)
-            .Push(ImGuiCol.ButtonActive, ImGuiColors.ParsedGreen, Selected.UseInARPostProcess))
-            if (ImGuiX.IconButton(FontAwesomeIcon.Faucet, "use in ar post process"))
-                Selected.UseInARPostProcess ^= true;
-
-        ImGui.SameLine();
-        var buttonSize = ImGuiHelpers.GetButtonSize(FontAwesomeIcon.FileImport.ToIconString());
-        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - buttonSize.X - ImGui.GetStyle().WindowPadding.X);
-        if (ImGuiX.IconButton(FontAwesomeIcon.FileImport, "Import from clipboard"))
-        {
-            var text = Utils.ConvertClipboardToSafeString();
-
-            //if (Utils.IsLuaCode(text))
-            //    Selected.Language = Language.Lua;
-
-            Selected.Write(text);
-        }
-
-        ImGui.SetNextItemWidth(-1);
-        var useMono = !C.DisableMonospaced;
-        using var font = ImRaii.PushFont(UiBuilder.MonoFont, useMono);
-
-        if (Selected.Exists)
-        {
-            var contents = Selected.Contents;
-            if (ImGui.InputTextMultiline($"##{Selected.Name}-editor", ref contents, 1_000_000, new Vector2(-1, -1)))
-                Selected.Write(contents);
-        }
-    }
-
-    private static bool MouseWheelInput(ref int iv)
-    {
-        if (ImGui.IsItemHovered())
-        {
-            var mouseDelta = (int)ImGui.GetIO().MouseWheel;  // -1, 0, 1
-            if (mouseDelta != 0)
-            {
-                iv += mouseDelta;
-                return true;
-            }
-        }
-
-        return false;
     }
 }

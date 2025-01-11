@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SomethingNeedDoing.Macros;
-using SomethingNeedDoing.Macros.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -47,22 +46,7 @@ public class MacroNode : INode
         Language = file.Language;
     }
 
-    public void RunMacro()
-    {
-        try
-        {
-            Service.MacroManager.EnqueueMacro(this);
-        }
-        catch (MacroSyntaxError ex)
-        {
-            Service.ChatManager.PrintError($"{ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            Service.ChatManager.PrintError($"Unexpected error");
-            Svc.Log.Error(ex, "Unexpected error");
-        }
-    }
+    public void Run() => Service.MacroManager.EnqueueMacro(this);
 }
 
 public class FolderNode : INode

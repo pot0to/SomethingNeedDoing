@@ -19,11 +19,12 @@ public sealed class Plugin : IDalamudPlugin
     private const string Command = "/somethingneeddoing";
     internal string[] Aliases => ["/snd", "/pcraft"];
 
-    internal static Plugin P = null!;
+    internal static Plugin P { get; private set; } = null!;
     internal static Config C => P.Config;
     internal static MacroFileSystem FS => P._ottergui.MacroFileSystem;
+
     private readonly Config Config = null!;
-    //private readonly Config _legacyConf = null!;
+    private readonly Config _legacyConf = null!;
     private readonly OtterGuiHandler _ottergui = null!;
     private readonly AutoRetainerApi _autoRetainerApi = null!;
 
@@ -33,16 +34,17 @@ public sealed class Plugin : IDalamudPlugin
         pluginInterface.Create<Service>();
         ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions, Module.DalamudReflector);
 
-        //_legacyConf = Config.Load(Svc.PluginInterface.ConfigDirectory); // must be done before EzConfig migration
-        //if (_legacyConf != default)
-        //{
-        //    var migration = new V2();
-        //    migration.Migrate(ref _legacyConf);
-        //}
-
+        _legacyConf = Config.Load(Svc.PluginInterface.ConfigDirectory); // must be done before EzConfig migration
         EzConfig.DefaultSerializationFactory = new ConfigFactory();
         EzConfig.Migrate<Config>();
         Config = EzConfig.Init<Config>();
+        // hack, find out why EzConfig refuses to migrate the children
+        if (_legacyConf?.RootFolder.Children.Count > 0 && Config.RootFolder?.Children.Count == 0)
+        {
+            Svc.Log.Info("Manually migrating macros from old config to new config.");
+            Config.RootFolder = _legacyConf.RootFolder;
+            C.Save();
+        }
 
         Service.ChatManager = new ChatManager();
         Service.GameEventManager = new GameEventManager();
@@ -65,26 +67,25 @@ public sealed class Plugin : IDalamudPlugin
 
     private void CheckCharacterPostProcess()
     {
-        //if (C.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
-        //    Svc.Log.Info("Skipping post process macro for current character.");
-        //else
-        //    _autoRetainerApi.RequestCharacterPostprocess();
+        if (C.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
+            Svc.Log.Info("Skipping post process macro for current character.");
+        else
+            _autoRetainerApi.RequestCharacterPostprocess();
     }
 
     private bool RunningPostProcess;
     private void DoCharacterPostProcess()
     {
-        //var macro = C.Files.FirstOrDefault(x => x.UseInARPostProcess);
-        //if (macro != default)
-        //{
-        //    RunningPostProcess = true;
-        //    Service.MacroManager.EnqueueMacro(macro);
-        //}
-        //else
-        //{
-        //    RunningPostProcess = false;
-        //    _autoRetainerApi.FinishCharacterPostProcess();
-        //}
+        if (C.ARCharacterPostProcessMacro != null)
+        {
+            RunningPostProcess = true;
+            Service.MacroManager.EnqueueMacro(C.ARCharacterPostProcessMacro);
+        }
+        else
+        {
+            RunningPostProcess = false;
+            _autoRetainerApi.FinishCharacterPostProcess();
+        }
     }
 
     private void CheckForMacroCompletion()

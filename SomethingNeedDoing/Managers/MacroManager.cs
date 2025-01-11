@@ -204,16 +204,25 @@ internal sealed partial class MacroManager
             .Select(macro => (macro.Node.Name, macro.StepIndex + 1))
             .ToArray();
 
-    public void EnqueueMacro(MacroFile file)
-    {
-        macroStack.Push(new ActiveMacro(new MacroNode(file)));
-        pausedWaiter.Set();
-    }
+    public void EnqueueMacro(MacroFile file) => EnqueueMacroInternal(new MacroNode(file));
+    public void EnqueueMacro(MacroNode node) => EnqueueMacroInternal(node);
 
-    public void EnqueueMacro(MacroNode node)
+    private void EnqueueMacroInternal(MacroNode node)
     {
-        macroStack.Push(new ActiveMacro(node));
-        pausedWaiter.Set();
+        try
+        {
+            macroStack.Push(new ActiveMacro(node));
+            pausedWaiter.Set();
+        }
+        catch (MacroSyntaxError ex)
+        {
+            Service.ChatManager.PrintError($"{ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Service.ChatManager.PrintError($"Unexpected error");
+            Svc.Log.Error(ex, "Unexpected error");
+        }
     }
 
     public void Pause(bool pauseAtLoop = false)

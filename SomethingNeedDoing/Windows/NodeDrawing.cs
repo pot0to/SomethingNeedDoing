@@ -1,22 +1,112 @@
 ﻿using Dalamud.Interface;
+using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using ECommons.ImGuiMethods;
 using ImGuiNET;
 using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.Misc;
 using System;
+using System.Numerics;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace SomethingNeedDoing.Windows;
 internal class NodeDrawing
 {
     private readonly Regex incrementalName = new(@"(?<all> \((?<index>\d+)\))$", RegexOptions.Compiled);
+    private MacroNode? Selected = null;
     private INode? draggedNode = null;
-    private MacroNode? activeMacroNode = null;
 
     public void DisplayNodeTree()
     {
         DrawHeader();
         DisplayNode(C.RootFolder);
+    }
+
+    public void DrawSelected()
+    {
+        using var child = ImRaii.Child("##Panel", -Vector2.One, true);
+        if (!child || Selected == null) return;
+        ImGui.TextUnformatted("Macro Editor");
+
+        using var disabled = ImRaii.Disabled(Service.MacroManager.State == LoopState.Running);
+
+        if (ImGuiEx.IconButton(FontAwesomeIcon.Play, "Run"))
+            Selected.Run();
+
+        ImGui.SameLine();
+        var lang = Selected.Language;
+        if (ImGuiX.Enum("Language", ref lang))
+            Selected.Language = lang;
+
+        if (Selected.Language == Language.Native)
+        {
+            var sb = new StringBuilder("Toggle CraftLoop");
+
+            if (Selected.CraftingLoop)
+            {
+                sb.AppendLine(" (0=disabled, -1=infinite)");
+                sb.AppendLine($"When enabled, your macro is modified as follows:");
+                sb.AppendLine(
+                    ActiveMacro.ModifyMacroForCraftLoop("[YourMacro]", true, Selected.CraftLoopCount)
+                    .Split(["\r\n", "\r", "\n"], StringSplitOptions.None)
+                    .Select(line => $"- {line}")
+                    .Aggregate(string.Empty, (s1, s2) => $"{s1}\n{s2}"));
+            }
+            using (var craftLoopEnabled = ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.HealerGreen, Selected.CraftingLoop)
+                .Push(ImGuiCol.ButtonHovered, ImGuiColors.HealerGreen, Selected.CraftingLoop)
+                .Push(ImGuiCol.ButtonActive, ImGuiColors.ParsedGreen, Selected.CraftingLoop))
+            {
+                ImGui.SameLine();
+                if (ImGuiX.IconButton(FontAwesomeIcon.Sync, sb.ToString()))
+                    Selected.CraftingLoop ^= true;
+            }
+
+            if (Selected.CraftingLoop)
+            {
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(50);
+
+                var v_min = -1;
+                var v_max = 999;
+                var loops = Selected.CraftLoopCount;
+                if (ImGui.InputInt("##CraftLoopCount", ref loops, 0) || MouseWheelInput(ref loops))
+                {
+                    if (loops < v_min)
+                        loops = v_min;
+
+                    if (loops > v_max)
+                        loops = v_max;
+
+                    Selected.CraftLoopCount = loops;
+                }
+            }
+        }
+
+        ImGui.SameLine();
+        var buttonSize = ImGuiHelpers.GetButtonSize(FontAwesomeIcon.FileImport.ToIconString());
+        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - buttonSize.X - ImGui.GetStyle().WindowPadding.X);
+        if (ImGuiX.IconButton(FontAwesomeIcon.FileImport, "Import from clipboard"))
+        {
+            var text = Utils.ConvertClipboardToSafeString();
+
+            if (Utils.IsLuaCode(text))
+                Selected.Language = Language.Lua;
+
+            Selected.Contents = text;
+            C.Save();
+        }
+
+        ImGui.SetNextItemWidth(-1);
+        using var font = ImRaii.PushFont(UiBuilder.MonoFont, !C.DisableMonospaced);
+
+        var contents = Selected.Contents;
+        if (ImGui.InputTextMultiline($"##{Selected.Name}-editor", ref contents, 1_000_000, new Vector2(-1, -1)))
+        {
+            Selected.Contents = contents;
+            C.Save();
+        }
     }
 
     private void DrawHeader()
@@ -63,7 +153,7 @@ internal class NodeDrawing
     private void DisplayMacroNode(MacroNode node)
     {
         var flags = ImGuiTreeNodeFlags.Leaf;
-        if (node == activeMacroNode)
+        if (node == Selected)
             flags |= ImGuiTreeNodeFlags.Selected;
 
         ImGui.TreeNodeEx($"{node.Name}##tree", flags);
@@ -72,7 +162,7 @@ internal class NodeDrawing
         NodeDragDrop(node);
 
         if (ImGui.IsItemClicked())
-            activeMacroNode = node;
+            Selected = node;
 
         ImGui.TreePop();
     }
@@ -111,7 +201,7 @@ internal class NodeDrawing
 
             if (node is MacroNode macroNode)
                 if (ImGuiX.IconButton(FontAwesomeIcon.Play, "Run"))
-                    macroNode.RunMacro();
+                    macroNode.Run();
 
             if (node is FolderNode folderNode)
             {
@@ -154,9 +244,7 @@ internal class NodeDrawing
 
     private string GetUniqueNodeName(string name)
     {
-        var nodeNames = C.GetAllNodes()
-            .Select(node => node.Name)
-            .ToList();
+        var nodeNames = C.GetAllNodes().Select(node => node.Name).ToList();
 
         while (nodeNames.Contains(name))
         {
@@ -169,9 +257,7 @@ internal class NodeDrawing
                 name = $"{name} ({index})";
             }
             else
-            {
                 name = $"{name} (1)";
-            }
         }
 
         return name.Trim();
@@ -237,5 +323,20 @@ internal class NodeDrawing
 
             ImGui.EndDragDropTarget();
         }
+    }
+
+    private bool MouseWheelInput(ref int iv)
+    {
+        if (ImGui.IsItemHovered())
+        {
+            var mouseDelta = (int)ImGui.GetIO().MouseWheel;  // -1, 0, 1
+            if (mouseDelta != 0)
+            {
+                iv += mouseDelta;
+                return true;
+            }
+        }
+
+        return false;
     }
 }

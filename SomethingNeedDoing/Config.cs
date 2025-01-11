@@ -43,6 +43,7 @@ public class Config : IEzConfig
     public int BeepCount { get; set; } = 3;
     public bool UseSNDTargeting { get; set; } = true;
 
+    public MacroNode? ARCharacterPostProcessMacro { get; set; }
     public List<ulong> ARCharacterPostProcessExcludedCharacters { get; set; } = [];
 
     public bool StopMacroIfActionTimeout { get; set; } = true;
@@ -180,23 +181,5 @@ public class V2 : IMigration
             PluginLog.Information($"Writing macro {macroNode.Name} to file @ {file.FullName}");
             File.WriteAllText(file.FullName, macroNode.Contents);
         }
-    }
-}
-
-public static class ConfigExtensions
-{
-    public static object GetDefault(this object obj)
-    {
-        if (obj == null)
-        {
-            return "null object";
-        }
-        var prop = typeof(Config).GetProperty(nameof(obj));
-        if (prop == null)
-            return "null prop";
-        var val = prop.GetValue(new Config());
-        if (val == null)
-            return "null value";
-        return val;
     }
 }

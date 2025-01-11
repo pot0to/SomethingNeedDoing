@@ -60,16 +60,14 @@ internal static class ImGuiUtils
 
             if (showTooltip)
             {
-                using (var _ = ImRaii.Tooltip())
+                using var _ = ImRaii.Tooltip();
+                if (iconFont != null)
                 {
-                    if (iconFont != null)
-                    {
-                        using (var _ = ImRaii.PushFont(iconFont.Value))
-                            ImGui.TextUnformatted("\uF0C1");
-                        ImGui.SameLine();
-                    }
-                    ImGui.TextUnformatted(URL);
+                    using (var font = ImRaii.PushFont(iconFont.Value))
+                        ImGui.TextUnformatted("\uF0C1");
+                    ImGui.SameLine();
                 }
+                ImGui.TextUnformatted(URL);
             }
         }
         else

@@ -1,5 +1,6 @@
 ﻿using Dalamud.Interface;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.Configuration;
 using ECommons.ImGuiMethods;
@@ -9,6 +10,8 @@ using OtterGui;
 using OtterGui.Classes;
 using OtterGui.Filesystem;
 using OtterGui.FileSystem.Selector;
+using SomethingNeedDoing.Interface;
+using SomethingNeedDoing.Misc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -201,6 +204,39 @@ public class MacroFileSystem : FileSystem<MacroFile>
             AddButton(ImportButton, 10);
             AddButton(RebuildDirectoryButton, 20);
             AddButton(DeleteButton, 1000);
+        }
+
+        public void DrawSelected()
+        {
+            using var child = ImRaii.Child("##Panel", -Vector2.One, true);
+            if (!child || Selected == null) return;
+            ImGui.TextUnformatted("Macro Editor");
+
+            using var disabled = ImRaii.Disabled(Service.MacroManager.State == LoopState.Running);
+
+            if (ImGuiEx.IconButton(FontAwesomeIcon.Play, "Run"))
+                Selected.Run();
+
+            ImGui.SameLine();
+            var lang = Selected.Language;
+            if (ImGuiX.Enum("Language", ref lang))
+                Selected.ChangeExtension(lang);
+
+            ImGui.SameLine();
+            var buttonSize = ImGuiHelpers.GetButtonSize(FontAwesomeIcon.FileImport.ToIconString());
+            ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - buttonSize.X - ImGui.GetStyle().WindowPadding.X);
+            if (ImGuiX.IconButton(FontAwesomeIcon.FileImport, "Import from clipboard"))
+                Selected.Write(Utils.ConvertClipboardToSafeString());
+
+            ImGui.SetNextItemWidth(-1);
+            using var font = ImRaii.PushFont(UiBuilder.MonoFont, !C.DisableMonospaced);
+
+            if (Selected.Exists)
+            {
+                var contents = Selected.Contents;
+                if (ImGui.InputTextMultiline($"##{Selected.Name}-editor", ref contents, 1_000_000, new Vector2(-1, -1)))
+                    Selected.Write(contents);
+            }
         }
 
         protected override uint CollapsedFolderColor => ImGuiColors.DalamudViolet.ToUint();

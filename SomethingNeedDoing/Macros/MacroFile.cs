@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using SomethingNeedDoing.Macros.Exceptions;
 using SomethingNeedDoing.Misc;
 using System;
 using System.IO;
@@ -54,22 +53,7 @@ public class MacroFile
         System.IO.File.Move(src, dest);
     }
 
-    public void Run()
-    {
-        try
-        {
-            Service.MacroManager.EnqueueMacro(this);
-        }
-        catch (MacroSyntaxError ex)
-        {
-            Service.ChatManager.PrintError($"{ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            Service.ChatManager.PrintError($"Unexpected error");
-            Svc.Log.Error(ex, "Unexpected error");
-        }
-    }
+    public void Run() => Service.MacroManager.EnqueueMacro(this);
 }
 
 public static class MacroFileExtensions
