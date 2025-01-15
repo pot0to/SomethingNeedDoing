@@ -257,7 +257,7 @@ function WalkToGC()
         if GetZoneID() ~= 128 then
 			yield("/li The Aftcastle") 
 		    ZoneTransition()
-			while GetZoneID() ~= 128 then  --sometimes things get stuck in limsa this should solve it.
+			while GetZoneID() ~= 128 do  --sometimes things get stuck in limsa this should solve it.
 				visland_stop_moving()
 				yield("/li The Aftcastle") 
 				ZoneTransition()
