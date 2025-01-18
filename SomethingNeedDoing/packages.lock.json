@@ -48,11 +48,11 @@
       },
       "NLua": {
         "type": "Direct",
-        "requested": "[1.6.3, )",
-        "resolved": "1.6.3",
-        "contentHash": "IY0ufwFPJIbbS340Fn1IuwyJ+B7I/UvRX5vfNTRE9CseZXITnUGxCDiuDVMNM0N29wrMg15PyToRtBvypHaV9A==",
+        "requested": "[1.6.0, )",
+        "resolved": "1.6.0",
+        "contentHash": "0+p4yrJoAGfsMuoZpcdSpp8jNHrZs9nyGPoYLbHaxzqbPZIS8RhBO1fnQLYsECrTMiQVledR3bDkEfRybjBdpw==",
         "dependencies": {
-          "KeraLua": "1.3.4"
+          "KeraLua": "1.3.1"
         }
       },
       "YamlDotNet": {
@@ -68,8 +68,8 @@
       },
       "KeraLua": {
         "type": "Transitive",
-        "resolved": "1.3.4",
-        "contentHash": "FeCNVmVkx/xfg2Q9fIOn9G6bs1W8oaMxLn9CTC1mwnYGQozWJAPl0jfZNW5V+kVaOXWNmn8zBxCQA/7j6to5nw=="
+        "resolved": "1.3.1",
+        "contentHash": "DSZkJx3+9YmJONylrJY2xvjmBBT6oPZO1Iv+MBZh4Ta8KsYewKmpp5n+yW2J5vkIxkJ1yxiQuHE+iKw25Kw6GA=="
       },
       "Microsoft.CodeAnalysis.Analyzers": {
         "type": "Transitive",
@@ -138,8 +138,8 @@
     "net8.0-windows7.0/win-x64": {
       "KeraLua": {
         "type": "Transitive",
-        "resolved": "1.3.4",
-        "contentHash": "FeCNVmVkx/xfg2Q9fIOn9G6bs1W8oaMxLn9CTC1mwnYGQozWJAPl0jfZNW5V+kVaOXWNmn8zBxCQA/7j6to5nw=="
+        "resolved": "1.3.1",
+        "contentHash": "DSZkJx3+9YmJONylrJY2xvjmBBT6oPZO1Iv+MBZh4Ta8KsYewKmpp5n+yW2J5vkIxkJ1yxiQuHE+iKw25Kw6GA=="
       }
     }
   }
