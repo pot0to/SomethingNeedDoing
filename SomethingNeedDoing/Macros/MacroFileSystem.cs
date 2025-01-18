@@ -188,6 +188,7 @@ public class MacroFileSystem : FileSystem<MacroFile>
             foreach (var childFile in directoryInfo.GetFiles())
                 CreateLeaf(virtualDirectory, childFile.Name, new MacroFile { File = childFile });
         }
+        catch (UnauthorizedAccessException e) { e.LogWarning(); }
         catch (Exception e) { e.Log(); }
     }
 
