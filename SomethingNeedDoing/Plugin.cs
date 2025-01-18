@@ -1,7 +1,6 @@
 using AutoRetainerAPI;
 using Dalamud.Plugin;
 using ECommons;
-using ECommons.Configuration;
 using ECommons.EzEventManager;
 using ECommons.SimpleGui;
 using SomethingNeedDoing.Interface;
@@ -24,7 +23,6 @@ public sealed class Plugin : IDalamudPlugin
     internal static MacroFileSystem FS => P._ottergui.MacroFileSystem;
 
     private readonly Config Config = null!;
-    private readonly Config _legacyConf = null!;
     private readonly OtterGuiHandler _ottergui = null!;
     private readonly AutoRetainerApi _autoRetainerApi = null!;
 
@@ -34,17 +32,7 @@ public sealed class Plugin : IDalamudPlugin
         pluginInterface.Create<Service>();
         ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions, Module.DalamudReflector);
 
-        _legacyConf = Config.Load(Svc.PluginInterface.ConfigDirectory); // must be done before EzConfig migration
-        EzConfig.DefaultSerializationFactory = new ConfigFactory();
-        EzConfig.Migrate<Config>();
-        Config = EzConfig.Init<Config>();
-        // hack, find out why EzConfig refuses to migrate the children
-        if (_legacyConf?.RootFolder.Children.Count > 0 && Config.RootFolder?.Children.Count == 0)
-        {
-            Svc.Log.Info("Manually migrating macros from old config to new config.");
-            Config.RootFolder = _legacyConf.RootFolder;
-            C.Save();
-        }
+        Config = Config.Load(Svc.PluginInterface.ConfigDirectory);
 
         Service.ChatManager = new ChatManager();
         Service.GameEventManager = new GameEventManager();
@@ -147,51 +135,59 @@ public sealed class Plugin : IDalamudPlugin
             }
 
             var macroName = arguments.Trim('"');
-            if (FS.TryFindMacroByName(macroName, out var macroFile))
-            {
-                if (loopCount > 0)
-                {
-                }
-                else
-                {
-                    Service.ChatManager.PrintMessage($"Running macro \"{macroName}\"");
-                }
-                Service.MacroManager.EnqueueMacro(macroFile);
-                return;
-            }
-            else
+            var nodes = C.GetAllNodes()
+                .OfType<MacroNode>()
+                .Where(node => node.Name.Trim() == macroName)
+                .ToArray();
+
+            if (nodes.Length == 0)
             {
                 Service.ChatManager.PrintError("No macros match that name");
                 return;
             }
 
-            //if (loopCount > 0)
-            //{
-            //    // Clone a new node so the modification doesn't save.
-            //    node = new MacroNode()
-            //    {
-            //        Name = node.Name,
-            //        Contents = node.Contents,
-            //    };
+            if (nodes.Length > 1)
+            {
+                Service.ChatManager.PrintError("More than one macro matches that name");
+                return;
+            }
 
-            //    var lines = node.Contents.Split('\r', '\n');
-            //    for (var i = lines.Length - 1; i >= 0; i--)
-            //    {
-            //        var line = lines[i].Trim();
-            //        if (line.StartsWith("/loop"))
-            //        {
-            //            var parts = line.Split()
-            //                .Where(s => !string.IsNullOrEmpty(s))
-            //                .ToArray();
+            var node = nodes[0];
 
-            //            var echo = line.Contains("<echo>") ? "<echo>" : string.Empty;
-            //            lines[i] = $"/loop {loopCount} {echo}";
-            //            node.Contents = string.Join('\n', lines);
-            //            Service.ChatManager.PrintMessage($"Running macro \"{macroName}\" {loopCount} times");
-            //            break;
-            //        }
-            //    }
-            //}
+            if (loopCount > 0)
+            {
+                // Clone a new node so the modification doesn't save.
+                node = new MacroNode()
+                {
+                    Name = node.Name,
+                    Contents = node.Contents,
+                };
+
+                var lines = node.Contents.Split('\r', '\n');
+                for (var i = lines.Length - 1; i >= 0; i--)
+                {
+                    var line = lines[i].Trim();
+                    if (line.StartsWith("/loop"))
+                    {
+                        var parts = line.Split()
+                            .Where(s => !string.IsNullOrEmpty(s))
+                            .ToArray();
+
+                        var echo = line.Contains("<echo>") ? "<echo>" : string.Empty;
+                        lines[i] = $"/loop {loopCount} {echo}";
+                        node.Contents = string.Join('\n', lines);
+                        Service.ChatManager.PrintMessage($"Running macro \"{macroName}\" {loopCount} times");
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Service.ChatManager.PrintMessage($"Running macro \"{macroName}\"");
+            }
+
+            Service.MacroManager.EnqueueMacro(node);
+            return;
         }
         else if (arguments == "pause")
         {

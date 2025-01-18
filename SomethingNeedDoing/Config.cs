@@ -1,3 +1,4 @@
+using Dalamud.Configuration;
 using Dalamud.Game.Text;
 using ECommons.Configuration;
 using ECommons.Logging;
@@ -10,9 +11,9 @@ using YamlDotNet.Serialization;
 
 namespace SomethingNeedDoing;
 
-public class Config : IEzConfig
+public class Config : IPluginConfiguration
 {
-    public int Version { get; set; } = 2;
+    public int Version { get; set; } = 1;
     public bool LockWindow { get; set; } = false;
     public string DefaultFileName { get; set; } = "UntitledMacro";
     public string DefaultFileExtension { get; set; } = ".txt";
@@ -80,7 +81,7 @@ public class Config : IEzConfig
         return conf ?? new Config();
     }
 
-    internal void Save() => EzConfig.Save();
+    internal void Save() => Svc.PluginInterface.SavePluginConfig(this);
 
     internal IEnumerable<INode> GetAllNodes() => new INode[] { RootFolder }.Concat(GetAllNodes(RootFolder.Children));
 
