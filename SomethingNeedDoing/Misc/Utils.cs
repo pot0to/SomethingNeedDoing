@@ -39,6 +39,9 @@ internal class Utils
         return text;
     }
 
+    public static bool IsMacroNative(string code)
+        => code.Split('\n').All(line => line.StartsWith('/'));
+
     public static bool IsLuaCode(string code)
     {
         string[] luaPatterns = [
@@ -52,7 +55,8 @@ internal class Utils
             @"\buntil\b",
             @"\bif\b",
             @"\belseif\b",
-            @"\belse\b"
+            @"\belse\b",
+            @"\w+\(.*\)"
         ];
 
         foreach (var pattern in luaPatterns)

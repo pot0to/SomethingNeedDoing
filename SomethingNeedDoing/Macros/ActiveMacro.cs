@@ -18,18 +18,6 @@ internal partial class ActiveMacro : IDisposable
     private Lua? lua;
     private LuaFunction? luaGenerator;
 
-    //public ActiveMacro(MacroFile file)
-    //{
-    //    File = file;
-    //    if (file.Language == Language.Lua)
-    //    {
-    //        Steps = [];
-    //        return;
-    //    }
-    //    var contents = ModifyMacroForCraftLoop(file.Contents, file.CraftingLoop, file.CraftLoopCount);
-    //    Steps = MacroParser.Parse(contents).ToList();
-    //}
-
     public ActiveMacro(MacroNode node)
     {
         Node = node;
@@ -42,12 +30,10 @@ internal partial class ActiveMacro : IDisposable
         Steps = MacroParser.Parse(contents).ToList();
     }
 
-    public MacroNode Node { get; private set; }
-
     /// <summary>
-    /// Gets the underlying file.
+    /// Gets the underlying node.
     /// </summary>
-    //public MacroFile File { get; private set; }
+    public MacroNode Node { get; private set; }
 
     /// <summary>
     /// Gets the command steps.

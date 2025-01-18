@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SomethingNeedDoing.Macros;
+using SomethingNeedDoing.Misc;
 using System;
 using System.Collections.Generic;
 
@@ -14,15 +15,14 @@ public interface INode
 public enum Language
 {
     Native,
+    CSharp,
     Lua,
-    //CSharp,
     //Python,
 }
 
 public class MacroNode : INode
 {
     public string Name { get; set; } = string.Empty;
-    public string FilePath { get; set; } = string.Empty;
     public string Gist { get; set; } = string.Empty;
     public string Contents { get; set; } = string.Empty;
 
@@ -41,7 +41,6 @@ public class MacroNode : INode
     public MacroNode(MacroFile file)
     {
         Name = file.Name;
-        FilePath = file.Path;
         Contents = file.Contents;
         Language = file.Language;
     }

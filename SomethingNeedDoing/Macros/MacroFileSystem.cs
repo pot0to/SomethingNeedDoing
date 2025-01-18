@@ -218,8 +218,9 @@ public class MacroFileSystem : FileSystem<MacroFile>
                 Selected.Run();
 
             ImGui.SameLine();
+            ImGui.SetNextItemWidth(150);
             var lang = Selected.Language;
-            if (ImGuiX.Enum("Language", ref lang))
+            if (ImGuiEx.EnumCombo("Language", ref lang))
                 Selected.ChangeExtension(lang);
 
             ImGui.SameLine();

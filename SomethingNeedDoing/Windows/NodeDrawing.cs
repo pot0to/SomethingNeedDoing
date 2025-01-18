@@ -36,10 +36,13 @@ internal class NodeDrawing
             Selected.Run();
 
         ImGui.SameLine();
+        ImGui.SetNextItemWidth(150);
         var lang = Selected.Language;
-        if (ImGuiX.Enum("Language", ref lang))
+        if (ImGuiEx.EnumCombo("Language", ref lang, l => l != Language.CSharp))
+        {
             Selected.Language = lang;
-
+            C.Save();
+        }
         if (Selected.Language == Language.Native)
         {
             var sb = new StringBuilder("Toggle CraftLoop");
@@ -60,7 +63,10 @@ internal class NodeDrawing
             {
                 ImGui.SameLine();
                 if (ImGuiX.IconButton(FontAwesomeIcon.Sync, sb.ToString()))
+                {
                     Selected.CraftingLoop ^= true;
+                    C.Save();
+                }
             }
 
             if (Selected.CraftingLoop)
@@ -80,6 +86,7 @@ internal class NodeDrawing
                         loops = v_max;
 
                     Selected.CraftLoopCount = loops;
+                    C.Save();
                 }
             }
         }
@@ -133,8 +140,8 @@ internal class NodeDrawing
             var node = new MacroNode { Name = GetUniqueNodeName("Untitled macro") };
             C.RootFolder.Children.Add(node);
 
-            if (Utils.IsLuaCode(text))
-                node.Language = Language.Lua;
+            //if (Utils.IsLuaCode(text))
+            //    node.Language = Language.Lua;
 
             node.Contents = text;
             C.Save();
