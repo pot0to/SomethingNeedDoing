@@ -37,7 +37,7 @@ public sealed class Plugin : IDalamudPlugin
         Service.ChatManager = new ChatManager();
         Service.GameEventManager = new GameEventManager();
         Service.MacroManager = new MacroManager();
-        _ottergui = new();
+        //_ottergui = new();
         _autoRetainerApi = new();
 
         EzConfigGui.Init(new Windows.MacrosUI().Draw);

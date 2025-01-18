@@ -33,10 +33,10 @@ public class MacrosUI : Window
 
     public override void Draw()
     {
-        using var tabs = ImRaii.TabBar("MacrosSelector");
-        using (var tab = ImRaii.TabItem("Native"))
-            if (tab)
-            {
+        //using var tabs = ImRaii.TabBar("MacrosSelector");
+        //using (var tab = ImRaii.TabItem("Native"))
+        //    if (tab)
+        //    {
                 using var table = ImRaii.Table("Native", 2, ImGuiTableFlags.SizingStretchProp);
                 if (!table) return;
                 ImGui.TableNextColumn();
@@ -45,17 +45,17 @@ public class MacrosUI : Window
                 DrawStateHeader();
                 DrawRunningMacro();
                 NodesUI.DrawSelected();
-            }
-        using (var tab = ImRaii.TabItem("Disk"))
-            if (tab)
-            {
-                FS.Selector.Draw(200f);
-                ImGui.SameLine();
-                using var group = ImRaii.Group();
-                DrawStateHeader();
-                DrawRunningMacro();
-                FS.Selector.DrawSelected();
-            }
+        //    }
+        //using (var tab = ImRaii.TabItem("Disk"))
+        //    if (tab)
+        //    {
+        //        FS.Selector.Draw(200f);
+        //        ImGui.SameLine();
+        //        using var group = ImRaii.Group();
+        //        DrawStateHeader();
+        //        DrawRunningMacro();
+        //        FS.Selector.DrawSelected();
+        //    }
     }
 
     private static void DrawStateHeader()
