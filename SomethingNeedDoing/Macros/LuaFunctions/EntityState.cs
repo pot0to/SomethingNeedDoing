@@ -1,4 +1,5 @@
 ﻿using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using ECommons.GameFunctions;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
@@ -30,6 +31,8 @@ internal class EntityState
 
     #region Target
     public string GetTargetName() => Svc.Targets.Target?.Name.TextValue ?? "";
+    public unsafe uint GetTargetWorldId() => (Svc.Targets.Target as IPlayerCharacter)?.CurrentWorld.Value.RowId ?? 0;
+    public unsafe string GetTargetWorldName() => (Svc.Targets.Target as IPlayerCharacter)?.CurrentWorld.Value.Name.ExtractText() ?? "";
     public float GetTargetRawXPos() => Svc.Targets.Target?.Position.X ?? 0;
     public float GetTargetRawYPos() => Svc.Targets.Target?.Position.Y ?? 0;
     public float GetTargetRawZPos() => Svc.Targets.Target?.Position.Z ?? 0;
@@ -129,6 +132,8 @@ internal class EntityState
 
     #region Party Members
     public string GetPartyMemberName(int index) => Svc.Party[index]?.Name.TextValue ?? "";
+    public unsafe uint GetPartyMemberWorldId(int index) => Svc.Party[index]?.World.RowId ?? 0;
+    public unsafe string GetPartyMemberWorldName(int index) => Svc.Party[index]?.World.Value.Name.ExtractText() ?? "";
     public float GetPartyMemberRawXPos(int index) => Svc.Party[index]?.Position.X ?? 0;
     public float GetPartyMemberRawYPos(int index) => Svc.Party[index]?.Position.Y ?? 0;
     public float GetPartyMemberRawZPos(int index) => Svc.Party[index]?.Position.Z ?? 0;
