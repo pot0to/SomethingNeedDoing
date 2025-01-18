@@ -143,44 +143,44 @@ public class Config : IPluginConfiguration
         ?? Directory.CreateDirectory(Path.Combine(Svc.PluginInterface.GetPluginConfigDirectory(), RootFolder.Name)).FullName;
 }
 
-public class ConfigFactory : ISerializationFactory
-{
-    public string DefaultConfigFileName => $"{nameof(SomethingNeedDoing)}.yaml";
-    public T Deserialize<T>(string inputData) => new DeserializerBuilder().IgnoreUnmatchedProperties().Build().Deserialize<T>(inputData);
-    public string Serialize(object s, bool prettyPrint) => new SerializerBuilder().Build().Serialize(s);
-}
+//public class ConfigFactory : ISerializationFactory
+//{
+//    public string DefaultConfigFileName => $"{nameof(SomethingNeedDoing)}.yaml";
+//    public T Deserialize<T>(string inputData) => new DeserializerBuilder().IgnoreUnmatchedProperties().Build().Deserialize<T>(inputData);
+//    public string Serialize(object s, bool prettyPrint) => new SerializerBuilder().Build().Serialize(s);
+//}
 
-public interface IMigration
-{
-    int Version { get; }
-    void Migrate(ref Config config);
-}
+//public interface IMigration
+//{
+//    int Version { get; }
+//    void Migrate(ref Config config);
+//}
 
-public class V2 : IMigration
-{
-    public int Version => 2;
-    public void Migrate(ref Config config)
-    {
-        PluginLog.Information($"Starting {nameof(IMigration)}{nameof(V2)}");
-        config.RootFolder.Name = "Macros";
-        WriteNode(config.RootFolder);
-    }
+//public class V2 : IMigration
+//{
+//    public int Version => 2;
+//    public void Migrate(ref Config config)
+//    {
+//        PluginLog.Information($"Starting {nameof(IMigration)}{nameof(V2)}");
+//        config.RootFolder.Name = "Macros";
+//        WriteNode(config.RootFolder);
+//    }
 
-    private void WriteNode(INode node, string? path = null)
-    {
-        if (node is FolderNode folderNode)
-        {
-            path = Path.Combine(path ?? Svc.PluginInterface.GetPluginConfigDirectory(), folderNode.Name);
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            foreach (var child in folderNode.Children)
-                WriteNode(child, path);
-        }
-        else if (node is MacroNode macroNode)
-        {
-            var file = new FileInfo(Path.Combine(path ?? Svc.PluginInterface.GetPluginConfigDirectory(), macroNode.Name + macroNode.Language.LanguageToFileExtension()));
-            PluginLog.Information($"Writing macro {macroNode.Name} to file @ {file.FullName}");
-            File.WriteAllText(file.FullName, macroNode.Contents);
-        }
-    }
-}
+//    private void WriteNode(INode node, string? path = null)
+//    {
+//        if (node is FolderNode folderNode)
+//        {
+//            path = Path.Combine(path ?? Svc.PluginInterface.GetPluginConfigDirectory(), folderNode.Name);
+//            if (!Directory.Exists(path))
+//                Directory.CreateDirectory(path);
+//            foreach (var child in folderNode.Children)
+//                WriteNode(child, path);
+//        }
+//        else if (node is MacroNode macroNode)
+//        {
+//            var file = new FileInfo(Path.Combine(path ?? Svc.PluginInterface.GetPluginConfigDirectory(), macroNode.Name + macroNode.Language.LanguageToFileExtension()));
+//            PluginLog.Information($"Writing macro {macroNode.Name} to file @ {file.FullName}");
+//            File.WriteAllText(file.FullName, macroNode.Contents);
+//        }
+//    }
+//}
