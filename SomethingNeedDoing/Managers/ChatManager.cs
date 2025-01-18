@@ -2,7 +2,6 @@ using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Plugin.Services;
-using Dalamud.Utility.Signatures;
 using ECommons.Automation;
 using ECommons.ChatMethods;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -15,12 +14,8 @@ internal class ChatManager : IDisposable
 {
     private readonly Channel<string> chatBoxMessages = Channel.CreateUnbounded<string>();
 
-    [Signature("48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 48 8B F2 48 8B F9 45 84 C9")]
-    private readonly ProcessChatBoxDelegate processChatBox = null!;
-
     public ChatManager()
     {
-        Svc.Hook.InitializeFromAttributes(this);
         Svc.Framework.Update += FrameworkUpdate;
     }
 
@@ -35,27 +30,26 @@ internal class ChatManager : IDisposable
     public void PrintMessage(string message)
         => Svc.Chat.Print(new XivChatEntry()
         {
-            Type = Service.Configuration.ChatType,
-            Message = $"[{SomethingNeedDoingPlugin.Prefix}] {message}",
+            Type = C.ChatType,
+            Message = $"[{P.Prefix}] {message}",
         });
 
     public void PrintColor(string message, UIColor color)
         => Svc.Chat.Print(new XivChatEntry()
         {
-            Type = Service.Configuration.ChatType,
+            Type = C.ChatType,
             Message = new SeString(
                 new UIForegroundPayload((ushort)color),
-                new TextPayload($"[{SomethingNeedDoingPlugin.Prefix}] {message}"),
+                new TextPayload($"[{P.Prefix}] {message}"),
                 UIForegroundPayload.UIForegroundOff),
         });
 
     public void PrintError(string message)
         => Svc.Chat.Print(new XivChatEntry()
         {
-            Type = Service.Configuration.ErrorChatType,
-            Message = $"[{SomethingNeedDoingPlugin.Prefix}] {message}",
+            Type = C.ErrorChatType,
+            Message = $"[{P.Prefix}] {message}",
         });
-
 
     public async void SendMessage(string message) => await chatBoxMessages.Writer.WriteAsync(message);
 

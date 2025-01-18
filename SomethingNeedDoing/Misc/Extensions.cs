@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace SomethingNeedDoing.Misc;
 
@@ -21,5 +20,21 @@ internal static class Extensions
 
     public static int ToUnixTimestamp(this DateTime value) => (int)Math.Truncate(value.ToUniversalTime().Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
 
-    public static uint ToUintColour(this Vector4 color) => (uint)((int)(color.W * 255) << 24 | (int)(color.X * 255) << 16 | (int)(color.Y * 255) << 8 | (int)(color.Z * 255));
+    public static Language FileExtensionToLanguage(this string extension) => extension switch
+    {
+        ".txt" => Language.Native,
+        ".lua" => Language.Lua,
+        //".cs" => Language.CSharp,
+        //".py" => Language.Python,
+        _ => Language.Native,
+    };
+
+    public static string LanguageToFileExtension(this Language language) => language switch
+    {
+        Language.Native => ".txt",
+        Language.Lua => ".lua",
+        //Language.CSharp => ".cs",
+        //Language.Python => ".py",
+        _ => ".txt",
+    };
 }

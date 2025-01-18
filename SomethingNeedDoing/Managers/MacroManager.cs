@@ -1,6 +1,7 @@
 using NLua.Exceptions;
-using SomethingNeedDoing.Exceptions;
 using SomethingNeedDoing.Grammar.Commands;
+using SomethingNeedDoing.Macros;
+using SomethingNeedDoing.Macros.Exceptions;
 using SomethingNeedDoing.Misc;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace SomethingNeedDoing.Managers;
 internal partial class MacroManager : IDisposable
 {
     private readonly Stack<ActiveMacro> macroStack = new();
-    private CancellationTokenSource eventLoopTokenSource = new();
+    private readonly CancellationTokenSource eventLoopTokenSource = new();
     private readonly ManualResetEvent loggedInWaiter = new(false);
     private readonly ManualResetEvent pausedWaiter = new(true);
 
@@ -144,7 +145,7 @@ internal partial class MacroManager : IDisposable
         }
         catch (MacroActionTimeoutError ex)
         {
-            var maxRetries = Service.Configuration.MaxTimeoutRetries;
+            var maxRetries = C.MaxTimeoutRetries;
             var message = $"Failure while running {step} (step {macro.StepIndex + 1}): {ex.Message}";
             if (attempt < maxRetries)
             {
@@ -183,12 +184,12 @@ internal partial class MacroManager : IDisposable
 
     private void PlayErrorSound()
     {
-        if (!Service.Configuration.NoisyErrors)
+        if (!C.NoisyErrors)
             return;
 
-        var count = Service.Configuration.BeepCount;
-        var frequency = Service.Configuration.BeepFrequency;
-        var duration = Service.Configuration.BeepDuration;
+        var count = C.BeepCount;
+        var frequency = C.BeepFrequency;
+        var duration = C.BeepDuration;
 
         for (var i = 0; i < count; i++)
             Console.Beep(frequency, duration);
@@ -203,10 +204,25 @@ internal sealed partial class MacroManager
             .Select(macro => (macro.Node.Name, macro.StepIndex + 1))
             .ToArray();
 
-    public void EnqueueMacro(MacroNode node)
+    public void EnqueueMacro(MacroFile file) => EnqueueMacroInternal(new MacroNode(file));
+    public void EnqueueMacro(MacroNode node) => EnqueueMacroInternal(node);
+
+    private void EnqueueMacroInternal(MacroNode node)
     {
-        macroStack.Push(new ActiveMacro(node));
-        pausedWaiter.Set();
+        try
+        {
+            macroStack.Push(new ActiveMacro(node));
+            pausedWaiter.Set();
+        }
+        catch (MacroSyntaxError ex)
+        {
+            Service.ChatManager.PrintError($"{ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Service.ChatManager.PrintError($"Unexpected error");
+            Svc.Log.Error(ex, "Unexpected error");
+        }
     }
 
     public void Pause(bool pauseAtLoop = false)

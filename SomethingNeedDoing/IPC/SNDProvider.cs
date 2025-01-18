@@ -13,8 +13,7 @@ public class SNDProvider
     [EzIPC]
     public void RunByName(string macroName)
     {
-        var node = Service.Configuration.GetAllNodes().OfType<MacroNode>().FirstOrDefault(macro => macro?.Name == macroName, null);
-        if (node != null)
-            Service.MacroManager.EnqueueMacro(node);
+        if (FS.TryFindMacroByName(macroName, out var macro))
+            Service.MacroManager.EnqueueMacro(macro);
     }
 }
