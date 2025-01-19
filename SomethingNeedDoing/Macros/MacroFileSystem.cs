@@ -34,7 +34,6 @@ public class MacroFileSystem : FileSystem<MacroFile>
                 Load(info, C.Files, ConvertToIdentifier, ConvertToName);
             Selector = new(this, h);
             BuildFileSystem();
-
             Changed += OnChange;
             EzConfig.OnSave += Save;
         }

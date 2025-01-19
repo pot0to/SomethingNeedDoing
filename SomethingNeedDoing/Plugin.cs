@@ -1,12 +1,11 @@
-using AutoRetainerAPI;
 using Dalamud.Plugin;
 using ECommons;
 using ECommons.EzEventManager;
 using ECommons.SimpleGui;
+using ECommons.Singletons;
 using SomethingNeedDoing.Interface;
 using SomethingNeedDoing.Macros;
 using SomethingNeedDoing.Macros.Lua;
-using SomethingNeedDoing.Managers;
 using SomethingNeedDoing.Misc;
 
 namespace SomethingNeedDoing;
@@ -20,11 +19,9 @@ public sealed class Plugin : IDalamudPlugin
 
     internal static Plugin P { get; private set; } = null!;
     internal static Config C => P.Config;
-    internal static MacroFileSystem FS => P._ottergui.MacroFileSystem;
+    internal static MacroFileSystem FS => Service.OtterGui.MacroFileSystem;
 
     private readonly Config Config = null!;
-    private readonly OtterGuiHandler _ottergui = null!;
-    private readonly AutoRetainerApi _autoRetainerApi = null!;
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -34,11 +31,7 @@ public sealed class Plugin : IDalamudPlugin
 
         Config = Config.Load(Svc.PluginInterface.ConfigDirectory);
 
-        Service.ChatManager = new ChatManager();
-        Service.GameEventManager = new GameEventManager();
-        Service.MacroManager = new MacroManager();
-        _ottergui = new();
-        _autoRetainerApi = new();
+        SingletonServiceManager.Initialize(typeof(Service));
 
         EzConfigGui.Init(new Windows.MacrosUI().Draw);
         EzConfigGui.WindowSystem.AddWindow(new HelpUI());
@@ -48,8 +41,8 @@ public sealed class Plugin : IDalamudPlugin
         EzCmd.Add(Command, OnChatCommand, "Open a window to edit various settings.");
         Aliases.ToList().ForEach(a => EzCmd.Add(a, OnChatCommand, $"{Command} Alias"));
 
-        _autoRetainerApi.OnCharacterPostprocessStep += CheckCharacterPostProcess;
-        _autoRetainerApi.OnCharacterReadyToPostProcess += DoCharacterPostProcess;
+        Service.AutoRetainerApi.OnCharacterPostprocessStep += CheckCharacterPostProcess;
+        Service.AutoRetainerApi.OnCharacterReadyToPostProcess += DoCharacterPostProcess;
         _ = new EzFrameworkUpdate(CheckForMacroCompletion);
     }
 
@@ -58,7 +51,7 @@ public sealed class Plugin : IDalamudPlugin
         if (C.ARCharacterPostProcessExcludedCharacters.Any(x => x == Svc.ClientState.LocalContentId))
             Svc.Log.Info("Skipping post process macro for current character.");
         else
-            _autoRetainerApi.RequestCharacterPostprocess();
+            Service.AutoRetainerApi.RequestCharacterPostprocess();
     }
 
     private bool RunningPostProcess;
@@ -72,7 +65,7 @@ public sealed class Plugin : IDalamudPlugin
         else
         {
             RunningPostProcess = false;
-            _autoRetainerApi.FinishCharacterPostProcess();
+            Service.AutoRetainerApi.FinishCharacterPostProcess();
         }
     }
 
@@ -82,7 +75,7 @@ public sealed class Plugin : IDalamudPlugin
         if (Service.MacroManager.State != LoopState.Running)
         {
             RunningPostProcess = false;
-            _autoRetainerApi.FinishCharacterPostProcess();
+            Service.AutoRetainerApi.FinishCharacterPostProcess();
         }
     }
 
@@ -90,13 +83,10 @@ public sealed class Plugin : IDalamudPlugin
     {
         FS.Dispose();
 
-        _autoRetainerApi.OnCharacterPostprocessStep -= CheckCharacterPostProcess;
-        _autoRetainerApi.OnCharacterReadyToPostProcess -= DoCharacterPostProcess;
+        Service.AutoRetainerApi.OnCharacterPostprocessStep -= CheckCharacterPostProcess;
+        Service.AutoRetainerApi.OnCharacterReadyToPostProcess -= DoCharacterPostProcess;
 
         Svc.PluginInterface.UiBuilder.OpenMainUi -= EzConfigGui.Window.Toggle;
-        Service.MacroManager?.Dispose();
-        Service.GameEventManager?.Dispose();
-        Service.ChatManager?.Dispose();
         Ipc.Instance?.Dispose();
         ECommonsMain.Dispose();
     }

@@ -12,7 +12,8 @@ public sealed class OtterGuiHandler : IDisposable
         try
         {
             Logger = new();
-            MacroFileSystem = new(this);
+            if (C.UseMacroFileSystem)
+                CreateMacroFileSystem();
         }
         catch (Exception ex)
         {
@@ -20,5 +21,6 @@ public sealed class OtterGuiHandler : IDisposable
         }
     }
 
+    public void CreateMacroFileSystem() => MacroFileSystem = new(this);
     public void Dispose() => Safe(() => MacroFileSystem?.Save());
 }

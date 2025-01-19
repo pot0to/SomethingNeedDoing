@@ -69,6 +69,8 @@ public class Config : IPluginConfiguration
     /// </summary>
     public string[] LuaRequirePaths { get; set; } = [];
 
+    public bool UseMacroFileSystem { get; set; } = false;
+
     internal static Config Load(DirectoryInfo configDirectory)
     {
         var pluginConfigPath = new FileInfo(Path.Combine(configDirectory.Parent!.FullName, $"SomethingNeedDoing.json"));
