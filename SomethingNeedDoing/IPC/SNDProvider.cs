@@ -11,9 +11,5 @@ public class SNDProvider
     [EzIPC] public void Stop() => Service.MacroManager.Stop();
 
     [EzIPC]
-    public void RunByName(string macroName)
-    {
-        if (FS.TryFindMacroByName(macroName, out var macro))
-            Service.MacroManager.EnqueueMacro(macro);
-    }
+    public void RunByName(string macroName) => C.GetAllNodes().OfType<MacroNode>().FirstOrDefault(macro => macro?.Name == macroName, null)?.Run();
 }

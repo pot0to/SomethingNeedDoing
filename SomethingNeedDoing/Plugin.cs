@@ -81,7 +81,7 @@ public sealed class Plugin : IDalamudPlugin
 
     public void Dispose()
     {
-        FS.Dispose();
+        //FS.Dispose();
 
         Service.AutoRetainerApi.OnCharacterPostprocessStep -= CheckCharacterPostProcess;
         Service.AutoRetainerApi.OnCharacterReadyToPostProcess -= DoCharacterPostProcess;

@@ -52,10 +52,12 @@ internal class RunMacroCommand : MacroCommand
     {
         Svc.Log.Debug($"Executing: {Text}");
 
-        if (FS.TryFindMacroByName(macroName, out var macroFile))
-            Service.MacroManager.EnqueueMacro(macroFile);
-        else
+        var macroNode = C.GetAllNodes().OfType<MacroNode>().FirstOrDefault(macro => macro.Name == macroName);
+
+        if (macroNode == default)
             throw new MacroCommandError("No macro with that name");
+
+        macroNode.Run();
 
         await PerformWait(token);
     }
