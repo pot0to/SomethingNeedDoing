@@ -55,12 +55,6 @@
           "KeraLua": "1.3.1"
         }
       },
-      "YamlDotNet": {
-        "type": "Direct",
-        "requested": "[16.2.1, )",
-        "resolved": "16.2.1",
-        "contentHash": "im6zTVgesjcfTRfuMpnx51Rg2svWenp/3q5XBfcIzgj8PNIkkSD2xEl9HWcVi2SaJPP9XcXUdzed9gSDEuf1TA=="
-      },
       "JetBrains.Annotations": {
         "type": "Transitive",
         "resolved": "2024.2.0",

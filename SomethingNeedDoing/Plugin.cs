@@ -1,5 +1,6 @@
 using Dalamud.Plugin;
 using ECommons;
+using ECommons.Configuration;
 using ECommons.EzEventManager;
 using ECommons.SimpleGui;
 using ECommons.Singletons;
@@ -22,6 +23,7 @@ public sealed class Plugin : IDalamudPlugin
     internal static MacroFileSystem FS => Service.OtterGui.MacroFileSystem;
 
     private readonly Config Config = null!;
+    // private readonly Config OldConfig = null!;
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -29,7 +31,8 @@ public sealed class Plugin : IDalamudPlugin
         pluginInterface.Create<Service>();
         ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions, Module.DalamudReflector);
 
-        Config = Config.Load(Svc.PluginInterface.ConfigDirectory);
+        EzConfig.Migrate<Config>();
+        Config = EzConfig.Init<Config>();
 
         SingletonServiceManager.Initialize(typeof(Service));
 

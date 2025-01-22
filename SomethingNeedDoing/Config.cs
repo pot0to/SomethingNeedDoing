@@ -1,17 +1,15 @@
-using Dalamud.Configuration;
 using Dalamud.Game.Text;
 using ECommons.Configuration;
-using ECommons.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using SomethingNeedDoing.Macros;
-using SomethingNeedDoing.Misc;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using YamlDotNet.Serialization;
 
 namespace SomethingNeedDoing;
 
-public class Config : IPluginConfiguration
+public class Config : IEzConfig
 {
     public int Version { get; set; } = 1;
     public bool LockWindow { get; set; } = false;
@@ -71,19 +69,7 @@ public class Config : IPluginConfiguration
 
     public bool UseMacroFileSystem { get; set; } = false;
 
-    internal static Config Load(DirectoryInfo configDirectory)
-    {
-        var pluginConfigPath = new FileInfo(Path.Combine(configDirectory.Parent!.FullName, $"SomethingNeedDoing.json"));
-
-        if (!pluginConfigPath.Exists)
-            return new Config();
-
-        var data = File.ReadAllText(pluginConfigPath.FullName);
-        var conf = JsonConvert.DeserializeObject<Config>(data);
-        return conf ?? new Config();
-    }
-
-    internal void Save() => Svc.PluginInterface.SavePluginConfig(this);
+    internal void Save() => EzConfig.Save();
 
     internal IEnumerable<INode> GetAllNodes() => new INode[] { RootFolder }.Concat(GetAllNodes(RootFolder.Children));
 
@@ -140,49 +126,33 @@ public class Config : IPluginConfiguration
         return property != null && property.Name != "Version" && property.CanWrite ? property.GetValue(this) : null;
     }
 
+    [JsonIgnore]
     internal string RootFolderPath
         => Directory.GetDirectories(Svc.PluginInterface.GetPluginConfigDirectory()).Select(x => new DirectoryInfo(x)).FirstOrDefault(x => x.Name == RootFolder.Name)?.FullName
         ?? Directory.CreateDirectory(Path.Combine(Svc.PluginInterface.GetPluginConfigDirectory(), RootFolder.Name)).FullName;
+
+    public static readonly JsonSerializerSettings JsonSerializerSettings = new()
+    {
+        TypeNameHandling = TypeNameHandling.Auto,
+        TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+        SerializationBinder = new CustomSerializationBinder(),
+        Formatting = Formatting.Indented,
+    };
+
+    public class CustomSerializationBinder : DefaultSerializationBinder
+    {
+        public override Type BindToType(string? assemblyName, string typeName)
+        {
+            try
+            {
+                return base.BindToType(assemblyName, typeName);
+            }
+            catch (Exception)
+            {
+                if (assemblyName == null || assemblyName == typeof(Plugin).Assembly.GetName().Name)
+                    return typeof(Plugin).Assembly.GetTypes().First(x => x.FullName == typeName);
+                throw;
+            }
+        }
+    }
 }
-
-//public class ConfigFactory : ISerializationFactory
-//{
-//    public string DefaultConfigFileName => $"{nameof(SomethingNeedDoing)}.yaml";
-//    public T Deserialize<T>(string inputData) => new DeserializerBuilder().IgnoreUnmatchedProperties().Build().Deserialize<T>(inputData);
-//    public string Serialize(object s, bool prettyPrint) => new SerializerBuilder().Build().Serialize(s);
-//}
-
-//public interface IMigration
-//{
-//    int Version { get; }
-//    void Migrate(ref Config config);
-//}
-
-//public class V2 : IMigration
-//{
-//    public int Version => 2;
-//    public void Migrate(ref Config config)
-//    {
-//        PluginLog.Information($"Starting {nameof(IMigration)}{nameof(V2)}");
-//        config.RootFolder.Name = "Macros";
-//        WriteNode(config.RootFolder);
-//    }
-
-//    private void WriteNode(INode node, string? path = null)
-//    {
-//        if (node is FolderNode folderNode)
-//        {
-//            path = Path.Combine(path ?? Svc.PluginInterface.GetPluginConfigDirectory(), folderNode.Name);
-//            if (!Directory.Exists(path))
-//                Directory.CreateDirectory(path);
-//            foreach (var child in folderNode.Children)
-//                WriteNode(child, path);
-//        }
-//        else if (node is MacroNode macroNode)
-//        {
-//            var file = new FileInfo(Path.Combine(path ?? Svc.PluginInterface.GetPluginConfigDirectory(), macroNode.Name + macroNode.Language.LanguageToFileExtension()));
-//            PluginLog.Information($"Writing macro {macroNode.Name} to file @ {file.FullName}");
-//            File.WriteAllText(file.FullName, macroNode.Contents);
-//        }
-//    }
-//}
