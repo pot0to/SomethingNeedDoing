@@ -21,6 +21,7 @@ internal partial class ActiveMacro : IDisposable
     public ActiveMacro(MacroNode node)
     {
         Node = node;
+        LineCount = node.Contents.Split(["\r\n", "\r", "\n"], StringSplitOptions.None).Length;
         if (node.Language == Language.Lua)
         {
             Steps = [];
@@ -44,6 +45,8 @@ internal partial class ActiveMacro : IDisposable
     /// Gets the current step number.
     /// </summary>
     public int StepIndex { get; private set; }
+
+    public int LineCount { get; private set; }
 
     /// <summary>
     /// Modify a macro for craft looping.

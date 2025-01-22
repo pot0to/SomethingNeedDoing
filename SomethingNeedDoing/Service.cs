@@ -1,4 +1,5 @@
 using AutoRetainerAPI;
+using SomethingNeedDoing.IPC;
 using SomethingNeedDoing.Macros;
 using SomethingNeedDoing.Managers;
 
@@ -11,4 +12,5 @@ internal class Service
     internal static GameEventManager GameEventManager { get; set; } = null!;
     internal static MacroManager MacroManager { get; set; } = null!;
     internal static OtterGuiHandler OtterGui { get; set; } = null!;
+    internal static Tippy Tippy { get; set; } = null!;
 }

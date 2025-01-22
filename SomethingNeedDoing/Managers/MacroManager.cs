@@ -74,11 +74,7 @@ internal partial class MacroManager : IDisposable
 
                 // Check if the paused waiter has been set
                 if (!pausedWaiter.WaitOne(0))
-                {
-                    State = macroStack.Count == 0
-                        ? LoopState.Waiting
-                        : LoopState.Paused;
-                }
+                    State = macroStack.Count == 0 ? LoopState.Waiting : LoopState.Paused;
 
                 // Wait for the un-pause button
                 pausedWaiter.WaitOne();
@@ -92,9 +88,7 @@ internal partial class MacroManager : IDisposable
 
                 State = LoopState.Running;
                 if (await Task.Run(() => ProcessMacro(macro, token)))
-                {
                     macroStack.Pop().Dispose();
-                }
             }
             catch (OperationCanceledException)
             {
@@ -211,8 +205,11 @@ internal sealed partial class MacroManager
     {
         try
         {
-            macroStack.Push(new ActiveMacro(node));
+            var macro = new ActiveMacro(node);
+            macroStack.Push(macro);
             pausedWaiter.Set();
+            if (macro.LineCount > 100)
+                Service.Tippy.RegisterMessage($"It seems you're running a very long macro. Have you considered making a plugin instead?");
         }
         catch (MacroSyntaxError ex)
         {
