@@ -105,17 +105,18 @@ end
 
 --update atools w fc and inventory
 yield("/echo Fully Unified Task Automation (F.U.T.A.) Initializing .....")
-yield("/freecompanycmd")
+yield("/freecompanycmd") -- for atools
 yield("/echo Free Company command executed.")
-yield("/inventory")
+yield("/inventory") --for atools
 yield("/echo Inventory command executed.")
-yield("/playtime")
-yield("/echo Playtime command executed.")  --for altoholic
-yield("/saddlebag")
+yield("/playtime")  --for altoholic
+yield("/echo Playtime command executed.")
+yield("/saddlebag") --for atools
 yield("/echo Saddlebag command executed.")
 yield("/echo Fully Unified Task Automation (F.U.T.A.) atools database updated")
 yield("/echo Non Aggregated Recursive Integration (N.A.R.I.) Initializing .....")
 ----------------------------------
+
 --Script+ar breaker stuff force fixed
 RestoreYesAlready()
 yield("/bmrai off")
