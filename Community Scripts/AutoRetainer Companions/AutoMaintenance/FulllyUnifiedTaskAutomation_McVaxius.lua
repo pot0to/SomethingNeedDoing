@@ -109,6 +109,8 @@ yield("/freecompanycmd")
 yield("/echo Free Company command executed.")
 yield("/inventory")
 yield("/echo Inventory command executed.")
+yield("/playtime")
+yield("/echo Playtime command executed.")  --for altoholic
 yield("/saddlebag")
 yield("/echo Saddlebag command executed.")
 yield("/echo Fully Unified Task Automation (F.U.T.A.) atools database updated")
