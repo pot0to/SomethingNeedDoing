@@ -216,8 +216,10 @@ function Final_GC_Cleaning()
 	end
 
 	--deliveroo i hack you
+	dellycounter = 100
 	if FUTA_processors[hoo_arr_weeeeee][3][4] == 1 then
 		yield("/cbt enable MaxGCRank")
+		dellycounter = 10
 	end
 
 	--deliveroo i choose you
@@ -243,12 +245,13 @@ function Final_GC_Cleaning()
 		dellyroo = true
 		dellyroo = DeliverooIsTurnInRunning()
 		dellycount = 0
+		
 		while dellyroo do
 			yield("/wait 5")
 			dellyroo = DeliverooIsTurnInRunning()
 			dellycount = dellycount + 1
 			yield("/echo Processing Retainer Abuser")
-			if dellycount > 100 then
+			if dellycount > dellycounter then --300 sec if not hacking 30 sec if hacking
 				--this will solve getting stuck on deliveroo doing nothing while its enabled
 				yield("/deliveroo disable")
 				yield("/wait 2")
