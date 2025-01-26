@@ -253,9 +253,11 @@ function Final_GC_Cleaning()
 				yield("/deliveroo disable")
 				yield("/wait 2")
 				ungabunga()
-				yield("/deliveroo enable")
-				yield("/wait 3")
-				dellycount = 0
+				if FUTA_processors[hoo_arr_weeeeee][3][4] == 0 then --only reset if we are not hacking deliveroo
+					yield("/deliveroo enable")
+					yield("/wait 3")
+					dellycount = 0
+				end
 			end
 		end
 --	end
