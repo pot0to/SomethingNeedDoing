@@ -215,6 +215,11 @@ function Final_GC_Cleaning()
 		ClearTarget()
 	end
 
+	--deliveroo i hack you
+	if FUTA_processors[hoo_arr_weeeeee][3][4] == 1 then
+		yield("/cbt enable MaxGCRank")
+	end
+
 	--deliveroo i choose you
 	yield("/deliveroo enable")
 	yield("/wait 3")
@@ -234,7 +239,7 @@ function Final_GC_Cleaning()
 	end
 	
 	--loop until deliveroo done if we aren't using the hack.
-	if FUTA_processors[hoo_arr_weeeeee][3][4] == 0 then
+--	if FUTA_processors[hoo_arr_weeeeee][3][4] == 0 then
 		dellyroo = true
 		dellyroo = DeliverooIsTurnInRunning()
 		dellycount = 0
@@ -253,7 +258,7 @@ function Final_GC_Cleaning()
 				dellycount = 0
 			end
 		end
-	end
+--	end
 	yield("/wait 1")
 	yield("/callback SelectYesno true 0")
 	yield("/wait 1")
@@ -264,11 +269,17 @@ function Final_GC_Cleaning()
 	--added 5 second wait here because sometimes they get stuck.
 	yield("/wait 5")
 	
+	--deliveroo i unhack you
+	if FUTA_processors[hoo_arr_weeeeee][3][4] == 1 then
+		yield("/cbt disable MaxGCRank")
+	end
+
 	if nnl == 1 then
 		yield("/novicenetworkleave")
 	end
 	
 	--expert delivery hack. meant for printing venture tokens on early chars
+	--[[
 	if FUTA_processors[hoo_arr_weeeeee][3][4] == 1 then
 	PauseYesAlready()
 	yield("/wait 2")
@@ -320,6 +331,7 @@ function Final_GC_Cleaning()
 		RestoreYesAlready()
 		yield("/wait 2")
 	end
+		--]]
 	
 	--try to turn in supply mission items and rankup before leaving if its set for that char
 	if FUTA_processors[hoo_arr_weeeeee][3][3] == 1 then
