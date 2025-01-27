@@ -24,7 +24,8 @@ internal class Changelog
         "- Added GetPartyMemberWorldName()\n" +
         "- Added GetTargetWorldId()\n" +
         "- Added GetTargetWorldName()\n" +
-        "- Added AllaganTools IPCs\n");
+        "- Added AllaganTools IPCs\n" +
+        "- Added BossMod IPCs\n");
 
         DisplayChangelog(
         "2024-12-19",

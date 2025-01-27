@@ -19,6 +19,7 @@ public class Ipc
     private readonly AllaganTools _aTools;
     private readonly AutoRetainer _autoretainer;
     private readonly AutoRetainerApi _autoRetainerApi;
+    private readonly BossMod _bossmod;
     private readonly Dropbox _dropbox;
     private readonly LifestreamIPC _lifestream;
     private readonly Questionable _questionable;
@@ -44,6 +45,7 @@ public class Ipc
         _aTools = new();
         _autoretainer = new();
         _autoRetainerApi = new();
+        _bossmod = new();
         _dropbox = new();
         _lifestream = new();
         _questionable = new();
@@ -314,5 +316,18 @@ public class Ipc
     public string ATAddNewCraftList(string craftListName, Dictionary<uint, uint> items) => _aTools.AddNewCraftList(craftListName, items);
     public ulong? ATCurrentCharacter() => _aTools.CurrentCharacter();
     public bool ATIsInitialized() => _aTools.IsInitialized();
+    #endregion
+
+    #region BossMod
+    public string? BMGet(string name) => _bossmod.Get(name);
+    public bool BMCreate(string presetSerialized, bool overwrite) => _bossmod.Create(presetSerialized, overwrite);
+    public bool BMDelete(string name) => _bossmod.Delete(name);
+    public string BMGetActive() => _bossmod.GetActive();
+    public bool BMSetActive(string name) => _bossmod.SetActive(name);
+    public bool BMClearActive() => _bossmod.ClearActive();
+    public bool BMGetForceDisabled() => _bossmod.GetForceDisabled();
+    public bool BMSetForceDisabled() => _bossmod.SetForceDisabled();
+    public bool BMAddTransientStrategy(string presetName, string moduleTypeName, string trackName, string value) => _bossmod.AddTransientStrategy(presetName, moduleTypeName, trackName, value);
+    public bool BMAddTransientStrategyTargetEnemyOID(string presetName, string moduleTypeName, string trackName, string value, int oid) => _bossmod.AddTransientStrategyTargetEnemyOID(presetName, moduleTypeName, trackName, value, oid);
     #endregion
 }
