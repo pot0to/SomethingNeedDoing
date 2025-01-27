@@ -19,11 +19,12 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
-        "2025-01-18",
+        "2025-01-27",
         "- Added GetPartyMemberWorldId()\n" +
         "- Added GetPartyMemberWorldName()\n" +
         "- Added GetTargetWorldId()\n" +
-        "- Added GetTargetWorldName()\n");
+        "- Added GetTargetWorldName()\n" +
+        "- Added AllaganTools IPCs\n");
 
         DisplayChangelog(
         "2024-12-19",

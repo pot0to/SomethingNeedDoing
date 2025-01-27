@@ -1,4 +1,6 @@
 ﻿using AutoRetainerAPI;
+using ECommons.EzIpcManager;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using SomethingNeedDoing.IPC;
 using SomethingNeedDoing.Misc;
 using System;
@@ -11,15 +13,17 @@ namespace SomethingNeedDoing.Macros.Lua;
 public class Ipc
 {
     internal static Ipc Instance { get; } = new();
-    private readonly Dropbox dropbox;
-    private readonly LifestreamIPC lifestream;
-    private readonly Questionable questionable;
-    private readonly RSR rsr;
-    private readonly Artisan artisan;
-    private readonly AutoRetainer autoretainer;
-    private readonly ARDiscard ardiscard;
-    private readonly VislandIPC visland;
+
+    private readonly ARDiscard _ardiscard;
+    private readonly Artisan _artisan;
+    private readonly AllaganTools _aTools;
+    private readonly AutoRetainer _autoretainer;
     private readonly AutoRetainerApi _autoRetainerApi;
+    private readonly Dropbox _dropbox;
+    private readonly LifestreamIPC _lifestream;
+    private readonly Questionable _questionable;
+    private readonly RSR _rsr;
+    private readonly VislandIPC _visland;
 
     public List<string> ListAllFunctions()
     {
@@ -35,19 +39,21 @@ public class Ipc
 
     internal Ipc()
     {
+        _ardiscard = new();
+        _artisan = new();
+        _aTools = new();
+        _autoretainer = new();
         _autoRetainerApi = new();
-        NavmeshIPC.Init();
-        DeliverooIPC.Init();
-        PandorasBoxIPC.Init();
-        lifestream = new();
-        dropbox = new();
-        questionable = new Questionable();
-        rsr = new();
-        artisan = new();
-        autoretainer = new();
-        ardiscard = new();
-        visland = new();
+        _dropbox = new();
+        _lifestream = new();
+        _questionable = new();
+        _rsr = new();
+        _visland = new();
+
         AutoDutyIPC.Init();
+        DeliverooIPC.Init();
+        NavmeshIPC.Init();
+        PandorasBoxIPC.Init();
     }
 
     internal void Dispose()
@@ -79,16 +85,16 @@ public class Ipc
     #endregion
 
     #region Questionable
-    public bool QuestionableIsRunning() => questionable.IsRunning();
-    public string QuestionableGetCurrentQuestId() => questionable.GetCurrentQuestId();
+    public bool QuestionableIsRunning() => _questionable.IsRunning();
+    public string QuestionableGetCurrentQuestId() => _questionable.GetCurrentQuestId();
     #endregion
 
     #region visland
-    public bool IsVislandRouteRunning() => visland.IsRouteRunning();
-    public bool VislandIsRoutePaused() => visland.IsRoutePaused();
-    public void VislandSetRoutePaused(bool state) => visland.SetRoutePaused(state);
-    public void VislandStopRoute() => visland.StopRoute();
-    public void VislandStartRoute(string route, bool once) => visland.StartRoute(route, once);
+    public bool IsVislandRouteRunning() => _visland.IsRouteRunning();
+    public bool VislandIsRoutePaused() => _visland.IsRoutePaused();
+    public void VislandSetRoutePaused(bool state) => _visland.SetRoutePaused(state);
+    public void VislandStopRoute() => _visland.StopRoute();
+    public void VislandStartRoute(string route, bool once) => _visland.StartRoute(route, once);
     #endregion
 
     #region navmesh
@@ -161,25 +167,25 @@ public class Ipc
     public List<ulong> ARGetCharacterCIDs() => _autoRetainerApi.GetRegisteredCharacters();
     public AutoRetainerAPI.Configuration.OfflineCharacterData ARGetCharacterData(ulong cid) => _autoRetainerApi.GetOfflineCharacterData(cid);
 
-    public bool ARGetMultiModeEnabled() => autoretainer.GetMultiModeEnabled();
-    public void ARSetMultiModeEnabled(bool value) => autoretainer.SetMultiModeEnabled(value);
-    public bool ARIsBusy() => autoretainer.IsBusy();
-    public int ARGetInventoryFreeSlotCount() => autoretainer.GetInventoryFreeSlotCount();
-    public Dictionary<ulong, HashSet<string>> ARGetEnabledRetainers() => autoretainer.GetEnabledRetainers();
-    public bool ARAreAnyRetainersAvailableForCurrentChara() => autoretainer.AreAnyRetainersAvailableForCurrentChara();
-    public void ARAbortAllTasks() => autoretainer.AbortAllTasks();
-    public void ARDisableAllFunctions() => autoretainer.DisableAllFunctions();
-    public void AREnableMultiMode() => autoretainer.EnableMultiMode();
-    public void AREnqueueHET() => autoretainer.EnqueueHET(() => { });
-    public bool ARCanAutoLogin() => autoretainer.CanAutoLogin();
-    public bool ARRelog(string charaNameWithWorld) => autoretainer.Relog(charaNameWithWorld);
-    public bool ARGetOptionRetainerSense() => autoretainer.GetOptionRetainerSense();
-    public void ARSetOptionRetainerSense(bool value) => autoretainer.SetOptionRetainerSense(value);
-    public int ARGetOptionRetainerSenseThreshold() => autoretainer.GetOptionRetainerSenseThreshold();
-    public void ARSetOptionRetainerSenseThreshold(int value) => autoretainer.SetOptionRetainerSenseThreshold(value);
-    public long? ARGetClosestRetainerVentureSecondsRemaining(ulong cid) => autoretainer.GetClosestRetainerVentureSecondsRemaining(cid);
-    public void AREnqueueInitiation() => autoretainer.EnqueueInitiation();
-    public (uint ShopDataID, uint ExchangeDataID, Vector3 Position)? ARGetGCInfo() => autoretainer.GetGCInfo();
+    public bool ARGetMultiModeEnabled() => _autoretainer.GetMultiModeEnabled();
+    public void ARSetMultiModeEnabled(bool value) => _autoretainer.SetMultiModeEnabled(value);
+    public bool ARIsBusy() => _autoretainer.IsBusy();
+    public int ARGetInventoryFreeSlotCount() => _autoretainer.GetInventoryFreeSlotCount();
+    public Dictionary<ulong, HashSet<string>> ARGetEnabledRetainers() => _autoretainer.GetEnabledRetainers();
+    public bool ARAreAnyRetainersAvailableForCurrentChara() => _autoretainer.AreAnyRetainersAvailableForCurrentChara();
+    public void ARAbortAllTasks() => _autoretainer.AbortAllTasks();
+    public void ARDisableAllFunctions() => _autoretainer.DisableAllFunctions();
+    public void AREnableMultiMode() => _autoretainer.EnableMultiMode();
+    public void AREnqueueHET() => _autoretainer.EnqueueHET(() => { });
+    public bool ARCanAutoLogin() => _autoretainer.CanAutoLogin();
+    public bool ARRelog(string charaNameWithWorld) => _autoretainer.Relog(charaNameWithWorld);
+    public bool ARGetOptionRetainerSense() => _autoretainer.GetOptionRetainerSense();
+    public void ARSetOptionRetainerSense(bool value) => _autoretainer.SetOptionRetainerSense(value);
+    public int ARGetOptionRetainerSenseThreshold() => _autoretainer.GetOptionRetainerSenseThreshold();
+    public void ARSetOptionRetainerSenseThreshold(int value) => _autoretainer.SetOptionRetainerSenseThreshold(value);
+    public long? ARGetClosestRetainerVentureSecondsRemaining(ulong cid) => _autoretainer.GetClosestRetainerVentureSecondsRemaining(cid);
+    public void AREnqueueInitiation() => _autoretainer.EnqueueInitiation();
+    public (uint ShopDataID, uint ExchangeDataID, Vector3 Position)? ARGetGCInfo() => _autoretainer.GetGCInfo();
 
     private unsafe ParallelQuery<ulong> GetAllEnabledCharacters() => _autoRetainerApi.GetRegisteredCharacters().AsParallel().Where(c => _autoRetainerApi.GetOfflineCharacterData(c).Enabled);
     #endregion
@@ -225,46 +231,46 @@ public class Ipc
     #endregion
 
     #region Dropbox
-    public void DropboxStart() => dropbox.BeginTradingQueue();
-    public void DropboxStop() => dropbox.Stop();
-    public bool DropboxIsBusy() => dropbox.IsBusy();
-    public int DropboxGetItemQuantity(uint id, bool hq) => dropbox.GetItemQuantity(id, hq);
-    public void DropboxSetItemQuantity(uint id, bool hq, int quantity) => dropbox.SetItemQuantity(id, hq, quantity);
+    public void DropboxStart() => _dropbox.BeginTradingQueue();
+    public void DropboxStop() => _dropbox.Stop();
+    public bool DropboxIsBusy() => _dropbox.IsBusy();
+    public int DropboxGetItemQuantity(uint id, bool hq) => _dropbox.GetItemQuantity(id, hq);
+    public void DropboxSetItemQuantity(uint id, bool hq, int quantity) => _dropbox.SetItemQuantity(id, hq, quantity);
     #endregion
 
     #region Lifestream
-    public bool LifestreamAethernetTeleport(string aethernetName) => lifestream.AethernetTeleport(aethernetName);
-    public bool LifestreamTeleport(uint destination, byte subIndex) => lifestream.Teleport(destination, subIndex);
-    public bool LifestreamTeleportToHome() => lifestream.TeleportToHome();
-    public bool LifestreamTeleportToFC() => lifestream.TeleportToFC();
-    public bool LifestreamTeleportToApartment() => lifestream.TeleportToApartment();
-    public bool LifestreamIsBusy() => lifestream.IsBusy();
-    public void LifestreamExecuteCommand(string command) => lifestream.ExecuteCommand(command);
-    public void LifestreamAbort() => lifestream.Abort();
+    public bool LifestreamAethernetTeleport(string aethernetName) => _lifestream.AethernetTeleport(aethernetName);
+    public bool LifestreamTeleport(uint destination, byte subIndex) => _lifestream.Teleport(destination, subIndex);
+    public bool LifestreamTeleportToHome() => _lifestream.TeleportToHome();
+    public bool LifestreamTeleportToFC() => _lifestream.TeleportToFC();
+    public bool LifestreamTeleportToApartment() => _lifestream.TeleportToApartment();
+    public bool LifestreamIsBusy() => _lifestream.IsBusy();
+    public void LifestreamExecuteCommand(string command) => _lifestream.ExecuteCommand(command);
+    public void LifestreamAbort() => _lifestream.Abort();
     #endregion
 
     #region RSR
-    public void RSRAddPriorityNameID(uint nameId) => rsr.AddPriorityNameID(nameId);
-    public void RSRRemovePriorityNameID(uint nameId) => rsr.RemovePriorityNameID(nameId);
-    public void RSRAddBlacklistNameID(uint nameId) => rsr.AddBlacklistNameID(nameId);
-    public void RSRRemoveBlacklistNameID(uint nameId) => rsr.RemoveBlacklistNameID(nameId);
-    public void RSRChangeOperatingMode(byte stateCommand) => rsr.ChangeOperatingMode((RSR.StateCommandType)stateCommand);
-    public void RSRTriggerSpecialState(byte specialCommand) => rsr.TriggerSpecialState((RSR.SpecialCommandType)specialCommand);
+    public void RSRAddPriorityNameID(uint nameId) => _rsr.AddPriorityNameID(nameId);
+    public void RSRRemovePriorityNameID(uint nameId) => _rsr.RemovePriorityNameID(nameId);
+    public void RSRAddBlacklistNameID(uint nameId) => _rsr.AddBlacklistNameID(nameId);
+    public void RSRRemoveBlacklistNameID(uint nameId) => _rsr.RemoveBlacklistNameID(nameId);
+    public void RSRChangeOperatingMode(byte stateCommand) => _rsr.ChangeOperatingMode((RSR.StateCommandType)stateCommand);
+    public void RSRTriggerSpecialState(byte specialCommand) => _rsr.TriggerSpecialState((RSR.SpecialCommandType)specialCommand);
     #endregion
 
     #region Artisan
-    public bool ArtisanGetEnduranceStatus() => artisan.GetEnduranceStatus();
-    public void ArtisanSetEnduranceStatus(bool state) => artisan.SetEnduranceStatus(state);
-    public bool ArtisanIsListRunning() => artisan.IsListRunning();
-    public bool ArtisanIsListPaused() => artisan.IsListPaused();
-    public void ArtisanSetListPause(bool state) => artisan.SetListPause(state);
-    public bool ArtisanGetStopRequest() => artisan.GetStopRequest();
-    public void ArtisanSetStopRequest(bool state) => artisan.SetStopRequest(state);
-    public void ArtisanCraftItem(ushort recipeID, int amount) => artisan.CraftItem(recipeID, amount);
+    public bool ArtisanGetEnduranceStatus() => _artisan.GetEnduranceStatus();
+    public void ArtisanSetEnduranceStatus(bool state) => _artisan.SetEnduranceStatus(state);
+    public bool ArtisanIsListRunning() => _artisan.IsListRunning();
+    public bool ArtisanIsListPaused() => _artisan.IsListPaused();
+    public void ArtisanSetListPause(bool state) => _artisan.SetListPause(state);
+    public bool ArtisanGetStopRequest() => _artisan.GetStopRequest();
+    public void ArtisanSetStopRequest(bool state) => _artisan.SetStopRequest(state);
+    public void ArtisanCraftItem(ushort recipeID, int amount) => _artisan.CraftItem(recipeID, amount);
     #endregion
 
     #region ARDiscard
-    public List<uint> ARDiscardGetItemsToDiscard() => [.. ardiscard.GetItemsToDiscard()];
+    public List<uint> ARDiscardGetItemsToDiscard() => [.. _ardiscard.GetItemsToDiscard()];
     #endregion
 
     #region AutoDuty
@@ -278,5 +284,35 @@ public class Ipc
     public bool? ADIsLooping() => AutoDutyIPC.IsLooping?.InvokeFunc();
     public bool? ADIsStopped() => AutoDutyIPC.IsStopped?.InvokeFunc();
     public bool? ADContentHasPath(uint territoryType) => AutoDutyIPC.ContentHasPath?.InvokeFunc(territoryType);
+    #endregion
+
+    #region Allagan Tools
+    public uint ATInventoryCountByType(uint inventoryType, ulong? characterId) => _aTools.InventoryCountByType(inventoryType, characterId);
+    public uint ATInventoryCountByTypes(uint[] inventoryTypes, ulong? characterId) => _aTools.InventoryCountByTypes(inventoryTypes, characterId);
+    public uint ATItemCount(uint itemId, ulong characterId, int inventoryType) => _aTools.ItemCount(itemId, characterId, inventoryType);
+    public uint ATItemCountHQ(uint itemId, ulong characterId, int inventoryType) => _aTools.ItemCountHQ(itemId, characterId, inventoryType);
+    public uint ATItemCountOwned(uint itemId, bool currentCharacterOnly, uint[] inventoryTypes) => _aTools.ItemCountOwned(itemId, currentCharacterOnly, inventoryTypes);
+    public bool ATEnableUiFilter(string filterKey) => _aTools.EnableUiFilter(filterKey);
+    public bool ATDisableUiFilter() => _aTools.DisableUiFilter();
+    public bool ATToggleUiFilter(string filterKey) => _aTools.ToggleUiFilter(filterKey);
+    public bool ATEnableBackgroundFilter(string filterKey) => _aTools.EnableBackgroundFilter(filterKey);
+    public bool ATDisableBackgroundFilter() => _aTools.DisableBackgroundFilter();
+    public bool ATToggleBackgroundFilter(string filterKey) => _aTools.ToggleBackgroundFilter(filterKey);
+    public bool ATEnableCraftList(string filterKey) => _aTools.EnableCraftList(filterKey);
+    public bool ATDisableCraftList() => _aTools.DisableCraftList();
+    public bool ATToggleCraftList(string filterKey) => _aTools.ToggleCraftList(filterKey);
+    public bool ATAddItemToCraftList(string filterKey, uint itemId, uint quantity) => _aTools.AddItemToCraftList(filterKey, itemId, quantity);
+    public bool ATRemoveItemFromCraftList(string filterKey, uint itemId, uint quantity) => _aTools.RemoveItemFromCraftList(filterKey, itemId, quantity);
+    public Dictionary<uint, uint> ATGetFilterItems(string filterKey) => _aTools.GetFilterItems(filterKey);
+    public Dictionary<uint, uint> ATGetCraftItems(string filterKey) => _aTools.GetCraftItems(filterKey);
+    public Dictionary<uint, uint> ATGetRetrievalItems() => _aTools.GetRetrievalItems();
+    public HashSet<ulong[]> ATGetCharacterItems(ulong characterId) => _aTools.GetCharacterItems(characterId);
+    public HashSet<ulong> ATGetCharactersOwnedByActive(bool includeOwner) => _aTools.GetCharactersOwnedByActive(includeOwner);
+    public HashSet<ulong[]> ATGetCharacterItemsByType(ulong characterId, uint inventoryType) => _aTools.GetCharacterItemsByType(characterId, inventoryType);
+    public Dictionary<string, string> ATGetCraftLists() => _aTools.GetCraftLists();
+    public Dictionary<string, string> ATGetSearchFilters() => _aTools.GetSearchFilters();
+    public string ATAddNewCraftList(string craftListName, Dictionary<uint, uint> items) => _aTools.AddNewCraftList(craftListName, items);
+    public ulong? ATCurrentCharacter() => _aTools.CurrentCharacter();
+    public bool ATIsInitialized() => _aTools.IsInitialized();
     #endregion
 }
