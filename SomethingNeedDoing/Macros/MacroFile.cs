@@ -7,7 +7,7 @@ namespace SomethingNeedDoing.Macros;
 public class MacroFile
 {
     internal string ID => GUID.ToString();
-    public string Name => FS.TryFindLeaf(this, out var l) ? l.FullName() : string.Empty;
+    public string Name => Service.FS.TryFindLeaf(this, out var l) ? l.FullName() : string.Empty;
 
     public Guid GUID = Guid.NewGuid();
     public string Gist = string.Empty;

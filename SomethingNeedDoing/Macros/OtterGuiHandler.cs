@@ -22,5 +22,9 @@ public sealed class OtterGuiHandler : IDisposable
     }
 
     public void CreateMacroFileSystem() => MacroFileSystem = new(this);
-    public void Dispose() => Safe(() => MacroFileSystem?.Save());
+    public void Dispose()
+    {
+        Safe(() => MacroFileSystem?.Save());
+        Safe(() => MacroFileSystem?.Dispose());
+    }
 }

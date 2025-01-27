@@ -19,6 +19,7 @@ public class Ipc
     private readonly AutoRetainer autoretainer;
     private readonly ARDiscard ardiscard;
     private readonly VislandIPC visland;
+    private readonly AutoRetainerApi _autoRetainerApi;
 
     public List<string> ListAllFunctions()
     {
@@ -31,8 +32,6 @@ public class Ipc
         }
         return list;
     }
-
-    private readonly AutoRetainerApi _autoRetainerApi;
 
     internal Ipc()
     {

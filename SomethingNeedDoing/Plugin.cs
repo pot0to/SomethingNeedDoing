@@ -20,10 +20,8 @@ public sealed class Plugin : IDalamudPlugin
 
     internal static Plugin P { get; private set; } = null!;
     internal static Config C => P.Config;
-    internal static MacroFileSystem FS => Service.OtterGui.MacroFileSystem;
 
     private readonly Config Config = null!;
-    // private readonly Config OldConfig = null!;
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -84,8 +82,6 @@ public sealed class Plugin : IDalamudPlugin
 
     public void Dispose()
     {
-        //FS.Dispose();
-
         Service.AutoRetainerApi.OnCharacterPostprocessStep -= CheckCharacterPostProcess;
         Service.AutoRetainerApi.OnCharacterReadyToPostProcess -= DoCharacterPostProcess;
 

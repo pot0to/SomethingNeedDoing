@@ -252,7 +252,7 @@ public class MacroFileSystem : FileSystem<MacroFile>
         private void RebuildDirectoryButton(Vector2 vector)
         {
             if (!ImGuiUtil.DrawDisabledButton(FontAwesomeIcon.Recycle.ToIconString(), vector, "Rebuild Directory", false, true)) return;
-            FS.BuildFileSystem();
+            Service.FS.BuildFileSystem();
         }
 
         private void ImportButton(Vector2 size)
@@ -272,7 +272,7 @@ public class MacroFileSystem : FileSystem<MacroFile>
             }
         }
 
-        private void DeleteButton(Vector2 vector) => DeleteSelectionButton(vector, new DoubleModifier(ModifierHotkey.Control), "macro", "macros", FS.DoDelete);
+        private void DeleteButton(Vector2 vector) => DeleteSelectionButton(vector, new DoubleModifier(ModifierHotkey.Control), "macro", "macros", Service.FS.DoDelete);
 
         private void NewMacroButton(Vector2 size)
         {
@@ -300,7 +300,7 @@ public class MacroFileSystem : FileSystem<MacroFile>
                 {
                     var newFile = EzConfig.DefaultSerializationFactory.Deserialize<MacroFile>(ClipboardText);
                     if (!newFile?.IsNull() ?? false)
-                        FS.DoAdd(newFile!, NewName);
+                        Service.FS.DoAdd(newFile!, NewName);
                     else
                         Notify.Error($"Invalid clipboard data");
                 }
@@ -315,7 +315,7 @@ public class MacroFileSystem : FileSystem<MacroFile>
             {
                 try
                 {
-                    FS.DoAdd(new MacroFile() { File = new FileInfo(NewName) }, NewName);
+                    Service.FS.DoAdd(new MacroFile() { File = new FileInfo(NewName) }, NewName);
                 }
                 catch (Exception e)
                 {
