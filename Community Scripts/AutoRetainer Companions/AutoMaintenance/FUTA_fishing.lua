@@ -165,7 +165,7 @@ function fishing()
 	yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 	
 	--if we are tp to limsa bell
-	if FUTA_processors[lowestID][1][2] == 2 then
+	if FUTA_processors[lowestID][1][2] == 4 then
 		return_to_limsa_bell()
 		yield("/wait 8")
 	end
