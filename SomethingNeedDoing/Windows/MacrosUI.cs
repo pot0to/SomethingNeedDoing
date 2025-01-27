@@ -29,8 +29,6 @@ public class MacrosUI : Window
         NodesUI = new NodeDrawing();
     }
 
-    public override bool DrawConditions() => !Service.FS.Building;
-
     public override void Draw()
     {
         //using var tabs = ImRaii.TabBar("MacrosSelector");

@@ -29,6 +29,7 @@ public sealed class Plugin : IDalamudPlugin
         pluginInterface.Create<Service>();
         ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions, Module.DalamudReflector);
 
+        EzConfig.DefaultSerializationFactory = new ConfigFactory();
         EzConfig.Migrate<Config>();
         Config = EzConfig.Init<Config>();
 

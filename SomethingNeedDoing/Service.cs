@@ -13,6 +13,4 @@ internal class Service
     internal static MacroManager MacroManager { get; set; } = null!;
     internal static OtterGuiHandler OtterGui { get; set; } = null!;
     internal static Tippy Tippy { get; set; } = null!;
-
-    internal static MacroFileSystem FS => OtterGui.MacroFileSystem;
 }

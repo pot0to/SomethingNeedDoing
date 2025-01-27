@@ -130,6 +130,26 @@ public class Config : IEzConfig
     internal string RootFolderPath
         => Directory.GetDirectories(Svc.PluginInterface.GetPluginConfigDirectory()).Select(x => new DirectoryInfo(x)).FirstOrDefault(x => x.Name == RootFolder.Name)?.FullName
         ?? Directory.CreateDirectory(Path.Combine(Svc.PluginInterface.GetPluginConfigDirectory(), RootFolder.Name)).FullName;
+}
+
+public class ConfigFactory : ISerializationFactory
+{
+    public string DefaultConfigFileName => "SomethingNeedDoing.json";
+
+    public T? Deserialize<T>(string inputData)
+    {
+        try
+        {
+            return JsonConvert.DeserializeObject<T>(inputData, JsonSerializerSettings);
+        }
+        catch
+        {
+            return JsonConvert.DeserializeObject<T>(inputData);
+        }
+    }
+
+    public string? Serialize(object data, bool pretty = false)
+        => JsonConvert.SerializeObject(data, JsonSerializerSettings);
 
     public static readonly JsonSerializerSettings JsonSerializerSettings = new()
     {
