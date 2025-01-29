@@ -2,9 +2,9 @@
 using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 using Lumina.Excel;
-using SomethingNeedDoing.Misc;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SomethingNeedDoing.Interface.Excel;
@@ -12,19 +12,29 @@ public sealed class ExcelSheetDisplay
 {
     public ExcelSheetDisplay() { }
 
+    private ExcelSheet<RawRow>? _sheet;
+    private SubrowExcelSheet<RawSubrow>? _subsheet;
     private List<int> _curSourceList = [];
-    private readonly List<int> _curFilteredRows = [];
+    private SortedSet<RawRow>? _curFilteredRows;
     private string _curSearchFilter = "";
+    private CancellationTokenSource? _filterCts;
     private float? itemHeight;
+
     public void Draw(ExcelSheet<RawRow> sheet)
     {
         if (sheet == null) return;
+        _sheet = sheet;
         _curSourceList = new(sheet.Count);
 
+        ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X * ImGuiHelpers.GlobalScale - ImGui.GetStyle().ItemSpacing.X);
         var filterDirty = ImGui.InputTextWithHint($"###{nameof(ExcelSheetDisplay)}filter", "Search...", ref _curSearchFilter, 256);
 
         if (filterDirty)
-            Task.Run(ApplyFilterAsync);
+        {
+            _filterCts?.Cancel();
+            _filterCts = new();
+            Task.Run(() => ApplyFilterAsync(sheet, _filterCts));
+        }
 
         if (sheet.Columns.Count > 100)
         {
@@ -33,10 +43,10 @@ public sealed class ExcelSheetDisplay
         }
 
         var height = ImGui.GetContentRegionAvail().Y;
-        using var table = ImRaii.Table($"{nameof(ExcelSheetDisplay)}", sheet.Columns.Count + 1, ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY | ImGuiTableFlags.NoSavedSettings | ImGuiTableFlags.SizingFixedFit, new(0, height));
+        using var table = ImRaii.Table($"{nameof(ExcelSheetDisplay)}", sheet.Columns.Count + 1, ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY | ImGuiTableFlags.NoSavedSettings, new(0, height));
         if (!table) return;
 
-        ImGui.TableSetupScrollFreeze(0, 1);
+        ImGui.TableSetupScrollFreeze(1, 1);
         ImGui.TableHeadersRow();
         ImGui.TableSetColumnIndex(0);
         ImGui.TableHeader("RowId");
@@ -50,20 +60,40 @@ public sealed class ExcelSheetDisplay
 
         ImGui.TableSetColumnIndex(0);
         itemHeight = ImGui.GetTextLineHeightWithSpacing();
-        var clipper = new ListClipper(sheet.Count, itemHeight: itemHeight ?? 0);
-        foreach (var r in clipper.Rows)
+        ImGuiClip.ClippedDraw(_curFilteredRows?.ToArray() ?? [.. _sheet], DrawRow, itemHeight ?? 0);
+    }
+
+    public void Draw(SubrowExcelSheet<RawSubrow> sheet)
+    {
+        if (sheet == null) return;
+        _subsheet = sheet;
+
+        ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X * ImGuiHelpers.GlobalScale - ImGui.GetStyle().ItemSpacing.X);
+        var filterDirty = ImGui.InputTextWithHint($"###{nameof(ExcelSheetDisplay)}filter", "Search...", ref _curSearchFilter, 256);
+
+        if (filterDirty)
+        {
+            _filterCts?.Cancel();
+            _filterCts = new();
+            Task.Run(() => ApplyFilterAsync(sheet, _filterCts));
+        }
+
+        ImGui.TextUnformatted($"dev didn't get this far implementing subrow sheets");
+    }
+
+    private void DrawRow(RawRow row)
+    {
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TextUnformatted(row.RowId.ToString());
+        for (var c = 0; c < _sheet!.Columns.Count; c++)
         {
             ImGui.TableNextColumn();
-            var rowId = sheet.GetRowAt(r).RowId;
-            ImGui.TextUnformatted($"{rowId}");
-            for (var c = 0; c < sheet.Columns.Count; c++)
-            {
-                ImGui.TableNextColumn();
-                ImGui.AlignTextToFramePadding();
-#pragma warning disable SeStringRenderer
-                ImGuiHelpers.CompileSeStringWrapped(ReadCell(sheet, (int)rowId, c));
-#pragma warning restore SeStringRenderer
-            }
+            ImGui.AlignTextToFramePadding();
+            //#pragma warning disable SeStringRenderer
+            //            ImGuiHelpers.CompileSeStringWrapped(ReadCell(_sheet, (int)row.RowId, c));
+            //#pragma warning restore SeStringRenderer
+            ImGui.TextUnformatted(ReadCell(_sheet, (int)row.RowId, c));
         }
     }
 
@@ -85,17 +115,29 @@ public sealed class ExcelSheetDisplay
         return sheet.GetRow((uint)r).ReadColumn(c).ToString() ?? string.Empty;
     }
 
-    private async Task ApplyFilterAsync()
+    private async Task ApplyFilterAsync(ExcelSheet<RawRow> sheet, CancellationTokenSource _filterCts)
     {
-        //    _curFilteredRows.Clear();
-        //    var terms = _curSearchFilter.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        //    async Task<bool> match(string name) => await Task.FromResult(terms.All(name.Contains));
-        //    _curFilteredRows.AddRange(await FilterAsync(_curSourceList, (sheet) => match(_sheets[sheet].ToLowerInvariant())));
+        if (string.IsNullOrWhiteSpace(_curSearchFilter) || _filterCts.IsCancellationRequested)
+        {
+            _curFilteredRows = null;
+            return;
+        }
+
+        _curFilteredRows = new(Comparer<RawRow>.Create((x, y) => x.RowId.CompareTo(y.RowId)));
+        for (var i = 0; i < sheet.Columns.Count; i++)
+        {
+            for (var r = 0; r < sheet.Count; r++)
+            {
+                if (sheet.GetRow((uint)r).ReadColumn(i).ToString() is { } text)
+                {
+                    if (text.Contains(_curSearchFilter, StringComparison.OrdinalIgnoreCase) && !_filterCts.IsCancellationRequested)
+                    {
+                        _curFilteredRows.Add(sheet.GetRow((uint)r));
+                    }
+                }
+            }
+        }
     }
 
-    private async Task<T[]> FilterAsync<T>(IEnumerable<T> sourceEnumerable, Func<T, Task<bool>> predicateAsync)
-        => (await Task.WhenAll(
-            sourceEnumerable.Select(v => predicateAsync(v).ContinueWith(
-                task => new { Predicate = task.Result, Value = v }))))
-        .Where(a => a.Predicate).Select(a => a.Value).ToArray();
+    private async Task ApplyFilterAsync(SubrowExcelSheet<RawSubrow> sheet, CancellationTokenSource _filterCts) { }
 }

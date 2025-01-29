@@ -63,7 +63,7 @@ public sealed class ExcelSheetList
 
         Func<Task>? postIteration = null;
         using var style = ImRaii.PushIndent(0.5f);
-        foreach (var id in _curFilteredSheets)
+        foreach (var id in _curFilteredSheets.ToArray())
         {
             if (ImGui.Selectable(_sheets[id], SelectedItem == id))
             {

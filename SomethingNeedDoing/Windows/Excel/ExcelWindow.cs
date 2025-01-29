@@ -32,6 +32,8 @@ public class ExcelWindow : Window
         if (ch)
         {
             var sheet = Svc.Data.GetExcelSheet<RawRow>(null, _sheetList._sheets[_sheetList.SelectedItem]);
+            // TODO: check for subrow sheets
+            //var subrowSheet = Svc.Data.GetSubrowExcelSheet<RawSubrow>(null, _sheetList._sheets[_sheetList.SelectedItem]);
             if (_sheetList.SelectedItem != 0)
                 _sheetDisplay.Draw(sheet);
         }
