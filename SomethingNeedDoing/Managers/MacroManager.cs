@@ -14,17 +14,10 @@ internal partial class MacroManager : IDisposable
 {
     private readonly Stack<ActiveMacro> macroStack = new();
     private readonly CancellationTokenSource eventLoopTokenSource = new();
-    private readonly ManualResetEvent loggedInWaiter = new(false);
     private readonly ManualResetEvent pausedWaiter = new(true);
 
     public MacroManager()
     {
-        Svc.ClientState.Login += OnLogin;
-
-        // If we're already logged in, toggle the waiter.
-        if (Svc.ClientState.LocalPlayer != null)
-            loggedInWaiter.Set();
-
         // Start the loop.
         Task.Factory.StartNew(EventLoop, TaskCreationOptions.LongRunning);
     }
@@ -39,19 +32,9 @@ internal partial class MacroManager : IDisposable
 
     public void Dispose()
     {
-        Svc.ClientState.Login -= OnLogin;
-
         eventLoopTokenSource.Cancel();
         eventLoopTokenSource.Dispose();
-
-        loggedInWaiter.Dispose();
         pausedWaiter.Dispose();
-    }
-
-    private void OnLogin()
-    {
-        loggedInWaiter.Set();
-        State = LoopState.Waiting;
     }
 
     private async void EventLoop()
@@ -62,16 +45,6 @@ internal partial class MacroManager : IDisposable
         {
             try
             {
-                // Check if the logged in waiter is set
-                if (!loggedInWaiter.WaitOne(0))
-                {
-                    State = LoopState.NotLoggedIn;
-                    macroStack.Clear();
-                }
-
-                // Wait to be logged in
-                loggedInWaiter.WaitOne();
-
                 // Check if the paused waiter has been set
                 if (!pausedWaiter.WaitOne(0))
                     State = macroStack.Count == 0 ? LoopState.Waiting : LoopState.Paused;
@@ -124,7 +97,10 @@ internal partial class MacroManager : IDisposable
             if (step == null)
                 return true;
 
-            await step.Execute(macro, token);
+            await Svc.Framework.RunOnTick(async () =>
+            {
+                await step.Execute(macro, token);
+            });
         }
         catch (GateComplete)
         {

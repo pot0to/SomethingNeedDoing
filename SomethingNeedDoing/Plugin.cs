@@ -4,8 +4,8 @@ using ECommons.Configuration;
 using ECommons.EzEventManager;
 using ECommons.SimpleGui;
 using ECommons.Singletons;
+using ImGuiNET;
 using SomethingNeedDoing.Interface;
-using SomethingNeedDoing.Macros;
 using SomethingNeedDoing.Macros.Lua;
 using SomethingNeedDoing.Misc;
 
@@ -35,17 +35,36 @@ public sealed class Plugin : IDalamudPlugin
 
         SingletonServiceManager.Initialize(typeof(Service));
 
-        EzConfigGui.Init(new Windows.MacrosUI().Draw);
-        EzConfigGui.WindowSystem.AddWindow(new HelpUI());
-        EzConfigGui.WindowSystem.AddWindow(new ExcelWindow());
-        Svc.PluginInterface.UiBuilder.OpenMainUi += EzConfigGui.Window.Toggle;
+        Svc.Framework.RunOnFrameworkThread(() =>
+        {
+            EzConfigGui.Init(new Windows.MacrosUI().Draw);
+            EzConfigGui.WindowSystem.AddWindow(new HelpUI());
+            EzConfigGui.WindowSystem.AddWindow(new ExcelWindow());
+            Svc.PluginInterface.UiBuilder.OpenMainUi += EzConfigGui.Window.Toggle;
+            Svc.PluginInterface.UiBuilder.Draw += DrawDevBarEntry;
 
-        EzCmd.Add(Command, OnChatCommand, "Open a window to edit various settings.");
-        Aliases.ToList().ForEach(a => EzCmd.Add(a, OnChatCommand, $"{Command} Alias"));
+            EzCmd.Add(Command, OnChatCommand, "Open a window to edit various settings.");
+            Aliases.ToList().ForEach(a => EzCmd.Add(a, OnChatCommand, $"{Command} Alias"));
 
-        Service.AutoRetainerApi.OnCharacterPostprocessStep += CheckCharacterPostProcess;
-        Service.AutoRetainerApi.OnCharacterReadyToPostProcess += DoCharacterPostProcess;
-        _ = new EzFrameworkUpdate(CheckForMacroCompletion);
+            Service.AutoRetainerApi.OnCharacterPostprocessStep += CheckCharacterPostProcess;
+            Service.AutoRetainerApi.OnCharacterReadyToPostProcess += DoCharacterPostProcess;
+            _ = new EzFrameworkUpdate(CheckForMacroCompletion);
+        });
+    }
+
+    private void DrawDevBarEntry()
+    {
+        if (Svc.PluginInterface.IsDevMenuOpen && ImGui.BeginMainMenuBar())
+        {
+            if (ImGui.MenuItem("SND Excel"))
+            {
+                if (ImGui.GetIO().KeyShift)
+                    EzConfigGui.Toggle();
+                else
+                    EzConfigGui.GetWindow<ExcelWindow>()!.Toggle();
+            }
+            ImGui.EndMainMenuBar();
+        }
     }
 
     private void CheckCharacterPostProcess()
@@ -87,6 +106,7 @@ public sealed class Plugin : IDalamudPlugin
         Service.AutoRetainerApi.OnCharacterReadyToPostProcess -= DoCharacterPostProcess;
 
         Svc.PluginInterface.UiBuilder.OpenMainUi -= EzConfigGui.Window.Toggle;
+        Svc.PluginInterface.UiBuilder.Draw -= DrawDevBarEntry;
         Ipc.Instance?.Dispose();
         ECommonsMain.Dispose();
     }
