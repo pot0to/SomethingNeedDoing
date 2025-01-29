@@ -192,4 +192,7 @@ public class CharacterState
     public unsafe bool IsFriendOnline(byte* name, ushort worldId) => InfoProxyFriendList.Instance()->GetEntryByName(name, worldId)->State != InfoProxyCommonList.CharacterData.OnlineStatus.Offline;
 
     public unsafe float GetJobExp(uint classjob) => PlayerState.Instance()->ClassJobExperience[GetRow<ClassJob>(classjob)?.ExpArrayIndex ?? 0];
+
+    public ulong GetPlayerContentId() => Svc.ClientState.LocalContentId;
+    public unsafe ulong GetPlayerAccountId() => Player.Character->AccountId;
 }
