@@ -19,6 +19,14 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2025-01-30",
+        "Excel viewer changes\n" +
+        "- In-sheet search works again\n" +
+        "- Initial support for large (>100 column) sheets\n" +
+        "- Support for subrow sheets\n" +
+        "- Layout has been adjusted. Columns now flex to their contents\n");
+
+        DisplayChangelog(
         "2025-01-29",
         "Added GetPlayerContentId()\n" +
         "Added GetPlayerAccountId()\n");
