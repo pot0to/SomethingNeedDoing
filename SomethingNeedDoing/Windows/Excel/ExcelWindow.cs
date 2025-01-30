@@ -1,8 +1,11 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using Lumina.Data.Files.Excel;
+using Lumina.Data.Structs.Excel;
 using Lumina.Excel;
 using SomethingNeedDoing.Interface.Excel;
+using System.IO;
 
 namespace SomethingNeedDoing.Interface;
 
@@ -31,9 +34,14 @@ public class ExcelWindow : Window
         using var ch = ImRaii.Child($"{nameof(ExcelSheetDisplay)}");
         if (ch)
         {
-            var sheet = Svc.Data.GetExcelSheet<RawRow>(null, _sheetList._sheets[_sheetList.SelectedItem]);
-            // TODO: check for subrow sheets
-            //var subrowSheet = Svc.Data.GetSubrowExcelSheet<RawSubrow>(null, _sheetList._sheets[_sheetList.SelectedItem]);
+            var header = Svc.Data.GetFile<ExcelHeaderFile>($"exd/{_sheetList._sheets[_sheetList.SelectedItem]}.exh")!;
+            var sheetType = header.Header.Variant switch
+            {
+                ExcelVariant.Default => typeof(RawRow),
+                ExcelVariant.Subrows => typeof(RawSubrow),
+                _ => throw new InvalidDataException("Invalid variant"),
+            };
+            var sheet = Svc.Data.Excel.GetBaseSheet(sheetType, null, _sheetList._sheets[_sheetList.SelectedItem]);
             if (_sheetList.SelectedItem != 0)
                 _sheetDisplay.Draw(sheet);
         }
