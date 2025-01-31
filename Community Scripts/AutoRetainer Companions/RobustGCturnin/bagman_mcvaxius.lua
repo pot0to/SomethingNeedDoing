@@ -389,11 +389,12 @@ for i=1,#franchise_owners do
 	yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
 
 	--only switch chars if the bagman is changing. in some cases we are delivering to same tony or different tonies. we dont care about the numbers
-	if GetCharacterName(true) ~= franchise_owners[i][1] then
+	--if GetCharacterName(true) ~= franchise_owners[i][1] then
+	while GetCharacterName(true) ~= franchise_owners[i][1] do
 		yield("/ays relog " ..franchise_owners[i][1])
 		yield("/wait 2")
 		CharacterSafeWait()
-	end	
+	end
 
     yield("/echo Processing Bagman "..i.."/"..#franchise_owners)
 	DropboxSetItemQuantity(1,false,0) --because we need to do this or shit breaks

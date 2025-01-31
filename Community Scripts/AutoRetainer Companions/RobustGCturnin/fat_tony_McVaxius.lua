@@ -117,7 +117,8 @@ for i=1,#franchise_owners do
 	yield("/echo Processing Tony "..i.."/"..#franchise_owners)
 
 	--only switch chars if the bagman is changing. in some cases we are delivering to same tony or different tonies. we dont care about the numbers
-	if GetCharacterName(true) ~= franchise_owners[i][1] then
+	--if GetCharacterName(true) ~= franchise_owners[i][1] then
+	while GetCharacterName(true) ~= franchise_owners[i][1] do
 		yield("/ays relog " ..franchise_owners[i][1])
 		yield("/wait 2")
 		CharacterSafeWait()
