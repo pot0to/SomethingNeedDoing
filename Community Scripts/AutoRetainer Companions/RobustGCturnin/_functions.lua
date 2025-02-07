@@ -236,6 +236,7 @@ function ZoneTransition()
 		end
     until not iswehehe
 	iswoah = 0
+	zungazunga()
 	yield("/automove off")
     repeat 
         yield("/wait 0.5")
