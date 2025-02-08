@@ -13,7 +13,7 @@ namespace SomethingNeedDoing.Managers;
 internal partial class MacroManager : IDisposable
 {
     private readonly Stack<ActiveMacro> macroStack = new();
-    private readonly CancellationTokenSource eventLoopTokenSource = new();
+    private readonly CancellationTokenSource cts = new();
     private readonly ManualResetEvent pausedWaiter = new(true);
 
     public MacroManager()
@@ -32,16 +32,14 @@ internal partial class MacroManager : IDisposable
 
     public void Dispose()
     {
-        eventLoopTokenSource.Cancel();
-        eventLoopTokenSource.Dispose();
+        cts.Cancel();
+        cts.Dispose();
         pausedWaiter.Dispose();
     }
 
     private async void EventLoop()
     {
-        var token = eventLoopTokenSource.Token;
-
-        while (!token.IsCancellationRequested)
+        while (!cts.Token.IsCancellationRequested)
         {
             try
             {
@@ -60,7 +58,7 @@ internal partial class MacroManager : IDisposable
                 }
 
                 State = LoopState.Running;
-                if (await Task.Run(() => ProcessMacro(macro, token)))
+                if (await Task.Run(() => ProcessMacro(macro, cts.Token)))
                     macroStack.Pop().Dispose();
             }
             catch (OperationCanceledException)
@@ -100,6 +98,7 @@ internal partial class MacroManager : IDisposable
             await Svc.Framework.RunOnTick(async () =>
             {
                 await step.Execute(macro, token);
+                await Svc.Framework.DelayTicks(1, token);
             });
         }
         catch (GateComplete)
@@ -234,7 +233,7 @@ internal sealed partial class MacroManager
             PauseAtLoop = false;
             StopAtLoop = false;
 
-            eventLoopTokenSource.TryReset();
+            cts.TryReset();
 
             pausedWaiter.Set();
             macroStack.Clear();

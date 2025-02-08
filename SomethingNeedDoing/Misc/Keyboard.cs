@@ -36,20 +36,15 @@ internal static class Keyboard
             if (WindowFunctions.TryFindGameWindow(out var hWnd))
             {
                 if (mods != null)
-                {
                     foreach (var mod in mods)
                         _ = SendMessage(hWnd, WM_KEYDOWN, (IntPtr)mod, IntPtr.Zero);
-                }
 
                 _ = SendMessage(hWnd, WM_KEYDOWN, (IntPtr)key, IntPtr.Zero);
-                Thread.Sleep(100);
                 _ = SendMessage(hWnd, WM_KEYUP, (IntPtr)key, IntPtr.Zero);
 
                 if (mods != null)
-                {
                     foreach (var mod in mods)
                         _ = SendMessage(hWnd, WM_KEYUP, (IntPtr)mod, IntPtr.Zero);
-                }
             }
         }
     }
@@ -66,10 +61,8 @@ internal static class Keyboard
             if (WindowFunctions.TryFindGameWindow(out var hWnd))
             {
                 if (mods != null)
-                {
                     foreach (var mod in mods)
                         _ = SendMessage(hWnd, WM_KEYDOWN, (IntPtr)mod, IntPtr.Zero);
-                }
 
                 _ = SendMessage(hWnd, WM_KEYDOWN, (IntPtr)key, IntPtr.Zero);
             }
@@ -90,10 +83,8 @@ internal static class Keyboard
                 _ = SendMessage(hWnd, WM_KEYUP, (IntPtr)key, IntPtr.Zero);
 
                 if (mods != null)
-                {
                     foreach (var mod in mods)
                         _ = SendMessage(hWnd, WM_KEYUP, (IntPtr)mod, IntPtr.Zero);
-                }
             }
         }
     }
