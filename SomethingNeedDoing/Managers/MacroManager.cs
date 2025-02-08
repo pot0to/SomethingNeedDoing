@@ -13,7 +13,7 @@ namespace SomethingNeedDoing.Managers;
 internal partial class MacroManager : IDisposable
 {
     private readonly Stack<ActiveMacro> macroStack = new();
-    private readonly CancellationTokenSource cts = new();
+    private readonly CancellationTokenSource eventLoopTokenSource = new();
     private readonly ManualResetEvent pausedWaiter = new(true);
 
     public MacroManager()
@@ -32,14 +32,14 @@ internal partial class MacroManager : IDisposable
 
     public void Dispose()
     {
-        cts.Cancel();
-        cts.Dispose();
+        eventLoopTokenSource.Cancel();
+        eventLoopTokenSource.Dispose();
         pausedWaiter.Dispose();
     }
 
     private async void EventLoop()
     {
-        while (!cts.Token.IsCancellationRequested)
+        while (!eventLoopTokenSource.Token.IsCancellationRequested)
         {
             try
             {
@@ -58,7 +58,7 @@ internal partial class MacroManager : IDisposable
                 }
 
                 State = LoopState.Running;
-                if (await Task.Run(() => ProcessMacro(macro, cts.Token)))
+                if (await Task.Run(() => ProcessMacro(macro, eventLoopTokenSource.Token)))
                     macroStack.Pop().Dispose();
             }
             catch (OperationCanceledException)
@@ -233,7 +233,7 @@ internal sealed partial class MacroManager
             PauseAtLoop = false;
             StopAtLoop = false;
 
-            cts.TryReset();
+            eventLoopTokenSource.TryReset();
 
             pausedWaiter.Set();
             macroStack.Clear();
