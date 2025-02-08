@@ -117,7 +117,8 @@ for i=1,#franchise_owners do
 	yield("/echo Processing Tony "..i.."/"..#franchise_owners)
 
 	--only switch chars if the bagman is changing. in some cases we are delivering to same tony or different tonies. we dont care about the numbers
-	if GetCharacterName(true) ~= franchise_owners[i][1] then
+	--if GetCharacterName(true) ~= franchise_owners[i][1] then
+	while GetCharacterName(true) ~= franchise_owners[i][1] do
 		yield("/ays relog " ..franchise_owners[i][1])
 		yield("/wait 2")
 		CharacterSafeWait()
@@ -188,18 +189,30 @@ for i=1,#franchise_owners do
 			yield("/echo See ya "..fat_tony..", a pleasure.")
 			yield("/wait 5")
 			CharacterSafeWait()
+			--[[
 			--added 5 second wait here because sometimes they get stuck.
 			yield("/wait 5")
+			yield("/tp Estate Hall")
+			yield("/wait 1")
+			--yield("/waitaddon Nowloading <maxwait.15>")
+			yield("/wait 15")
+			yield("/waitaddon NamePlate <maxwait.600><wait.5>")
+			--]]
+			--normal small house shenanigans
 			if franchise_owners[i][3] == 0 then
 				return_to_fc()			
+				CharacterSafeWait()
 				yield("/wait 5")
 				return_fc_entrance()
 			end
 			if franchise_owners[i][3] == 3 then --return to fc without returning to entrance
 				return_to_fc()			
+				CharacterSafeWait()
 			end
 			--retainer bell nearby shenanigans
 			if franchise_owners[i][3] == 1 then
+				return_to_fc()			
+				CharacterSafeWait()
 				yield("/target \"Summoning Bell\"")
 				yield("/wait 2")
 				PathfindAndMoveTo(GetObjectRawXPos("Summoning Bell"), GetObjectRawYPos("Summoning Bell"), GetObjectRawZPos("Summoning Bell"), false)
@@ -207,7 +220,6 @@ for i=1,#franchise_owners do
 			end
 			--limsa bell
 			if franchise_owners[i][3] == 2 then
-				yield("/echo returning to limsa bell")
 				return_to_limsa_bell()
 			end
 		end

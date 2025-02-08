@@ -145,7 +145,8 @@ exmample qolbar for telling group to go instance 2
 
 -----------CONFIGURATION END-----------
 if open_on_next_load == 1 then
-    openFolderInExplorer(os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\")
+	local folderPath = os.getenv("appdata") .. "\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
+	os.execute('explorer "' .. folderPath .. '"')
 end
 ----------------
 --INIT SECTION--
