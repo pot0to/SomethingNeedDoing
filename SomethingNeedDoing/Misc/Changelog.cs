@@ -19,6 +19,10 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2025-02-08",
+        "- Added GetShieldPercentage()\n");
+
+        DisplayChangelog(
         "2025-01-30",
         "Excel viewer changes\n" +
         "- In-sheet search works again\n" +

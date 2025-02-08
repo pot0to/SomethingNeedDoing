@@ -83,6 +83,7 @@ public class CharacterState
     public uint GetClassJobId() => Svc.ClientState.LocalPlayer!.ClassJob.RowId;
     public uint GetHP() => Svc.ClientState.LocalPlayer?.CurrentHp ?? 0;
     public uint GetMaxHP() => Svc.ClientState.LocalPlayer?.MaxHp ?? 0;
+    public uint GetShieldPercentage() => Svc.ClientState.LocalPlayer?.ShieldPercentage ?? 0;
     public uint GetMP() => Svc.ClientState.LocalPlayer?.CurrentMp ?? 0;
     public uint GetMaxMP() => Svc.ClientState.LocalPlayer?.MaxMp ?? 0;
     public uint GetCurrentWorld() => Svc.ClientState.LocalPlayer?.CurrentWorld.RowId ?? 0;
