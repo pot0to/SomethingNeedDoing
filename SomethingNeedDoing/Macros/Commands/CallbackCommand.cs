@@ -93,14 +93,17 @@ internal class CallbackCommand : MacroCommand
     {
         unsafe
         {
-            Callback.Fire((AtkUnitBase*)Svc.GameGui.GetAddonByName(addon), updateState, [.. valueArgs]);
-            //if (TryGetAddonByName<AtkUnitBase>(addon, out var addonArg))
-            //    Callback.Fire(addonArg, updateState, [.. valueArgs]);
-            //else
-            //{
-            //    if (C.StopMacroIfAddonNotFound)
-            //        throw new MacroCommandError($"Addon {addon} not found.");
-            //}
+            if (TryGetAddonByName<AtkUnitBase>(addon, out var addonArg))
+            {
+                Svc.Log.Debug($"Sending callback to {addon} with args [{string.Join(", ", valueArgs)}]");
+                Callback.Fire(addonArg, updateState, [.. valueArgs]);
+            }
+            else
+            {
+                Svc.Log.Debug($"Addon {addon} not found.");
+                if (C.StopMacroIfAddonNotFound)
+                    throw new MacroCommandError($"Addon {addon} not found.");
+            }
         }
         await PerformWait(token);
     }

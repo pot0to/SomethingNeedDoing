@@ -39,7 +39,8 @@ internal partial class MacroManager : IDisposable
 
     private async void EventLoop()
     {
-        while (!eventLoopTokenSource.Token.IsCancellationRequested)
+        var token = eventLoopTokenSource.Token;
+        while (!token.IsCancellationRequested)
         {
             try
             {
@@ -58,7 +59,7 @@ internal partial class MacroManager : IDisposable
                 }
 
                 State = LoopState.Running;
-                if (await Task.Run(() => ProcessMacro(macro, eventLoopTokenSource.Token)))
+                if (await Task.Run(() => ProcessMacro(macro, token)))
                     macroStack.Pop().Dispose();
             }
             catch (OperationCanceledException)
@@ -97,7 +98,16 @@ internal partial class MacroManager : IDisposable
 
             await Svc.Framework.RunOnTick(async () =>
             {
-                await step.Execute(macro, token);
+                try
+                {
+                    await step.Execute(macro, token);
+                }
+                catch (Exception ex)
+                {
+                    Svc.Log.Error(ex, "Failed to execute macro step");
+                    Service.ChatManager.PrintError($"Failed to execute macro step \"{step.Text}\": {ex.Message}");
+                    return;
+                }
                 await Svc.Framework.DelayTicks(1, token);
             });
         }
