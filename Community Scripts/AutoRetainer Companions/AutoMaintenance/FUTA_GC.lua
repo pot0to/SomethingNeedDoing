@@ -140,7 +140,8 @@ function Final_GC_Cleaning()
 			castattempt = 0
 			--credit to https://github.com/WigglyMuffin/SNDScripts/blob/main/vac_functions.lua  for finding the nodetext for this one :~D
 			yield("/freecompanycmd <wait.1>")
-			yield("/callback FreeCompany false 0 4u <wait.1>")
+			
+			if IsAddonReady("FreeCompany") then yield("/callback FreeCompany false 0 4u <wait.1>") end
 			if purchase_attempts > 1 then
 				search_boof = "Seal Sweetener"
 				yield("/echo FC not ready for Seal Sweetener II")
@@ -153,11 +154,11 @@ function Final_GC_Cleaning()
 				yield("/wait 0.3")
 				if type(node_text) == "string" and node_text == search_boof and castattempt == 0 then --we hit it. time to cast it
 					castattempt = 1
-					yield("/callback FreeCompanyAction false 1 "..zz.."u <wait.1>")
+					if IsAddonReady("FreeCompany") then yield("/callback FreeCompanyAction false 1 "..zz.."u <wait.1>") end
 				end
 			end
-			yield("/callback ContextMenu true 0 0 1u 0 0 <wait.1>")
-			yield("/callback SelectYesno true 0 <wait.1>")
+			if IsAddonReady("ContextMenu") then yield("/callback ContextMenu true 0 0 1u 0 0 <wait.1>") end
+			if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0 <wait.1>") end
 			
 			--if seal buff fails to work then trigger buy seal buff from npc routine, but only do this if we can failsafe ourselves with 16k gil and 7k fc points
 			if GetStatusTimeRemaining(414) == 0 then
@@ -175,7 +176,7 @@ function Final_GC_Cleaning()
 						yield("/wait 2")
 						yield("/callback SelectString true 1 <wait.1>")
 						yield("/wait 2")
-						yield("/callback SelectYesno true 0")
+						if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 						zungazunga()
 						yield("/wait 2")
 						yield("/target \"OIC Quartermaster\"")
@@ -192,13 +193,13 @@ function Final_GC_Cleaning()
 						buycount = 0
 						while (buycount < buymax) do
 							if purchase_attempts < 2 then
-								yield("/callback FreeCompanyExchange false 2 22u")
+								if IsAddonReady("FreeCompanyExchange") then yield("/callback FreeCompanyExchange false 2 22u") end
 							end
 							if purchase_attempts > 1 then
-								yield("/callback FreeCompanyExchange false 2 5u")
+								if IsAddonReady("FreeCompanyExchange") then yield("/callback FreeCompanyExchange false 2 5u") end
 							end
 							yield("/wait 1")
-							yield("/callback SelectYesno true 0")
+							if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 							yield("/wait 1")
 							buycount = buycount + 1
 						end
@@ -229,13 +230,13 @@ function Final_GC_Cleaning()
 		yield("/echo oh boy we forgot to click the squadron stuff before")
 		yield("/wait 10") --we forgot to enable squadrons
 		yield("/wait 1")
-		yield("/callback SelectYesno true 0")
+		if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 
 		yield("/wait 1")
-		yield("/callback SelectYesno true 0")
+		if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 
 		yield("/wait 1")
-		yield("/callback SelectYesno true 0")
+		if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 		yield("/wait 25")
 		yield("/deliveroo enable")
 	end
@@ -265,11 +266,11 @@ function Final_GC_Cleaning()
 		end
 --	end
 	yield("/wait 1")
-	yield("/callback SelectYesno true 0")
+	if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 	yield("/wait 1")
-	yield("/callback SelectYesno true 0")
+	if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 	yield("/wait 1")
-	yield("/callback SelectYesno true 0")
+	if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 
 	--added 5 second wait here because sometimes they get stuck.
 	yield("/wait 5")
@@ -353,7 +354,7 @@ function Final_GC_Cleaning()
 		yield("/wait 1")
 		yield("/send NUMPAD0")
 		yield("/wait 1")
-		yield("/callback GrandCompanySupplyList true 0 1 2")
+		if IsAddonReady("GrandCompanySupplyList") then yield("/callback GrandCompanySupplyList true 0 1 2") end
 		yield("/wait 1")
 		yield("/send NUMPAD0")
 		yield("/wait 1")
@@ -373,7 +374,7 @@ function Final_GC_Cleaning()
 			yield("/wait 2")
 			yield("/callback SelectString true 1")
 			yield("/wait 3")
-			yield("/callback GrandCompanyRankUp true 0")
+			if IsAddonReady("GrandCompanyRankUp") then yield("/callback GrandCompanyRankUp true 0") end
 			yield("/wait 1")
 			yield("/send ESCAPE <wait.1.5>")
 			yield("/send ESCAPE <wait.1.5>")
@@ -447,18 +448,18 @@ function FUTA_robust_gc()
 	if config_sell == 1 then
 		yield("/maincommand Item Settings")
 		yield("/wait 0.5")
-		yield("/callback ConfigCharaItem true 18 288 0 u0")
-		yield("/callback ConfigCharaItem true 0")
+		if IsAddonReady("ConfigCharaItem") then yield("/callback ConfigCharaItem true 18 288 0 u0") end
+		if IsAddonReady("ConfigCharaItem") then yield("/callback ConfigCharaItem true 0") end
 		yield("/wait 0.5")
-		yield("/callback ConfigCharacter true 1")
+		if IsAddonReady("ConfigCharaItem") then yield("/callback ConfigCharacter true 1") end
 	end
 	if config_sell == 2 then
 		yield("/maincommand Item Settings")
 		yield("/wait 0.5")
-		yield("/callback ConfigCharaItem true 18 288 1 u0")
-		yield("/callback ConfigCharaItem true 0")
+		if IsAddonReady("ConfigCharaItem") then yield("/callback ConfigCharaItem true 18 288 1 u0") end
+		if IsAddonReady("ConfigCharaItem") then yield("/callback ConfigCharaItem true 0") end
 		yield("/wait 0.5")
-		yield("/callback ConfigCharacter true 1")
+		if IsAddonReady("ConfigCharaItem") then yield("/callback ConfigCharacter true 1") end
 	end
 	if auto_eqweep == 1 then
 		if are_we_dol() then

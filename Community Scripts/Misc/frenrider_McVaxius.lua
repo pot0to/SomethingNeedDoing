@@ -333,6 +333,18 @@ shartycardinality = 2 -- leader
 partycardinality = 2 -- me
 fartycardinality = 2 --leader ui cardinality
 autotosscount = 0
+
+pandora_interact_toggler_count = 0 -- for checking on pandora interact settings.
+--zones of interact --rule - only put zones that require everyone in party to interact. if its party leader only. dont do it.
+pandora_interact_toggler_count = 0 -- for checking on pandora interact settings.
+zoi = {
+1044,--praetorium
+1043,--meridianum
+171,--dzemael
+1041--brayflox
+1245--halatali
+}
+
 we_are_in = GetZoneID()
 we_were_in = GetZoneID()
 for i=0,7 do
@@ -362,6 +374,31 @@ countfartula = 2 --redeclare dont worry its fine. we need this so we can do it l
 	end
 end
 counting_fartula() --we can call it before mounting because the order changes sometimes after a duty ends or after changing areas (AFTER a duty ends?) idk it was hard to recreate but this solves it.
+
+function checkzoi()
+--pandora memory leak too real
+--[[
+	if pandora_interact_toggler_count > 10 then
+	pandora_interact_toggler_count = 0
+	are_we_in_i_zone = 0
+	--prae, meri, dze, halatali	
+	for zzz=1,#zoi do
+		if zoi[zzz] == GetZoneID() then
+			are_we_in_i_zone = 1
+		end
+		yield("/wait 0.5")
+	end
+	if are_we_in_i_zone == 1 then
+		PandoraSetFeatureState("Auto-interact with Objects in Instances",true)
+		--yield("/echo PandoraSetFeatureState(Auto-interact with Objects in Instances,true)")
+	end
+	if are_we_in_i_zone == 0 then
+		PandoraSetFeatureState("Auto-interact with Objects in Instances",false)
+		--yield("/echo PandoraSetFeatureState(Auto-interact with Objects in Instances,false)")
+	end
+	end
+	--]]
+end
 
 --yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
 yield("/echo Friend is party slot -> "..fartycardinality .. " Order of join -> "..partycardinality.." Fren Join order -> "..shartycardinality)
@@ -452,12 +489,18 @@ while weirdvar == 1 do
 					if flandom == 1 then yield("/send E") end
 					yield("/wait 0.5")
 				end
+				pandora_interact_toggler_count = pandora_interact_toggler_count + 1
+				checkzoi()
 			end
+
 			if GetCharacterCondition(34) == false then  --not in duty  
 				--SAFETY CHECKS DONE, can do whatever you want now with characterconditions etc			
 				--movement with formation - initially we test while in any situation not just combat
 				--check distance to fren, if its more than cling, then
 	
+				pandora_interact_toggler_count = pandora_interact_toggler_count + 1
+				checkzoi()
+
 				if formation == true and bistance < maxbistance then
 					-- Inside combat and formation enabled
 					local leaderX, leaderY, leaderZ = GetObjectRawXPos(fren), GetObjectRawYPos(fren), GetObjectRawZPos(fren)
