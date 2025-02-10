@@ -109,7 +109,7 @@ internal partial class MacroManager : IDisposable
                     return;
                 }
                 await Svc.Framework.DelayTicks(1, token);
-            });
+            }, cancellationToken: token);
         }
         catch (GateComplete)
         {

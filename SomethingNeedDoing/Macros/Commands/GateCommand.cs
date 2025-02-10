@@ -30,8 +30,7 @@ internal class GateCommand : MacroCommand
     /// <param name="craftCount">Craft count.</param>
     /// <param name="wait">Wait value.</param>
     /// <param name="echo">Echo value.</param>
-    private GateCommand(string text, int craftCount, WaitModifier wait, EchoModifier echo)
-        : base(text, wait)
+    private GateCommand(string text, int craftCount, WaitModifier wait, EchoModifier echo) : base(text, wait)
     {
         startingCrafts = craftsRemaining = craftCount;
         echoMod = echo;
@@ -64,27 +63,27 @@ internal class GateCommand : MacroCommand
     {
         Svc.Log.Debug($"Executing: {Text}");
 
-        if (echoMod.PerformEcho || C.LoopEcho)
+        while (craftsRemaining > 0)
         {
-            if (craftsRemaining == 0)
+            if (craftsRemaining < 0)
             {
-                Service.ChatManager.PrintMessage("No crafts remaining");
+                craftsRemaining = startingCrafts;
+                throw new GateComplete();
             }
-            else
+
+            if (echoMod.PerformEcho || C.LoopEcho)
             {
-                var noun = craftsRemaining == 1 ? "craft" : "crafts";
-                Service.ChatManager.PrintMessage($"{craftsRemaining} {noun} remaining");
+                if (craftsRemaining == 0)
+                    Service.ChatManager.PrintMessage("No crafts remaining");
+                else
+                {
+                    var noun = craftsRemaining == 1 ? "craft" : "crafts";
+                    Service.ChatManager.PrintMessage($"{craftsRemaining} {noun} remaining");
+                }
             }
-        }
 
-        craftsRemaining--;
-
-        await PerformWait(token);
-
-        if (craftsRemaining < 0)
-        {
-            craftsRemaining = startingCrafts;
-            throw new GateComplete();
+            craftsRemaining--;
+            await NextFrame(token);
         }
     }
 }
