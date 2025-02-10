@@ -266,6 +266,10 @@ function clingmove(nemm)
 		yield("/wait 5")
 		return --don't do the other stuff until we have opened the door
 	end
+	if GetObjectRawXPos(nemm) == 0 and GetObjectRawYPos(nemm) == 0 and GetObjectRawZPos(nemm) == 0 then
+		yield("/echo Cannot find master or they are somehow at 0,0,0 - we are not moving")
+		return
+	end
 	--jump if we are mounted and below the leader by 10 yalms
 	if (GetObjectRawYPos(nemm) - GetPlayerRawYPos()) > 9 and GetCharacterCondition(4) == true then
 		yield("/gaction jump")
@@ -281,6 +285,8 @@ function clingmove(nemm)
 	if allowmovement == 1 then
 		--navmesh
 		if zclingtype == 0 then
+			--DEBUG
+			--yield("/echo x->"..GetObjectRawXPos(nemm).."y->"..GetObjectRawYPos(nemm).."z->"..GetObjectRawZPos(nemm))--if its 0,0,0 we are not gonna do shiiiit.
 			--PathfindAndMoveTo(GetObjectRawXPos(nemm),GetObjectRawYPos(nemm),GetObjectRawZPos(nemm), false)
 			if GetCharacterCondition(77) == false then yield("/vnav moveto "..GetObjectRawXPos(nemm).." "..GetObjectRawYPos(nemm).." "..GetObjectRawZPos(nemm)) end
 			if GetCharacterCondition(77) == true then yield("/vnav flyto "..GetObjectRawXPos(nemm).." "..GetObjectRawYPos(nemm).." "..GetObjectRawZPos(nemm)) end
