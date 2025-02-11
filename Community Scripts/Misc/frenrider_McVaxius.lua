@@ -267,7 +267,7 @@ function clingmove(nemm)
 		return --don't do the other stuff until we have opened the door
 	end
 	if GetObjectRawXPos(nemm) == 0 and GetObjectRawYPos(nemm) == 0 and GetObjectRawZPos(nemm) == 0 then
-		yield("/echo Cannot find master or they are somehow at 0,0,0 - we are not moving")
+		yield("/echo Cannot find >"..nemm.."< or they are somehow at 0,0,0 - we are not moving")
 		return
 	end
 	--jump if we are mounted and below the leader by 10 yalms
