@@ -63,6 +63,7 @@ while im_a_cuck == 1 do
 	if GetCharacterCondition(26) == true then
 		if distance(GetPlayerRawXPos(), GetPlayerRawYPos(), GetPlayerRawZPos(), GetObjectRawXPos(GetTargetName()),GetObjectRawYPos(GetTargetName()),GetObjectRawZPos(GetTargetName())) > 15 then
 			yield("/vnav moveto "..GetObjectRawXPos(GetTargetName()).." "..GetObjectRawYPos(GetTargetName()).." "..GetObjectRawZPos(GetTargetName()))
+			yield("/echo Attempting Autoduty Calibration --> "..GetTargetName())
 		end
 	end
 end
