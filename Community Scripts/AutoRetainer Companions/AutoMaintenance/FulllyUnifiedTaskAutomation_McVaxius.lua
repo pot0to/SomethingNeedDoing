@@ -52,7 +52,7 @@ table_version = 2 -- don't change this. I will change it. this way your old conf
 ----------------------GLOBAL VARIABLES----------------------
 ------------------------------------------------------------
 FUTA_config_file = "FUTAconfig_McVaxius_"..table_version..".lua"
-force_fishing = 0 -- Set to 1 if you want the default indexed char to fish whenever possible
+force_fishing = 0 -- Set to 1 if you want the default indexed char (read the default settings for FISH) to fish whenever possible
 venture_cleaning = 20 -- How many venture coins do we need to have left we do a cleaning - useful for leveling new retainer abusers 21072 is item id
 folderPath = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\"
 loadfiyel = os.getenv("appdata").."\\XIVLauncher\\pluginConfigs\\SomethingNeedDoing\\_functions.lua"
@@ -147,7 +147,7 @@ FUTA_processors = {} -- Initialize variable
 FUTA_defaults = {
     {
         {"Firstname Lastname@Server", 0}, 			--Y--{}[i][1][1..2]--name@server and return type 0 return home to fc entrance, 1 return home to a bell, 2 don't return home, 3 is gridania inn, 4 limsa bell near aetheryte, 5 personal estate entrance, 6 bell near personal home, 7 fc entrance and do nothing else
-        {"FISH", 0},								--Y--{}[i][2][1..2]--level, 0 = dont do anything, 100 = dont do anything, 101 = automatically pick this char everytime, minimum = pick this char if no 101 exists
+        {"FISH", 0},								--Y--{}[i][2][1..2]--level, 0 = dont do anything, 100 = dont do anything, 101 = automatically pick this char everytime (default indexed char), minimum = pick this char if no 101 exists (default indexed char)
 		{"CLEAN", 100, 0, 0, 50},					--Y--{}[i][3][1..5]--chance to do random cleaning/100 if 100 it will be changed to illegalcleaningresetvalue(default 3) after 1 run, process_gc_rank = 0=no,1=yes. expert_hack = 0=no,1=yes. clean_inventory = 0=no, >0 check inventory slots free and try to clean out inventory., set [5] to -1 if you want to disable gc cleaning for this char
 		{"FUEL", 0, 0},								--Y--{}[i][4][1..3]--fuel safety stock trigger, fuel to buy up to i[4][3] amount when hitting i[4][2] amount or lower leave i[4][2] at 0 if you dont want it to process this
 		{"TT", 0, 0},								--N--{}[i][5][1..3]--minutes of TT, npc to play 1= roe 2= manservant
