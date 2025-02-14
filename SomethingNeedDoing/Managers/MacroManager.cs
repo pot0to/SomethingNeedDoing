@@ -59,7 +59,7 @@ internal partial class MacroManager : IDisposable
                 }
 
                 State = LoopState.Running;
-                if (await Task.Run(() => ProcessMacro(macro, token)))
+                if (await ProcessMacro(macro, token))
                     macroStack.Pop().Dispose();
             }
             catch (OperationCanceledException)
@@ -96,20 +96,21 @@ internal partial class MacroManager : IDisposable
             if (step == null)
                 return true;
 
-            await Svc.Framework.RunOnTick(async () =>
-            {
-                try
-                {
-                    await step.Execute(macro, token);
-                }
-                catch (Exception ex)
-                {
-                    Svc.Log.Error(ex, "Failed to execute macro step");
-                    Service.ChatManager.PrintError($"Failed to execute macro step \"{step.Text}\": {ex.Message}");
-                    return;
-                }
-                await Svc.Framework.DelayTicks(1, token);
-            }, cancellationToken: token);
+            await step.Execute(macro, token);
+            //await Svc.Framework.RunOnTick(async () =>
+            //{
+            //    try
+            //    {
+            //        await step.Execute(macro, token);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Svc.Log.Error(ex, "Failed to execute macro step");
+            //        Service.ChatManager.PrintError($"Failed to execute macro step \"{step.Text}\": {ex.Message}");
+            //        return;
+            //    }
+            //    await Svc.Framework.DelayTicks(1, token);
+            //}, cancellationToken: token);
         }
         catch (GateComplete)
         {

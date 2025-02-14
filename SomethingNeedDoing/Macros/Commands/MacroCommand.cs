@@ -82,8 +82,6 @@ internal abstract class MacroCommand
         return groupValue;
     }
 
-    protected async Task NextFrame(CancellationToken ct, int framesToWait = 1) => await Svc.Framework.DelayTicks(framesToWait, ct);
-
     /// <summary>
     /// Perform a wait.
     /// </summary>
@@ -107,8 +105,7 @@ internal abstract class MacroCommand
             Svc.Log.Debug($"Sleeping for {sleep.TotalMilliseconds} millis ({Wait} to {WaitUntil})");
         }
 
-        await NextFrame(token, WaitUntil == 0 ? Wait : Rand.Next(Wait, WaitUntil));
-        //await Task.Delay(sleep, token);
+        await Task.Delay(sleep, token);
     }
 
     /// <summary>
@@ -132,8 +129,7 @@ internal abstract class MacroCommand
             if (totalWait > until)
                 return false;
 
-            await NextFrame(token, interval);
-            //await Task.Delay(interval, token);
+            await Task.Delay(interval, token);
         }
     }
 
@@ -159,8 +155,7 @@ internal abstract class MacroCommand
             if (totalWait > until)
                 return (result, false);
 
-            await NextFrame(token, interval);
-            //await Task.Delay(interval, token);
+            await Task.Delay(interval, token);
         }
     }
 }

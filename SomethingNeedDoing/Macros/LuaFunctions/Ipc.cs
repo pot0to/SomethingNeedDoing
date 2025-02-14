@@ -1,6 +1,4 @@
 ﻿using AutoRetainerAPI;
-using ECommons.EzIpcManager;
-using FFXIVClientStructs.FFXIV.Client.Game;
 using SomethingNeedDoing.IPC;
 using SomethingNeedDoing.Misc;
 using System;

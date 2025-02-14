@@ -6,6 +6,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ECommons.Automation;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -45,12 +46,12 @@ internal class ReleaseCommand : MacroCommand
         Svc.Log.Debug($"Executing: {Text}");
 
         if (vkCodes.Length == 1)
-            Keyboard.Release(vkCodes[0]);
+            WindowsKeypress.SendKeyRelease(vkCodes[0], null);
         else
         {
             var key = vkCodes.Last();
             var mods = vkCodes.SkipLast(1);
-            Keyboard.Release(key, mods);
+            WindowsKeypress.SendKeyRelease(key, mods);
         }
 
         await PerformWait(token);

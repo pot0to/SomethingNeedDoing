@@ -95,8 +95,15 @@ internal class CallbackCommand : MacroCommand
         {
             if (TryGetAddonByName<AtkUnitBase>(addon, out var addonArg))
             {
-                Svc.Log.Debug($"Sending callback to {addon} with args [{string.Join(", ", valueArgs)}]");
-                Callback.Fire(addonArg, updateState, [.. valueArgs]);
+                if (IsAddonReady(addonArg))
+                {
+                    Svc.Log.Debug($"Sending callback to {addon} with args [{string.Join(", ", valueArgs)}]");
+                    Svc.Framework.RunOnFrameworkThread(() =>
+                    {
+                        if (IsAddonReady(addonArg))
+                            Callback.Fire(addonArg, updateState, [.. valueArgs]);
+                    });
+                }
             }
             else
             {

@@ -6,6 +6,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ECommons.Automation;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -45,12 +46,12 @@ internal class HoldCommand : MacroCommand
         Svc.Log.Debug($"Executing: {Text}");
 
         if (vkCodes.Length == 1)
-            Keyboard.Hold(vkCodes[0]);
+            WindowsKeypress.SendKeyHold(vkCodes[0], null);
         else
         {
             var key = vkCodes.Last();
             var mods = vkCodes.SkipLast(1);
-            Keyboard.Hold(key, mods);
+            WindowsKeypress.SendKeyHold(key, mods);
         }
 
         await PerformWait(token);

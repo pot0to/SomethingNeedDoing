@@ -6,6 +6,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ECommons.Automation;
 
 namespace SomethingNeedDoing.Grammar.Commands;
 
@@ -45,12 +46,12 @@ internal class SendCommand : MacroCommand
         Svc.Log.Debug($"Executing: {Text}");
 
         if (vkCodes.Length == 1)
-            Keyboard.Send(vkCodes[0]);
+            WindowsKeypress.SendKeypress(vkCodes[0], null);
         else
         {
             var key = vkCodes.Last();
             var mods = vkCodes.SkipLast(1);
-            Keyboard.Send(key, mods);
+            WindowsKeypress.SendKeypress(key, mods);
         }
 
         await PerformWait(token);

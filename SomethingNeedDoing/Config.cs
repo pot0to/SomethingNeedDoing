@@ -6,6 +6,7 @@ using SomethingNeedDoing.Macros;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace SomethingNeedDoing;
 
@@ -136,6 +137,8 @@ public class ConfigFactory : ISerializationFactory
 {
     public string DefaultConfigFileName => "SomethingNeedDoing.json";
 
+    public bool IsBinary => false;
+
     public T? Deserialize<T>(string inputData)
     {
         try
@@ -150,6 +153,9 @@ public class ConfigFactory : ISerializationFactory
 
     public string? Serialize(object data, bool pretty = false)
         => JsonConvert.SerializeObject(data, JsonSerializerSettings);
+    public string? Serialize(object config) => Serialize(config, false);
+    public T? Deserialize<T>(byte[] inputData) => Deserialize<T>(Encoding.UTF8.GetString(inputData));
+    public byte[]? SerializeAsBin(object config) => Encoding.UTF8.GetBytes(Serialize(config));
 
     public static readonly JsonSerializerSettings JsonSerializerSettings = new()
     {

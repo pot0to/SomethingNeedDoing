@@ -63,14 +63,8 @@ internal class GateCommand : MacroCommand
     {
         Svc.Log.Debug($"Executing: {Text}");
 
-        while (craftsRemaining > 0)
+        if (echoMod.PerformEcho || C.LoopEcho)
         {
-            if (craftsRemaining < 0)
-            {
-                craftsRemaining = startingCrafts;
-                throw new GateComplete();
-            }
-
             if (echoMod.PerformEcho || C.LoopEcho)
             {
                 if (craftsRemaining == 0)
@@ -81,9 +75,15 @@ internal class GateCommand : MacroCommand
                     Service.ChatManager.PrintMessage($"{craftsRemaining} {noun} remaining");
                 }
             }
+        }
+        craftsRemaining--;
 
-            craftsRemaining--;
-            await NextFrame(token);
+        await PerformWait(token);
+
+        if (craftsRemaining < 0)
+        {
+            craftsRemaining = startingCrafts;
+            throw new GateComplete();
         }
     }
 }

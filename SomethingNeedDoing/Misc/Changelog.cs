@@ -19,6 +19,11 @@ internal class Changelog
         using var font = ImRaii.PushFont(UiBuilder.MonoFont);
 
         DisplayChangelog(
+        "2025-02-14",
+        "- Reverted the behaviour of scripts running on the game thread for the time being. (PLEASE SUBSCRIBE TO THE TESTING VERSION IN THE FUTURE)\n" +
+        "- Added GetPluginVersion()\n");
+
+        DisplayChangelog(
         "2025-02-08",
         "- Added GetShieldPercentage()\n");
 

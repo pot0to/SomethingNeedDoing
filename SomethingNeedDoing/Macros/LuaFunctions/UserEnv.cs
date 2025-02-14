@@ -34,4 +34,5 @@ public class UserEnv
     public void LogVerbose(object text) => Svc.Log.Verbose($"{text}");
 
     public bool HasPlugin(string name) => DalamudReflector.TryGetDalamudPlugin(name, out _, false, true);
+    public System.Version GetPluginVersion(string name) => Svc.PluginInterface.InstalledPlugins.FirstOrDefault(p => p?.InternalName == name, null)?.Version ?? new System.Version(0, 0);
 }
