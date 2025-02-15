@@ -51,7 +51,7 @@ function fishing()
 		yield("/wait 1")
 		yield("/callback Repair true 1")
 		yield("/wait 3")
-		yield("/callback SelectYesno true 0")
+		if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 		yield("/wait 1")
 		ungabunga()
 	end
@@ -71,9 +71,9 @@ function fishing()
 		yield("/wait 1")
 		yield("/callback SelectIconString true 0")
 		yield("/wait 3")
-		yield("/callback Shop true 0 3 10")
+		if IsAddonReady("Shop") then yield("/callback Shop true 0 3 10") end
 		yield("/wait 1")
-		yield("/callback Shop true 0 3 10")
+		if IsAddonReady("Shop") then yield("/callback Shop true 0 3 10") end
 		yield("/wait 1")
 		ungabunga()
 	end
@@ -191,9 +191,9 @@ function fishing()
 		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
 		yield("/li fc")
 		yield("/wait 1")
-		yield("/callback SelectYesno true 0")
+		if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 		yield("/wait 1")
-		yield("/callback SelectYesno true 0")
+		if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 		--yield("/waitaddon Nowloading <maxwait.15>")
 		yield("/wait 15")
 		yield("/waitaddon NamePlate <maxwait.600><wait.5>")
