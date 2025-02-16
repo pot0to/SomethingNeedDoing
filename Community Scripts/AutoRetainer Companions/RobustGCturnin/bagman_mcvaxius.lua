@@ -25,9 +25,13 @@ Simpletweaks -> enable auto equip recommended
 
 Known issues:
 1. "Race Condition with trade windows"
-Something i need to confirm and report -> Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a, if i use callback method they will keep trying until they finish delivering gil.  however
-if i use the dropbox method I am 99% sure it will just kind of sit there thinking its processing a dropbox queue but in fact its just sitting there doing nothing if any of the trade windows are open
-while other clients are trying and failing to open one with the char from account A.
+Something i need to report on a regular basis since it still isn't fixed after a year of monthly reports->
+
+The Drop Box Race Condition
+Accounts, a, b, c, d.  Say i want to deliver from b,c,d to a
+If the trade window is ever busy or the char is unavailable for some reason (cutscene, not fully loaded).  dropbox will just sortof go into limbo, pretending its processing its queue but never do anything.
+This happens if i have multiple chars trying to dropbox to same destination ( common usecase for sublords )
+Opening trade manually to see if it will jumpstart the continuation of the process does not "solve" it, dropbox needs to be reviewed and fixed
 
 2. if dropbox isnt on the item tab, nothing will work.
 
