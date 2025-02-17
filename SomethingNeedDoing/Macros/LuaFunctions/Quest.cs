@@ -56,6 +56,8 @@ internal class Quests
 
     public string GetQuestAlliedSociety(uint id) => Svc.Data.GetExcelSheet<Quest>(Svc.ClientState.ClientLanguage).FirstOrDefault(x => x.RowId == id).BeastTribe.Value.Name.ToString();
 
+    public unsafe bool IsLeveAccepted(ushort id) => QuestManager.Instance()->LeveQuests.ToArray().Any(q => q.LeveId == id);
+
     public unsafe MonsterNoteRankInfo GetMonsterNoteRankInfo(int index) => MonsterNoteManager.Instance()->RankData[index];
 
     private static bool IsMatch(string x, string y) => Regex.IsMatch(x, $@"\b{Regex.Escape(y)}\b");
