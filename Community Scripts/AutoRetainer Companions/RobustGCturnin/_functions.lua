@@ -132,13 +132,13 @@ end
 
 function ungabunga()
 	yield("/send ESCAPE <wait.1.5>")
-	yield("/callback SelectYesno true 0")
+	if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 	yield("/send ESCAPE <wait.1.5>")
-	yield("/callback SelectYesno true 0")
+	if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 	yield("/send ESCAPE <wait.1.5>")
-	yield("/callback SelectYesno true 0")
+	if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 	yield("/send ESCAPE <wait.1>")
-	yield("/callback SelectYesno true 0")
+	if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 	yield("/wait 3")
 end
 
@@ -160,11 +160,11 @@ function ungabungabunga()
 		tobungaorunga = 0
 		while tobungaorunga == 0 do
 			yield("/send ESCAPE <wait.1.5>")
-			yield("/callback SelectYesno true 0")
+			if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 			yield("/send ESCAPE <wait.1.5>")
-			yield("/callback SelectYesno true 0")
+			if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 			yield("/send ESCAPE <wait.1.5>")
-			yield("/callback SelectYesno true 0")
+			if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 			yield("/send ESCAPE <wait.1>")
 			yield("/wait 3")
 			if IsPlayerAvailable() == true then
@@ -227,12 +227,12 @@ function ZoneTransition()
         yield("/echo Are we ready? -> "..iswoah.."/20")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
-		if 	iswoah == 5 then yield("/callback SelectYesno true 0") end
-		if 	iswoah == 10 then yield("/callback SelectYesno true 0") end
-		if 	iswoah == 15 then yield("/callback SelectYesno true 0") end
+		if 	iswoah == 5 then if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end end
+		if 	iswoah == 10 then if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end end
+		if 	iswoah == 15 then if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end end
 		if 	iswoah == 20 then
 			iswehehe = false
-			yield("/callback SelectYesno true 0")
+			if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 		end
     until not iswehehe
 	iswoah = 0
@@ -243,14 +243,15 @@ function ZoneTransition()
         yield("/echo Are we ready? (backup check)-> "..iswoah.."/20")
 		iswehehe = IsPlayerAvailable() 
 		iswoah = iswoah + 1
-		if 	iswoah == 5 then yield("/callback SelectYesno true 0") end
-		if 	iswoah == 10 then yield("/callback SelectYesno true 0") end
-		if 	iswoah == 15 then yield("/callback SelectYesno true 0") end
+		if 	iswoah == 5 then if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end end
+		if 	iswoah == 10 then if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end end
+		if 	iswoah == 15 then if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end end
 		if 	iswoah == 20 then
 			iswehehe = true
-			yield("/callback SelectYesno true 0")
+			if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 		end
     until iswehehe
+	zungazunga()
 end
 
 function WalkToGC()
@@ -319,12 +320,12 @@ function visland_stop_moving()
 	 yield("/equipguud")
 	 yield("/equiprecommended")
 	 yield("/character")
-	 yield("/callback Character true 15")
+	 if IsAddonReady("Character") then yield("/callback Character true 15") end
 	 yield("/wait 0.5")
-	 yield("/callback SelectYesno true 0")
+	 if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 	 yield("/character")
-	 yield("/callback Character true 15")
-	 yield("/callback SelectYesno true 0")
+	 if IsAddonReady("Character") then yield("/callback Character true 15") end
+	 if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 	 yield("/wait 3")
  end
  muuv = 1
@@ -357,7 +358,7 @@ function visland_stop_moving()
  if do_we_force_equip == 1 then
 	 yield("/character")
 	 yield("/wait 1")
-	 yield("/callback Character true 12")
+ 	 if IsAddonReady("Character") then yield("/callback Character true 12") end
 	 yield("/wait 1")
 	 yield("/callback RecommendEquip true 0")
 	 yield("/wait 1")
@@ -369,7 +370,7 @@ function return_to_limsa_bell()
 	ZoneTransition()
 	yield("/wait 2")
 	yield("/wait 1")
-	yield("/callback SelectYesno true 0")
+	if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 	PathfindAndMoveTo(-125.440284729, 18.0, 21.004405975342, false)
 	visland_stop_moving() --added so we don't accidentally end before we get to the inn person
 end
@@ -460,10 +461,10 @@ function open_house_door()
 	yield("/target Entrance <wait.1>")
 	yield("/interact")
 	yield("/wait 1")
-	yield("/callback SelectYesno true 0")
+	if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 	yield("/interact")
 	yield("/wait 1")
-	yield("/callback SelectYesno true 0")
+	if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 end
 
 function return_fc_near_bell()
@@ -684,9 +685,9 @@ function try_to_buy_fuel(restock_amt)
 		end
 		yield("/callback FreeCompanyCreditShop false 0 0u "..buyamt.."u") 
 		yield("/wait 0.5")
-		yield("/callback SelectYesno true 0")
+		if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 		yield("/wait 1")
-		--yield("/callback SelectYesno true 0")
+		--if IsAddonReady("SelectYesno") then yield("/callback SelectYesno true 0") end
 		oldFuel = curFuel
 		curFuel = GetItemCount(10155)
 		yield("/echo Current Fuel -> "..curFuel.." Old Fuel -> "..oldFuel)
