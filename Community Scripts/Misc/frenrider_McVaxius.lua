@@ -342,6 +342,7 @@ shartycardinality = 2 -- leader
 partycardinality = 2 -- me
 fartycardinality = 2 --leader ui cardinality
 autotosscount = 0
+did_we_toggle = 0 --so we aren't setting this setting multiple times. breaking its ability to function or causing ourselves a crash maybe
 
 pandora_interact_toggler_count = 0 -- for checking on pandora interact settings.
 --zones of interact --rule - only put zones that require everyone in party to interact. if its party leader only. dont do it.
@@ -350,7 +351,7 @@ zoi = {
 1044,--praetorium
 1043,--meridianum
 171,--dzemael
-1041--brayflox
+1041,--brayflox
 1245--halatali
 }
 
@@ -386,7 +387,6 @@ counting_fartula() --we can call it before mounting because the order changes so
 
 function checkzoi()
 --pandora memory leak too real
---[[
 	if pandora_interact_toggler_count > 10 then
 	pandora_interact_toggler_count = 0
 	are_we_in_i_zone = 0
@@ -397,16 +397,18 @@ function checkzoi()
 		end
 		yield("/wait 0.5")
 	end
-	if are_we_in_i_zone == 1 then
+	if are_we_in_i_zone == 1 and did_we_toggle == 0 then
 		PandoraSetFeatureState("Auto-interact with Objects in Instances",true)
+		did_we_toggle = 1
+		yield("/echo Turning on Pandora Auto Interact -- it will be turned off when we leave this area")
 		--yield("/echo PandoraSetFeatureState(Auto-interact with Objects in Instances,true)")
 	end
 	if are_we_in_i_zone == 0 then
 		PandoraSetFeatureState("Auto-interact with Objects in Instances",false)
+		did_we_toggle = 0
 		--yield("/echo PandoraSetFeatureState(Auto-interact with Objects in Instances,false)")
 	end
 	end
-	--]]
 end
 
 --yield("Friend is party slot -> "..partycardinality.." but actually is ff14 slot -> "..fartycardinality)
